@@ -92,8 +92,12 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Views\ToolBar.xaml.cs">
-      <DependentUpon>ToolBar.xaml</DependentUpon>
+    <Compile Include="Views\Canvas\DatabaseModelCanvas.xaml.cs">
+      <DependentUpon>DatabaseModelCanvas.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Canvas\TableItem\MoveThumb.cs" />
+    <Compile Include="Views\Panels\DatabaseConnectionPanel.xaml.cs">
+      <DependentUpon>DatabaseConnectionPanel.xaml</DependentUpon>
     </Compile>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -107,7 +111,19 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="Views\ToolBar.xaml">
+    <Page Include="Views\Canvas\DatabaseModelCanvas.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Canvas\TableItem\MoveThumb.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Canvas\TableItem\TableItem.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Panels\DatabaseConnectionPanel.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

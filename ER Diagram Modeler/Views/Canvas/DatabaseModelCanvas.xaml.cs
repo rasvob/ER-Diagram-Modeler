@@ -13,16 +13,23 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace ER_Diagram_Modeler.Views
+namespace ER_Diagram_Modeler.Views.Canvas
 {
 	/// <summary>
-	/// Interaction logic for ToolBar.xaml
+	/// Interaction logic for DatabaseModelCanvas.xaml
 	/// </summary>
-	public partial class ToolBar : UserControl
+	public partial class DatabaseModelCanvas : UserControl
 	{
-		public ToolBar()
+		public DatabaseModelCanvas()
 		{
 			InitializeComponent();
+		}
+
+		public void AddElement(Rectangle rect)
+		{
+			var contentControl = new ContentControl();
+			contentControl.Content = rect;
+			Canvas.Children.Add(rect);
 		}
 	}
 }

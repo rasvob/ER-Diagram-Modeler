@@ -31,5 +31,17 @@ namespace ER_Diagram_Modeler
 		{
 			Trace.WriteLine("Executed");
 		}
+
+
+		private void ButtonBase_OnClick(object sender, RoutedEventArgs e)
+		{
+			DatabaseModelCanvas.AddElement(new Rectangle()
+			{
+				Width = 100,
+				Height = 200,
+				Fill = new SolidColorBrush(Color.FromRgb(150, 30, 20)),
+				Stretch = Stretch.Fill
+			});
+		}
 	}
 }

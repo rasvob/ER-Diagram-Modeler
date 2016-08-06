@@ -8,13 +8,15 @@
 		xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
         xmlns:xcad="http://schemas.xceed.com/wpf/xaml/avalondock"
         xmlns:system="clr-namespace:System;assembly=mscorlib"
-		xmlns:views="clr-namespace:ER_Diagram_Modeler.Views"
+		xmlns:xcpt="http://schemas.xceed.com/wpf/xaml/themes"
+		xmlns:panels="clr-namespace:ER_Diagram_Modeler.Views.Panels"
+		xmlns:canvas="clr-namespace:ER_Diagram_Modeler.Views.Canvas"
 		mc:Ignorable="d"
 		WindowStartupLocation="CenterScreen"
 		BorderThickness="1"
 		Icon="icon.ico"
-        Title="ER Diagram Modeler" Height="350" Width="525">
-	<Grid>
+        Title="ER Diagram Modeler" Height="768" Width="1024">
+	<Grid> 
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto"></RowDefinition>
 			<RowDefinition Height="Auto"></RowDefinition>
@@ -22,52 +24,46 @@
 			<RowDefinition Height="Auto"></RowDefinition>
 		</Grid.RowDefinitions>
 
+		<!--Menu-->
 		<Menu Grid.Row="0">
 			<MenuItem Header="File">
 				<MenuItem Header="Exit"/>
 			</MenuItem>
 		</Menu>
 
-		<StackPanel Orientation="Horizontal" Grid.Row="1" Margin="0,5,0,5">
-			<Button Content="New table"></Button>
-			<Button Content="Delete table"></Button>
+		<!--ToolBar-->
+		<StackPanel Orientation="Horizontal" Grid.Row="1" Margin="5">
+			<Button Content="New table" Click="ButtonBase_OnClick"></Button>
+			<Button Content="Delete table" Margin="5,0,0,0"></Button>
 		</StackPanel>
-		
-		<xcad:DockingManager Grid.Row="2"
-                           AllowMixedOrientation="False"
-                           >
-			<xcad:LayoutRoot x:Name="_layoutRoot">
-				<xcad:LayoutPanel Orientation="Horizontal">
-					<xcad:LayoutAnchorablePane DockWidth="200">
-						<xcad:LayoutAnchorable ContentId="properties" Title="Properties" CanHide="False" CanClose="False"
-                                            AutoHideWidth="240"
-                                         >
-							<xctk:PropertyGrid NameColumnWidth="110"
-                        />
-						</xcad:LayoutAnchorable>
-					</xcad:LayoutAnchorablePane>
-
-					<xcad:LayoutAnchorablePane DockWidth="200">
-						<xcad:LayoutAnchorable ContentId="properties" Title="Properties" CanHide="False" CanClose="False"
-                                            AutoHideWidth="240"
-                                         >
-							<Grid>
-								<Grid.RowDefinitions>
-									<RowDefinition Height="Auto"></RowDefinition>
-									<RowDefinition Height="Auto"></RowDefinition>
-								</Grid.RowDefinitions>
-
-								<views:ToolBar Grid.Row="0"></views:ToolBar>
-								<views:ToolBar Grid.Row="1"></views:ToolBar>
-
-							</Grid>
-						</xcad:LayoutAnchorable>
-					</xcad:LayoutAnchorablePane>
-					
 				
+		<!--MainView with Docking-->
+		<xcad:DockingManager Grid.Row="2"
+							 AllowMixedOrientation="False"
+							 Margin="5"
+                             >
+			<xcad:DockingManager.Theme>
+				<xcad:MetroTheme></xcad:MetroTheme>
+			</xcad:DockingManager.Theme>
+			<xcad:LayoutRoot x:Name="LayoutRoot">
+				<xcad:LayoutPanel Orientation="Horizontal">
 					<xcad:LayoutAnchorablePaneGroup DockWidth="125">
 						<xcad:LayoutAnchorablePane>
-							<xcad:LayoutAnchorable ContentId="alarms" Title="Alarms"  >
+							<xcad:LayoutAnchorable ContentId="DatabaseConnectionPanel" Title="Database Connection">
+								<panels:DatabaseConnectionPanel></panels:DatabaseConnectionPanel>
+							</xcad:LayoutAnchorable>
+						</xcad:LayoutAnchorablePane>
+					</xcad:LayoutAnchorablePaneGroup>
+
+					<xcad:LayoutDocumentPane>
+						<xcad:LayoutAnchorable ContentId="Diagram" Title="Diagram" CanHide="False" CanClose="False" >
+							<canvas:DatabaseModelCanvas x:Name="DatabaseModelCanvas"></canvas:DatabaseModelCanvas>
+						</xcad:LayoutAnchorable>
+					</xcad:LayoutDocumentPane>
+
+					<xcad:LayoutAnchorablePaneGroup DockWidth="125">
+						<xcad:LayoutAnchorablePane>
+							<xcad:LayoutAnchorable ContentId="PropertiesPanel" Title="Properties" CanClose="False" CanHide="True">
 								<ListBox>
 									<system:String>Alarm 1</system:String>
 									<system:String>Alarm 2</system:String>
@@ -76,17 +72,22 @@
 							</xcad:LayoutAnchorable>
 						</xcad:LayoutAnchorablePane>
 					</xcad:LayoutAnchorablePaneGroup>
-
 				</xcad:LayoutPanel>
 			</xcad:LayoutRoot>
 		</xcad:DockingManager>
 
+		
+		<!--StatusBar-->
 		<StatusBar Grid.Row="3">
 			<StatusBarItem Content="Ready"/>
 		</StatusBar>
 
 	</Grid>
 </Controls:MetroWindow>
+
+
+
+
 
 
 
