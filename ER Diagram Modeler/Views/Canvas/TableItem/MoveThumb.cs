@@ -16,14 +16,10 @@ namespace ER_Diagram_Modeler.Views.Canvas.TableItem
 		private void OnDragDelta(object sender, DragDeltaEventArgs dragDeltaEventArgs)
 		{
 			var item = DataContext as ContentControl;
-
-			if (item != null)
-			{
-				Point dragDelta = new Point((int)dragDeltaEventArgs.HorizontalChange, (int)dragDeltaEventArgs.VerticalChange);
-
-				System.Windows.Controls.Canvas.SetLeft(item, System.Windows.Controls.Canvas.GetLeft(item) + dragDelta.X);
-				System.Windows.Controls.Canvas.SetTop(item, System.Windows.Controls.Canvas.GetTop(item) + dragDelta.Y);
-			}
+			if (item == null) return;
+			Point dragDelta = new Point((int)dragDeltaEventArgs.HorizontalChange, (int)dragDeltaEventArgs.VerticalChange);
+			System.Windows.Controls.Canvas.SetLeft(item, System.Windows.Controls.Canvas.GetLeft(item) + dragDelta.X);
+			System.Windows.Controls.Canvas.SetTop(item, System.Windows.Controls.Canvas.GetTop(item) + dragDelta.Y);
 		}
 	}
 }

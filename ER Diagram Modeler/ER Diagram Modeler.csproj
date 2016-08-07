@@ -92,10 +92,23 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Models\Designer\Datatype.cs" />
+    <Compile Include="Models\Designer\TableModel.cs" />
+    <Compile Include="Models\Designer\TableRowModel.cs" />
+    <Compile Include="Properties\Annotations1.cs" />
+    <Compile Include="ViewModels\DatabaseModelCanvasViewModel.cs" />
+    <Compile Include="ViewModels\MainWindowViewModel.cs" />
+    <Compile Include="ViewModels\SimpleCommand.cs" />
+    <Compile Include="ViewModels\TableViewModel.cs" />
+    <Compile Include="Views\Canvas\TableItem\DesignerItemDecorator.cs" />
     <Compile Include="Views\Canvas\DatabaseModelCanvas.xaml.cs">
       <DependentUpon>DatabaseModelCanvas.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Canvas\TableItem\MoveThumb.cs" />
+    <Compile Include="Views\Canvas\TableItem\ResizeAdorner.cs" />
+    <Compile Include="Views\Canvas\TableItem\ResizeDecoratorFlat.cs" />
+    <Compile Include="Views\Canvas\TableItem\ResizeThumb.cs" />
+    <Compile Include="Views\Canvas\TableItem\TableContent.cs" />
     <Compile Include="Views\Panels\DatabaseConnectionPanel.xaml.cs">
       <DependentUpon>DatabaseConnectionPanel.xaml</DependentUpon>
     </Compile>
@@ -116,6 +129,14 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Canvas\TableItem\MoveThumb.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Canvas\TableItem\ResizeDecorator.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Canvas\TableItem\ResizeDecoratorFlat.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -160,8 +181,7 @@
     <Resource Include="icon.ico" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Models\" />
-    <Folder Include="ViewModels\" />
+    <Folder Include="Resources\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

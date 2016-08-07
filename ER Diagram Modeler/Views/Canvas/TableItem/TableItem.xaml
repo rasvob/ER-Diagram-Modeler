@@ -4,19 +4,26 @@
 					
 	<ResourceDictionary.MergedDictionaries>
 		<ResourceDictionary Source="MoveThumb.xaml"></ResourceDictionary>
+		<ResourceDictionary Source="ResizeDecoratorFlat.xaml"></ResourceDictionary>
 	</ResourceDictionary.MergedDictionaries>
 	
-	<Style x:Key="TableItemStyle" TargetType="ContentControl">
-		<Setter Property="MinHeight" Value="50"></Setter>
-		<Setter Property="MinWidth" Value="50"></Setter>
+	<Style x:Key="TableItemStyle" TargetType="{x:Type local:TableContent}">
+		<Setter Property="MinHeight" Value="100"></Setter>
+		<Setter Property="MinWidth" Value="100"></Setter>
 		<Setter Property="SnapsToDevicePixels" Value="True"></Setter>
 		<Setter Property="Template">
 			<Setter.Value>
-				<ControlTemplate TargetType="ContentControl">
+				<ControlTemplate TargetType="{x:Type local:TableContent}">
 					<Grid DataContext="{Binding RelativeSource={RelativeSource TemplatedParent}}">
-						<local:MoveThumb Template="{StaticResource MoveThumbTemplate}" Cursor="SizeAll"></local:MoveThumb>
-						<ContentPresenter Content="{TemplateBinding ContentControl.Content}"></ContentPresenter>
+						<local:MoveThumb Template="{StaticResource MoveThumbTemplate}" Cursor="SizeAll" x:Name="MoveThumb"></local:MoveThumb>
+						<ContentPresenter Content="{TemplateBinding ContentControl.Content}" Margin="{TemplateBinding Padding}" x:Name="ContentPresenter"></ContentPresenter>
+						<local:DesignerItemDecorator x:Name="ItemDecorator"></local:DesignerItemDecorator>
 					</Grid>
+					<ControlTemplate.Triggers>
+						<Trigger Property="IsSelected" Value="True">
+							<Setter TargetName="ItemDecorator" Property="ShowDecorator" Value="True"/>
+						</Trigger>
+					</ControlTemplate.Triggers>
 				</ControlTemplate>
 			</Setter.Value>
 		</Setter>

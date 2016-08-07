@@ -16,6 +16,13 @@
 		BorderThickness="1"
 		Icon="icon.ico"
         Title="ER Diagram Modeler" Height="768" Width="1024">
+	<Window.Resources>
+		<ResourceDictionary>
+			<ResourceDictionary.MergedDictionaries>
+				<ResourceDictionary Source="Views/Canvas/TableItem/TableItem.xaml"></ResourceDictionary>
+			</ResourceDictionary.MergedDictionaries>
+		</ResourceDictionary>
+	</Window.Resources>
 	<Grid> 
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto"></RowDefinition>
@@ -56,7 +63,7 @@
 					</xcad:LayoutAnchorablePaneGroup>
 
 					<xcad:LayoutDocumentPane>
-						<xcad:LayoutAnchorable ContentId="Diagram" Title="Diagram" CanHide="False" CanClose="False" >
+						<xcad:LayoutAnchorable ContentId="Diagram" Title="Diagram" CanHide="False" CanClose="False" CanFloat="True">
 							<canvas:DatabaseModelCanvas x:Name="DatabaseModelCanvas"></canvas:DatabaseModelCanvas>
 						</xcad:LayoutAnchorable>
 					</xcad:LayoutDocumentPane>
