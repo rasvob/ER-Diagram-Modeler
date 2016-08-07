@@ -100,6 +100,7 @@
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
     <Compile Include="ViewModels\SimpleCommand.cs" />
     <Compile Include="ViewModels\TableViewModel.cs" />
+    <Compile Include="Views\Canvas\DesignerCanvas.cs" />
     <Compile Include="Views\Canvas\TableItem\DesignerItemDecorator.cs" />
     <Compile Include="Views\Canvas\DatabaseModelCanvas.xaml.cs">
       <DependentUpon>DatabaseModelCanvas.xaml</DependentUpon>
@@ -109,6 +110,9 @@
     <Compile Include="Views\Canvas\TableItem\ResizeDecoratorFlat.cs" />
     <Compile Include="Views\Canvas\TableItem\ResizeThumb.cs" />
     <Compile Include="Views\Canvas\TableItem\TableContent.cs" />
+    <Compile Include="Views\Canvas\TableItem\TableViewControl.xaml.cs">
+      <DependentUpon>TableViewControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Panels\DatabaseConnectionPanel.xaml.cs">
       <DependentUpon>DatabaseConnectionPanel.xaml</DependentUpon>
     </Compile>
@@ -141,6 +145,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Canvas\TableItem\TableItem.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Canvas\TableItem\TableViewControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

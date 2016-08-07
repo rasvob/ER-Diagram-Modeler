@@ -134,7 +134,12 @@ namespace ER_Diagram_Modeler
 
 		private void ButtonBase_OnClick(object sender, RoutedEventArgs e)
 		{
-			DatabaseModelCanvas.SetIsSelected();
+			DatabaseModelCanvas.AddElement(SeedDataTable());
+		}
+
+		private void ButtonBase_OnClickDelete(object sender, RoutedEventArgs e)
+		{
+			DatabaseModelCanvas.SetVisible();
 		}
 	}
 }

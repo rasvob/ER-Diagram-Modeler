@@ -14,6 +14,9 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using ER_Diagram_Modeler.Models.Designer;
+using ER_Diagram_Modeler.ViewModels;
+using ER_Diagram_Modeler.Views.Canvas.TableItem;
 
 namespace ER_Diagram_Modeler.Views.Canvas
 {
@@ -25,24 +28,41 @@ namespace ER_Diagram_Modeler.Views.Canvas
 		public DatabaseModelCanvas()
 		{
 			InitializeComponent();
+			var vm = new TableViewModel()
+			{
+				Left = 120,
+				Top = 150,
+				Model = new TableModel()
+				{
+					Title = "TABULKA 1"
+				}
+			};
+			DataContext = vm;
+			//AddElement(vm);
 		}
 
-		public void AddElement(Rectangle rect)
+		public void AddElement(TableViewModel viewModel)
 		{
-			
+			var label = new TableViewControl(viewModel);
+			label.TableTitle.Text = "Proc ne";
+			label.Background = new SolidColorBrush(Color.FromRgb(150,2,80));
+			var tab = new TableContent();
+			tab.Width = 200;
+			tab.Height = 200;
+			label.IsHitTestVisible = false;
+			tab.Content = label as FrameworkElement;
+			tab.Style = FindResource("TableItemStyle") as Style;
+			ModelDesignerCanvas.Children.Add(tab);
+			DesignerCanvas.SetTop(tab, 120);
+			DesignerCanvas.SetLeft(tab, 120);
 		}
 
-		public void SetIsSelected()
+		public void SetVisible()
 		{
-			//foreach(Control control in DesignerCanvas.Children)
-			//{
-			//	Selector.SetIsSelected(control, true);
-			//}
-		}
-
-		private void ButtonBase_OnClick(object sender, RoutedEventArgs e)
-		{
-			SetIsSelected();
+			foreach (TableContent content in ModelDesignerCanvas.Children)
+			{
+				content.IsSelected = true;
+			}
 		}
 	}
 }

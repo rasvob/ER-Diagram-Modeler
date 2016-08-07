@@ -10,8 +10,8 @@ namespace ER_Diagram_Modeler.Views.Canvas.TableItem
 	{
 		public bool IsSelected
 		{
-			get { return false; }
-			set { IsSelected = value; }
+			get { return (bool)GetValue(IsSelectedProperty); }
+			set { SetValue(IsSelectedProperty, value); }
 		}
 
 		public static readonly DependencyProperty IsSelectedProperty = DependencyProperty
@@ -61,6 +61,29 @@ namespace ER_Diagram_Modeler.Views.Canvas.TableItem
 					if (!IsSelected)
 					{
 						IsSelected = true;
+					}
+				}
+			}
+		}
+
+		public void LoadThumb()
+		{
+			if(Template != null)
+			{
+				ContentPresenter contentPresenter = Template.FindName("ContentPresenter", this) as ContentPresenter;
+				MoveThumb moveThumb = Template.FindName("MoveThumb", this) as MoveThumb;
+				if(contentPresenter != null && moveThumb != null)
+				{
+					UIElement contentVisual = VisualTreeHelper.GetChild(contentPresenter, 0) as UIElement;
+
+					if(contentVisual != null)
+					{
+						ControlTemplate template = GetMoveThumbTemplate(contentVisual);
+
+						if(template != null)
+						{
+							moveThumb.Template = template;
+						}
 					}
 				}
 			}
