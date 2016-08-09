@@ -3,6 +3,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using ER_Diagram_Modeler.ViewModels;
 
 namespace ER_Diagram_Modeler.Views.Canvas.TableItem
 {
@@ -10,9 +11,20 @@ namespace ER_Diagram_Modeler.Views.Canvas.TableItem
 	{
 		public bool IsSelected
 		{
-			get { return (bool)GetValue(IsSelectedProperty); }
-			set { SetValue(IsSelectedProperty, value); }
+			get
+			{
+				return (bool)GetValue(IsSelectedProperty);
+			}
+			set
+			{
+				SetValue(IsSelectedProperty, value);
+			}
 		}
+
+		public TableContentViewModel ViewModel { get; set; }
+
+		public static readonly int ZIndexSelectedValue = 1000;
+		public static readonly int ZIndexUnSelectedValue = 0;
 
 		public static readonly DependencyProperty IsSelectedProperty = DependencyProperty
 			.Register(
@@ -50,17 +62,19 @@ namespace ER_Diagram_Modeler.Views.Canvas.TableItem
 				if ((Keyboard.Modifiers & (ModifierKeys.Shift | ModifierKeys.Control)) != ModifierKeys.None)
 				{
 					IsSelected = !IsSelected;
+					DesignerCanvas.SetZIndex(this, !IsSelected ? ZIndexUnSelectedValue : ZIndexSelectedValue);
 				}
 				else
 				{
 					if (!IsSelected)
 					{
+						canvas.ResetZIndexes();
 						canvas.DeselectAll();
 						IsSelected = true;
+						DesignerCanvas.SetZIndex(this, ZIndexSelectedValue);
 					}
 				}
 			}
-
 			e.Handled = false;
 		}
 

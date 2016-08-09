@@ -5,7 +5,9 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:ER_Diagram_Modeler.Views.Canvas"
              xmlns:tableItem="clr-namespace:ER_Diagram_Modeler.Views.Canvas.TableItem"
-             mc:Ignorable="d" 
+             xmlns:viewModels="clr-namespace:ER_Diagram_Modeler.ViewModels"
+             d:DataContext="{d:DesignInstance viewModels:DatabaseModelCanvasViewModel}"
+			 mc:Ignorable="d" 
 			 d:DesignHeight="300" d:DesignWidth="300">
 	<UserControl.Resources>
 		<ResourceDictionary>
@@ -24,17 +26,18 @@
 			<local:DesignerCanvas x:Name="ModelDesignerCanvas"
 								  MinWidth="800"
 								  MinHeight="600"
-								  Height="1000"
-								  Width="1000"
+								  Height="2000"
+								  Width="2000"
 								  Background="White">
-				<tableItem:TableContent Width="100"
+				
+
+				<!--<tableItem:TableContent Width="100"
 										Height="200"
 										Canvas.Top="50"
 										Canvas.Left="100"
 										Style="{StaticResource TableItemStyle}"
 										>
 					<Ellipse Fill="BlueViolet" IsHitTestVisible="False" Stretch="Fill"></Ellipse>
-					
 				</tableItem:TableContent>
 
 				<tableItem:TableContent Width="100"
@@ -44,8 +47,11 @@
 										Style="{StaticResource TableItemStyle}"
 										>
 					<tableItem:TableViewControl></tableItem:TableViewControl>
-
 				</tableItem:TableContent>
+
+
+				<Ellipse Canvas.ZIndex="50"
+					Fill="Aquamarine" IsHitTestVisible="False" Width="50" Height="50" Stretch="Fill" Canvas.Top="50" Canvas.Left="50"></Ellipse>-->
 			</local:DesignerCanvas>
 		</ScrollViewer>
 	</Grid>

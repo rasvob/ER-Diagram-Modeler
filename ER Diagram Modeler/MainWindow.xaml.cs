@@ -139,7 +139,7 @@ namespace ER_Diagram_Modeler
 
 		private void ButtonBase_OnClickDelete(object sender, RoutedEventArgs e)
 		{
-			DatabaseModelCanvas.SetVisible();
+			
 		}
 	}
 }

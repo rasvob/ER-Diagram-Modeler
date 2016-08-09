@@ -44,25 +44,13 @@ namespace ER_Diagram_Modeler.Views.Canvas
 		public void AddElement(TableViewModel viewModel)
 		{
 			var label = new TableViewControl(viewModel);
-			label.TableTitle.Text = "Proc ne";
-			label.Background = new SolidColorBrush(Color.FromRgb(150,2,80));
+			label.TableTitle.Text = "Employees";
 			var tab = new TableContent();
-			tab.Width = 200;
-			tab.Height = 200;
-			label.IsHitTestVisible = false;
-			tab.Content = label as FrameworkElement;
+			tab.Content = label;
 			tab.Style = FindResource("TableItemStyle") as Style;
 			ModelDesignerCanvas.Children.Add(tab);
 			DesignerCanvas.SetTop(tab, 120);
 			DesignerCanvas.SetLeft(tab, 120);
-		}
-
-		public void SetVisible()
-		{
-			foreach (TableContent content in ModelDesignerCanvas.Children)
-			{
-				content.IsSelected = true;
-			}
 		}
 	}
 }

@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Media;
 using ER_Diagram_Modeler.Views.Canvas.TableItem;
 
 namespace ER_Diagram_Modeler.Views.Canvas
@@ -26,8 +28,17 @@ namespace ER_Diagram_Modeler.Views.Canvas
 			if (e.Source.Equals(this))
 			{
 				_dragStartPoint = e.GetPosition(this);
+				ResetZIndexes();
 				DeselectAll();
 				e.Handled = true;
+			}
+		}
+
+		public void ResetZIndexes()
+		{
+			foreach (TableContent item in Children.OfType<TableContent>())
+			{
+				SetZIndex(item, 0);
 			}
 		}
 	}

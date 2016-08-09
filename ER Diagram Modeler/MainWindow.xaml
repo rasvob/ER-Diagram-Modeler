@@ -11,7 +11,9 @@
 		xmlns:xcpt="http://schemas.xceed.com/wpf/xaml/themes"
 		xmlns:panels="clr-namespace:ER_Diagram_Modeler.Views.Panels"
 		xmlns:canvas="clr-namespace:ER_Diagram_Modeler.Views.Canvas"
+		xmlns:viewModels="clr-namespace:ER_Diagram_Modeler.ViewModels"
 		mc:Ignorable="d"
+		d:DataContext="{d:DesignInstance viewModels:MainWindowViewModel}"
 		WindowStartupLocation="CenterScreen"
 		BorderThickness="1"
 		Icon="icon.ico"
@@ -63,7 +65,7 @@
 					</xcad:LayoutAnchorablePaneGroup>
 
 					<xcad:LayoutDocumentPane>
-						<xcad:LayoutAnchorable ContentId="Diagram" Title="Diagram" CanHide="False" CanClose="False" CanFloat="True">
+						<xcad:LayoutAnchorable ContentId="Diagram" Title="Designer" CanHide="False" CanClose="False" CanFloat="True">
 							<canvas:DatabaseModelCanvas x:Name="DatabaseModelCanvas"></canvas:DatabaseModelCanvas>
 						</xcad:LayoutAnchorable>
 					</xcad:LayoutDocumentPane>

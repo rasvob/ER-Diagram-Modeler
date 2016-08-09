@@ -8,7 +8,7 @@
 	</ResourceDictionary.MergedDictionaries>
 	
 	<Style x:Key="TableItemStyle" TargetType="{x:Type local:TableContent}">
-		<Setter Property="MinHeight" Value="100"></Setter>
+		<Setter Property="MinHeight" Value="200"></Setter>
 		<Setter Property="MinWidth" Value="100"></Setter>
 		<Setter Property="SnapsToDevicePixels" Value="True"></Setter>
 		<Setter Property="Template">
