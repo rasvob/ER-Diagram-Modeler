@@ -24,8 +24,8 @@
 			<local:DesignerCanvas x:Name="ModelDesignerCanvas"
 								  MinWidth="800"
 								  MinHeight="600"
-								  Height="2000"
-								  Width="2000"
+								  Height="1000"
+								  Width="1000"
 								  Background="White">
 				<tableItem:TableContent Width="100"
 										Height="200"
