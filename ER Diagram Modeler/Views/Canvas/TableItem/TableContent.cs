@@ -40,17 +40,12 @@ namespace ER_Diagram_Modeler.Views.Canvas.TableItem
 			DefaultStyleKeyProperty.OverrideMetadata(typeof(TableContent), new FrameworkPropertyMetadata(typeof(TableContent)));
 		}
 
-		public TableContent()
-		{
-			Loaded += OnLoaded;
-		}
-
 		protected override void OnPreviewMouseDown(MouseButtonEventArgs e)
 		{
 			base.OnPreviewMouseDown(e);
-			System.Windows.Controls.Canvas content = VisualTreeHelper.GetParent(this) as System.Windows.Controls.Canvas;
+			DesignerCanvas canvas = VisualTreeHelper.GetParent(this) as DesignerCanvas;
 
-			if (content != null)
+			if (canvas != null)
 			{
 				if ((Keyboard.Modifiers & (ModifierKeys.Shift | ModifierKeys.Control)) != ModifierKeys.None)
 				{
@@ -60,56 +55,36 @@ namespace ER_Diagram_Modeler.Views.Canvas.TableItem
 				{
 					if (!IsSelected)
 					{
+						canvas.DeselectAll();
 						IsSelected = true;
 					}
 				}
 			}
+
+			e.Handled = false;
 		}
 
-		public void LoadThumb()
-		{
-			if(Template != null)
-			{
-				ContentPresenter contentPresenter = Template.FindName("ContentPresenter", this) as ContentPresenter;
-				MoveThumb moveThumb = Template.FindName("MoveThumb", this) as MoveThumb;
-				if(contentPresenter != null && moveThumb != null)
-				{
-					UIElement contentVisual = VisualTreeHelper.GetChild(contentPresenter, 0) as UIElement;
+		//public void LoadThumb()
+		//{
+		//	if(Template != null)
+		//	{
+		//		ContentPresenter contentPresenter = Template.FindName("ContentPresenter", this) as ContentPresenter;
+		//		MoveThumb moveThumb = Template.FindName("MoveThumb", this) as MoveThumb;
+		//		if(contentPresenter != null && moveThumb != null)
+		//		{
+		//			UIElement contentVisual = VisualTreeHelper.GetChild(contentPresenter, 0) as UIElement;
 
-					if(contentVisual != null)
-					{
-						ControlTemplate template = GetMoveThumbTemplate(contentVisual);
+		//			if(contentVisual != null)
+		//			{
+		//				ControlTemplate template = GetMoveThumbTemplate(contentVisual);
 
-						if(template != null)
-						{
-							moveThumb.Template = template;
-						}
-					}
-				}
-			}
-		}
-
-		private void OnLoaded(object sender, RoutedEventArgs routedEventArgs)
-		{
-			if (Template != null)
-			{
-				ContentPresenter contentPresenter = Template.FindName("ContentPresenter", this) as ContentPresenter;
-				MoveThumb moveThumb = Template.FindName("MoveThumb", this) as MoveThumb;
-				if (contentPresenter != null && moveThumb != null)
-				{
-					UIElement contentVisual = VisualTreeHelper.GetChild(contentPresenter, 0) as UIElement;
-
-					if (contentVisual != null)
-					{
-						ControlTemplate template = GetMoveThumbTemplate(contentVisual);
-
-						if (template != null)
-						{
-							moveThumb.Template = template;
-						}
-					}
-				}
-			}
-		}
+		//				if(template != null)
+		//				{
+		//					moveThumb.Template = template;
+		//				}
+		//			}
+		//		}
+		//	}
+		//}
 	}
 }

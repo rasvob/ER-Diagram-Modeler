@@ -24,6 +24,8 @@
 			<local:DesignerCanvas x:Name="ModelDesignerCanvas"
 								  MinWidth="800"
 								  MinHeight="600"
+								  Height="2000"
+								  Width="2000"
 								  Background="White">
 				<tableItem:TableContent Width="100"
 										Height="200"
@@ -37,7 +39,7 @@
 
 				<tableItem:TableContent Width="100"
 										Height="200"
-										Canvas.Top="50"
+										Canvas.Top="150"
 										Canvas.Left="100"
 										Style="{StaticResource TableItemStyle}"
 										>

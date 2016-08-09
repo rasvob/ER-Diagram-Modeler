@@ -61,7 +61,7 @@
 							<Rectangle  SnapsToDevicePixels="True"
 										StrokeThickness="1"
 										Margin="1"
-										Stroke="#41b1e1"/>	
+										Stroke="{StaticResource AccentColorBrush}"/>	
 							<Ellipse Style="{StaticResource ThumbCorner}" HorizontalAlignment="Left" VerticalAlignment="Top"/>
 							<Ellipse Style="{StaticResource ThumbCorner}" HorizontalAlignment="Right" VerticalAlignment="Top"/>
 							<Ellipse Style="{StaticResource ThumbCorner}" HorizontalAlignment="Left" VerticalAlignment="Bottom"/>

@@ -13,76 +13,81 @@ namespace ER_Diagram_Modeler.Views.Canvas.TableItem
 {
 	class ResizeThumb: Thumb
 	{
-		private Adorner _adorner;
-		private Point _transformOrigin;
-		private ContentControl _designerItem;
-		private System.Windows.Controls.Canvas _canvas;
+		private TableContent _item;
+		private DesignerCanvas _canvas;
 
 		public ResizeThumb()
 		{
 			DragStarted += ResizeThumb_DragStarted;
 			DragDelta += ResizeThumb_DragDelta;
-			DragCompleted += ResizeThumb_DragCompleted;
 		}
 
 		private void ResizeThumb_DragStarted(object sender, DragStartedEventArgs e)
 		{
-			_designerItem = DataContext as ContentControl;
+			_item = DataContext as TableContent;
 
-			if(_designerItem != null)
+			if (_item != null)
 			{
-				_canvas = VisualTreeHelper.GetParent(_designerItem) as System.Windows.Controls.Canvas;
-
-				if(_canvas != null)
-				{
-					_transformOrigin = _designerItem.RenderTransformOrigin;
-				}
+				_canvas = VisualTreeHelper.GetParent(_item) as DesignerCanvas;
 			}
 		}
 
 		private void ResizeThumb_DragDelta(object sender, DragDeltaEventArgs e)
 		{
-			if(_designerItem != null)
+			if(_item != null && _canvas != null && _item.IsSelected)
 			{
-				double deltaVertical, deltaHorizontal;
+				double minLeft = double.MaxValue;
+				double minTop = double.MaxValue;
 
-				switch(VerticalAlignment)
+				double maxTop = double.MinValue;
+				double maxLeft = double.MinValue;
+
+				double deltaVertical, deltaHorizontal;
+				double minDeltaVertical = double.MaxValue; 
+				double minDeltaHorizontal = double.MaxValue;
+
+				foreach(TableContent item in _canvas.SelectedItems)
 				{
-					case VerticalAlignment.Bottom:
-						deltaVertical = Math.Min(-e.VerticalChange, _designerItem.ActualHeight - _designerItem.MinHeight);
-						_designerItem.Height -= deltaVertical;
-						break;
-					case VerticalAlignment.Top:
-						deltaVertical = Math.Min(e.VerticalChange, _designerItem.ActualHeight - _designerItem.MinHeight);
-						System.Windows.Controls.Canvas.SetTop(_designerItem, System.Windows.Controls.Canvas.GetTop(_designerItem) + deltaVertical);
-						_designerItem.Height -= deltaVertical;
-						break;
+					minLeft = Math.Min(DesignerCanvas.GetLeft(item), minLeft);
+					minTop = Math.Min(DesignerCanvas.GetTop(item), minTop);
+
+					minDeltaVertical = Math.Min(item.ActualHeight - item.MinHeight, minDeltaVertical);
+					minDeltaHorizontal = Math.Min(item.ActualWidth - item.MinWidth, minDeltaHorizontal);
 				}
 
-				switch(HorizontalAlignment)
+				foreach(TableContent item in _canvas.SelectedItems)
 				{
-					case HorizontalAlignment.Left:
-						deltaHorizontal = Math.Min(e.HorizontalChange, _designerItem.ActualWidth - _designerItem.MinWidth);
-						System.Windows.Controls.Canvas.SetLeft(_designerItem, System.Windows.Controls.Canvas.GetLeft(_designerItem) + deltaHorizontal);
-						_designerItem.Width -= deltaHorizontal;
-						break;
-					case HorizontalAlignment.Right:
-						deltaHorizontal = Math.Min(-e.HorizontalChange, _designerItem.ActualWidth - _designerItem.MinWidth);
-						_designerItem.Width -= deltaHorizontal;
-						break;
+					switch (VerticalAlignment)
+					{
+						case VerticalAlignment.Bottom:
+							deltaVertical = Math.Min(-e.VerticalChange, minDeltaVertical);
+							item.Height = item.ActualHeight - deltaVertical;
+							break;
+						case VerticalAlignment.Top:
+							deltaVertical = Math.Min(e.VerticalChange, _item.ActualHeight - _item.MinHeight);
+							System.Windows.Controls.Canvas.SetTop(_item, System.Windows.Controls.Canvas.GetTop(_item) + deltaVertical);
+							_item.Height -= deltaVertical;
+							break;
+					}
+
+					switch (HorizontalAlignment)
+					{
+						case HorizontalAlignment.Left:
+							deltaHorizontal = Math.Min(e.HorizontalChange, _item.ActualWidth - _item.MinWidth);
+							System.Windows.Controls.Canvas.SetLeft(_item, System.Windows.Controls.Canvas.GetLeft(_item) + deltaHorizontal);
+							_item.Width -= deltaHorizontal;
+							break;
+						case HorizontalAlignment.Right:
+							deltaHorizontal = Math.Min(-e.HorizontalChange, _item.ActualWidth - _item.MinWidth);
+							_item.Width -= deltaHorizontal;
+							break;
+					}
 				}
 			}
 
 			e.Handled = true;
 		}
 
-		private void ResizeThumb_DragCompleted(object sender, DragCompletedEventArgs e)
-		{
-			if (_adorner == null) return;
-			AdornerLayer adornerLayer = AdornerLayer.GetAdornerLayer(_canvas);
-			adornerLayer?.Remove(_adorner);
-			_adorner = null;
-		}
 	}
 }
 

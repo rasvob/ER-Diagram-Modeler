@@ -25,15 +25,10 @@ namespace ER_Diagram_Modeler.Views.Canvas
 			base.OnMouseDown(e);
 			if (e.Source.Equals(this))
 			{
-				_dragStartPoint = new Point?(e.GetPosition(this));
+				_dragStartPoint = e.GetPosition(this);
 				DeselectAll();
 				e.Handled = true;
 			}
-		}
-
-		protected override void OnMouseMove(MouseEventArgs e)
-		{
-			base.OnMouseMove(e);
 		}
 	}
 }
