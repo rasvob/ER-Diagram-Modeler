@@ -31,8 +31,6 @@ namespace ER_Diagram_Modeler
 		{
 			InitializeComponent();
 			MainWindowViewModel = new MainWindowViewModel();
-			MainWindowViewModel.DatabaseModelCanvasViewModel.Tables.Add(SeedDataTable());
-			MainWindowViewModel.DatabaseModelCanvasViewModel.Tables.Add(SeedDataTable2());
 			DataContext = MainWindowViewModel;
 		}
 
@@ -134,7 +132,7 @@ namespace ER_Diagram_Modeler
 
 		private void ButtonBase_OnClick(object sender, RoutedEventArgs e)
 		{
-			DatabaseModelCanvas.AddElement(SeedDataTable());
+			
 		}
 
 		private void ButtonBase_OnClickDelete(object sender, RoutedEventArgs e)

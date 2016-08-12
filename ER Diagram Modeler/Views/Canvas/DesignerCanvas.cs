@@ -13,6 +13,7 @@ namespace ER_Diagram_Modeler.Views.Canvas
 		private Point? _dragStartPoint;
 
 		public IEnumerable<TableContent> SelectedItems => Children.OfType<TableContent>().Where(t => t.IsSelected);
+		public IEnumerable<TableContent> Tables => Children.OfType<TableContent>(); 
 
 		public void DeselectAll()
 		{

@@ -96,15 +96,15 @@
     <Compile Include="Models\Designer\TableModel.cs" />
     <Compile Include="Models\Designer\TableRowModel.cs" />
     <Compile Include="Properties\Annotations1.cs" />
-    <Compile Include="ViewModels\DatabaseModelCanvasViewModel.cs" />
+    <Compile Include="ViewModels\DatabaseModelDiagramViewModel.cs" />
+    <Compile Include="ViewModels\Enums\TableViewMode.cs" />
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
     <Compile Include="ViewModels\SimpleCommand.cs" />
-    <Compile Include="ViewModels\TableContentViewModel.cs" />
     <Compile Include="ViewModels\TableViewModel.cs" />
     <Compile Include="Views\Canvas\DesignerCanvas.cs" />
     <Compile Include="Views\Canvas\TableItem\DesignerItemDecorator.cs" />
-    <Compile Include="Views\Canvas\DatabaseModelCanvas.xaml.cs">
-      <DependentUpon>DatabaseModelCanvas.xaml</DependentUpon>
+    <Compile Include="Views\Canvas\DatabaseModelDesigner.xaml.cs">
+      <DependentUpon>DatabaseModelDesigner.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Canvas\TableItem\MoveThumb.cs" />
     <Compile Include="Views\Canvas\TableItem\ResizeAdorner.cs" />
@@ -133,15 +133,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Canvas\DatabaseModelCanvas.xaml">
+    <Page Include="Views\Canvas\DatabaseModelDesigner.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Canvas\TableItem\MoveThumb.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\Canvas\TableItem\ResizeDecorator.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

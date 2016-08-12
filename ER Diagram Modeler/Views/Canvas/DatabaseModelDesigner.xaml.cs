@@ -21,11 +21,12 @@ using ER_Diagram_Modeler.Views.Canvas.TableItem;
 namespace ER_Diagram_Modeler.Views.Canvas
 {
 	/// <summary>
-	/// Interaction logic for DatabaseModelCanvas.xaml
+	/// Interaction logic for DatabaseModelDesigner.xaml
 	/// </summary>
-	public partial class DatabaseModelCanvas : UserControl
+	public partial class DatabaseModelDesigner : UserControl
 	{
-		public DatabaseModelCanvas()
+
+		public DatabaseModelDesigner()
 		{
 			InitializeComponent();
 			var vm = new TableViewModel()
@@ -44,7 +45,7 @@ namespace ER_Diagram_Modeler.Views.Canvas
 		public void AddElement(TableViewModel viewModel)
 		{
 			var label = new TableViewControl(viewModel);
-			label.TableTitle.Text = "Employees";
+			//label.TableTitle.Text = "Employees";
 			var tab = new TableContent();
 			tab.Content = label;
 			tab.Style = FindResource("TableItemStyle") as Style;

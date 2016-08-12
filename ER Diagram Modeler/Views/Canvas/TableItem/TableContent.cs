@@ -4,6 +4,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using ER_Diagram_Modeler.ViewModels;
+using ER_Diagram_Modeler.ViewModels.Enums;
 
 namespace ER_Diagram_Modeler.Views.Canvas.TableItem
 {
@@ -20,8 +21,6 @@ namespace ER_Diagram_Modeler.Views.Canvas.TableItem
 				SetValue(IsSelectedProperty, value);
 			}
 		}
-
-		public TableContentViewModel ViewModel { get; set; }
 
 		public static readonly int ZIndexSelectedValue = 1000;
 		public static readonly int ZIndexUnSelectedValue = 0;

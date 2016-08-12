@@ -6,11 +6,11 @@
 		<ResourceDictionary Source="MoveThumb.xaml"></ResourceDictionary>
 		<ResourceDictionary Source="ResizeDecoratorFlat.xaml"></ResourceDictionary>
 	</ResourceDictionary.MergedDictionaries>
-	
+
 	<Style x:Key="TableItemStyle" TargetType="{x:Type local:TableContent}">
-		<Setter Property="MinHeight" Value="200"></Setter>
-		<Setter Property="MinWidth" Value="100"></Setter>
 		<Setter Property="SnapsToDevicePixels" Value="True"></Setter>
+		<Setter Property="MinHeight" Value="26"></Setter>
+		<Setter Property="MinWidth" Value="120"></Setter>
 		<Setter Property="Template">
 			<Setter.Value>
 				<ControlTemplate TargetType="{x:Type local:TableContent}">

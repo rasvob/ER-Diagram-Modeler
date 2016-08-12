@@ -9,6 +9,7 @@ using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Documents;
 using System.Windows.Media;
+using ER_Diagram_Modeler.ViewModels.Enums;
 
 namespace ER_Diagram_Modeler.Views.Canvas.TableItem
 {
@@ -66,8 +67,9 @@ namespace ER_Diagram_Modeler.Views.Canvas.TableItem
 
 				foreach(TableContent item in _canvas.SelectedItems)
 				{
+
 					double deltaVertical;
-					switch (VerticalAlignment)
+					switch(VerticalAlignment)
 					{
 						case VerticalAlignment.Bottom:
 							deltaVertical = e.VerticalChange > 0 && e.VerticalChange >= maxDeltaVertical ? 0 : Math.Min(-e.VerticalChange, minDeltaVertical);
@@ -95,10 +97,8 @@ namespace ER_Diagram_Modeler.Views.Canvas.TableItem
 					}
 				}
 			}
-
 			e.Handled = true;
 		}
-
 	}
 }
 

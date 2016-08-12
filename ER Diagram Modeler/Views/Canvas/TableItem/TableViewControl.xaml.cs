@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -32,6 +33,21 @@ namespace ER_Diagram_Modeler.Views.Canvas.TableItem
 		{
 			InitializeComponent();
 			DataContext = viewModel;
+		}
+
+		private void MenuItem_OnClick(object sender, RoutedEventArgs e)
+		{
+			Trace.WriteLine("STD");
+		}
+
+		private void MenuItem_NameOnly_OnClick(object sender, RoutedEventArgs e)
+		{
+			Trace.WriteLine("Name only");
+		}
+
+		private void ButtonBase_OnClick(object sender, RoutedEventArgs e)
+		{
+			TableContextMenu.IsOpen = true;
 		}
 	}
 }

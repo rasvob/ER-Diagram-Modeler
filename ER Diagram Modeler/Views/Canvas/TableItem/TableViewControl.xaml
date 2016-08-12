@@ -13,18 +13,36 @@
 			<RowDefinition Height="Auto"></RowDefinition>
 			<RowDefinition Height="*"></RowDefinition>
 		</Grid.RowDefinitions>
-		<TextBlock x:Name="TableTitle" 
-				   Grid.Row="0" 
-				   Text="{Binding Model.Title}" 
-				   Background="{StaticResource PrimaryColorBrush}" 
-				   VerticalAlignment="Center" 
-				   Padding="5"
-				   FontWeight="Bold"
-				   Foreground="White"
-				   IsHitTestVisible="False"></TextBlock>
-		<Border Grid.Row="1" Background="{StaticResource PrimaryColorBrush}" BorderThickness="3" BorderBrush="{StaticResource PrimaryColorBrush}">
-			<DataGrid 
-			ItemsSource="{Binding Model.Attributes}"></DataGrid>
-		</Border>
+
+		<Grid>
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="*"></ColumnDefinition>
+				<ColumnDefinition Width="Auto"></ColumnDefinition>
+			</Grid.ColumnDefinitions>
+			<Label 
+				Grid.Column="0"
+				Background="{StaticResource PrimaryColorBrush}"
+				Content="{Binding Model.Title}"
+				FontWeight="Bold"
+				Foreground="White"
+				Padding="5"
+				IsHitTestVisible="False"
+				>
+				<Label.ContextMenu>
+					<ContextMenu Name="TableContextMenu">
+						<MenuItem Header="Table view mode">
+							<MenuItem Header="Standard" Click="MenuItem_OnClick"></MenuItem>
+							<MenuItem Header="Name only" Name="MenuItem_NameOnly" Click="MenuItem_NameOnly_OnClick"></MenuItem>
+						</MenuItem>
+					</ContextMenu>
+				</Label.ContextMenu>
+			</Label>
+			<Button Content="Menu" Grid.Column="1" Click="ButtonBase_OnClick">
+			</Button>
+		</Grid>
+		<!--<Border Grid.Row="1" BorderThickness="3" BorderBrush="{StaticResource PrimaryColorBrush}" Visibility="Hidden">
+			<DataGrid x:Name="TableDataGrid" Visibility="Collapsed"
+					  ItemsSource="{Binding Model.Attributes}"></DataGrid>
+		</Border>-->
 	</Grid>
 </UserControl>

@@ -6,9 +6,9 @@ namespace ER_Diagram_Modeler.ViewModels
 {
 	public class MainWindowViewModel: INotifyPropertyChanged
 	{
-		private DatabaseModelCanvasViewModel _databaseModelCanvasViewModel;
+		private DatabaseModelDiagramViewModel _databaseModelCanvasViewModel;
 
-		public DatabaseModelCanvasViewModel DatabaseModelCanvasViewModel
+		public DatabaseModelDiagramViewModel DatabaseModelCanvasViewModel
 		{
 			get { return _databaseModelCanvasViewModel; }
 			set
@@ -21,7 +21,7 @@ namespace ER_Diagram_Modeler.ViewModels
 
 		public MainWindowViewModel()
 		{
-			_databaseModelCanvasViewModel = new DatabaseModelCanvasViewModel();
+			_databaseModelCanvasViewModel = new DatabaseModelDiagramViewModel();
 		}
 
 		public event PropertyChangedEventHandler PropertyChanged;

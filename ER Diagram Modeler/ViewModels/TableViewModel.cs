@@ -2,14 +2,27 @@
 using System.Runtime.CompilerServices;
 using ER_Diagram_Modeler.Annotations;
 using ER_Diagram_Modeler.Models.Designer;
+using ER_Diagram_Modeler.ViewModels.Enums;
 
 namespace ER_Diagram_Modeler.ViewModels
 {
 	public class TableViewModel: INotifyPropertyChanged
 	{
 		private TableModel _model;
+		private TableViewMode _viewMode;
 		private double _left;
 		private double _top;
+
+		public TableViewMode ViewMode
+		{
+			get { return _viewMode; }
+			set
+			{
+				if (value == _viewMode) return;
+				_viewMode = value;
+				OnPropertyChanged();
+			}
+		}
 
 		public TableModel Model
 		{

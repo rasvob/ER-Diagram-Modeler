@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="ER_Diagram_Modeler.Views.Canvas.DatabaseModelCanvas"
+﻿<UserControl x:Class="ER_Diagram_Modeler.Views.Canvas.DatabaseModelDesigner"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:ER_Diagram_Modeler.Views.Canvas"
              xmlns:tableItem="clr-namespace:ER_Diagram_Modeler.Views.Canvas.TableItem"
              xmlns:viewModels="clr-namespace:ER_Diagram_Modeler.ViewModels"
-             d:DataContext="{d:DesignInstance viewModels:DatabaseModelCanvasViewModel}"
+             d:DataContext="{d:DesignInstance viewModels:DatabaseModelDiagramViewModel}"
 			 mc:Ignorable="d" 
 			 d:DesignHeight="300" d:DesignWidth="300">
 	<UserControl.Resources>
@@ -29,29 +29,6 @@
 								  Height="2000"
 								  Width="2000"
 								  Background="White">
-				
-
-				<!--<tableItem:TableContent Width="100"
-										Height="200"
-										Canvas.Top="50"
-										Canvas.Left="100"
-										Style="{StaticResource TableItemStyle}"
-										>
-					<Ellipse Fill="BlueViolet" IsHitTestVisible="False" Stretch="Fill"></Ellipse>
-				</tableItem:TableContent>
-
-				<tableItem:TableContent Width="100"
-										Height="200"
-										Canvas.Top="150"
-										Canvas.Left="100"
-										Style="{StaticResource TableItemStyle}"
-										>
-					<tableItem:TableViewControl></tableItem:TableViewControl>
-				</tableItem:TableContent>
-
-
-				<Ellipse Canvas.ZIndex="50"
-					Fill="Aquamarine" IsHitTestVisible="False" Width="50" Height="50" Stretch="Fill" Canvas.Top="50" Canvas.Left="50"></Ellipse>-->
 			</local:DesignerCanvas>
 		</ScrollViewer>
 	</Grid>
