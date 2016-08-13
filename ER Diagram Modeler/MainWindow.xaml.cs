@@ -25,12 +25,15 @@ namespace ER_Diagram_Modeler
 	/// </summary>
 	public partial class MainWindow : MetroWindow
 	{
+		public List<TableViewModel> Models { get; set; }
+
 		public MainWindowViewModel MainWindowViewModel { get; set; }
 
 		public MainWindow()
 		{
 			InitializeComponent();
 			MainWindowViewModel = new MainWindowViewModel();
+			DatabaseModelDesigner.ViewModel = MainWindowViewModel.DatabaseModelDesignerViewModel;
 			DataContext = MainWindowViewModel;
 		}
 
@@ -132,7 +135,7 @@ namespace ER_Diagram_Modeler
 
 		private void ButtonBase_OnClick(object sender, RoutedEventArgs e)
 		{
-			
+			MainWindowViewModel.DatabaseModelDesignerViewModel.TableViewModels.Add(SeedDataTable());
 		}
 
 		private void ButtonBase_OnClickDelete(object sender, RoutedEventArgs e)

@@ -6,7 +6,6 @@
              xmlns:local="clr-namespace:ER_Diagram_Modeler.Views.Canvas"
              xmlns:tableItem="clr-namespace:ER_Diagram_Modeler.Views.Canvas.TableItem"
              xmlns:viewModels="clr-namespace:ER_Diagram_Modeler.ViewModels"
-             d:DataContext="{d:DesignInstance viewModels:DatabaseModelDiagramViewModel}"
 			 mc:Ignorable="d" 
 			 d:DesignHeight="300" d:DesignWidth="300">
 	<UserControl.Resources>

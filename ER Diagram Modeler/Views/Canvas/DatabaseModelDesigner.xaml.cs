@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
@@ -25,33 +26,45 @@ namespace ER_Diagram_Modeler.Views.Canvas
 	/// </summary>
 	public partial class DatabaseModelDesigner : UserControl
 	{
+		private DatabaseModelDesignerViewModel _viewModel;
+
+		public DatabaseModelDesignerViewModel ViewModel
+		{
+			get { return _viewModel; }
+			set
+			{
+				_viewModel = value;
+				DataContext = value;
+				ViewModel.TableViewModels.CollectionChanged += TableViewModelsOnCollectionChanged;
+			}
+		}
+
+		private void TableViewModelsOnCollectionChanged(object sender, NotifyCollectionChangedEventArgs args)
+		{
+			switch (args.Action)
+			{
+				case NotifyCollectionChangedAction.Add:
+					foreach (TableViewModel item in args.NewItems)
+					{
+						AddElement(item);
+					}
+					break;
+				case NotifyCollectionChangedAction.Remove:
+					break;
+			}
+		}
 
 		public DatabaseModelDesigner()
 		{
 			InitializeComponent();
-			var vm = new TableViewModel()
-			{
-				Left = 120,
-				Top = 150,
-				Model = new TableModel()
-				{
-					Title = "TABULKA 1"
-				}
-			};
-			DataContext = vm;
-			//AddElement(vm);
 		}
 
 		public void AddElement(TableViewModel viewModel)
 		{
-			var label = new TableViewControl(viewModel);
-			//label.TableTitle.Text = "Employees";
-			var tab = new TableContent();
-			tab.Content = label;
-			tab.Style = FindResource("TableItemStyle") as Style;
-			ModelDesignerCanvas.Children.Add(tab);
-			DesignerCanvas.SetTop(tab, 120);
-			DesignerCanvas.SetLeft(tab, 120);
+			var content = new TableContent(viewModel);
+			ModelDesignerCanvas.Children.Add(content);
+			DesignerCanvas.SetTop(content, viewModel.Top);
+			DesignerCanvas.SetLeft(content, viewModel.Left);
 		}
 	}
 }

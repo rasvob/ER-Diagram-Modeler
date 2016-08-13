@@ -92,11 +92,14 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="EventArgs\TableViewModelArgs.cs" />
     <Compile Include="Models\Designer\Datatype.cs" />
     <Compile Include="Models\Designer\TableModel.cs" />
     <Compile Include="Models\Designer\TableRowModel.cs" />
     <Compile Include="Properties\Annotations1.cs" />
-    <Compile Include="ViewModels\DatabaseModelDiagramViewModel.cs" />
+    <Compile Include="ValueConverters\TableViewModeToVisibilityConverter.cs" />
+    <Compile Include="ViewModels\DatabaseModelDesignerViewModel.cs" />
+    <Compile Include="ViewModels\Enums\MouseMode.cs" />
     <Compile Include="ViewModels\Enums\TableViewMode.cs" />
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
     <Compile Include="ViewModels\SimpleCommand.cs" />
@@ -130,6 +133,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="Resources\Colors.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Resources\Constants.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

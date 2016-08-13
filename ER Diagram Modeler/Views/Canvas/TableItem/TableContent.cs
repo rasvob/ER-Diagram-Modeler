@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -10,6 +11,13 @@ namespace ER_Diagram_Modeler.Views.Canvas.TableItem
 {
 	public class TableContent: ContentControl
 	{
+		public TableViewModel TableViewModel { get; set; }
+
+		public static readonly int ZIndexSelectedValue = 1000;
+		public static readonly int ZIndexUnSelectedValue = 0;
+
+		private double _oldHeight;
+
 		public bool IsSelected
 		{
 			get
@@ -22,8 +30,8 @@ namespace ER_Diagram_Modeler.Views.Canvas.TableItem
 			}
 		}
 
-		public static readonly int ZIndexSelectedValue = 1000;
-		public static readonly int ZIndexUnSelectedValue = 0;
+		public static double TableItemMinWidth { get; } = (double)Application.Current.FindResource("TableMinHWidth");
+		public static double TableItemMinHeight { get; } = (double)Application.Current.FindResource("TableMinHeight");
 
 		public static readonly DependencyProperty IsSelectedProperty = DependencyProperty
 			.Register(
@@ -51,6 +59,32 @@ namespace ER_Diagram_Modeler.Views.Canvas.TableItem
 			DefaultStyleKeyProperty.OverrideMetadata(typeof(TableContent), new FrameworkPropertyMetadata(typeof(TableContent)));
 		}
 
+		public TableContent(TableViewModel tableViewModel)
+		{
+			TableViewModel = tableViewModel;
+			TableViewModel.PropertyChanged += TableViewModelOnPropertyChanged;
+			Style = Application.Current.FindResource("TableItemStyle") as Style;
+			Content = new TableViewControl(TableViewModel);
+		}
+
+		private void TableViewModelOnPropertyChanged(object sender, PropertyChangedEventArgs args)
+		{
+			if (args.PropertyName.Equals("ViewMode"))
+			{
+				switch (TableViewModel.ViewMode)
+				{
+					case TableViewMode.Standard:
+						Height = _oldHeight;
+						break;
+					case TableViewMode.NameOnly:
+						_oldHeight = Height;
+						Height = TableItemMinHeight;
+						break;
+				}
+			}
+		}
+
+
 		protected override void OnPreviewMouseDown(MouseButtonEventArgs e)
 		{
 			base.OnPreviewMouseDown(e);
@@ -61,6 +95,7 @@ namespace ER_Diagram_Modeler.Views.Canvas.TableItem
 				if ((Keyboard.Modifiers & (ModifierKeys.Shift | ModifierKeys.Control)) != ModifierKeys.None)
 				{
 					IsSelected = !IsSelected;
+					TableViewModel.IsSelected = IsSelected;
 					DesignerCanvas.SetZIndex(this, !IsSelected ? ZIndexUnSelectedValue : ZIndexSelectedValue);
 				}
 				else
@@ -70,6 +105,7 @@ namespace ER_Diagram_Modeler.Views.Canvas.TableItem
 						canvas.ResetZIndexes();
 						canvas.DeselectAll();
 						IsSelected = true;
+						TableViewModel.IsSelected = IsSelected;
 						DesignerCanvas.SetZIndex(this, ZIndexSelectedValue);
 					}
 				}

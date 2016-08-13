@@ -14,6 +14,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using ER_Diagram_Modeler.ViewModels;
+using ER_Diagram_Modeler.ViewModels.Enums;
 
 namespace ER_Diagram_Modeler.Views.Canvas.TableItem
 {
@@ -32,17 +33,18 @@ namespace ER_Diagram_Modeler.Views.Canvas.TableItem
 		public TableViewControl(TableViewModel viewModel)
 		{
 			InitializeComponent();
+			ViewModel = viewModel;
 			DataContext = viewModel;
 		}
 
 		private void MenuItem_OnClick(object sender, RoutedEventArgs e)
 		{
-			Trace.WriteLine("STD");
+			ViewModel.ViewMode = TableViewMode.Standard;
 		}
 
 		private void MenuItem_NameOnly_OnClick(object sender, RoutedEventArgs e)
 		{
-			Trace.WriteLine("Name only");
+			ViewModel.ViewMode = TableViewMode.NameOnly;
 		}
 
 		private void ButtonBase_OnClick(object sender, RoutedEventArgs e)

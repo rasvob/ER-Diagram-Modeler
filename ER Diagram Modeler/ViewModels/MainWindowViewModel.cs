@@ -1,27 +1,42 @@
-﻿using System.ComponentModel;
+﻿using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using ER_Diagram_Modeler.Annotations;
+using ER_Diagram_Modeler.ViewModels.Enums;
 
 namespace ER_Diagram_Modeler.ViewModels
 {
 	public class MainWindowViewModel: INotifyPropertyChanged
 	{
-		private DatabaseModelDiagramViewModel _databaseModelCanvasViewModel;
-
-		public DatabaseModelDiagramViewModel DatabaseModelCanvasViewModel
+		public MouseMode MouseMode
 		{
-			get { return _databaseModelCanvasViewModel; }
+			get { return _mouseMode; }
 			set
 			{
-				if (Equals(value, _databaseModelCanvasViewModel)) return;
-				_databaseModelCanvasViewModel = value;
+				if (value == _mouseMode) return;
+				_mouseMode = value;
+				OnPropertyChanged();
+			}
+		}
+
+		private DatabaseModelDesignerViewModel _databaseModelDesignerViewModel;
+		private MouseMode _mouseMode;
+
+		public DatabaseModelDesignerViewModel DatabaseModelDesignerViewModel
+		{
+			get { return _databaseModelDesignerViewModel; }
+			set
+			{
+				if (Equals(value, _databaseModelDesignerViewModel)) return;
+				_databaseModelDesignerViewModel = value;
 				OnPropertyChanged();
 			}
 		}
 
 		public MainWindowViewModel()
 		{
-			_databaseModelCanvasViewModel = new DatabaseModelDiagramViewModel();
+			DatabaseModelDesignerViewModel = new DatabaseModelDesignerViewModel();
+			MouseMode = MouseMode.Select;
 		}
 
 		public event PropertyChangedEventHandler PropertyChanged;

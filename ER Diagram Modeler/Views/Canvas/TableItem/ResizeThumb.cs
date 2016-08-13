@@ -68,18 +68,23 @@ namespace ER_Diagram_Modeler.Views.Canvas.TableItem
 				foreach(TableContent item in _canvas.SelectedItems)
 				{
 
-					double deltaVertical;
-					switch(VerticalAlignment)
+					if (item.TableViewModel.ViewMode != TableViewMode.NameOnly)
 					{
-						case VerticalAlignment.Bottom:
-							deltaVertical = e.VerticalChange > 0 && e.VerticalChange >= maxDeltaVertical ? 0 : Math.Min(-e.VerticalChange, minDeltaVertical);
-							item.Height = item.ActualHeight - deltaVertical;
-							break;
-						case VerticalAlignment.Top:
-							deltaVertical = Math.Min(Math.Max(-minTop, e.VerticalChange), minDeltaVertical);
-							DesignerCanvas.SetTop(item, DesignerCanvas.GetTop(item) + deltaVertical);
-							item.Height = item.ActualHeight - deltaVertical;
-							break;
+						double deltaVertical;
+						switch (VerticalAlignment)
+						{
+							case VerticalAlignment.Bottom:
+								deltaVertical = e.VerticalChange > 0 && e.VerticalChange >= maxDeltaVertical
+									? 0
+									: Math.Min(-e.VerticalChange, minDeltaVertical);
+								item.Height = item.ActualHeight - deltaVertical;
+								break;
+							case VerticalAlignment.Top:
+								deltaVertical = Math.Min(Math.Max(-minTop, e.VerticalChange), minDeltaVertical);
+								DesignerCanvas.SetTop(item, DesignerCanvas.GetTop(item) + deltaVertical);
+								item.Height = item.ActualHeight - deltaVertical;
+								break;
+						}
 					}
 
 					double deltaHorizontal;

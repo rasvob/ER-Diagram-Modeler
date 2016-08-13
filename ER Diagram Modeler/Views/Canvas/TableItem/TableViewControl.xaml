@@ -5,10 +5,15 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:ER_Diagram_Modeler.Views.Canvas.TableItem"
              xmlns:viewModels="clr-namespace:ER_Diagram_Modeler.ViewModels"
+             xmlns:valueConverters="clr-namespace:ER_Diagram_Modeler.ValueConverters"
              mc:Ignorable="d" 
 			 d:DataContext="{d:DesignInstance viewModels:TableViewModel}"
              d:DesignHeight="300" d:DesignWidth="300">
-    <Grid>
+	<UserControl.Resources>
+		<valueConverters:TableViewModeToVisibilityConverter x:Key="TableViewModeToVisibilityConverter" />
+	</UserControl.Resources>
+	
+	<Grid>
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto"></RowDefinition>
 			<RowDefinition Height="*"></RowDefinition>
@@ -40,9 +45,14 @@
 			<Button Content="Menu" Grid.Column="1" Click="ButtonBase_OnClick">
 			</Button>
 		</Grid>
-		<!--<Border Grid.Row="1" BorderThickness="3" BorderBrush="{StaticResource PrimaryColorBrush}" Visibility="Hidden">
-			<DataGrid x:Name="TableDataGrid" Visibility="Collapsed"
-					  ItemsSource="{Binding Model.Attributes}"></DataGrid>
-		</Border>-->
+		<Border Grid.Row="1" 
+				BorderThickness="3 0 3 3" 
+				BorderBrush="{StaticResource PrimaryColorBrush}" 
+				Visibility="{Binding ViewMode, Converter={StaticResource TableViewModeToVisibilityConverter}}">
+			<DataGrid x:Name="TableDataGrid"
+					  ItemsSource="{Binding Model.Attributes}">
+				
+			</DataGrid>
+		</Border>
 	</Grid>
 </UserControl>

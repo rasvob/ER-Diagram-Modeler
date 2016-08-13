@@ -12,6 +12,18 @@ namespace ER_Diagram_Modeler.ViewModels
 		private TableViewMode _viewMode;
 		private double _left;
 		private double _top;
+		private bool _isSelected;
+
+		public bool IsSelected
+		{
+			get { return _isSelected; }
+			set
+			{
+				if (value == _isSelected) return;
+				_isSelected = value;
+				OnPropertyChanged();
+			}
+		}
 
 		public TableViewMode ViewMode
 		{
@@ -55,6 +67,16 @@ namespace ER_Diagram_Modeler.ViewModels
 				_top = value;
 				OnPropertyChanged();
 			}
+		}
+
+		public TableViewModel()
+		{
+			ViewMode = TableViewMode.Standard;
+		}
+
+		public TableViewModel(TableModel model):this()
+		{
+			_model = model;
 		}
 
 		public event PropertyChangedEventHandler PropertyChanged;
