@@ -3,6 +3,6 @@
 					xmlns:sys="clr-namespace:System;assembly=mscorlib"
                     >
 	<!--TableItem-->
-	<sys:Double x:Key="TableMinHeight">26</sys:Double>
-	<sys:Double x:Key="TableMinHWidth">150</sys:Double>
+	<sys:Double x:Key="TableMinHeight">25</sys:Double>
+	<sys:Double x:Key="TableMinWidth">150</sys:Double>
 </ResourceDictionary>

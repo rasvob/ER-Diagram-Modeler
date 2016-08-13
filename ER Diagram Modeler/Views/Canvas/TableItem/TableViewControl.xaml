@@ -10,7 +10,13 @@
 			 d:DataContext="{d:DesignInstance viewModels:TableViewModel}"
              d:DesignHeight="300" d:DesignWidth="300">
 	<UserControl.Resources>
-		<valueConverters:TableViewModeToVisibilityConverter x:Key="TableViewModeToVisibilityConverter" />
+		<ResourceDictionary>
+			<valueConverters:TableViewModeToVisibilityConverter x:Key="TableViewModeToVisibilityConverter" />
+
+			<ResourceDictionary.MergedDictionaries>
+				<ResourceDictionary Source="../../../Themes/TableSettingsDropdownButton.xaml"></ResourceDictionary>
+			</ResourceDictionary.MergedDictionaries>
+		</ResourceDictionary>
 	</UserControl.Resources>
 	
 	<Grid>
@@ -19,7 +25,7 @@
 			<RowDefinition Height="*"></RowDefinition>
 		</Grid.RowDefinitions>
 
-		<Grid>
+		<Grid Height="{StaticResource TableMinHeight}">
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition Width="*"></ColumnDefinition>
 				<ColumnDefinition Width="Auto"></ColumnDefinition>
@@ -31,18 +37,20 @@
 				FontWeight="Bold"
 				Foreground="White"
 				Padding="5"
+				Height="25"
 				IsHitTestVisible="False"
+				VerticalContentAlignment="Center"
 				>
-				<Label.ContextMenu>
-					<ContextMenu Name="TableContextMenu">
+			</Label>
+			<Button Content="Menu" Grid.Column="1"  Style="{StaticResource TableSettingsDropdownButtonStyle}">
+				<Button.ContextMenu>
+					<ContextMenu>
 						<MenuItem Header="Table view mode">
 							<MenuItem Header="Standard" Click="MenuItem_OnClick"></MenuItem>
 							<MenuItem Header="Name only" Name="MenuItem_NameOnly" Click="MenuItem_NameOnly_OnClick"></MenuItem>
 						</MenuItem>
 					</ContextMenu>
-				</Label.ContextMenu>
-			</Label>
-			<Button Content="Menu" Grid.Column="1" Click="ButtonBase_OnClick">
+				</Button.ContextMenu>
 			</Button>
 		</Grid>
 		<Border Grid.Row="1" 
@@ -51,7 +59,6 @@
 				Visibility="{Binding ViewMode, Converter={StaticResource TableViewModeToVisibilityConverter}}">
 			<DataGrid x:Name="TableDataGrid"
 					  ItemsSource="{Binding Model.Attributes}">
-				
 			</DataGrid>
 		</Border>
 	</Grid>

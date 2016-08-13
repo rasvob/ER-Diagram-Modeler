@@ -46,10 +46,5 @@ namespace ER_Diagram_Modeler.Views.Canvas.TableItem
 		{
 			ViewModel.ViewMode = TableViewMode.NameOnly;
 		}
-
-		private void ButtonBase_OnClick(object sender, RoutedEventArgs e)
-		{
-			TableContextMenu.IsOpen = true;
-		}
 	}
 }

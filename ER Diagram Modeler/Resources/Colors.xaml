@@ -3,7 +3,11 @@
                     >
 	<!--Colors-->
 	<Color x:Key="PrimaryColor">#41b1e1</Color>
+	<Color x:Key="PrimaryColorDark">#348eb4</Color>
+	<Color x:Key="PrimaryColorDark2">#276a87</Color>
 	
 	<!--Brushes-->
-	<SolidColorBrush x:Key="PrimaryColorBrush" Color="{StaticResource PrimaryColor}"></SolidColorBrush>
+	<SolidColorBrush x:Key="PrimaryColorBrush" Color="{StaticResource PrimaryColor}" ></SolidColorBrush>
+	<SolidColorBrush x:Key="PrimaryColorDarkBrush" Color="{StaticResource PrimaryColorDark}" ></SolidColorBrush>
+	<SolidColorBrush x:Key="PrimaryColorDarkBrush2" Color="{StaticResource PrimaryColorDark2}" ></SolidColorBrush>
 </ResourceDictionary>

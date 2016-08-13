@@ -27,10 +27,11 @@ namespace ER_Diagram_Modeler.Views.Canvas.TableItem
 			set
 			{
 				SetValue(IsSelectedProperty, value);
+				TableViewModel.IsSelected = value;
 			}
 		}
 
-		public static double TableItemMinWidth { get; } = (double)Application.Current.FindResource("TableMinHWidth");
+		public static double TableItemMinWidth { get; } = (double)Application.Current.FindResource("TableMinWidth");
 		public static double TableItemMinHeight { get; } = (double)Application.Current.FindResource("TableMinHeight");
 
 		public static readonly DependencyProperty IsSelectedProperty = DependencyProperty
@@ -79,6 +80,7 @@ namespace ER_Diagram_Modeler.Views.Canvas.TableItem
 					case TableViewMode.NameOnly:
 						_oldHeight = Height;
 						Height = TableItemMinHeight;
+						Width = ActualWidth;
 						break;
 				}
 			}
@@ -95,7 +97,6 @@ namespace ER_Diagram_Modeler.Views.Canvas.TableItem
 				if ((Keyboard.Modifiers & (ModifierKeys.Shift | ModifierKeys.Control)) != ModifierKeys.None)
 				{
 					IsSelected = !IsSelected;
-					TableViewModel.IsSelected = IsSelected;
 					DesignerCanvas.SetZIndex(this, !IsSelected ? ZIndexUnSelectedValue : ZIndexSelectedValue);
 				}
 				else
@@ -105,7 +106,6 @@ namespace ER_Diagram_Modeler.Views.Canvas.TableItem
 						canvas.ResetZIndexes();
 						canvas.DeselectAll();
 						IsSelected = true;
-						TableViewModel.IsSelected = IsSelected;
 						DesignerCanvas.SetZIndex(this, ZIndexSelectedValue);
 					}
 				}

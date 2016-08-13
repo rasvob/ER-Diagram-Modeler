@@ -10,7 +10,7 @@
 	<Style x:Key="TableItemStyle" TargetType="{x:Type local:TableContent}">
 		<Setter Property="SnapsToDevicePixels" Value="True"></Setter>
 		<Setter Property="MinHeight" Value="{StaticResource TableMinHeight}"></Setter>
-		<Setter Property="MinWidth" Value="{StaticResource TableMinHWidth}"></Setter>
+		<Setter Property="MinWidth" Value="{StaticResource TableMinWidth}"></Setter>
 		<Setter Property="Template">
 			<Setter.Value>
 				<ControlTemplate TargetType="{x:Type local:TableContent}">
