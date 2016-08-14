@@ -36,6 +36,7 @@
 		<!--Menu-->
 		<Menu Grid.Row="0">
 			<MenuItem Header="File">
+				<MenuItem Name="MenuItemTest" Header="Test PK" Click="MenuItemTest_OnClick"/>
 				<MenuItem Header="Exit"/>
 			</MenuItem>
 		</Menu>

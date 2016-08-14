@@ -60,6 +60,9 @@ namespace ER_Diagram_Modeler.Views.Canvas.TableItem
 			DefaultStyleKeyProperty.OverrideMetadata(typeof(TableContent), new FrameworkPropertyMetadata(typeof(TableContent)));
 		}
 
+		//For XAML Creation
+		public TableContent() { }
+
 		public TableContent(TableViewModel tableViewModel)
 		{
 			TableViewModel = tableViewModel;

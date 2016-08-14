@@ -6,13 +6,14 @@
              xmlns:local="clr-namespace:ER_Diagram_Modeler.Views.Canvas.TableItem"
              xmlns:viewModels="clr-namespace:ER_Diagram_Modeler.ViewModels"
              xmlns:valueConverters="clr-namespace:ER_Diagram_Modeler.ValueConverters"
+             xmlns:enums="clr-namespace:ER_Diagram_Modeler.ViewModels.Enums"
              mc:Ignorable="d" 
 			 d:DataContext="{d:DesignInstance viewModels:TableViewModel}"
              d:DesignHeight="300" d:DesignWidth="300">
 	<UserControl.Resources>
 		<ResourceDictionary>
 			<valueConverters:TableViewModeToVisibilityConverter x:Key="TableViewModeToVisibilityConverter" />
-
+		
 			<ResourceDictionary.MergedDictionaries>
 				<ResourceDictionary Source="../../../Themes/TableSettingsDropdownButton.xaml"></ResourceDictionary>
 			</ResourceDictionary.MergedDictionaries>
@@ -42,12 +43,15 @@
 				VerticalContentAlignment="Center"
 				>
 			</Label>
-			<Button Content="Menu" Grid.Column="1"  Style="{StaticResource TableSettingsDropdownButtonStyle}">
+			<Button Content="Menu" 
+					Grid.Column="1" 
+					Style="{StaticResource TableSettingsDropdownButtonStyle}"
+					>
 				<Button.ContextMenu>
 					<ContextMenu>
-						<MenuItem Header="Table view mode">
-							<MenuItem Header="Standard" Click="MenuItem_OnClick"></MenuItem>
-							<MenuItem Header="Name only" Name="MenuItem_NameOnly" Click="MenuItem_NameOnly_OnClick"></MenuItem>
+						<MenuItem Header="Table view mode" Name="MenuItemViewModeList">
+							<MenuItem Name="MenuItemStandard" Header="Standard" Click="MenuItem_OnClick" IsChecked="True"></MenuItem>
+							<MenuItem Header="Name only" Name="MenuItemNameOnly" Click="MenuItem_NameOnly_OnClick"></MenuItem>
 						</MenuItem>
 					</ContextMenu>
 				</Button.ContextMenu>
@@ -58,7 +62,45 @@
 				BorderBrush="{StaticResource PrimaryColorBrush}" 
 				Visibility="{Binding ViewMode, Converter={StaticResource TableViewModeToVisibilityConverter}}">
 			<DataGrid x:Name="TableDataGrid"
-					  ItemsSource="{Binding Model.Attributes}">
+					  ItemsSource="{Binding Model.Attributes}"
+					  SelectionMode="Extended"
+					  SelectionUnit="FullRow"
+					  CanUserAddRows="True"
+					  CanUserReorderColumns="True"
+					  CanUserResizeColumns="True"
+					  CanUserSortColumns="True"
+					  CanUserDeleteRows="True"
+					  AutoGenerateColumns="False">
+				<DataGrid.Columns>
+					<DataGridCheckBoxColumn Binding="{Binding PrimaryKey, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+											Header="PK"
+											ElementStyle="{DynamicResource MetroDataGridCheckBox}">
+					</DataGridCheckBoxColumn>
+					
+					<DataGridTextColumn Binding="{Binding Name, Mode=TwoWay}" 
+										Header="Name"
+										/>
+					<DataGridTextColumn Binding="{Binding Datatype.Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+										Header="Data Type" />
+
+					<DataGridCheckBoxColumn Binding="{Binding AllowNull, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+											Header="Allow Null"
+											ElementStyle="{DynamicResource MetroDataGridCheckBox}">
+						<DataGridCheckBoxColumn.CellStyle>
+							<Style TargetType="DataGridCell" BasedOn="{StaticResource MetroDataGridCell}">
+								<Style.Triggers>
+									<DataTrigger Binding="{Binding PrimaryKey}" Value="True">
+										<Setter Property="IsEnabled" Value="False"></Setter>
+									</DataTrigger>
+
+									<DataTrigger Binding="{Binding PrimaryKey}" Value="False">
+										<Setter Property="IsEnabled" Value="True"></Setter>
+									</DataTrigger>
+								</Style.Triggers>
+							</Style>
+						</DataGridCheckBoxColumn.CellStyle>
+					</DataGridCheckBoxColumn>
+				</DataGrid.Columns>
 			</DataGrid>
 		</Border>
 	</Grid>

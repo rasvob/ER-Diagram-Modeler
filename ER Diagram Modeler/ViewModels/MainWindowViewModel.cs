@@ -8,6 +8,10 @@ namespace ER_Diagram_Modeler.ViewModels
 {
 	public class MainWindowViewModel: INotifyPropertyChanged
 	{
+		private DatabaseModelDesignerViewModel _databaseModelDesignerViewModel;
+		private MouseMode _mouseMode;
+		private ConnectionType _connectionType;
+
 		public MouseMode MouseMode
 		{
 			get { return _mouseMode; }
@@ -19,8 +23,16 @@ namespace ER_Diagram_Modeler.ViewModels
 			}
 		}
 
-		private DatabaseModelDesignerViewModel _databaseModelDesignerViewModel;
-		private MouseMode _mouseMode;
+		public ConnectionType ConnectionType
+		{
+			get { return _connectionType; }
+			set
+			{
+				if (value == _connectionType) return;
+				_connectionType = value;
+				OnPropertyChanged();
+			}
+		}
 
 		public DatabaseModelDesignerViewModel DatabaseModelDesignerViewModel
 		{
