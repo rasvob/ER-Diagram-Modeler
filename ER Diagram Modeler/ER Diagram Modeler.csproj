@@ -120,6 +120,8 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Configuration\Providers\DatatypeProvider.cs" />
+    <Compile Include="Configuration\Providers\SessionProvider.cs" />
     <Compile Include="EventArgs\TableViewModelArgs.cs" />
     <Compile Include="Models\Designer\Datatype.cs" />
     <Compile Include="Models\Designer\TableModel.cs" />

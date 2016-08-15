@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using ER_Diagram_Modeler.Annotations;
+using ER_Diagram_Modeler.Configuration.Providers;
 using ER_Diagram_Modeler.ViewModels.Enums;
 
 namespace ER_Diagram_Modeler.ViewModels
@@ -10,7 +11,6 @@ namespace ER_Diagram_Modeler.ViewModels
 	{
 		private DatabaseModelDesignerViewModel _databaseModelDesignerViewModel;
 		private MouseMode _mouseMode;
-		private ConnectionType _connectionType = ConnectionType.None;
 
 		public MouseMode MouseMode
 		{
@@ -19,18 +19,6 @@ namespace ER_Diagram_Modeler.ViewModels
 			{
 				if (value == _mouseMode) return;
 				_mouseMode = value;
-				OnPropertyChanged();
-			}
-		}
-
-		public ConnectionType ConnectionType
-		{
-			get { return _connectionType; }
-			set
-			{
-				if (value == _connectionType) return;
-				_connectionType = value;
-				DatabaseModelDesignerViewModel.ConnectionType = value;
 				OnPropertyChanged();
 			}
 		}
@@ -50,9 +38,6 @@ namespace ER_Diagram_Modeler.ViewModels
 		{
 			DatabaseModelDesignerViewModel = new DatabaseModelDesignerViewModel();
 			MouseMode = MouseMode.Select;
-			//For Debug
-			ConnectionType = ConnectionType.SqlServer;
-			//DatabaseModelDesignerViewModel.LoadDatatypes();
 		}
 
 		public event PropertyChangedEventHandler PropertyChanged;

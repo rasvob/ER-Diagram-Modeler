@@ -1,6 +1,8 @@
-﻿using System.ComponentModel;
+﻿using System.Collections.Generic;
+using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using ER_Diagram_Modeler.Annotations;
+using ER_Diagram_Modeler.Configuration.Providers;
 using ER_Diagram_Modeler.Models.Designer;
 using ER_Diagram_Modeler.ViewModels.Enums;
 

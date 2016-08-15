@@ -80,8 +80,15 @@
 					<DataGridTextColumn Binding="{Binding Name, Mode=TwoWay}" 
 										Header="Name"
 										/>
-					<DataGridTextColumn Binding="{Binding Datatype.Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
-										Header="Data Type" />
+					<DataGridTemplateColumn Header="Data Type">
+						<DataGridTemplateColumn.CellTemplate>
+							<DataTemplate>
+								<StackPanel Orientation="Horizontal">
+									<ComboBox></ComboBox>
+								</StackPanel>
+							</DataTemplate>
+						</DataGridTemplateColumn.CellTemplate>
+					</DataGridTemplateColumn>
 
 					<DataGridCheckBoxColumn Binding="{Binding AllowNull, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
 											Header="Allow Null"

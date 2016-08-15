@@ -24,7 +24,7 @@ namespace ER_Diagram_Modeler.Models.Designer
 		private bool _hasScale;
 		private bool _hasPrecision;
 		private bool _isNullable;
-		private int _maxLenght;
+		private int? _maxLenght;
 		private int? _maxScale;
 		private int? _maxPrecision;
 
@@ -50,7 +50,7 @@ namespace ER_Diagram_Modeler.Models.Designer
 			}
 		}
 
-		public int MaxLenght
+		public int? MaxLenght
 		{
 			get { return _maxLenght; }
 			set
@@ -182,6 +182,29 @@ namespace ER_Diagram_Modeler.Models.Designer
 			}
 		}
 
+		public Datatype()
+		{
+			
+		}
+
+		public Datatype(Datatype datatype)
+		{
+			Name = datatype.Name;
+			DefaultLenght = datatype.DefaultLenght;
+			DefaultPrecision = datatype.DefaultPrecision;
+			DefaultScale = datatype.DefaultScale;
+			HasLenght = datatype.HasLenght;
+			HasScale = datatype.HasScale;
+			HasPrecision = datatype.HasPrecision;
+			MaxLenght = datatype.MaxLenght;
+			MaxScale = datatype.MaxScale;
+			MaxPrecision = datatype.MaxPrecision;
+			IsNullable = datatype.IsNullable;
+			Lenght = datatype.Lenght;
+			Scale = datatype.Scale;
+			Precision = datatype.Precision;
+		}
+
 		public override string ToString()
 		{
 			var sb = new StringBuilder();
@@ -196,17 +219,41 @@ namespace ER_Diagram_Modeler.Models.Designer
 			}
 			else if (Scale.HasValue && Precision.HasValue)
 			{
-				sb.Append($"({Scale.Value},{Precision.Value})");
+				sb.Append($"({Precision.Value},{Scale.Value})");
 			}
 			return sb.ToString();
 		}
+
 
 		public static Datatype LoadFromXmlNode(XElement node)
 		{
 			var res = new Datatype();
 			res.Name = node.Attribute("Name").Value;
+			res.IsNullable = node.Attribute("IsNullable").Value.Equals("1");
+			res.HasLenght = node.Attribute("HasLenght").Value.Equals("1");
+			res.HasScale = node.Attribute("HasScale").Value.Equals("1");
+			res.HasPrecision = node.Attribute("HasPrecision").Value.Equals("1");
 
+			if (res.HasLenght)
+			{
+				res.MaxLenght = int.Parse(node.Attribute("MaxLenght").Value);
+				res.DefaultLenght = int.Parse(node.Attribute("DefaultLenght").Value);
+				res.Lenght = res.DefaultLenght;
+			}
 
+			if (res.HasPrecision)
+			{
+				res.MaxPrecision = int.Parse(node.Attribute("Precision").Value);
+				res.DefaultPrecision = int.Parse(node.Attribute("DefaultPrecision").Value);
+				res.Precision = res.DefaultPrecision;
+			}
+
+			if (res.HasScale)
+			{
+				res.MaxScale = int.Parse(node.Attribute("Scale").Value);
+				res.DefaultScale = int.Parse(node.Attribute("DefaultScale").Value);
+				res.Scale = res.DefaultScale;
+			}
 
 			return res;
 		}
@@ -221,7 +268,7 @@ namespace ER_Diagram_Modeler.Models.Designer
 			}
 
 			//TODO Add Oracle resource
-			var resource = connectionType == ConnectionType.SqlServer ? Resources.DataTypesMicrosoft : null;
+			var resource = connectionType == ConnectionType.SqlServer ? Resources.DataTypesMicrosoft : Resources.DataTypesMicrosoft;
 
 			XDocument document = XDocument.Parse(resource);
 			var nodes = document.Root.Elements();

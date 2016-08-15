@@ -37,7 +37,7 @@ namespace ER_Diagram_Modeler.Views.Canvas
 
 		public void ResetZIndexes()
 		{
-			foreach (TableContent item in Children.OfType<TableContent>())
+			foreach (TableContent item in Tables)
 			{
 				SetZIndex(item, 0);
 			}

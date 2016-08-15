@@ -15,8 +15,10 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using ER_Diagram_Modeler.Configuration.Providers;
 using ER_Diagram_Modeler.Models.Designer;
 using ER_Diagram_Modeler.ViewModels;
+using ER_Diagram_Modeler.ViewModels.Enums;
 using ER_Diagram_Modeler.Views.Canvas.TableItem;
 
 namespace ER_Diagram_Modeler.Views.Canvas
