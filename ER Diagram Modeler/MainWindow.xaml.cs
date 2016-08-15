@@ -18,6 +18,7 @@ using System.Windows.Shapes;
 using System.Xml.Linq;
 using ER_Diagram_Modeler.Models.Designer;
 using ER_Diagram_Modeler.ViewModels;
+using ER_Diagram_Modeler.ViewModels.Enums;
 using MahApps.Metro.Controls;
 
 namespace ER_Diagram_Modeler
@@ -147,8 +148,7 @@ namespace ER_Diagram_Modeler
 
 		private void MenuItemTest_OnClick(object sender, RoutedEventArgs e)
 		{
-			XDocument doc = XDocument.Parse(Properties.Resources.DataTypesMicrosoft);
-			var root = doc.Root?.Elements();
+			Datatype.LoadDatatypesFromResource(ConnectionType.SqlServer);
 		}
 	}
 }

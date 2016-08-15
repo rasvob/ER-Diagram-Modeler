@@ -1,8 +1,13 @@
-﻿using System.ComponentModel;
+﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Xml.Linq;
 using ER_Diagram_Modeler.Annotations;
+using ER_Diagram_Modeler.Properties;
+using ER_Diagram_Modeler.ViewModels.Enums;
 
 namespace ER_Diagram_Modeler.Models.Designer
 {
@@ -20,6 +25,30 @@ namespace ER_Diagram_Modeler.Models.Designer
 		private bool _hasPrecision;
 		private bool _isNullable;
 		private int _maxLenght;
+		private int? _maxScale;
+		private int? _maxPrecision;
+
+		public int? MaxScale
+		{
+			get { return _maxScale; }
+			set
+			{
+				if (value == _maxScale) return;
+				_maxScale = value;
+				OnPropertyChanged();
+			}
+		}
+
+		public int? MaxPrecision
+		{
+			get { return _maxPrecision; }
+			set
+			{
+				if (value == _maxPrecision) return;
+				_maxPrecision = value;
+				OnPropertyChanged();
+			}
+		}
 
 		public int MaxLenght
 		{
@@ -174,8 +203,33 @@ namespace ER_Diagram_Modeler.Models.Designer
 
 		public static Datatype LoadFromXmlNode(XElement node)
 		{
-			return null;
+			var res = new Datatype();
+			res.Name = node.Attribute("Name").Value;
+
+
+
+			return res;
 		}
+
+		public static List<Datatype> LoadDatatypesFromResource(ConnectionType connectionType)
+		{
+			var res = new List<Datatype>();
+
+			if (connectionType == ConnectionType.None)
+			{
+				return res;
+			}
+
+			//TODO Add Oracle resource
+			var resource = connectionType == ConnectionType.SqlServer ? Resources.DataTypesMicrosoft : null;
+
+			XDocument document = XDocument.Parse(resource);
+			var nodes = document.Root.Elements();
+
+			res.AddRange(nodes.Select(LoadFromXmlNode));
+
+			return res;
+		} 
 
 		public event PropertyChangedEventHandler PropertyChanged;
 

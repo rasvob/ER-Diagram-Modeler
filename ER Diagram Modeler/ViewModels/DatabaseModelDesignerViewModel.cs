@@ -4,6 +4,8 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using ER_Diagram_Modeler.Annotations;
 using ER_Diagram_Modeler.Models.Designer;
+using ER_Diagram_Modeler.Properties;
+using ER_Diagram_Modeler.ViewModels.Enums;
 
 namespace ER_Diagram_Modeler.ViewModels
 {
@@ -11,6 +13,18 @@ namespace ER_Diagram_Modeler.ViewModels
 	{
 		private ObservableCollection<TableViewModel> _tableViewModels;
 		private List<Datatype> _datatypes;
+		private ConnectionType _connectionType;
+
+		public ConnectionType ConnectionType
+		{
+			get { return _connectionType; }
+			set
+			{
+				if (value == _connectionType) return;
+				_connectionType = value;
+				OnPropertyChanged();
+			}
+		}
 
 		public ObservableCollection<TableViewModel> TableViewModels
 		{
@@ -40,9 +54,9 @@ namespace ER_Diagram_Modeler.ViewModels
 			Datatypes = new List<Datatype>();
 		}
 
-		private void LoadDatatypesFromResource(string res)
+		public void LoadDatatypes()
 		{
-			
+			Datatypes = Datatype.LoadDatatypesFromResource(ConnectionType);
 		}
 
 		public event PropertyChangedEventHandler PropertyChanged;
