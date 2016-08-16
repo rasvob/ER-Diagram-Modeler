@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
@@ -11,7 +12,7 @@ using ER_Diagram_Modeler.ViewModels.Enums;
 
 namespace ER_Diagram_Modeler.Models.Designer
 {
-	public class Datatype: INotifyPropertyChanged
+	public class Datatype: INotifyPropertyChanged,IDataErrorInfo
 	{
 		private string _name;
 		private int? _lenght;
@@ -285,5 +286,41 @@ namespace ER_Diagram_Modeler.Models.Designer
 		{
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 		}
+
+		public string this[string columnName]
+		{
+			get
+			{
+				switch(columnName)
+				{
+					case "Scale":
+						if(Scale < 0 || Scale > MaxScale)
+						{
+							return $"Scale value has to be between {0} and {MaxScale}";
+						}
+						break;
+
+					case "Precision":
+						if(Precision < 0 || Precision > MaxPrecision)
+						{
+							return $"Precision value has to be between {0} and {MaxPrecision}";
+						}
+						break;
+
+					case "Lenght":
+						if(Lenght < 0 || Lenght > MaxLenght)
+						{
+							return $"Lenght value has to be between {0} and {MaxLenght}";
+						}
+						break;
+					default:
+						return null;
+				}
+
+				return Error;
+			}
+		}
+
+		public string Error => string.Empty;
 	}
 }

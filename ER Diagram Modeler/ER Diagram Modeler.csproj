@@ -127,6 +127,7 @@
     <Compile Include="Models\Designer\TableModel.cs" />
     <Compile Include="Models\Designer\TableRowModel.cs" />
     <Compile Include="Properties\Annotations1.cs" />
+    <Compile Include="ValidationRules\DatatypePropertyValidationRule.cs" />
     <Compile Include="ValueConverters\TableViewModeToVisibilityConverter.cs" />
     <Compile Include="ViewModels\DatabaseModelDesignerViewModel.cs" />
     <Compile Include="ViewModels\Enums\ConnectionType.cs" />

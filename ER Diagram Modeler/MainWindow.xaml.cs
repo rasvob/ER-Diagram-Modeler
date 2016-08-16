@@ -44,43 +44,70 @@ namespace ER_Diagram_Modeler
 
 		private TableViewModel SeedDataTable()
 		{
-			return new TableViewModel()
-			{
-				Left = 100,
-				Top = 50,
-				Model = new TableModel()
-				{
-					Title = "Employee",
-					Attributes = new List<TableRowModel>()
-					{
-						new TableRowModel()
-						{
-							AllowNull = false,
-							Datatype = DatatypeProvider.Instance.FindDatatype("Int"),
-							Name = "Id",
-							PrimaryKey = true
-						},
-						new TableRowModel()
-						{
-							AllowNull = false,
-							Datatype = DatatypeProvider.Instance.FindDatatype("Varchar"),
-							Name = "FirstName",
-							PrimaryKey = false
-						},
-						new TableRowModel()
-						{
-							AllowNull = false,
-							Datatype = new Datatype()
-							{
-								Name = "Varchar",
-								Lenght = 100
-							},
-							Name = "LastName",
-							PrimaryKey = true
-						}
-					}
-				}
-			};
+			var attrs = new List<TableRowModel>();
+
+			var row1 = new TableRowModel("Id", DatatypeProvider.Instance.FindDatatype("int"));
+			var row2 = new TableRowModel("FirstName", DatatypeProvider.Instance.FindDatatype("varchar"));
+			var row3 = new TableRowModel("LastName", DatatypeProvider.Instance.FindDatatype("varchar"));
+			var row4 = new TableRowModel("Salary", DatatypeProvider.Instance.FindDatatype("numeric"));
+
+			row2.Datatype.Lenght = 100;
+			row3.Datatype.Lenght = 200;
+			row4.Datatype.Scale = 20;
+			row4.Datatype.Precision = 15;
+
+			row1.PrimaryKey = true;
+
+			attrs.Add(row1);
+			attrs.Add(row2);
+			attrs.Add(row3);
+			attrs.Add(row4);
+
+			var model = new TableModel();
+			model.Title = "Employee";
+			model.Attributes = attrs;
+			var vm = new TableViewModel(model);
+			vm.Left = 100;
+			vm.Top = 100;
+
+			return vm;
+			//return new TableViewModel()
+			//{
+			//	Left = 100,
+			//	Top = 50,
+			//	Model = new TableModel()
+			//	{
+			//		Title = "Employee",
+			//		Attributes = new List<TableRowModel>()
+			//		{
+			//			new TableRowModel()
+			//			{
+			//				AllowNull = false,
+			//				Datatype = DatatypeProvider.Instance.FindDatatype("Int"),
+			//				Name = "Id",
+			//				PrimaryKey = true
+			//			},
+			//			new TableRowModel()
+			//			{
+			//				AllowNull = false,
+			//				Datatype = DatatypeProvider.Instance.FindDatatype("Varchar"),
+			//				Name = "FirstName",
+			//				PrimaryKey = false
+			//			},
+			//			new TableRowModel()
+			//			{
+			//				AllowNull = false,
+			//				Datatype = new Datatype()
+			//				{
+			//					Name = "Varchar",
+			//					Lenght = 100
+			//				},
+			//				Name = "LastName",
+			//				PrimaryKey = true
+			//			}
+			//		}
+			//	}
+			//};
 		}
 
 		private void ButtonBase_OnClick(object sender, RoutedEventArgs e)
@@ -95,7 +122,10 @@ namespace ER_Diagram_Modeler
 
 		private void MenuItemTest_OnClick(object sender, RoutedEventArgs e)
 		{
-			
+			foreach (TableViewModel model in MainWindowViewModel.DatabaseModelDesignerViewModel.TableViewModels)
+			{
+				Trace.WriteLine(model.Model);
+			}
 		}
 	}
 }

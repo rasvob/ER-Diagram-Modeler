@@ -28,7 +28,8 @@ namespace ER_Diagram_Modeler.Models.Designer
 			{
 				if(Equals(value, _selectedDatatype)) return;
 				_selectedDatatype = value;
-				Datatype = new Datatype(value);
+				//Datatype = new Datatype(value);
+				Datatype = SelectedDatatype;
 				OnPropertyChanged();
 			}
 		}
@@ -117,7 +118,7 @@ namespace ER_Diagram_Modeler.Models.Designer
 
 		public TableRowModel()
 		{
-			
+			SelectedDatatype = DatatypesItemSource.FirstOrDefault();
 		}
 
 		public TableRowModel(string name, Datatype datatype)
@@ -125,7 +126,27 @@ namespace ER_Diagram_Modeler.Models.Designer
 			Name = name;
 			Datatype = datatype;
 			SelectedDatatype =
-				DatatypesItemSource.FirstOrDefault(t => t.Name.Equals(Name, StringComparison.CurrentCultureIgnoreCase));
+				DatatypesItemSource.FirstOrDefault(t => t.Name.Equals(datatype.Name, StringComparison.CurrentCultureIgnoreCase));
+
+			if (SelectedDatatype == null)
+			{
+				return;
+			}
+
+			if (Datatype.HasLenght)
+			{
+				SelectedDatatype.Lenght = Datatype.Lenght;
+			}
+
+			if (Datatype.HasScale)
+			{
+				SelectedDatatype.Scale = Datatype.Scale;
+			}
+
+			if (Datatype.HasPrecision)
+			{
+				SelectedDatatype.Precision = Datatype.Precision;
+			}
 		}
 
 		public event PropertyChangedEventHandler PropertyChanged;

@@ -7,6 +7,8 @@
              xmlns:viewModels="clr-namespace:ER_Diagram_Modeler.ViewModels"
              xmlns:valueConverters="clr-namespace:ER_Diagram_Modeler.ValueConverters"
              xmlns:enums="clr-namespace:ER_Diagram_Modeler.ViewModels.Enums"
+             xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
+             xmlns:validationRules="clr-namespace:ER_Diagram_Modeler.ValidationRules"
              mc:Ignorable="d" 
 			 d:DataContext="{d:DesignInstance viewModels:TableViewModel}"
              d:DesignHeight="300" d:DesignWidth="300">
@@ -70,6 +72,7 @@
 					  CanUserResizeColumns="True"
 					  CanUserSortColumns="True"
 					  CanUserDeleteRows="True"
+					  GridLinesVisibility="All"
 					  AutoGenerateColumns="False">
 				<DataGrid.Columns>
 					<DataGridCheckBoxColumn Binding="{Binding PrimaryKey, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
@@ -80,12 +83,104 @@
 					<DataGridTextColumn Binding="{Binding Name, Mode=TwoWay}" 
 										Header="Name"
 										/>
+					
 					<DataGridTemplateColumn Header="Data Type">
 						<DataGridTemplateColumn.CellTemplate>
 							<DataTemplate>
-								<StackPanel Orientation="Horizontal">
-									<ComboBox></ComboBox>
-								</StackPanel>
+								<Grid>
+									<Grid.ColumnDefinitions>
+										<ColumnDefinition Width="*"></ColumnDefinition>
+										<ColumnDefinition Width="80"></ColumnDefinition>
+										<ColumnDefinition Width="80"></ColumnDefinition>
+									</Grid.ColumnDefinitions>
+									
+									<ComboBox x:Name="DataTypeComboBox"
+											  Grid.Column="0"
+											  ItemsSource="{Binding DatatypesItemSource}"
+											  SelectedItem="{Binding SelectedDatatype, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+											  DisplayMemberPath="Name"
+											  MaxDropDownHeight="200"
+											  Style="{DynamicResource VirtualisedMetroComboBox}"
+											  IsEditable="False"></ComboBox>
+
+									<TextBox x:Name="LengthTextBox"
+											 Grid.Column="1"
+											 controls:TextBoxHelper.UseFloatingWatermark="True"
+											 controls:TextBoxHelper.Watermark="Lenght"
+											 Text="{Binding SelectedDatatype.Lenght, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, NotifyOnValidationError=True, ValidatesOnDataErrors=True}"
+											 >
+										<TextBox.Style>
+												 <Style TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}">
+													<Style.Triggers>
+													<DataTrigger Binding="{Binding SelectedDatatype.HasLenght, 
+														Mode=OneWay, 
+														UpdateSourceTrigger=PropertyChanged}" Value="True">
+														<Setter Property="Visibility" Value="Visible"></Setter>
+													</DataTrigger>
+
+													<DataTrigger Binding="{Binding SelectedDatatype.HasLenght, 
+														Mode=OneWay, 
+														UpdateSourceTrigger=PropertyChanged}" Value="False">
+														<Setter Property="Visibility" Value="Collapsed"></Setter>
+													</DataTrigger>
+														
+													<Trigger Property="Validation.HasError" Value="True">
+														<Setter Property="FocusManager.FocusedElement" Value="{Binding ElementName=LengthTextBox}"></Setter>
+													</Trigger>
+												</Style.Triggers>
+												</Style>
+											 </TextBox.Style>
+									</TextBox>
+									
+									<TextBox x:Name="PrecisonTextBox"
+											 Grid.Column="1"
+											 controls:TextBoxHelper.UseFloatingWatermark="True"
+											 controls:TextBoxHelper.Watermark="Precision"
+											 Text="{Binding SelectedDatatype.Precision, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, NotifyOnValidationError=True, ValidatesOnDataErrors=True}">
+										<TextBox.Style>
+											<Style TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}">
+												<Style.Triggers>
+													<DataTrigger Binding="{Binding SelectedDatatype.HasPrecision, 
+														Mode=OneWay, 
+														UpdateSourceTrigger=PropertyChanged}" Value="True">
+														<Setter Property="Visibility" Value="Visible"></Setter>
+													</DataTrigger>
+
+													<DataTrigger Binding="{Binding SelectedDatatype.HasPrecision, 
+														Mode=OneWay, 
+														UpdateSourceTrigger=PropertyChanged}" Value="False">
+														<Setter Property="Visibility" Value="Collapsed"></Setter>
+													</DataTrigger>
+												</Style.Triggers>
+											</Style>
+										</TextBox.Style>
+									</TextBox>
+
+									<TextBox x:Name="ScaleTextBox"
+											 Grid.Column="2"
+											 controls:TextBoxHelper.UseFloatingWatermark="True"
+											 controls:TextBoxHelper.Watermark="Scale"
+											 Text="{Binding SelectedDatatype.Scale, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, NotifyOnValidationError=True, ValidatesOnDataErrors=True}">
+										<TextBox.Style>
+											<Style TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}">
+												<Style.Triggers>
+													<DataTrigger Binding="{Binding SelectedDatatype.HasScale, 
+														Mode=OneWay, 
+														UpdateSourceTrigger=PropertyChanged}" Value="True">
+														<Setter Property="Visibility" Value="Visible"></Setter>
+													</DataTrigger>
+
+													<DataTrigger Binding="{Binding SelectedDatatype.HasScale, 
+														Mode=OneWay, 
+														UpdateSourceTrigger=PropertyChanged}" Value="False">
+														<Setter Property="Visibility" Value="Collapsed"></Setter>
+													</DataTrigger>
+												</Style.Triggers>
+											</Style>
+										</TextBox.Style>
+									</TextBox>
+									
+								</Grid>
 							</DataTemplate>
 						</DataGridTemplateColumn.CellTemplate>
 					</DataGridTemplateColumn>
