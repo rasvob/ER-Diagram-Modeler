@@ -76,9 +76,9 @@ namespace ER_Diagram_Modeler.Views.Canvas
 					ModelDesignerCanvas.ResetZIndexes();
 					break;
 				case MouseMode.NewTable:
+					var origin = e.GetPosition(ModelDesignerCanvas);
 					var table = new TableViewModel(new TableModel());
-					var origin = e.GetPosition(this);
-
+					
 					var nameDialog = new TableNameDialog
 					{
 						Owner = Window.GetWindow(this),
@@ -109,8 +109,12 @@ namespace ER_Diagram_Modeler.Views.Canvas
 		{
 			var content = new TableContent(viewModel);
 			ModelDesignerCanvas.Children.Add(content);
-			DesignerCanvas.SetTop(content, viewModel.Top);
-			DesignerCanvas.SetLeft(content, viewModel.Left);
+			content.Loaded += (sender, args) =>
+			{
+				MeasureToFit(content);
+				DesignerCanvas.SetTop(content, viewModel.Top);
+				DesignerCanvas.SetLeft(content, viewModel.Left);
+			};
 		}
 
 		private void RemoveElement(TableViewModel viewModel)
@@ -125,6 +129,19 @@ namespace ER_Diagram_Modeler.Views.Canvas
 			foreach(TableViewModel item in delete)
 			{
 				ViewModel.TableViewModels.Remove(item);
+			}
+		}
+
+		private void MeasureToFit(TableContent content)
+		{
+			if (content.ActualWidth + content.TableViewModel.Left >= ModelDesignerCanvas.ActualWidth)
+			{
+				content.TableViewModel.Left = ModelDesignerCanvas.ActualWidth - content.ActualWidth - 10;
+			}
+
+			if(content.ActualHeight + content.TableViewModel.Top >= ModelDesignerCanvas.ActualHeight)
+			{
+				content.TableViewModel.Top = ModelDesignerCanvas.ActualHeight - content.ActualHeight - 10;
 			}
 		}
 	}
