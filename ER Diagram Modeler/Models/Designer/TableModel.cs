@@ -9,9 +9,9 @@ using ER_Diagram_Modeler.Annotations;
 
 namespace ER_Diagram_Modeler.Models.Designer
 {
-	public class TableModel: INotifyPropertyChanged
+	public class TableModel: INotifyPropertyChanged, IDataErrorInfo
 	{
-		private string _title;
+		private string _title = "Table";
 		private List<TableRowModel> _attributes = new List<TableRowModel>();
 
 		public string Title
@@ -54,5 +54,23 @@ namespace ER_Diagram_Modeler.Models.Designer
 		{
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 		}
+
+		public string this[string columnName]
+		{
+			get
+			{
+				if (columnName.Equals("Title"))
+				{
+					if (Title.Length == 0)
+					{
+						return "Title can't be empty";
+					}
+				}
+
+				return string.Empty;
+			}
+		}
+
+		public string Error => string.Empty;
 	}
 }

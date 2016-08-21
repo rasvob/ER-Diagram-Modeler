@@ -16,6 +16,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using ER_Diagram_Modeler.Configuration.Providers;
+using ER_Diagram_Modeler.Dialogs;
 using ER_Diagram_Modeler.Models.Designer;
 using ER_Diagram_Modeler.ViewModels;
 using ER_Diagram_Modeler.ViewModels.Enums;
@@ -64,7 +65,6 @@ namespace ER_Diagram_Modeler.Views.Canvas
 		{
 			InitializeComponent();
 			DataContextChanged += OnDataContextChanged;
-			ModelDesignerCanvas.MouseDown += ModelDesignerCanvasOnMouseDown;
 		}
 
 		private void ModelDesignerCanvasOnMouseDown(object sender, MouseButtonEventArgs e)
@@ -76,10 +76,25 @@ namespace ER_Diagram_Modeler.Views.Canvas
 					ModelDesignerCanvas.ResetZIndexes();
 					break;
 				case MouseMode.NewTable:
-					var table = MainWindow.SeedDataTable();
-					table.Left = e.GetPosition(sender as DesignerCanvas).X;
-					table.Top = e.GetPosition(sender as DesignerCanvas).Y;
-					ViewModel.TableViewModels.Add(table);
+					var table = new TableViewModel(new TableModel());
+					var origin = e.GetPosition(this);
+
+					var nameDialog = new TableNameDialog
+					{
+						Owner = Window.GetWindow(this),
+						Model = table.Model
+					};
+					var res = nameDialog.ShowDialog();
+
+					if (res.HasValue)
+					{
+						if (res.Value)
+						{
+							table.Left = origin.X;
+							table.Top = origin.Y;
+							ViewModel.TableViewModels.Add(table);
+						}
+					}
 					ViewModel.MouseMode = MouseMode.Select;
 					break;
 			}

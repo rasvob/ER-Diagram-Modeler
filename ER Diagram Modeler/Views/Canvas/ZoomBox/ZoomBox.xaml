@@ -16,9 +16,35 @@
 				<ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/FlatSlider.xaml" />
 			</ResourceDictionary.MergedDictionaries>
 			<valueConverters:ScaleToPercentConverter x:Key="ScaleToPercentConverter"/>
-		</ResourceDictionary>
 
+			<RoutedUICommand x:Key="Commands.Zoom50"></RoutedUICommand>
+			<RoutedUICommand x:Key="Commands.Zoom100"></RoutedUICommand>
+			<RoutedUICommand x:Key="Commands.Zoom200"></RoutedUICommand>
+		</ResourceDictionary>
+		
 	</UserControl.Resources>
+	
+	<UserControl.InputBindings>
+		<KeyBinding Key="F1"
+					Command="{StaticResource Commands.Zoom50}"></KeyBinding>
+
+		<KeyBinding Key="F2"
+					Command="{StaticResource Commands.Zoom100}"></KeyBinding>
+
+		<KeyBinding Key="F3"
+					Command="{StaticResource Commands.Zoom200}"></KeyBinding>
+	</UserControl.InputBindings>
+	
+	<UserControl.CommandBindings>
+		<CommandBinding Command="{StaticResource Commands.Zoom50}"
+						Executed="Zoom50Command_Executed"></CommandBinding>
+
+		<CommandBinding Command="{StaticResource Commands.Zoom100}"
+						Executed="Zoom100Command_Executed"></CommandBinding>
+
+		<CommandBinding Command="{StaticResource Commands.Zoom200}"
+						Executed="Zoom200Command_Executed"></CommandBinding>
+	</UserControl.CommandBindings>
 	
 	<Border Height="150"
 			Width="200"
@@ -73,21 +99,21 @@
 
 				<Button
 					Grid.Column="0"
-					Click="ButtonScaleClick"
+					Command="{StaticResource Commands.Zoom50}"
 					Tag="0,5"
 					Content="50%">
 				</Button>
 
 				<Button
 					Grid.Column="1"
-					Click="ButtonScaleClick"
+					Command="{StaticResource Commands.Zoom100}"
 					Tag="1"
 					Content="100%">
 				</Button>
 
 				<Button
 					Grid.Column="2"
-					Click="ButtonScaleClick"
+					Command="{StaticResource Commands.Zoom200}"
 					Tag="2"
 					Content="200%">
 				</Button>

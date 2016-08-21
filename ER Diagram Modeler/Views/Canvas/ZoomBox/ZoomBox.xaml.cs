@@ -53,10 +53,19 @@ namespace ER_Diagram_Modeler.Views.Canvas.ZoomBox
 			InitializeComponent();
 		}
 
-		private void ButtonScaleClick(object sender, RoutedEventArgs e)
+		private void Zoom50Command_Executed(object sender, ExecutedRoutedEventArgs e)
 		{
-			string scale = (string)(sender as Button).Tag;
-			ViewModel.Scale = double.Parse(scale);
+			ViewModel.Scale = 0.5;
+		}
+
+		private void Zoom100Command_Executed(object sender, ExecutedRoutedEventArgs e)
+		{
+			ViewModel.Scale = 1;
+		}
+
+		private void Zoom200Command_Executed(object sender, ExecutedRoutedEventArgs e)
+		{
+			ViewModel.Scale = 2;
 		}
 	}
 }

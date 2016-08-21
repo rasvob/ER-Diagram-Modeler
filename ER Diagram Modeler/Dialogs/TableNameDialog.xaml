@@ -1,0 +1,60 @@
+﻿<controls:MetroWindow x:Class="ER_Diagram_Modeler.Dialogs.TableNameDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ER_Diagram_Modeler.Dialogs"
+        xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
+        mc:Ignorable="d"
+		BorderThickness="1"
+		x:Name="DialogWindow"
+		ResizeMode="NoResize"
+		WindowStartupLocation="CenterOwner"
+        Title="Table Name" Width="300" Height="120"
+		Style="{StaticResource BaseDialogStyle}"
+		>
+	<controls:MetroWindow.Resources>
+		<ResourceDictionary>
+			<ResourceDictionary.MergedDictionaries>
+				<ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/FlatButton.xaml" />
+			</ResourceDictionary.MergedDictionaries>
+			
+			<RoutedUICommand x:Key="ProceedCommand"></RoutedUICommand>
+		</ResourceDictionary>
+	</controls:MetroWindow.Resources>
+
+	<controls:MetroWindow.CommandBindings>
+		<CommandBinding Command="{StaticResource ProceedCommand}"
+						Executed="Proceed_OnExecuted"
+						CanExecute="Proceed_OnCanExecute"></CommandBinding>
+	</controls:MetroWindow.CommandBindings>
+	
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto"></RowDefinition>
+			<RowDefinition Height="*"></RowDefinition>
+		</Grid.RowDefinitions>
+
+		<TextBox x:Name="NameTextBox"
+				 Grid.Row="0"
+				 Margin="5"
+				 Text="{Binding Title, Mode=TwoWay, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged}"
+				 controls:TextBoxHelper.ClearTextButton="True"
+                 controls:TextBoxHelper.UseFloatingWatermark="True"
+                 controls:TextBoxHelper.Watermark="Table name">
+			<TextBox.InputBindings>
+				<KeyBinding Command="{StaticResource ProceedCommand}" Key="Enter"></KeyBinding>
+			</TextBox.InputBindings>
+		</TextBox>
+
+		<Button x:Name="OkButton"
+				Grid.Row="1"
+				Margin="0 0 5 5"
+				Command="{StaticResource ProceedCommand}"
+		        HorizontalAlignment="Right"
+				Content="Proceed">
+		</Button>
+
+	</Grid>
+</controls:MetroWindow>
+

@@ -13,6 +13,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using ER_Diagram_Modeler.Dialogs;
 using ER_Diagram_Modeler.ViewModels;
 using ER_Diagram_Modeler.ViewModels.Enums;
 
@@ -59,6 +60,16 @@ namespace ER_Diagram_Modeler.Views.Canvas.TableItem
 			UncheckViewModeMenuItems();
 			var item = sender as MenuItem;
 			if(item != null) item.IsChecked = true;
+		}
+
+		private void ChangeTableNameItem_OnClick(object sender, RoutedEventArgs e)
+		{
+			var dialog = new TableNameDialog()
+			{
+				Model = ViewModel.Model,
+				Owner = Window.GetWindow(this)
+			};
+			dialog.ShowDialog();
 		}
 	}
 }

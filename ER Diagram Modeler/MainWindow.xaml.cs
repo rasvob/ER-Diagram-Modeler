@@ -73,10 +73,7 @@ namespace ER_Diagram_Modeler
 
 		private void MenuItemTest_OnClick(object sender, RoutedEventArgs e)
 		{
-			foreach (TableViewModel model in MainWindowViewModel.DatabaseModelDesignerViewModel.TableViewModels)
-			{
-				Trace.WriteLine(model.Model);
-			}
+			MainWindowViewModel.DatabaseModelDesignerViewModel.TableViewModels.Add(SeedDataTable());
 		}
 
 		private void NewTableCommand_Executed(object sender, ExecutedRoutedEventArgs e)

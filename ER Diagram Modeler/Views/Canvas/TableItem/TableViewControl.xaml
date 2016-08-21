@@ -50,6 +50,7 @@
 					>
 				<Button.ContextMenu>
 					<ContextMenu>
+						<MenuItem Header="Change table name" Name="ChangeTableNameItem" Click="ChangeTableNameItem_OnClick"></MenuItem>
 						<MenuItem Header="Table view mode" Name="MenuItemViewModeList">
 							<MenuItem Name="MenuItemStandard" Header="Standard" Click="MenuItem_OnClick" IsChecked="True"></MenuItem>
 							<MenuItem Header="Name only" Name="MenuItemNameOnly" Click="MenuItem_NameOnly_OnClick"></MenuItem>

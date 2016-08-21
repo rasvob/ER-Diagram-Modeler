@@ -7,6 +7,7 @@
              xmlns:tableItem="clr-namespace:ER_Diagram_Modeler.Views.Canvas.TableItem"
              xmlns:viewModels="clr-namespace:ER_Diagram_Modeler.ViewModels"
              xmlns:zoomBox="clr-namespace:ER_Diagram_Modeler.Views.Canvas.ZoomBox"
+             xmlns:valueConverters="clr-namespace:ER_Diagram_Modeler.ValueConverters"
              mc:Ignorable="d" 
 			 d:DataContext="{d:DesignInstance viewModels:DatabaseModelDesignerViewModel}"
 			 d:DesignHeight="300" d:DesignWidth="300">
@@ -16,6 +17,7 @@
 				<ResourceDictionary Source="TableItem/TableItem.xaml"></ResourceDictionary>
 				<ResourceDictionary Source="TableItem/ResizeDecoratorFlat.xaml"></ResourceDictionary>
 			</ResourceDictionary.MergedDictionaries>
+			<valueConverters:MouseModeToCursorConverter x:Key="MouseModeToCursorConverter"></valueConverters:MouseModeToCursorConverter>
 		</ResourceDictionary>
 	</UserControl.Resources>
 	
@@ -34,6 +36,8 @@
 				                      MinHeight="600"
 				                      Height="2000"
 				                      Width="2000"
+									  Cursor="{Binding MouseMode, Mode=OneWay, Converter={StaticResource MouseModeToCursorConverter}, UpdateSourceTrigger=PropertyChanged}"
+									  MouseDown="ModelDesignerCanvasOnMouseDown"
 				                      Background="White">
 					<local:DesignerCanvas.LayoutTransform>
 						<ScaleTransform ScaleX="{Binding Scale}" ScaleY="{Binding Scale}"></ScaleTransform>
