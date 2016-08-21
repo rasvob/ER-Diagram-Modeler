@@ -52,6 +52,10 @@ namespace ER_Diagram_Modeler.Views.Canvas
 					}
 					break;
 				case NotifyCollectionChangedAction.Remove:
+					foreach (TableViewModel item in args.OldItems)
+					{
+						RemoveElement(item);
+					}
 					break;
 			}
 		}
@@ -59,14 +63,54 @@ namespace ER_Diagram_Modeler.Views.Canvas
 		public DatabaseModelDesigner()
 		{
 			InitializeComponent();
+			DataContextChanged += OnDataContextChanged;
+			ModelDesignerCanvas.MouseDown += ModelDesignerCanvasOnMouseDown;
 		}
 
-		public void AddElement(TableViewModel viewModel)
+		private void ModelDesignerCanvasOnMouseDown(object sender, MouseButtonEventArgs e)
+		{
+			switch (ViewModel.MouseMode)
+			{
+				case MouseMode.Select:
+					ModelDesignerCanvas.DeselectAll();
+					ModelDesignerCanvas.ResetZIndexes();
+					break;
+				case MouseMode.NewTable:
+					var table = MainWindow.SeedDataTable();
+					table.Left = e.GetPosition(sender as DesignerCanvas).X;
+					table.Top = e.GetPosition(sender as DesignerCanvas).Y;
+					ViewModel.TableViewModels.Add(table);
+					ViewModel.MouseMode = MouseMode.Select;
+					break;
+			}
+		}
+
+		private void OnDataContextChanged(object sender, DependencyPropertyChangedEventArgs dependencyPropertyChangedEventArgs)
+		{
+			ZoomBox.ViewModel = ViewModel;
+		}
+
+		private void AddElement(TableViewModel viewModel)
 		{
 			var content = new TableContent(viewModel);
 			ModelDesignerCanvas.Children.Add(content);
 			DesignerCanvas.SetTop(content, viewModel.Top);
 			DesignerCanvas.SetLeft(content, viewModel.Left);
+		}
+
+		private void RemoveElement(TableViewModel viewModel)
+		{
+			var table = ModelDesignerCanvas.Children.Cast<TableContent>().FirstOrDefault(t => t.TableViewModel.Equals(viewModel));
+			ModelDesignerCanvas.Children.Remove(table);
+		}
+
+		public void DeleteSelectedTables()
+		{
+			var delete = ViewModel.TableViewModels.Where(t => t.IsSelected).ToList();
+			foreach(TableViewModel item in delete)
+			{
+				ViewModel.TableViewModels.Remove(item);
+			}
 		}
 	}
 }

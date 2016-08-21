@@ -8,7 +8,6 @@
              xmlns:valueConverters="clr-namespace:ER_Diagram_Modeler.ValueConverters"
              xmlns:enums="clr-namespace:ER_Diagram_Modeler.ViewModels.Enums"
              xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
-             xmlns:validationRules="clr-namespace:ER_Diagram_Modeler.ValidationRules"
              mc:Ignorable="d" 
 			 d:DataContext="{d:DesignInstance viewModels:TableViewModel}"
              d:DesignHeight="300" d:DesignWidth="300">

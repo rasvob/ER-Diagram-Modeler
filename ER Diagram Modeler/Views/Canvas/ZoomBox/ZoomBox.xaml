@@ -1,0 +1,100 @@
+﻿<UserControl x:Class="ER_Diagram_Modeler.Views.Canvas.ZoomBox.ZoomBox"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:ER_Diagram_Modeler.Views.Canvas.ZoomBox"
+             xmlns:viewModels="clr-namespace:ER_Diagram_Modeler.ViewModels"
+             xmlns:valueConverters="clr-namespace:ER_Diagram_Modeler.ValueConverters"
+             mc:Ignorable="d" 
+			 x:Name="ZoomBoxUserControl"
+             d:DesignHeight="300" d:DesignWidth="300">
+
+	<UserControl.Resources>
+		<ResourceDictionary>
+			<ResourceDictionary.MergedDictionaries>
+				<ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/FlatSlider.xaml" />
+			</ResourceDictionary.MergedDictionaries>
+			<valueConverters:ScaleToPercentConverter x:Key="ScaleToPercentConverter"/>
+		</ResourceDictionary>
+
+	</UserControl.Resources>
+	
+	<Border Height="150"
+			Width="200"
+			BorderBrush="{StaticResource PrimaryColorBrush}"
+			BorderThickness="1"
+			>
+		<Grid>
+			<Grid.RowDefinitions>
+				<RowDefinition Height="Auto"></RowDefinition>
+				<RowDefinition Height="*"></RowDefinition>
+				<RowDefinition Height="Auto"></RowDefinition>
+			</Grid.RowDefinitions>
+
+			<Grid Grid.Row="0">
+				<Grid.RowDefinitions>
+					<RowDefinition Height="Auto"></RowDefinition>
+					<RowDefinition Height="*"></RowDefinition>
+				</Grid.RowDefinitions>
+
+				<Label  Background="{StaticResource AccentColorBrush}"
+						Foreground="White"
+						ContentStringFormat="Scale ({0}%)"
+						Content="{Binding ElementName=ScaleSlider, Path=Value, Converter={StaticResource ScaleToPercentConverter}, Mode=OneWay}" />
+
+				<Slider x:Name="ScaleSlider"
+						Grid.Row="1"
+						AutoToolTipPlacement="TopLeft"
+						Width="Auto"
+						Minimum="0.25"
+						Maximum="5"
+						AutoToolTipPrecision="2"
+						TickFrequency="0.1"
+						Value="{Binding Scale}"
+						Style="{StaticResource FlatSlider}" />	
+			</Grid>
+			
+			
+			
+			<Canvas x:Name="ZoomBoxCanvas"
+					Grid.Row="1">
+				<Canvas.Background>
+					<VisualBrush Stretch="Fill" Visual="{Binding ElementName=ZoomBoxUserControl, Path=DesignerCanvas}" />
+				</Canvas.Background>
+			</Canvas>
+
+			<Grid Grid.Row="2">
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="*"></ColumnDefinition>
+					<ColumnDefinition Width="*"></ColumnDefinition>
+					<ColumnDefinition Width="*"></ColumnDefinition>
+				</Grid.ColumnDefinitions>
+
+				<Button
+					Grid.Column="0"
+					Click="ButtonScaleClick"
+					Tag="0,5"
+					Content="50%">
+				</Button>
+
+				<Button
+					Grid.Column="1"
+					Click="ButtonScaleClick"
+					Tag="1"
+					Content="100%">
+				</Button>
+
+				<Button
+					Grid.Column="2"
+					Click="ButtonScaleClick"
+					Tag="2"
+					Content="200%">
+				</Button>
+			</Grid>
+		</Grid>
+	</Border >
+</UserControl>
+
+
+

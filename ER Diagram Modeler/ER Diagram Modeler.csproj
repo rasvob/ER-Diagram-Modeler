@@ -127,7 +127,7 @@
     <Compile Include="Models\Designer\TableModel.cs" />
     <Compile Include="Models\Designer\TableRowModel.cs" />
     <Compile Include="Properties\Annotations1.cs" />
-    <Compile Include="ValidationRules\DatatypePropertyValidationRule.cs" />
+    <Compile Include="ValueConverters\ScaleToPercentConverter.cs" />
     <Compile Include="ValueConverters\TableViewModeToVisibilityConverter.cs" />
     <Compile Include="ViewModels\DatabaseModelDesignerViewModel.cs" />
     <Compile Include="ViewModels\Enums\ConnectionType.cs" />
@@ -148,6 +148,9 @@
     <Compile Include="Views\Canvas\TableItem\TableContent.cs" />
     <Compile Include="Views\Canvas\TableItem\TableViewControl.xaml.cs">
       <DependentUpon>TableViewControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Canvas\ZoomBox\ZoomBox.xaml.cs">
+      <DependentUpon>ZoomBox.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Panels\DatabaseConnectionPanel.xaml.cs">
       <DependentUpon>DatabaseConnectionPanel.xaml</DependentUpon>
@@ -200,6 +203,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\Canvas\ZoomBox\ZoomBox.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\Panels\DatabaseConnectionPanel.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -244,6 +251,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Configuration\Oracle\" />
+    <Folder Include="ValidationRules\" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">

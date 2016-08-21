@@ -24,8 +24,31 @@
 			<ResourceDictionary.MergedDictionaries>
 				<ResourceDictionary Source="Views/Canvas/TableItem/TableItem.xaml"></ResourceDictionary>
 			</ResourceDictionary.MergedDictionaries>
+
+			<RoutedUICommand x:Key="Commands.NewTable"></RoutedUICommand>
+			<RoutedUICommand x:Key="Commands.DeleteItems"></RoutedUICommand>
+
 		</ResourceDictionary>
 	</Window.Resources>
+	
+	<Window.CommandBindings>
+		<CommandBinding Command="{StaticResource Commands.NewTable}"
+						Executed="NewTableCommand_Executed"
+						CanExecute="NewTableCommand_CanExecute"/>
+
+		<CommandBinding Command="{StaticResource Commands.DeleteItems}"
+						Executed="DeleteItems_Executed"
+						CanExecute="DeleteItems_CanExecute"/>
+	</Window.CommandBindings>
+	
+	<Window.InputBindings>
+		<KeyBinding Command="{StaticResource Commands.NewTable}"
+					Key="N" />
+
+		<KeyBinding Command="{StaticResource Commands.DeleteItems}"
+					Key="Delete" />
+	</Window.InputBindings>
+	
 	<Grid> 
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto"></RowDefinition>
@@ -44,8 +67,8 @@
 
 		<!--ToolBar-->
 		<StackPanel Orientation="Horizontal" Grid.Row="1" Margin="5">
-			<Button Content="New table" Click="ButtonBase_OnClick"></Button>
-			<Button Content="Delete table" Margin="5,0,0,0" Click="ButtonBase_OnClickDelete"></Button>
+			<Button Content="New table" Command="{StaticResource Commands.NewTable}"></Button>
+			<Button Content="Delete table" Margin="5,0,0,0" Command="{StaticResource Commands.DeleteItems}"></Button>
 		</StackPanel>
 				
 		<!--MainView with Docking-->

@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using ER_Diagram_Modeler.Annotations;
@@ -10,19 +11,7 @@ namespace ER_Diagram_Modeler.ViewModels
 	public class MainWindowViewModel: INotifyPropertyChanged
 	{
 		private DatabaseModelDesignerViewModel _databaseModelDesignerViewModel;
-		private MouseMode _mouseMode;
-
-		public MouseMode MouseMode
-		{
-			get { return _mouseMode; }
-			set
-			{
-				if (value == _mouseMode) return;
-				_mouseMode = value;
-				OnPropertyChanged();
-			}
-		}
-
+		
 		public DatabaseModelDesignerViewModel DatabaseModelDesignerViewModel
 		{
 			get { return _databaseModelDesignerViewModel; }
@@ -37,15 +26,20 @@ namespace ER_Diagram_Modeler.ViewModels
 		public MainWindowViewModel()
 		{
 			DatabaseModelDesignerViewModel = new DatabaseModelDesignerViewModel();
-			MouseMode = MouseMode.Select;
 		}
 
 		public event PropertyChangedEventHandler PropertyChanged;
+		public event EventHandler<MouseMode> MouseModeChanged;  
 
 		[NotifyPropertyChangedInvocator]
 		protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
 		{
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+		}
+
+		protected virtual void OnMouseModeChanged(MouseMode e)
+		{
+			MouseModeChanged?.Invoke(this, e);
 		}
 	}
 }

@@ -6,7 +6,9 @@
              xmlns:local="clr-namespace:ER_Diagram_Modeler.Views.Canvas"
              xmlns:tableItem="clr-namespace:ER_Diagram_Modeler.Views.Canvas.TableItem"
              xmlns:viewModels="clr-namespace:ER_Diagram_Modeler.ViewModels"
-			 mc:Ignorable="d" 
+             xmlns:zoomBox="clr-namespace:ER_Diagram_Modeler.Views.Canvas.ZoomBox"
+             mc:Ignorable="d" 
+			 d:DataContext="{d:DesignInstance viewModels:DatabaseModelDesignerViewModel}"
 			 d:DesignHeight="300" d:DesignWidth="300">
 	<UserControl.Resources>
 		<ResourceDictionary>
@@ -16,19 +18,50 @@
 			</ResourceDictionary.MergedDictionaries>
 		</ResourceDictionary>
 	</UserControl.Resources>
+	
+	<UserControl.CommandBindings>
+		<CommandBinding></CommandBinding>
+	</UserControl.CommandBindings>
 
-	<Grid>
+	<Grid Background="GhostWhite">
 		<ScrollViewer Name="DesignerScrollViewer"
 					  Background="Transparent"
 					  HorizontalScrollBarVisibility="Visible"
 					  VerticalScrollBarVisibility="Visible">
-			<local:DesignerCanvas x:Name="ModelDesignerCanvas"
-								  MinWidth="800"
-								  MinHeight="600"
-								  Height="2000"
-								  Width="2000"
-								  Background="White">
-			</local:DesignerCanvas>
+
+				<local:DesignerCanvas x:Name="ModelDesignerCanvas"
+				                      MinWidth="800"
+				                      MinHeight="600"
+				                      Height="2000"
+				                      Width="2000"
+				                      Background="White">
+					<local:DesignerCanvas.LayoutTransform>
+						<ScaleTransform ScaleX="{Binding Scale}" ScaleY="{Binding Scale}"></ScaleTransform>
+					</local:DesignerCanvas.LayoutTransform>
+				</local:DesignerCanvas>
 		</ScrollViewer>
+
+		<zoomBox:ZoomBox x:Name="ZoomBox" 
+						 VerticalAlignment="Top"
+						 HorizontalAlignment="Right"
+						 ScrollOwner="{Binding ElementName=DesignerScrollViewer}"
+						 DesignerCanvas="{Binding ElementName=ModelDesignerCanvas}"
+						 Margin="0 0 20 0"
+							 />
 	</Grid>
 </UserControl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -29,8 +29,6 @@ namespace ER_Diagram_Modeler
 	/// </summary>
 	public partial class MainWindow : MetroWindow
 	{
-		public List<TableViewModel> Models { get; set; }
-
 		public MainWindowViewModel MainWindowViewModel { get; set; }
 
 		public MainWindow()
@@ -42,7 +40,7 @@ namespace ER_Diagram_Modeler
 			DataContext = MainWindowViewModel;
 		}
 
-		private TableViewModel SeedDataTable()
+		public static TableViewModel SeedDataTable()
 		{
 			var attrs = new List<TableRowModel>();
 
@@ -71,53 +69,6 @@ namespace ER_Diagram_Modeler
 			vm.Top = 100;
 
 			return vm;
-			//return new TableViewModel()
-			//{
-			//	Left = 100,
-			//	Top = 50,
-			//	Model = new TableModel()
-			//	{
-			//		Title = "Employee",
-			//		Attributes = new List<TableRowModel>()
-			//		{
-			//			new TableRowModel()
-			//			{
-			//				AllowNull = false,
-			//				Datatype = DatatypeProvider.Instance.FindDatatype("Int"),
-			//				Name = "Id",
-			//				PrimaryKey = true
-			//			},
-			//			new TableRowModel()
-			//			{
-			//				AllowNull = false,
-			//				Datatype = DatatypeProvider.Instance.FindDatatype("Varchar"),
-			//				Name = "FirstName",
-			//				PrimaryKey = false
-			//			},
-			//			new TableRowModel()
-			//			{
-			//				AllowNull = false,
-			//				Datatype = new Datatype()
-			//				{
-			//					Name = "Varchar",
-			//					Lenght = 100
-			//				},
-			//				Name = "LastName",
-			//				PrimaryKey = true
-			//			}
-			//		}
-			//	}
-			//};
-		}
-
-		private void ButtonBase_OnClick(object sender, RoutedEventArgs e)
-		{
-			MainWindowViewModel.DatabaseModelDesignerViewModel.TableViewModels.Add(SeedDataTable());
-		}
-
-		private void ButtonBase_OnClickDelete(object sender, RoutedEventArgs e)
-		{
-			
 		}
 
 		private void MenuItemTest_OnClick(object sender, RoutedEventArgs e)
@@ -126,6 +77,37 @@ namespace ER_Diagram_Modeler
 			{
 				Trace.WriteLine(model.Model);
 			}
+		}
+
+		private void NewTableCommand_Executed(object sender, ExecutedRoutedEventArgs e)
+		{
+			MainWindowViewModel.DatabaseModelDesignerViewModel.MouseMode = MouseMode.NewTable;
+		}
+
+		private void DeleteItems_Executed(object sender, ExecutedRoutedEventArgs e)
+		{
+			DatabaseModelDesigner.DeleteSelectedTables();
+		}
+
+		private void NewTableCommand_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+		{
+			var isSenderTextBox = FocusManager.GetFocusedElement(this) is TextBox;
+			if (isSenderTextBox)
+			{
+				e.ContinueRouting = true;
+				e.CanExecute = false;
+			}
+			else
+			{
+				e.ContinueRouting = false;
+				e.CanExecute = true;
+			}
+		}
+
+		private void DeleteItems_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+		{
+			if (MainWindowViewModel != null)
+				e.CanExecute = MainWindowViewModel.DatabaseModelDesignerViewModel.TableViewModels.Any(t => t.IsSelected);
 		}
 	}
 }

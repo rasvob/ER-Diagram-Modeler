@@ -15,6 +15,31 @@ namespace ER_Diagram_Modeler.ViewModels
 	public class DatabaseModelDesignerViewModel: INotifyPropertyChanged
 	{
 		private ObservableCollection<TableViewModel> _tableViewModels;
+		private double _scale = 1;
+		private MouseMode _mouseMode = MouseMode.Select;
+
+		public MouseMode MouseMode
+		{
+			get { return _mouseMode; }
+			set
+			{
+				if (value == _mouseMode) return;
+				_mouseMode = value;
+				OnPropertyChanged();
+			}
+		}
+
+		public double Scale
+		{
+			get { return _scale; }
+			set
+			{
+				if (value.Equals(_scale)) return;
+				_scale = value;
+				OnPropertyChanged();
+			}
+		}
+
 		public ObservableCollection<TableViewModel> TableViewModels
 		{
 			get { return _tableViewModels; }
