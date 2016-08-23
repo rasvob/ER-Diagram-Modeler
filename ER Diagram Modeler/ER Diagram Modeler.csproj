@@ -125,7 +125,7 @@
     <Compile Include="Dialogs\TableNameDialog.xaml.cs">
       <DependentUpon>TableNameDialog.xaml</DependentUpon>
     </Compile>
-    <Compile Include="EventArgs\TableViewModelArgs.cs" />
+    <Compile Include="EventArgs\ScaleEventArgs.cs" />
     <Compile Include="Models\Designer\Datatype.cs" />
     <Compile Include="Models\Designer\TableModel.cs" />
     <Compile Include="Models\Designer\TableRowModel.cs" />

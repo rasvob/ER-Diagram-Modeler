@@ -8,6 +8,7 @@ using System.Runtime.CompilerServices;
 using System.Windows.Input;
 using ER_Diagram_Modeler.Annotations;
 using ER_Diagram_Modeler.Configuration.Providers;
+using ER_Diagram_Modeler.EventArgs;
 using ER_Diagram_Modeler.Models.Designer;
 using ER_Diagram_Modeler.Properties;
 using ER_Diagram_Modeler.ViewModels.Enums;
@@ -137,8 +138,16 @@ namespace ER_Diagram_Modeler.ViewModels
 			set
 			{
 				if (value.Equals(_scale)) return;
+				var args = new ScaleEventArgs()
+				{
+					OldHorizontalOffset = HorizontalScrollOffset,
+					OldVerticalOffset = VeticalScrollOffset,
+					OldViewportHeight = ViewportHeight,
+					OldViewportWidth = ViewportWidth
+				};
 				_scale = value;
 				OnPropertyChanged();
+				OnScaleChanged(args);
 				OnComputedPropertyChanged();
 			}
 		}
@@ -229,6 +238,7 @@ namespace ER_Diagram_Modeler.ViewModels
 		}
 
 		public event PropertyChangedEventHandler PropertyChanged;
+		public event EventHandler<ScaleEventArgs> ScaleChanged;
 
 		[NotifyPropertyChangedInvocator]
 		protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
@@ -242,6 +252,11 @@ namespace ER_Diagram_Modeler.ViewModels
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("ZoomBoxThumbHeight"));
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("ZoomBoxThumbLeft"));
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("ZoomBoxThumbTop"));
+		}
+
+		protected virtual void OnScaleChanged(ScaleEventArgs args)
+		{
+			ScaleChanged?.Invoke(this, args);
 		}
 	}
 }

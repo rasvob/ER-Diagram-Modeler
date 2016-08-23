@@ -17,6 +17,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using ER_Diagram_Modeler.Configuration.Providers;
 using ER_Diagram_Modeler.Dialogs;
+using ER_Diagram_Modeler.EventArgs;
 using ER_Diagram_Modeler.Models.Designer;
 using ER_Diagram_Modeler.ViewModels;
 using ER_Diagram_Modeler.ViewModels.Enums;
@@ -39,7 +40,15 @@ namespace ER_Diagram_Modeler.Views.Canvas
 				_viewModel = value;
 				DataContext = value;
 				ViewModel.TableViewModels.CollectionChanged += TableViewModelsOnCollectionChanged;
+				ViewModel.ScaleChanged += ViewModelOnScaleChanged;
 			}
+		}
+
+		private void ViewModelOnScaleChanged(object sender, ScaleEventArgs scaleEventArgs)
+		{
+			Trace.WriteLine($"Old: {scaleEventArgs.OldVerticalOffset}");
+			Trace.WriteLine($"New: {DesignerScrollViewer.VerticalOffset}");
+			Trace.WriteLine($"Content: {DesignerScrollViewer.ContentVerticalOffset}");
 		}
 
 		private void TableViewModelsOnCollectionChanged(object sender, NotifyCollectionChangedEventArgs args)
@@ -153,11 +162,13 @@ namespace ER_Diagram_Modeler.Views.Canvas
 			{
 				return;
 			}
-
+			Trace.WriteLine("Fired");
 			ViewModel.ViewportWidth = args.ViewportWidth;
 			ViewModel.ViewportHeight = args.ViewportHeight;
+			Trace.WriteLine($"Offset: {args.VerticalOffset}");
 			ViewModel.VeticalScrollOffset = args.VerticalOffset;
 			ViewModel.HorizontalScrollOffset = args.HorizontalOffset;
+			
 		}
 	}
 }
