@@ -114,6 +114,7 @@ namespace ER_Diagram_Modeler.Views.Canvas
 				MeasureToFit(content);
 				DesignerCanvas.SetTop(content, viewModel.Top);
 				DesignerCanvas.SetLeft(content, viewModel.Left);
+				DesignerScrollViewer.ScrollToHorizontalOffset(DesignerScrollViewer.HorizontalOffset - 0.1);
 			};
 		}
 
@@ -143,6 +144,20 @@ namespace ER_Diagram_Modeler.Views.Canvas
 			{
 				content.TableViewModel.Top = ModelDesignerCanvas.ActualHeight - content.ActualHeight - 10;
 			}
+		}
+
+		private void DesignerScrollViewerOnScrollChanged(object sender, ScrollChangedEventArgs args)
+		{
+			//Extent size glith-stop
+			if(args.ExtentWidth < ViewModel.CanvasWidth * ViewModel.Scale || args.ExtentHeight < ViewModel.CanvasHeight * ViewModel.Scale)
+			{
+				return;
+			}
+
+			ViewModel.ViewportWidth = args.ViewportWidth;
+			ViewModel.ViewportHeight = args.ViewportHeight;
+			ViewModel.VeticalScrollOffset = args.VerticalOffset;
+			ViewModel.HorizontalScrollOffset = args.HorizontalOffset;
 		}
 	}
 }

@@ -61,8 +61,10 @@ namespace ER_Diagram_Modeler.Views.Canvas.TableItem
 
 				foreach (TableContent item in _canvas.SelectedItems)
 				{
-					DesignerCanvas.SetLeft(item, DesignerCanvas.GetLeft(item) + deltaHorizontal);
-					DesignerCanvas.SetTop(item, DesignerCanvas.GetTop(item) + deltaVertical);
+					item.TableViewModel.Left = DesignerCanvas.GetLeft(item) + deltaHorizontal;
+					item.TableViewModel.Top = DesignerCanvas.GetTop(item) + deltaVertical;
+					DesignerCanvas.SetLeft(item, item.TableViewModel.Left);
+					DesignerCanvas.SetTop(item, item.TableViewModel.Top);
 				}
 
 				dragDeltaEventArgs.Handled = true;

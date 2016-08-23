@@ -7,6 +7,7 @@
              xmlns:viewModels="clr-namespace:ER_Diagram_Modeler.ViewModels"
              xmlns:valueConverters="clr-namespace:ER_Diagram_Modeler.ValueConverters"
              mc:Ignorable="d" 
+			 d:DataContext="{d:DesignInstance viewModels:DatabaseModelDesignerViewModel}"
 			 x:Name="ZoomBoxUserControl"
              d:DesignHeight="300" d:DesignWidth="300">
 
@@ -16,45 +17,18 @@
 				<ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/FlatSlider.xaml" />
 			</ResourceDictionary.MergedDictionaries>
 			<valueConverters:ScaleToPercentConverter x:Key="ScaleToPercentConverter"/>
-
-			<RoutedUICommand x:Key="Commands.Zoom50"></RoutedUICommand>
-			<RoutedUICommand x:Key="Commands.Zoom100"></RoutedUICommand>
-			<RoutedUICommand x:Key="Commands.Zoom200"></RoutedUICommand>
 		</ResourceDictionary>
 		
 	</UserControl.Resources>
-	
-	<UserControl.InputBindings>
-		<KeyBinding Key="F1"
-					Command="{StaticResource Commands.Zoom50}"></KeyBinding>
-
-		<KeyBinding Key="F2"
-					Command="{StaticResource Commands.Zoom100}"></KeyBinding>
-
-		<KeyBinding Key="F3"
-					Command="{StaticResource Commands.Zoom200}"></KeyBinding>
-	</UserControl.InputBindings>
-	
-	<UserControl.CommandBindings>
-		<CommandBinding Command="{StaticResource Commands.Zoom50}"
-						Executed="Zoom50Command_Executed"></CommandBinding>
-
-		<CommandBinding Command="{StaticResource Commands.Zoom100}"
-						Executed="Zoom100Command_Executed"></CommandBinding>
-
-		<CommandBinding Command="{StaticResource Commands.Zoom200}"
-						Executed="Zoom200Command_Executed"></CommandBinding>
-	</UserControl.CommandBindings>
-	
-	<Border Height="150"
-			Width="200"
+			
+	<Border x:Name="ZoomBoxBorder"
 			BorderBrush="{StaticResource PrimaryColorBrush}"
 			BorderThickness="1"
 			>
 		<Grid>
 			<Grid.RowDefinitions>
 				<RowDefinition Height="Auto"></RowDefinition>
-				<RowDefinition Height="*"></RowDefinition>
+				<RowDefinition Height="Auto"></RowDefinition>
 				<RowDefinition Height="Auto"></RowDefinition>
 			</Grid.RowDefinitions>
 
@@ -80,14 +54,28 @@
 						Value="{Binding Scale}"
 						Style="{StaticResource FlatSlider}" />	
 			</Grid>
-			
-			
-			
+
 			<Canvas x:Name="ZoomBoxCanvas"
-					Grid.Row="1">
+					Grid.Row="1"
+					Height="{Binding ZoomBoxCanvasHeight}"
+					Width="{Binding ZoomBoxCanvasWidth}">
 				<Canvas.Background>
-					<VisualBrush Stretch="Fill" Visual="{Binding ElementName=ZoomBoxUserControl, Path=DesignerCanvas}" />
+					<VisualBrush Stretch="Fill" Visual="{Binding ElementName=ZoomBoxUserControl, Path=DesignerCanvas}"/>
 				</Canvas.Background>
+
+				<Thumb x:Name="ZoomBoxThumb"
+					   Canvas.Top="{Binding ZoomBoxThumbTop, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+					   Canvas.Left="{Binding ZoomBoxThumbLeft, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+					   Width="{Binding ZoomBoxThumbWidth, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+					   Height="{Binding ZoomBoxThumbHeight, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+					   DragDelta="ZoomBoxThumb_OnDragDelta">
+					<Thumb.Template>
+						<ControlTemplate TargetType="{x:Type Thumb}">
+							<Rectangle 
+					           Fill="{StaticResource AccentColorBrush4}" />
+						</ControlTemplate>
+					</Thumb.Template>
+				</Thumb>
 			</Canvas>
 
 			<Grid Grid.Row="2">
@@ -99,28 +87,40 @@
 
 				<Button
 					Grid.Column="0"
-					Command="{StaticResource Commands.Zoom50}"
-					Tag="0,5"
+					Command="{Binding ChangeZoomCommand}"
+					CommandParameter="0,5"
 					Content="50%">
 				</Button>
 
 				<Button
 					Grid.Column="1"
-					Command="{StaticResource Commands.Zoom100}"
-					Tag="1"
+					Command="{Binding ChangeZoomCommand}"
+					CommandParameter="1"
 					Content="100%">
 				</Button>
 
 				<Button
 					Grid.Column="2"
-					Command="{StaticResource Commands.Zoom200}"
-					Tag="2"
+					Command="{Binding ChangeZoomCommand}"
+					CommandParameter="2"
 					Content="200%">
 				</Button>
 			</Grid>
 		</Grid>
 	</Border >
 </UserControl>
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

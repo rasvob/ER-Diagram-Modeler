@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
@@ -48,24 +49,16 @@ namespace ER_Diagram_Modeler.Views.Canvas.ZoomBox
 		public static readonly DependencyProperty DesignerCanvasProperty =
 			DependencyProperty.Register("DesignerCanvas", typeof(DesignerCanvas), typeof(ZoomBox), new FrameworkPropertyMetadata(null));
 
+
 		public ZoomBox()
 		{
 			InitializeComponent();
 		}
 
-		private void Zoom50Command_Executed(object sender, ExecutedRoutedEventArgs e)
+		private void ZoomBoxThumb_OnDragDelta(object sender, DragDeltaEventArgs e)
 		{
-			ViewModel.Scale = 0.5;
-		}
-
-		private void Zoom100Command_Executed(object sender, ExecutedRoutedEventArgs e)
-		{
-			ViewModel.Scale = 1;
-		}
-
-		private void Zoom200Command_Executed(object sender, ExecutedRoutedEventArgs e)
-		{
-			ViewModel.Scale = 2;
+			ScrollOwner.ScrollToVerticalOffset(ScrollOwner.VerticalOffset + e.VerticalChange);
+			ScrollOwner.ScrollToHorizontalOffset(ScrollOwner.HorizontalOffset + e.HorizontalChange);
 		}
 	}
 }

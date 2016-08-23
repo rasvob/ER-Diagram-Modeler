@@ -21,24 +21,33 @@
 		</ResourceDictionary>
 	</UserControl.Resources>
 	
-	<UserControl.CommandBindings>
-		<CommandBinding></CommandBinding>
-	</UserControl.CommandBindings>
+	<UserControl.InputBindings>
+		<KeyBinding Command="{Binding ChangeZoomCommand}"
+					CommandParameter="0,5"
+					Key="F1"/>
+
+		<KeyBinding Command="{Binding ChangeZoomCommand}"
+					CommandParameter="1"
+					Key="F2"/>
+
+		<KeyBinding Command="{Binding ChangeZoomCommand}"
+					CommandParameter="2"
+					Key="F3"/>
+	</UserControl.InputBindings>
 
 	<Grid Background="GhostWhite">
 		<ScrollViewer Name="DesignerScrollViewer"
 					  Background="Transparent"
 					  HorizontalScrollBarVisibility="Visible"
-					  VerticalScrollBarVisibility="Visible">
-
-				<local:DesignerCanvas x:Name="ModelDesignerCanvas"
-				                      MinWidth="800"
-				                      MinHeight="600"
-				                      Height="2000"
-				                      Width="2000"
-									  Cursor="{Binding MouseMode, Mode=OneWay, Converter={StaticResource MouseModeToCursorConverter}, UpdateSourceTrigger=PropertyChanged}"
-									  MouseDown="ModelDesignerCanvasOnMouseDown"
-				                      Background="White">
+					  VerticalScrollBarVisibility="Visible"
+					  ScrollChanged="DesignerScrollViewerOnScrollChanged"
+					  >
+			<local:DesignerCanvas x:Name="ModelDesignerCanvas"
+								  Height="{Binding CanvasHeight}"
+								  Width="{Binding CanvasWidth}"
+								  Cursor="{Binding MouseMode, Mode=OneWay, Converter={StaticResource MouseModeToCursorConverter}, UpdateSourceTrigger=PropertyChanged}"
+								  MouseDown="ModelDesignerCanvasOnMouseDown"
+								  Background="White">
 					<local:DesignerCanvas.LayoutTransform>
 						<ScaleTransform ScaleX="{Binding Scale}" ScaleY="{Binding Scale}"></ScaleTransform>
 					</local:DesignerCanvas.LayoutTransform>
@@ -51,7 +60,7 @@
 						 ScrollOwner="{Binding ElementName=DesignerScrollViewer}"
 						 DesignerCanvas="{Binding ElementName=ModelDesignerCanvas}"
 						 Margin="0 0 20 0"
-							 />
+						 />
 	</Grid>
 </UserControl>
 

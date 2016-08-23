@@ -84,7 +84,8 @@ namespace ER_Diagram_Modeler.Views.Canvas.TableItem
 								break;
 							case VerticalAlignment.Top:
 								deltaVertical = Math.Min(Math.Max(-minTop, e.VerticalChange), minDeltaVertical);
-								DesignerCanvas.SetTop(item, DesignerCanvas.GetTop(item) + deltaVertical);
+								item.TableViewModel.Top = DesignerCanvas.GetTop(item) + deltaVertical;
+								DesignerCanvas.SetTop(item, item.TableViewModel.Top);
 								item.Height = item.ActualHeight - deltaVertical;
 								break;
 						}
@@ -95,7 +96,8 @@ namespace ER_Diagram_Modeler.Views.Canvas.TableItem
 					{
 						case HorizontalAlignment.Left:
 							deltaHorizontal = Math.Min(Math.Max(-minLeft, e.HorizontalChange), minDeltaHorizontal);
-							DesignerCanvas.SetLeft(item, DesignerCanvas.GetLeft(item) + deltaHorizontal);
+							item.TableViewModel.Left = DesignerCanvas.GetLeft(item) + deltaHorizontal;
+							DesignerCanvas.SetLeft(item, item.TableViewModel.Left);
 							item.Width = item.ActualWidth - deltaHorizontal;
 							break;
 						case HorizontalAlignment.Right:
