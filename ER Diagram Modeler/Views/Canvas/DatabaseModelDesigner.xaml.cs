@@ -31,6 +31,9 @@ namespace ER_Diagram_Modeler.Views.Canvas
 	public partial class DatabaseModelDesigner : UserControl
 	{
 		private DatabaseModelDesignerViewModel _viewModel;
+		private Point? _dragStartPoint = null;
+		private double _capturedVerticalOffset;
+		private double _capturedHorizontalOffset;
 
 		public DatabaseModelDesignerViewModel ViewModel
 		{
@@ -44,11 +47,29 @@ namespace ER_Diagram_Modeler.Views.Canvas
 			}
 		}
 
-		private void ViewModelOnScaleChanged(object sender, ScaleEventArgs scaleEventArgs)
+		private void ViewModelOnScaleChanged(object sender, ScaleEventArgs args)
 		{
-			Trace.WriteLine($"Old: {scaleEventArgs.OldVerticalOffset}");
-			Trace.WriteLine($"New: {DesignerScrollViewer.VerticalOffset}");
-			Trace.WriteLine($"Content: {DesignerScrollViewer.ContentVerticalOffset}");
+			double contentHorizontalMiddle = (args.OldHorizontalOffset + args.OldViewportWidth/2)/args.OldScale;
+			double contentVerticalMiddle = (args.OldVerticalOffset + args.OldViewportHeight/2)/args.OldScale;
+
+			if ((int)DesignerScrollViewer.ScrollableWidth == 0)
+			{
+				contentHorizontalMiddle = ViewModel.CanvasWidth/2;
+			}
+
+			if ((int)DesignerScrollViewer.ScrollableHeight == 0)
+			{
+				contentVerticalMiddle = ViewModel.CanvasHeight/2;
+			}
+
+			double newContentHorizontalOffset = contentHorizontalMiddle - (ViewModel.ViewportWidth / 2)/ViewModel.Scale;
+			double newContentVerticalOffset = contentVerticalMiddle - (ViewModel.ViewportHeight/2)/ViewModel.Scale;
+
+			double newHorizontalOffset = newContentHorizontalOffset*ViewModel.Scale;
+			double newVerticalOffset = newContentVerticalOffset * ViewModel.Scale;
+
+			DesignerScrollViewer.ScrollToHorizontalOffset(newHorizontalOffset);
+			DesignerScrollViewer.ScrollToVerticalOffset(newVerticalOffset);
 		}
 
 		private void TableViewModelsOnCollectionChanged(object sender, NotifyCollectionChangedEventArgs args)
@@ -162,13 +183,100 @@ namespace ER_Diagram_Modeler.Views.Canvas
 			{
 				return;
 			}
-			Trace.WriteLine("Fired");
 			ViewModel.ViewportWidth = args.ViewportWidth;
 			ViewModel.ViewportHeight = args.ViewportHeight;
-			Trace.WriteLine($"Offset: {args.VerticalOffset}");
 			ViewModel.VeticalScrollOffset = args.VerticalOffset;
 			ViewModel.HorizontalScrollOffset = args.HorizontalOffset;
-			
+		}
+				
+		private void TestCommand_OnExecuted(object sender, ExecutedRoutedEventArgs e)
+		{
+			ViewModel.MouseMode = ViewModel.MouseMode == MouseMode.Panning ? MouseMode.Select : MouseMode.Panning;
+		}
+
+		private void DesignerScrollViewer_OnPreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+		{
+			if (ViewModel.MouseMode == MouseMode.Panning)
+			{
+				_dragStartPoint = e.GetPosition(DesignerScrollViewer);
+				_capturedHorizontalOffset = DesignerScrollViewer.HorizontalOffset;
+				_capturedVerticalOffset = DesignerScrollViewer.VerticalOffset;
+				DesignerScrollViewer.CaptureMouse();
+				Keyboard.Focus(DesignerScrollViewer);
+				e.Handled = true;
+			}
+		}
+
+		private void DesignerScrollViewer_OnPreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+		{
+			if(ViewModel.MouseMode == MouseMode.Panning || _dragStartPoint.HasValue)
+			{
+				DesignerScrollViewer.ReleaseMouseCapture();
+				_dragStartPoint = null;
+				e.Handled = true;
+			}			
+		}
+
+		private void DesignerScrollViewer_OnPreviewMouseMove(object sender, MouseEventArgs e)
+		{
+			if (ViewModel.MouseMode == MouseMode.Panning)
+			{
+				if (_dragStartPoint.HasValue)
+				{
+					Vector delta = e.GetPosition(DesignerScrollViewer) - _dragStartPoint.Value;
+					DesignerScrollViewer.ScrollToHorizontalOffset(_capturedHorizontalOffset - delta.X);
+					DesignerScrollViewer.ScrollToVerticalOffset(_capturedVerticalOffset - delta.Y);
+					e.Handled = true;
+				}
+			}
+		}
+
+		private void DesignerScrollViewer_OnPreviewKeyDown(object sender, KeyEventArgs e)
+		{
+			if (e.Source is ScrollViewer)
+			{
+				if (e.Key == Key.Space)
+				{
+					ViewModel.MouseMode = MouseMode.Panning;
+					e.Handled = true;
+				}
+			}
+		}
+
+		private void DesignerScrollViewer_OnPreviewKeyUp(object sender, KeyEventArgs e)
+		{
+			if(e.Source is ScrollViewer)
+			{
+				if(e.Key == Key.Space)
+				{
+					ViewModel.MouseMode = MouseMode.Select;
+					e.Handled = true;
+				}
+			}
+		}
+
+		private void DesignerScrollViewer_OnPreviewMouseWheel(object sender, MouseWheelEventArgs e)
+		{
+			Trace.WriteLine(e.Source);
+			if ((Keyboard.Modifiers & ModifierKeys.Control) != 0)
+			{
+				double newScale = ViewModel.Scale;
+				if (e.Delta > 0)
+				{
+					newScale += 0.05;
+				}
+				else if (e.Delta < 0)
+				{
+					newScale -= 0.05;
+				}
+				ViewModel.ChangeZoomCommand.Execute(newScale.ToString("G"));
+				e.Handled = true;
+			}
+			else if ((Keyboard.Modifiers & ModifierKeys.Shift) != 0)
+			{
+				DesignerScrollViewer.ScrollToHorizontalOffset(DesignerScrollViewer.HorizontalOffset + e.Delta);
+				e.Handled = true;
+			}
 		}
 	}
 }

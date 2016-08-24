@@ -2,6 +2,6 @@
 {
 	public enum MouseMode
 	{
-		Select, NewTable
+		Select, NewTable, Panning
 	}
 }

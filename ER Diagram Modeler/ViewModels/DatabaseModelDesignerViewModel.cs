@@ -28,6 +28,30 @@ namespace ER_Diagram_Modeler.ViewModels
 		private double _zoomBoxCanvasHeight = 250;
 		private double _veticalScrollOffset;
 		private double _horizontalScrollOffset;
+		private double _maxScale = 5;
+		private double _minScale = 0.25;
+
+		public double MinScale
+		{
+			get { return _minScale; }
+			set
+			{
+				if (value.Equals(_minScale)) return;
+				_minScale = value;
+				OnPropertyChanged();
+			}
+		}
+
+		public double MaxScale
+		{
+			get { return _maxScale; }
+			set
+			{
+				if (value.Equals(_maxScale)) return;
+				_maxScale = value;
+				OnPropertyChanged();
+			}
+		}
 
 		public double HorizontalScrollOffset
 		{
@@ -140,6 +164,7 @@ namespace ER_Diagram_Modeler.ViewModels
 				if (value.Equals(_scale)) return;
 				var args = new ScaleEventArgs()
 				{
+					OldScale = _scale,
 					OldHorizontalOffset = HorizontalScrollOffset,
 					OldVerticalOffset = VeticalScrollOffset,
 					OldViewportHeight = ViewportHeight,
@@ -147,8 +172,8 @@ namespace ER_Diagram_Modeler.ViewModels
 				};
 				_scale = value;
 				OnPropertyChanged();
-				OnScaleChanged(args);
 				OnComputedPropertyChanged();
+				OnScaleChanged(args);
 			}
 		}
 
@@ -233,7 +258,20 @@ namespace ER_Diagram_Modeler.ViewModels
 			bool res = double.TryParse((string) o, out scale);
 			if (res)
 			{
+				SnapScaleToRange(ref scale);
 				Scale = scale;
+			}
+		}
+
+		private void SnapScaleToRange(ref double scale)
+		{
+			if (scale > MaxScale)
+			{
+				scale = MaxScale;
+			}
+			if (scale < MinScale)
+			{
+				scale = MinScale;
 			}
 		}
 
