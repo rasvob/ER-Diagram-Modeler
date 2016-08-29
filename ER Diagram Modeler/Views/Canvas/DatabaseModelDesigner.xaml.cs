@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Data;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
@@ -22,6 +23,8 @@ using ER_Diagram_Modeler.Models.Designer;
 using ER_Diagram_Modeler.ViewModels;
 using ER_Diagram_Modeler.ViewModels.Enums;
 using ER_Diagram_Modeler.Views.Canvas.TableItem;
+using Xceed.Wpf.AvalonDock.Controls;
+using Xceed.Wpf.Toolkit.Core.Utilities;
 
 namespace ER_Diagram_Modeler.Views.Canvas
 {
@@ -265,7 +268,20 @@ namespace ER_Diagram_Modeler.Views.Canvas
 
 		private void DesignerScrollViewer_OnPreviewMouseWheel(object sender, MouseWheelEventArgs e)
 		{
-			Trace.WriteLine(e.Source);
+			
+			if (Keyboard.Modifiers != 0)
+			{
+				TableViewControl viewControl = e.Source as TableViewControl;
+				if(viewControl != null)
+				{
+					var grid = viewControl.TableDataGrid;
+					var item = grid.SelectedItem;
+					var row = grid.ItemContainerGenerator.ContainerFromItem(item) as DataGridRow;
+					var cbox = VisualTreeHelperEx.FindDescendantByName(row, "DataTypeComboBox") as ComboBox;
+					if (cbox != null) cbox.IsDropDownOpen = false;
+				}
+			}
+
 			if ((Keyboard.Modifiers & ModifierKeys.Control) != 0)
 			{
 				double newScale = ViewModel.Scale;

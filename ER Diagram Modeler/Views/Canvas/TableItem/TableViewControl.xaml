@@ -80,7 +80,7 @@
 					<DataGridTextColumn Binding="{Binding Name, Mode=TwoWay}"
 						                    Header="Name" />
 
-					<DataGridTemplateColumn Header="Data Type">
+					<DataGridTemplateColumn Header="Data Type" x:Name="DataTypeColumn">
 						<DataGridTemplateColumn.CellTemplate>
 							<DataTemplate>
 								<Grid>
