@@ -69,6 +69,7 @@
 					   Canvas.Left="{Binding ZoomBoxThumbLeft, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
 					   Width="{Binding ZoomBoxThumbWidth, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
 					   Height="{Binding ZoomBoxThumbHeight, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+					   Cursor="Hand"
 					   DragDelta="ZoomBoxThumb_OnDragDelta">
 					<Thumb.Template>
 						<ControlTemplate TargetType="{x:Type Thumb}">

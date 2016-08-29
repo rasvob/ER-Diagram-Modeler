@@ -14,40 +14,37 @@
 	<UserControl.Resources>
 		<ResourceDictionary>
 			<valueConverters:TableViewModeToVisibilityConverter x:Key="TableViewModeToVisibilityConverter" />
-		
+
 			<ResourceDictionary.MergedDictionaries>
 				<ResourceDictionary Source="../../../Themes/TableSettingsDropdownButton.xaml"></ResourceDictionary>
 			</ResourceDictionary.MergedDictionaries>
 		</ResourceDictionary>
 	</UserControl.Resources>
-	
 	<Grid>
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto"></RowDefinition>
 			<RowDefinition Height="*"></RowDefinition>
 		</Grid.RowDefinitions>
 
-		<Grid Height="{StaticResource TableMinHeight}">
+		<Grid>
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition Width="*"></ColumnDefinition>
 				<ColumnDefinition Width="Auto"></ColumnDefinition>
 			</Grid.ColumnDefinitions>
-			<Label 
-				Grid.Column="0"
-				Background="{StaticResource PrimaryColorBrush}"
-				Content="{Binding Model.Title}"
-				FontWeight="Bold"
-				Foreground="White"
-				Padding="5"
-				Height="25"
-				IsHitTestVisible="False"
-				VerticalContentAlignment="Center"
-				>
+			<Label
+					Grid.Column="0"
+					Background="{StaticResource PrimaryColorBrush}"
+					Content="{Binding Model.Title}"
+					FontWeight="Bold"
+					Foreground="White"
+					Padding="5"
+					Height="25"
+					IsHitTestVisible="False"
+					VerticalContentAlignment="Center">
 			</Label>
-			<Button Content="Menu" 
-					Grid.Column="1" 
-					Style="{StaticResource TableSettingsDropdownButtonStyle}"
-					>
+			<Button Content="Menu"
+				        Grid.Column="1"
+				        Style="{StaticResource TableSettingsDropdownButtonStyle}">
 				<Button.ContextMenu>
 					<ContextMenu>
 						<MenuItem Header="Change table name" Name="ChangeTableNameItem" Click="ChangeTableNameItem_OnClick"></MenuItem>
@@ -59,31 +56,30 @@
 				</Button.ContextMenu>
 			</Button>
 		</Grid>
-		<Border Grid.Row="1" 
-				BorderThickness="3 0 3 3" 
-				BorderBrush="{StaticResource PrimaryColorBrush}" 
-				Visibility="{Binding ViewMode, Converter={StaticResource TableViewModeToVisibilityConverter}}">
+		<Border Grid.Row="1"
+			        BorderThickness="3 0 3 3"
+			        BorderBrush="{StaticResource PrimaryColorBrush}"
+			        Visibility="{Binding ViewMode, Converter={StaticResource TableViewModeToVisibilityConverter}}">
 			<DataGrid x:Name="TableDataGrid"
-					  ItemsSource="{Binding Model.Attributes}"
-					  SelectionMode="Extended"
-					  SelectionUnit="FullRow"
-					  CanUserAddRows="True"
-					  CanUserReorderColumns="True"
-					  CanUserResizeColumns="True"
-					  CanUserSortColumns="True"
-					  CanUserDeleteRows="True"
-					  GridLinesVisibility="All"
-					  AutoGenerateColumns="False">
+				          ItemsSource="{Binding Model.Attributes}"
+				          SelectionMode="Extended"
+				          SelectionUnit="FullRow"
+				          CanUserAddRows="True"
+				          CanUserReorderColumns="True"
+				          CanUserResizeColumns="True"
+				          CanUserSortColumns="True"
+				          CanUserDeleteRows="True"
+				          GridLinesVisibility="All"
+				          AutoGenerateColumns="False">
 				<DataGrid.Columns>
-					<DataGridCheckBoxColumn Binding="{Binding PrimaryKey, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
-											Header="PK"
-											ElementStyle="{DynamicResource MetroDataGridCheckBox}">
+					<DataGridCheckBoxColumn Binding="{Binding PrimaryKey, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+						                        Header="PK"
+						                        ElementStyle="{DynamicResource MetroDataGridCheckBox}">
 					</DataGridCheckBoxColumn>
-					
-					<DataGridTextColumn Binding="{Binding Name, Mode=TwoWay}" 
-										Header="Name"
-										/>
-					
+
+					<DataGridTextColumn Binding="{Binding Name, Mode=TwoWay}"
+						                    Header="Name" />
+
 					<DataGridTemplateColumn Header="Data Type">
 						<DataGridTemplateColumn.CellTemplate>
 							<DataTemplate>
@@ -93,62 +89,70 @@
 										<ColumnDefinition Width="80"></ColumnDefinition>
 										<ColumnDefinition Width="80"></ColumnDefinition>
 									</Grid.ColumnDefinitions>
-									
+
 									<ComboBox x:Name="DataTypeComboBox"
-											  Grid.Column="0"
-											  ItemsSource="{Binding DatatypesItemSource}"
-											  SelectedItem="{Binding SelectedDatatype, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-											  DisplayMemberPath="Name"
-											  MaxDropDownHeight="200"
-											  Style="{DynamicResource VirtualisedMetroComboBox}"
-											  IsEditable="False"></ComboBox>
+										          Grid.Column="0"
+										          ItemsSource="{Binding DatatypesItemSource}"
+										          SelectedItem="{Binding SelectedDatatype, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+										          DisplayMemberPath="Name"
+										          MaxDropDownHeight="200"
+										          Style="{DynamicResource VirtualisedMetroComboBox}"
+										          IsEditable="False">
+									</ComboBox>
 
 									<TextBox x:Name="LengthTextBox"
-											 Grid.Column="1"
-											 controls:TextBoxHelper.UseFloatingWatermark="True"
-											 controls:TextBoxHelper.Watermark="Lenght"
-											 Text="{Binding SelectedDatatype.Lenght, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, NotifyOnValidationError=True, ValidatesOnDataErrors=True}"
-											 >
+										         Grid.Column="1"
+										         controls:TextBoxHelper.UseFloatingWatermark="True"
+										         controls:TextBoxHelper.Watermark="Lenght"
+										         Text="{Binding SelectedDatatype.Lenght, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, NotifyOnValidationError=True, ValidatesOnDataErrors=True}">
 										<TextBox.Style>
-												 <Style TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}">
-													<Style.Triggers>
-													<DataTrigger Binding="{Binding SelectedDatatype.HasLenght, 
+											<Style TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}">
+												<Style.Triggers>
+													<DataTrigger
+															Binding="{Binding SelectedDatatype.HasLenght, 
 														Mode=OneWay, 
-														UpdateSourceTrigger=PropertyChanged}" Value="True">
+														UpdateSourceTrigger=PropertyChanged}"
+															Value="True">
 														<Setter Property="Visibility" Value="Visible"></Setter>
 													</DataTrigger>
 
-													<DataTrigger Binding="{Binding SelectedDatatype.HasLenght, 
+													<DataTrigger
+															Binding="{Binding SelectedDatatype.HasLenght, 
 														Mode=OneWay, 
-														UpdateSourceTrigger=PropertyChanged}" Value="False">
+														UpdateSourceTrigger=PropertyChanged}"
+															Value="False">
 														<Setter Property="Visibility" Value="Collapsed"></Setter>
 													</DataTrigger>
-														
+
 													<Trigger Property="Validation.HasError" Value="True">
 														<Setter Property="FocusManager.FocusedElement" Value="{Binding ElementName=LengthTextBox}"></Setter>
 													</Trigger>
 												</Style.Triggers>
-												</Style>
-											 </TextBox.Style>
+											</Style>
+										</TextBox.Style>
 									</TextBox>
-									
+
 									<TextBox x:Name="PrecisonTextBox"
-											 Grid.Column="1"
-											 controls:TextBoxHelper.UseFloatingWatermark="True"
-											 controls:TextBoxHelper.Watermark="Precision"
-											 Text="{Binding SelectedDatatype.Precision, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, NotifyOnValidationError=True, ValidatesOnDataErrors=True}">
+										         Grid.Column="1"
+										         controls:TextBoxHelper.UseFloatingWatermark="True"
+										         controls:TextBoxHelper.Watermark="Precision"
+										         Text="{Binding SelectedDatatype.Precision, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, NotifyOnValidationError=True, ValidatesOnDataErrors=True}">
 										<TextBox.Style>
 											<Style TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}">
 												<Style.Triggers>
-													<DataTrigger Binding="{Binding SelectedDatatype.HasPrecision, 
+													<DataTrigger
+															Binding="{Binding SelectedDatatype.HasPrecision, 
 														Mode=OneWay, 
-														UpdateSourceTrigger=PropertyChanged}" Value="True">
+														UpdateSourceTrigger=PropertyChanged}"
+															Value="True">
 														<Setter Property="Visibility" Value="Visible"></Setter>
 													</DataTrigger>
 
-													<DataTrigger Binding="{Binding SelectedDatatype.HasPrecision, 
+													<DataTrigger
+															Binding="{Binding SelectedDatatype.HasPrecision, 
 														Mode=OneWay, 
-														UpdateSourceTrigger=PropertyChanged}" Value="False">
+														UpdateSourceTrigger=PropertyChanged}"
+															Value="False">
 														<Setter Property="Visibility" Value="Collapsed"></Setter>
 													</DataTrigger>
 												</Style.Triggers>
@@ -157,37 +161,41 @@
 									</TextBox>
 
 									<TextBox x:Name="ScaleTextBox"
-											 Grid.Column="2"
-											 controls:TextBoxHelper.UseFloatingWatermark="True"
-											 controls:TextBoxHelper.Watermark="Scale"
-											 Text="{Binding SelectedDatatype.Scale, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, NotifyOnValidationError=True, ValidatesOnDataErrors=True}">
+										         Grid.Column="2"
+										         controls:TextBoxHelper.UseFloatingWatermark="True"
+										         controls:TextBoxHelper.Watermark="Scale"
+										         Text="{Binding SelectedDatatype.Scale, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, NotifyOnValidationError=True, ValidatesOnDataErrors=True}">
 										<TextBox.Style>
 											<Style TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}">
 												<Style.Triggers>
-													<DataTrigger Binding="{Binding SelectedDatatype.HasScale, 
+													<DataTrigger
+															Binding="{Binding SelectedDatatype.HasScale, 
 														Mode=OneWay, 
-														UpdateSourceTrigger=PropertyChanged}" Value="True">
+														UpdateSourceTrigger=PropertyChanged}"
+															Value="True">
 														<Setter Property="Visibility" Value="Visible"></Setter>
 													</DataTrigger>
 
-													<DataTrigger Binding="{Binding SelectedDatatype.HasScale, 
+													<DataTrigger
+															Binding="{Binding SelectedDatatype.HasScale, 
 														Mode=OneWay, 
-														UpdateSourceTrigger=PropertyChanged}" Value="False">
+														UpdateSourceTrigger=PropertyChanged}"
+															Value="False">
 														<Setter Property="Visibility" Value="Collapsed"></Setter>
 													</DataTrigger>
 												</Style.Triggers>
 											</Style>
 										</TextBox.Style>
 									</TextBox>
-									
+
 								</Grid>
 							</DataTemplate>
 						</DataGridTemplateColumn.CellTemplate>
 					</DataGridTemplateColumn>
 
-					<DataGridCheckBoxColumn Binding="{Binding AllowNull, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
-											Header="Allow Null"
-											ElementStyle="{DynamicResource MetroDataGridCheckBox}">
+					<DataGridCheckBoxColumn Binding="{Binding AllowNull, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+						                        Header="Allow Null"
+						                        ElementStyle="{DynamicResource MetroDataGridCheckBox}">
 						<DataGridCheckBoxColumn.CellStyle>
 							<Style TargetType="DataGridCell" BasedOn="{StaticResource MetroDataGridCell}">
 								<Style.Triggers>

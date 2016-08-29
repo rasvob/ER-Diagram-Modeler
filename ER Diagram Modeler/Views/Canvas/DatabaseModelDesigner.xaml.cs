@@ -144,7 +144,8 @@ namespace ER_Diagram_Modeler.Views.Canvas
 				MeasureToFit(content);
 				DesignerCanvas.SetTop(content, viewModel.Top);
 				DesignerCanvas.SetLeft(content, viewModel.Left);
-				DesignerScrollViewer.ScrollToHorizontalOffset(DesignerScrollViewer.HorizontalOffset - 0.1);
+				viewModel.Height = content.ActualHeight;
+				viewModel.Width = content.ActualWidth;
 			};
 		}
 
@@ -191,7 +192,14 @@ namespace ER_Diagram_Modeler.Views.Canvas
 				
 		private void TestCommand_OnExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
-			ViewModel.MouseMode = ViewModel.MouseMode == MouseMode.Panning ? MouseMode.Select : MouseMode.Panning;
+			foreach (TableViewModel model in ViewModel.TableViewModels)
+			{
+				Trace.WriteLine(model.Model.Title);
+				Trace.WriteLine($"Top: {model.Top}, Left: {model.Left}, Width: {model.Width}, Height: {model.Height}");
+				var table =
+					ModelDesignerCanvas.Children.OfType<TableContent>().FirstOrDefault(t => t.TableViewModel.Equals(model));
+				Trace.WriteLine(table.ActualHeight);
+			}
 		}
 
 		private void DesignerScrollViewer_OnPreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)

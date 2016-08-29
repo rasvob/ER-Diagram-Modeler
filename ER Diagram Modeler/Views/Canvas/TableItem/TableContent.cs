@@ -79,11 +79,14 @@ namespace ER_Diagram_Modeler.Views.Canvas.TableItem
 				{
 					case TableViewMode.Standard:
 						Height = _oldHeight;
+						TableViewModel.Height = _oldHeight;
 						break;
 					case TableViewMode.NameOnly:
-						_oldHeight = Height;
+						_oldHeight = TableViewModel.Height;
 						Height = TableItemMinHeight;
 						Width = ActualWidth;
+						TableViewModel.Height = Height;
+						TableViewModel.Width = Width;
 						break;
 				}
 			}

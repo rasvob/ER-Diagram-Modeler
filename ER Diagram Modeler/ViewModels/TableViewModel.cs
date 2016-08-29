@@ -15,6 +15,30 @@ namespace ER_Diagram_Modeler.ViewModels
 		private double _left;
 		private double _top;
 		private bool _isSelected;
+		private double _width;
+		private double _height;
+
+		public double Height
+		{
+			get { return _height; }
+			set
+			{
+				if (value.Equals(_height)) return;
+				_height = value;
+				OnPropertyChanged();
+			}
+		}
+
+		public double Width
+		{
+			get { return _width; }
+			set
+			{
+				if (value.Equals(_width)) return;
+				_width = value;
+				OnPropertyChanged();
+			}
+		}
 
 		public bool IsSelected
 		{
