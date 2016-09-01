@@ -50,7 +50,7 @@ namespace ER_Diagram_Modeler.Views.Canvas.TableItem
 				double maxDeltaVertical = double.MaxValue;
 				double maxDeltaHorizontal = double.MaxValue;
 
-				foreach(TableContent item in _canvas.SelectedItems)
+				foreach(TableContent item in _canvas.SelectedTables)
 				{
 					minLeft = Math.Min(DesignerCanvas.GetLeft(item), minLeft);
 					minTop = Math.Min(DesignerCanvas.GetTop(item), minTop);
@@ -70,7 +70,7 @@ namespace ER_Diagram_Modeler.Views.Canvas.TableItem
 
 
 
-				foreach(TableContent item in _canvas.SelectedItems)
+				foreach(TableContent item in _canvas.SelectedTables)
 				{
 
 					if (item.TableViewModel.ViewMode != TableViewMode.NameOnly)

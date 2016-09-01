@@ -18,7 +18,8 @@
 		WindowStartupLocation="CenterScreen"
 		BorderThickness="1"
 		Icon="icon.ico"
-        Title="ER Diagram Modeler" Height="768" Width="1024">
+		GlowBrush="{StaticResource AccentColorBrush}"
+        Title="ER Diagram Modeler" Height="1000" Width="1500">
 	<Window.Resources>
 		<ResourceDictionary>
 			<ResourceDictionary.MergedDictionaries>

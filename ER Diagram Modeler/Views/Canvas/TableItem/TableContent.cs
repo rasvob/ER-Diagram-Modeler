@@ -13,8 +13,8 @@ namespace ER_Diagram_Modeler.Views.Canvas.TableItem
 	{
 		public TableViewModel TableViewModel { get; set; }
 
-		public static readonly int ZIndexSelectedValue = 1000;
-		public static readonly int ZIndexUnSelectedValue = 0;
+		public static readonly int ZIndexSelectedValue = DesignerCanvas.TableSelectedZIndex;
+		public static readonly int ZIndexUnSelectedValue = DesignerCanvas.TableUnselectedZIndex;
 
 		private double _oldHeight;
 
@@ -118,28 +118,5 @@ namespace ER_Diagram_Modeler.Views.Canvas.TableItem
 			}
 			e.Handled = false;
 		}
-
-		//public void LoadThumb()
-		//{
-		//	if(Template != null)
-		//	{
-		//		ContentPresenter contentPresenter = Template.FindName("ContentPresenter", this) as ContentPresenter;
-		//		MoveThumb moveThumb = Template.FindName("MoveThumb", this) as MoveThumb;
-		//		if(contentPresenter != null && moveThumb != null)
-		//		{
-		//			UIElement contentVisual = VisualTreeHelper.GetChild(contentPresenter, 0) as UIElement;
-
-		//			if(contentVisual != null)
-		//			{
-		//				ControlTemplate template = GetMoveThumbTemplate(contentVisual);
-
-		//				if(template != null)
-		//				{
-		//					moveThumb.Template = template;
-		//				}
-		//			}
-		//		}
-		//	}
-		//}
 	}
 }

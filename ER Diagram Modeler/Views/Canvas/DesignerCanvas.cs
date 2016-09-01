@@ -13,12 +13,16 @@ namespace ER_Diagram_Modeler.Views.Canvas
 {
 	public class DesignerCanvas: System.Windows.Controls.Canvas
 	{
-		public IEnumerable<TableContent> SelectedItems => Children.OfType<TableContent>().Where(t => t.IsSelected);
+		public static int TableSelectedZIndex = 100;
+		public static int TableUnselectedZIndex = 10;
+		public static int ConnectionLineZIndex = 5;
+
+		public IEnumerable<TableContent> SelectedTables => Children.OfType<TableContent>().Where(t => t.IsSelected);
 		public IEnumerable<TableContent> Tables => Children.OfType<TableContent>();
 
 		public void DeselectAll()
 		{
-			foreach (TableContent item in SelectedItems)
+			foreach (TableContent item in SelectedTables)
 			{
 				item.IsSelected = false;
 			}
@@ -28,7 +32,7 @@ namespace ER_Diagram_Modeler.Views.Canvas
 		{
 			foreach (TableContent item in Tables)
 			{
-				SetZIndex(item, 0);
+				SetZIndex(item, TableUnselectedZIndex);
 			}
 		}
 	}

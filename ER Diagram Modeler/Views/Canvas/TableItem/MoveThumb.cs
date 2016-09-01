@@ -38,7 +38,7 @@ namespace ER_Diagram_Modeler.Views.Canvas.TableItem
 				double maxTop = double.MinValue;
 				double maxLeft = double.MinValue;
 
-				foreach (TableContent item in _canvas.SelectedItems)
+				foreach (TableContent item in _canvas.SelectedTables)
 				{
 					minLeft = Math.Min(DesignerCanvas.GetLeft(item), minLeft);
 					minTop = Math.Min(DesignerCanvas.GetTop(item), minTop);
@@ -59,7 +59,7 @@ namespace ER_Diagram_Modeler.Views.Canvas.TableItem
 					deltaVertical = 0;
 				}
 
-				foreach (TableContent item in _canvas.SelectedItems)
+				foreach (TableContent item in _canvas.SelectedTables)
 				{
 					item.TableViewModel.Left = DesignerCanvas.GetLeft(item) + deltaHorizontal;
 					item.TableViewModel.Top = DesignerCanvas.GetTop(item) + deltaVertical;
@@ -69,13 +69,6 @@ namespace ER_Diagram_Modeler.Views.Canvas.TableItem
 
 				dragDeltaEventArgs.Handled = true;
 			}
-
-
-			//var item = DataContext as ContentControl;
-			//if (item == null) return;
-			//Point dragDelta = new Point((int)dragDeltaEventArgs.HorizontalChange, (int)dragDeltaEventArgs.VerticalChange);
-			//System.Windows.Controls.Canvas.SetLeft(item, System.Windows.Controls.Canvas.GetLeft(item) + dragDelta.X);
-			//System.Windows.Controls.Canvas.SetTop(item, System.Windows.Controls.Canvas.GetTop(item) + dragDelta.Y);
 		}
 	}
 }

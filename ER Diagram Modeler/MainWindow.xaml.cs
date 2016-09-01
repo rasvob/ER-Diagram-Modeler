@@ -38,6 +38,15 @@ namespace ER_Diagram_Modeler
 			MainWindowViewModel = new MainWindowViewModel();
 			DatabaseModelDesigner.ViewModel = MainWindowViewModel.DatabaseModelDesignerViewModel;
 			DataContext = MainWindowViewModel;
+
+			//TEST
+			//var tab1 = SeedDataTable();
+			//var tab2 = SeedDataTable();
+
+			//tab2.Top = 400;
+			//tab2.Left = 450;
+			//MainWindowViewModel.DatabaseModelDesignerViewModel.TableViewModels.Add(tab1);
+			//MainWindowViewModel.DatabaseModelDesignerViewModel.TableViewModels.Add(tab2);
 		}
 
 		public static TableViewModel SeedDataTable()
@@ -89,8 +98,8 @@ namespace ER_Diagram_Modeler
 
 		private void NewTableCommand_CanExecute(object sender, CanExecuteRoutedEventArgs e)
 		{
-			var isSenderTextBox = FocusManager.GetFocusedElement(this) is TextBox;
-			if (isSenderTextBox)
+			var isSenderAllowed = (FocusManager.GetFocusedElement(this) is ScrollViewer) || (FocusManager.GetFocusedElement(this) is Button);
+			if (!isSenderAllowed)
 			{
 				e.ContinueRouting = true;
 				e.CanExecute = false;

@@ -20,6 +20,7 @@
 			<valueConverters:MouseModeToCursorConverter x:Key="MouseModeToCursorConverter"></valueConverters:MouseModeToCursorConverter>
 			<valueConverters:MouseModeToCanvasEnabledConverter x:Key="CanvasEnabledConverter"></valueConverters:MouseModeToCanvasEnabledConverter>
 			<RoutedCommand x:Key="TestCommand"></RoutedCommand>
+			<RoutedCommand x:Key="TestCommand2"></RoutedCommand>
 		</ResourceDictionary>
 	</UserControl.Resources>
 	
@@ -35,13 +36,20 @@
 		<KeyBinding Command="{Binding ChangeZoomCommand}"
 					CommandParameter="2"
 					Key="F3"/>
+		
 		<KeyBinding Command="{StaticResource TestCommand}"
 					Key="F4" />
+
+		<KeyBinding Command="{StaticResource TestCommand2}"
+					Key="F5" />
 	</UserControl.InputBindings>
 	
 	<UserControl.CommandBindings>
 		<CommandBinding Command="{StaticResource TestCommand}"
 						Executed="TestCommand_OnExecuted"></CommandBinding>
+
+		<CommandBinding Command="{StaticResource TestCommand2}"
+						Executed="CommandBinding_OnExecuted"></CommandBinding>
 	</UserControl.CommandBindings>
 
 	<Grid Background="GhostWhite">
