@@ -4,7 +4,7 @@ using ER_Diagram_Modeler.EventArgs;
 
 namespace ER_Diagram_Modeler.Views.Canvas.Connection
 {
-	public class ConnectionPoint
+	public class ConnectionPoint: IEquatable<ConnectionPoint>
 	{
 		private double _x;
 		private double _y;
@@ -35,14 +35,25 @@ namespace ER_Diagram_Modeler.Views.Canvas.Connection
 			Y += yOffset;
 		}
 
+		public bool Equals(ConnectionPoint other)
+		{
+			return X == other.X && Y == other.Y;
+		}
+
+		public override int GetHashCode()
+		{
+			unchecked
+			{
+				int hash = 13;
+				hash = 31*hash + X.GetHashCode();
+				hash = 31*hash + Y.GetHashCode();
+				return hash;
+			}
+		}
+
 		public override string ToString()
 		{
 			return $"[{X}|{Y}]";
-		}
-
-		public bool IsEqual(ConnectionPoint compared)
-		{
-			return X == compared.X && Y == compared.Y;
 		}
 
 		public event EventHandler<ConnectionPointEventArgs> CoordinatesChanged;

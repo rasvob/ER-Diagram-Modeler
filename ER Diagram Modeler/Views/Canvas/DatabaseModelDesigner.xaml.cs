@@ -37,7 +37,7 @@ namespace ER_Diagram_Modeler.Views.Canvas
 	/// </summary>
 	public partial class DatabaseModelDesigner : UserControl
 	{
-		private ObservableCollection<ConnectionInfo> _connections; 
+		private readonly ObservableCollection<ConnectionInfo> _connections; 
 
 		private DatabaseModelDesignerViewModel _viewModel;
 		private Point? _dragStartPoint = null;
@@ -117,12 +117,46 @@ namespace ER_Diagram_Modeler.Views.Canvas
 					foreach (ConnectionInfo item in args.NewItems)
 					{
 						AddConnectionElement(item);
+						item.Lines.CollectionChanged += LinesOnCollectionChanged;
+						item.Points.CollectionChanged += PointsOnCollectionChanged;
 					}
 					break;
 				case NotifyCollectionChangedAction.Remove:
 					foreach(ConnectionInfo item in args.OldItems)
 					{
 						RemoveConnectionElement(item);
+					}
+					break;
+			}
+		}
+
+		private void PointsOnCollectionChanged(object sender, NotifyCollectionChangedEventArgs args)
+		{
+			switch (args.Action)
+			{
+				case NotifyCollectionChangedAction.Add:
+					//Trace.WriteLine("Point added");
+					break;
+				case NotifyCollectionChangedAction.Remove:
+					//Trace.WriteLine("Point removed");
+					break;
+			}
+		}
+
+		private void LinesOnCollectionChanged(object sender, NotifyCollectionChangedEventArgs args)
+		{
+			switch (args.Action)
+			{
+				case NotifyCollectionChangedAction.Add:
+					foreach (ConnectionLine newItem in args.NewItems)
+					{
+						ModelDesignerCanvas.Children.Add(newItem.Line);
+					}
+					break;
+				case NotifyCollectionChangedAction.Remove:
+					foreach (ConnectionLine newItem in args.OldItems)
+					{
+						ModelDesignerCanvas.Children.Remove(newItem.Line);
 					}
 					break;
 			}
@@ -245,32 +279,32 @@ namespace ER_Diagram_Modeler.Views.Canvas
 
 			info.Points.Add(new ConnectionPoint()
 			{
-				X = 5,
-				Y = 5
+				X = 5, Y = 5
 			});
 
 			info.Points.Add(new ConnectionPoint()
 			{
-				X = 100,
-				Y = 5
+				X = 100, Y = 5
 			});
 
 			info.Points.Add(new ConnectionPoint()
 			{
-				X = 100,
-				Y = 80
+				X = 100, Y = 80
 			});
 
 			info.Points.Add(new ConnectionPoint()
 			{
-				X = 210,
-				Y = 80
+				X = 210, Y = 80
 			});
 
 			info.Points.Add(new ConnectionPoint()
 			{
-				X = 210,
-				Y = 300
+				X = 210, Y = 300
+			});
+
+			info.Points.Add(new ConnectionPoint()
+			{
+				X = 400, Y = 300
 			});
 
 			info.BuildLinesFromPoints();
@@ -292,7 +326,7 @@ namespace ER_Diagram_Modeler.Views.Canvas
 
 			_connections.Remove(info);
 
-			foreach(ConnectionPoint connectionPoint in info.Points)
+			foreach (ConnectionPoint connectionPoint in info.Points)
 			{
 				Trace.WriteLine($"{connectionPoint.X}:{connectionPoint.Y}");
 			}
@@ -300,7 +334,7 @@ namespace ER_Diagram_Modeler.Views.Canvas
 			info.BuildPointsFromLines();
 
 			Trace.WriteLine("---");
-			foreach(ConnectionPoint connectionPoint in info.Points)
+			foreach (ConnectionPoint connectionPoint in info.Points)
 			{
 				Trace.WriteLine($"{connectionPoint.X}:{connectionPoint.Y}");
 			}
@@ -408,7 +442,5 @@ namespace ER_Diagram_Modeler.Views.Canvas
 				e.Handled = true;
 			}
 		}
-
-		
 	}
 }

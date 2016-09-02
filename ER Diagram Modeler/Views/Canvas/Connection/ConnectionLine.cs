@@ -52,6 +52,8 @@ namespace ER_Diagram_Modeler.Views.Canvas.Connection
 			Line.Stroke = Application.Current.FindResource("PrimaryColorBrush") as SolidColorBrush;
 			Line.StrokeThickness = 4;
 			Line.SnapsToDevicePixels = true;
+			Line.StrokeEndLineCap = PenLineCap.Round;
+			Line.StrokeStartLineCap = PenLineCap.Round;
 
 			StartPoint.CoordinatesChanged += StartPointOnCoordinatesChanged;
 			EndPoint.CoordinatesChanged += EndPointOnCoordinatesChanged;
@@ -69,13 +71,13 @@ namespace ER_Diagram_Modeler.Views.Canvas.Connection
 
 				if (Orientation == LineOrientation.Vertical)
 				{
-					StartPoint.X = _dragStartPointStart.X + offset.X;
-					EndPoint.X = _dragStartPointEnd.X + offset.X;
+					StartPoint.X = _dragStartPointStart.X + (int)offset.X;
+					EndPoint.X = _dragStartPointEnd.X + (int)offset.X;
 				}
 				else
 				{
-					StartPoint.Y = _dragStartPointStart.Y + offset.Y;
-					EndPoint.Y = _dragStartPointEnd.Y + offset.Y;
+					StartPoint.Y = _dragStartPointStart.Y + (int)offset.Y;
+					EndPoint.Y = _dragStartPointEnd.Y + (int)offset.Y;
 				}
 
 				var evArgs = new ConnectionLineMovingEventArgs()

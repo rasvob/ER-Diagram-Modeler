@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Security.Policy;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Shapes;
@@ -56,12 +58,26 @@ namespace ER_Diagram_Modeler.Views.Canvas.Connection
 			}
 		}
 
+		public void BuildPointsFromLines()
+		{
+			if(Lines.Count < 1)
+			{
+				return;
+			}
+
+			ClearPoints();
+			Points.Add(Lines[0].StartPoint);
+
+			foreach(ConnectionLine line in Lines)
+			{
+				Points.Add(line.EndPoint);
+			}
+		}
+
 		private void LineOnBeforeLineMove(object sender, ConnectionLineMovingEventArgs args)
 		{
-			_moveLine1 = Lines.FirstOrDefault(t => t.EndPoint.IsEqual(args.OriginalStartPoint));
-			_moveLine2 = Lines.FirstOrDefault(t => t.StartPoint.IsEqual(args.OriginalEndPoint));
-			Trace.WriteLine(_moveLine1);
-			Trace.WriteLine(_moveLine2);
+			_moveLine1 = Lines.FirstOrDefault(t => t.EndPoint.Equals(args.OriginalStartPoint));
+			_moveLine2 = Lines.FirstOrDefault(t => t.StartPoint.Equals(args.OriginalEndPoint));
 		}
 
 		private void LineOnLineMoving(object sender, ConnectionLineMovingEventArgs args)
@@ -99,21 +115,18 @@ namespace ER_Diagram_Modeler.Views.Canvas.Connection
 
 			_moveLine1 = null;
 			_moveLine2 = null;
-		}
 
-		public void BuildPointsFromLines()
-		{
-			if (Lines.Count < 1)
+			foreach (ConnectionLine connectionLine in Lines)
 			{
-				return;
+				Trace.WriteLine(connectionLine);
 			}
 
-			ClearPoints();
-			Points.Add(Lines[0].StartPoint);
+			SynchronizeBendingPoints();
 
-			foreach(ConnectionLine line in Lines)
+			Trace.WriteLine("---");
+			foreach (ConnectionPoint point in Points)
 			{
-				Points.Add(line.EndPoint);
+				Trace.WriteLine(point);
 			}
 		}
 
@@ -135,6 +148,44 @@ namespace ER_Diagram_Modeler.Views.Canvas.Connection
 				Lines.RemoveAt(0);
 			}
 			Lines.Clear();
+		}
+
+		private void RemoveRedundandBendPoints()
+		{
+			Trace.WriteLine("Before");
+			foreach (ConnectionPoint point in Points)
+			{
+				Trace.WriteLine(point);
+			}
+			Trace.WriteLine("before");
+
+
+			var duplicate = Points.GroupBy(t => t).Where(s => s.Count() > 1).Select(u => u.Key);
+			var forRemove = Points.Where(t => duplicate.Any(s => s.Equals(t))).ToList();
+
+			if (forRemove.Contains(Points[0]))
+			{
+				var item = forRemove.FirstOrDefault(t => t.Equals(Points[0]));
+				forRemove.Remove(item);
+			}
+
+			if(forRemove.Contains(Points[Points.Count - 1]))
+			{
+				var item = forRemove.FirstOrDefault(t => t.Equals(Points[Points.Count - 1]));
+				forRemove.Remove(item);
+			}
+
+			foreach (ConnectionPoint connectionPoint in forRemove)
+			{
+				Points.Remove(connectionPoint);
+			}
+		}
+
+		private void SynchronizeBendingPoints()
+		{
+			BuildPointsFromLines();
+			RemoveRedundandBendPoints();
+			BuildLinesFromPoints();
 		}
 
 		public void SplitLine(ConnectionLine line)
