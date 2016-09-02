@@ -35,6 +35,16 @@ namespace ER_Diagram_Modeler.Views.Canvas.Connection
 			Y += yOffset;
 		}
 
+		public override string ToString()
+		{
+			return $"[{X}|{Y}]";
+		}
+
+		public bool IsEqual(ConnectionPoint compared)
+		{
+			return X == compared.X && Y == compared.Y;
+		}
+
 		public event EventHandler<ConnectionPointEventArgs> CoordinatesChanged;
 
 		protected virtual void OnCoordinatesChanged(ConnectionPointEventArgs e)

@@ -296,6 +296,7 @@ namespace ER_Diagram_Modeler.Views.Canvas
 			{
 				Trace.WriteLine($"{connectionPoint.X}:{connectionPoint.Y}");
 			}
+
 			info.BuildPointsFromLines();
 
 			Trace.WriteLine("---");
@@ -304,7 +305,6 @@ namespace ER_Diagram_Modeler.Views.Canvas
 				Trace.WriteLine($"{connectionPoint.X}:{connectionPoint.Y}");
 			}
 
-			info.Lines.Clear();
 			info.BuildLinesFromPoints();
 
 			_connections.Add(info);

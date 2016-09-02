@@ -23,6 +23,8 @@ namespace ER_Diagram_Modeler.Views.Canvas.Connection
 		public Line Line { get; }
 
 		public event EventHandler LineMoved;
+		public event EventHandler<ConnectionLineMovingEventArgs> LineMoving;
+		public event EventHandler<ConnectionLineMovingEventArgs> BeforeLineMove; 
 
 		public LineOrientation Orientation
 		{
@@ -47,7 +49,7 @@ namespace ER_Diagram_Modeler.Views.Canvas.Connection
 			StartPoint = new ConnectionPoint();
 			EndPoint = new ConnectionPoint();
 
-			Line.Stroke = new SolidColorBrush(Colors.DimGray);
+			Line.Stroke = Application.Current.FindResource("PrimaryColorBrush") as SolidColorBrush;
 			Line.StrokeThickness = 4;
 			Line.SnapsToDevicePixels = true;
 
@@ -75,6 +77,13 @@ namespace ER_Diagram_Modeler.Views.Canvas.Connection
 					StartPoint.Y = _dragStartPointStart.Y + offset.Y;
 					EndPoint.Y = _dragStartPointEnd.Y + offset.Y;
 				}
+
+				var evArgs = new ConnectionLineMovingEventArgs()
+				{
+					Offset = offset
+				};
+
+				OnLineMoving(evArgs);
 			}
 		}
 
@@ -98,6 +107,14 @@ namespace ER_Diagram_Modeler.Views.Canvas.Connection
 			_dragStartPointEnd.Y = EndPoint.Y;
 
 			snd?.CaptureMouse();
+
+			var evArgs = new ConnectionLineMovingEventArgs()
+			{
+				OriginalStartPoint = _dragStartPointStart,
+				OriginalEndPoint = _dragStartPointEnd
+			};
+			OnBeforeLineMove(evArgs);
+
 			args.Handled = true;
 		}
 
@@ -124,9 +141,24 @@ namespace ER_Diagram_Modeler.Views.Canvas.Connection
 			return res;
 		}
 
+		public override string ToString()
+		{
+			return $"{StartPoint} | {EndPoint}";
+		}
+
 		protected virtual void OnLineMoved()
 		{
 			LineMoved?.Invoke(this, System.EventArgs.Empty);
+		}
+
+		protected virtual void OnLineMoving(ConnectionLineMovingEventArgs e)
+		{
+			LineMoving?.Invoke(this, e);
+		}
+
+		protected virtual void OnBeforeLineMove(ConnectionLineMovingEventArgs e)
+		{
+			BeforeLineMove?.Invoke(this, e);
 		}
 	}
 }

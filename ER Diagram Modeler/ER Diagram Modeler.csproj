@@ -125,6 +125,7 @@
     <Compile Include="Dialogs\TableNameDialog.xaml.cs">
       <DependentUpon>TableNameDialog.xaml</DependentUpon>
     </Compile>
+    <Compile Include="EventArgs\ConnectionLineMovingEventArgs.cs" />
     <Compile Include="EventArgs\ConnectionPointEventArgs.cs" />
     <Compile Include="EventArgs\ScaleEventArgs.cs" />
     <Compile Include="Models\Designer\Datatype.cs" />
@@ -147,10 +148,7 @@
     <Compile Include="ViewModels\TableViewModel.cs" />
     <Compile Include="Views\Canvas\Connection\ConnectionInfo.cs" />
     <Compile Include="Views\Canvas\Connection\ConnectionLine.cs" />
-    <Compile Include="Views\Canvas\Connection\ConnectionLineThumb.cs" />
     <Compile Include="Views\Canvas\Connection\ConnectionPoint.cs" />
-    <Compile Include="Views\Canvas\Connection\ConnectionPointThumb.cs" />
-    <Compile Include="Views\Canvas\Connection\LineContent.cs" />
     <Compile Include="Views\Canvas\DesignerCanvas.cs" />
     <Compile Include="Views\Canvas\TableItem\DesignerItemDecorator.cs" />
     <Compile Include="Views\Canvas\DatabaseModelDesigner.xaml.cs">
@@ -207,14 +205,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Resources\ConnectionPointStyle.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\Canvas\Connection\LineItem.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\Canvas\Connection\LineMoveThumb.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

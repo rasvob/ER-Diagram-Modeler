@@ -1,7 +1,11 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows;
+using System.Windows.Input;
+using System.Windows.Shapes;
+using ER_Diagram_Modeler.EventArgs;
 using ER_Diagram_Modeler.Models.Designer;
 using ER_Diagram_Modeler.ViewModels.Enums;
 
@@ -12,6 +16,9 @@ namespace ER_Diagram_Modeler.Views.Canvas.Connection
 		public RelationshipModel RelationshipModel { get; set; }
 		public ObservableCollection<ConnectionLine> Lines { get; } = new ObservableCollection<ConnectionLine>();
 		public ObservableCollection<ConnectionPoint> Points { get; } = new ObservableCollection<ConnectionPoint>();
+
+		private ConnectionLine _moveLine1 = null;
+		private ConnectionLine _moveLine2 = null;
 
 		public void BuildLinesFromPoints()
 		{
@@ -41,8 +48,57 @@ namespace ER_Diagram_Modeler.Views.Canvas.Connection
 					line.Orientation = LineOrientation.Horizontal;
 				}
 
+				line.BeforeLineMove += LineOnBeforeLineMove;
+				line.LineMoving += LineOnLineMoving;
+				line.LineMoved += LineOnLineMoved;
+
 				Lines.Add(line);
 			}
+		}
+
+		private void LineOnBeforeLineMove(object sender, ConnectionLineMovingEventArgs args)
+		{
+			_moveLine1 = Lines.FirstOrDefault(t => t.EndPoint.IsEqual(args.OriginalStartPoint));
+			_moveLine2 = Lines.FirstOrDefault(t => t.StartPoint.IsEqual(args.OriginalEndPoint));
+			Trace.WriteLine(_moveLine1);
+			Trace.WriteLine(_moveLine2);
+		}
+
+		private void LineOnLineMoving(object sender, ConnectionLineMovingEventArgs args)
+		{
+			var line = sender as ConnectionLine;
+
+			if (_moveLine1 != null)
+			{
+				_moveLine1.EndPoint.X = line.StartPoint.X;
+				_moveLine1.EndPoint.Y = line.StartPoint.Y;
+			}
+
+			if (_moveLine2 != null)
+			{
+				_moveLine2.StartPoint.X = line.EndPoint.X;
+				_moveLine2.StartPoint.Y = line.EndPoint.Y;
+			}
+		}
+
+		private void LineOnLineMoved(object sender, System.EventArgs eventArgs)
+		{
+			var line = sender as ConnectionLine;
+
+			if(_moveLine1 != null)
+			{
+				_moveLine1.EndPoint.X = line.StartPoint.X;
+				_moveLine1.EndPoint.Y = line.StartPoint.Y;
+			}
+
+			if(_moveLine2 != null)
+			{
+				_moveLine2.StartPoint.X = line.EndPoint.X;
+				_moveLine2.StartPoint.Y = line.EndPoint.Y;
+			}
+
+			_moveLine1 = null;
+			_moveLine2 = null;
 		}
 
 		public void BuildPointsFromLines()
@@ -63,18 +119,20 @@ namespace ER_Diagram_Modeler.Views.Canvas.Connection
 
 		private void ClearPoints()
 		{
-			for (int i = 0; i < Points.Count; i++)
+			var len = Points.Count;
+			for (int i = 0; i < len; i++)
 			{
-				Points.RemoveAt(i);
+				Points.RemoveAt(0);
 			}
 			Points.Clear();
 		}
 
 		private void ClearLines()
 		{
-			for(int i = 0; i < Lines.Count; i++)
+			int len = Lines.Count;
+			for(int i = 0; i < len; i++)
 			{
-				Lines.RemoveAt(i);
+				Lines.RemoveAt(0);
 			}
 			Lines.Clear();
 		}
