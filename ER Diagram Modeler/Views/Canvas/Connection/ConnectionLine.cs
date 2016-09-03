@@ -16,15 +16,30 @@ namespace ER_Diagram_Modeler.Views.Canvas.Connection
 		private ConnectionPoint _dragStartPointStart = new ConnectionPoint();
 		private ConnectionPoint _dragStartPointEnd = new ConnectionPoint();
 		private Point? _dragStartPoint;
+		private SolidColorBrush _unselectedColor = Application.Current.FindResource("PrimaryColorBrush") as SolidColorBrush;
+		private SolidColorBrush _selectedColor = Application.Current.FindResource("PrimaryColorDarkBrush") as SolidColorBrush;
 
 		private LineOrientation _orientation;
+		private bool _isSelected;
 		public ConnectionPoint StartPoint { get; }
 		public ConnectionPoint EndPoint { get; }
 		public Line Line { get; }
 
+		public bool IsSelected
+		{
+			get { return _isSelected; }
+			set
+			{
+				_isSelected = value;
+				Line.Stroke = value ? _selectedColor : _unselectedColor;
+			}
+		}
+
+		public event EventHandler LineSelected;
 		public event EventHandler LineMoved;
-		public event EventHandler<ConnectionLineMovingEventArgs> LineMoving;
-		public event EventHandler<ConnectionLineMovingEventArgs> BeforeLineMove; 
+		public event EventHandler LineMoving;
+		public event EventHandler<ConnectionLineBeforeMoveEventArgs> BeforeLineMove;
+		public event EventHandler<ConnectionPoint> LineSplit; 
 
 		public LineOrientation Orientation
 		{
@@ -49,7 +64,7 @@ namespace ER_Diagram_Modeler.Views.Canvas.Connection
 			StartPoint = new ConnectionPoint();
 			EndPoint = new ConnectionPoint();
 
-			Line.Stroke = Application.Current.FindResource("PrimaryColorBrush") as SolidColorBrush;
+			Line.Stroke = _unselectedColor;
 			Line.StrokeThickness = 4;
 			Line.SnapsToDevicePixels = true;
 			Line.StrokeEndLineCap = PenLineCap.Round;
@@ -61,6 +76,39 @@ namespace ER_Diagram_Modeler.Views.Canvas.Connection
 			Line.MouseLeftButtonUp += LineOnMouseLeftButtonUp;
 			Line.MouseLeftButtonDown += LineOnMouseLeftButtonDown;
 			Line.MouseMove += LineOnMouseMove;
+			Line.PreviewMouseDown += LineOnPreviewMouseDown;
+			Line.PreviewMouseUp += LineOnPreviewMouseUp;
+		}
+
+		private void LineOnPreviewMouseUp(object sender, MouseButtonEventArgs mouseButtonEventArgs)
+		{
+			OnLineSelected();
+		}
+
+		private void LineOnPreviewMouseDown(object sender, MouseButtonEventArgs args)
+		{
+			OnLineSelected();
+			if (args.MiddleButton == MouseButtonState.Pressed)
+			{
+				Line line = sender as Line;
+				var point = args.GetPosition(line);
+				var splitPoint = new ConnectionPoint();
+
+				if (Orientation == LineOrientation.Horizontal)
+				{
+					splitPoint.X = (int) point.X;
+					splitPoint.Y = StartPoint.Y;
+				}
+				else
+				{
+					splitPoint.X = StartPoint.X;
+					splitPoint.Y = (int) point.Y;
+				}
+
+				OnLineSplit(splitPoint);
+
+				args.Handled = true;
+			}
 		}
 
 		private void LineOnMouseMove(object sender, MouseEventArgs args)
@@ -80,12 +128,7 @@ namespace ER_Diagram_Modeler.Views.Canvas.Connection
 					EndPoint.Y = _dragStartPointEnd.Y + (int)offset.Y;
 				}
 
-				var evArgs = new ConnectionLineMovingEventArgs()
-				{
-					Offset = offset
-				};
-
-				OnLineMoving(evArgs);
+				OnLineMoving();
 			}
 		}
 
@@ -95,6 +138,7 @@ namespace ER_Diagram_Modeler.Views.Canvas.Connection
 			_dragStartPoint = null;
 			snd?.ReleaseMouseCapture();
 			OnLineMoved();
+			OnLineSelected();
 			args.Handled = true;
 		}
 
@@ -109,14 +153,13 @@ namespace ER_Diagram_Modeler.Views.Canvas.Connection
 			_dragStartPointEnd.Y = EndPoint.Y;
 
 			snd?.CaptureMouse();
-
-			var evArgs = new ConnectionLineMovingEventArgs()
+			OnBeforeLineMove(new ConnectionLineBeforeMoveEventArgs()
 			{
-				OriginalStartPoint = _dragStartPointStart,
-				OriginalEndPoint = _dragStartPointEnd
-			};
-			OnBeforeLineMove(evArgs);
+				OriginalEndPoint = _dragStartPointEnd,
+				OriginalStartPoint = _dragStartPointStart
+			});
 
+			OnLineSelected();
 			args.Handled = true;
 		}
 
@@ -153,14 +196,24 @@ namespace ER_Diagram_Modeler.Views.Canvas.Connection
 			LineMoved?.Invoke(this, System.EventArgs.Empty);
 		}
 
-		protected virtual void OnLineMoving(ConnectionLineMovingEventArgs e)
+		protected virtual void OnLineMoving()
 		{
-			LineMoving?.Invoke(this, e);
+			LineMoving?.Invoke(this, System.EventArgs.Empty);
 		}
 
-		protected virtual void OnBeforeLineMove(ConnectionLineMovingEventArgs e)
+		protected virtual void OnBeforeLineMove(ConnectionLineBeforeMoveEventArgs e)
 		{
 			BeforeLineMove?.Invoke(this, e);
+		}
+
+		protected virtual void OnLineSplit(ConnectionPoint e)
+		{
+			LineSplit?.Invoke(this, e);
+		}
+
+		protected virtual void OnLineSelected()
+		{
+			LineSelected?.Invoke(this, System.EventArgs.Empty);
 		}
 	}
 }

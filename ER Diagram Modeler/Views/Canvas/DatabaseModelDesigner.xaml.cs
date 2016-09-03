@@ -1,24 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.Collections.Specialized;
-using System.Data;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using ER_Diagram_Modeler.Configuration.Providers;
 using ER_Diagram_Modeler.Dialogs;
 using ER_Diagram_Modeler.EventArgs;
 using ER_Diagram_Modeler.Models.Designer;
@@ -26,9 +12,7 @@ using ER_Diagram_Modeler.ViewModels;
 using ER_Diagram_Modeler.ViewModels.Enums;
 using ER_Diagram_Modeler.Views.Canvas.Connection;
 using ER_Diagram_Modeler.Views.Canvas.TableItem;
-using Xceed.Wpf.AvalonDock.Controls;
 using Xceed.Wpf.Toolkit.Core.Utilities;
-using Size = System.Drawing.Size;
 
 namespace ER_Diagram_Modeler.Views.Canvas
 {
@@ -119,6 +103,8 @@ namespace ER_Diagram_Modeler.Views.Canvas
 						AddConnectionElement(item);
 						item.Lines.CollectionChanged += LinesOnCollectionChanged;
 						item.Points.CollectionChanged += PointsOnCollectionChanged;
+						item.Marks.CollectionChanged += MarksOnCollectionChanged;
+						item.SelectionChange += ItemOnSelectionChange;
 					}
 					break;
 				case NotifyCollectionChangedAction.Remove:
@@ -127,6 +113,38 @@ namespace ER_Diagram_Modeler.Views.Canvas
 						RemoveConnectionElement(item);
 					}
 					break;
+			}
+		}
+
+		private void MarksOnCollectionChanged(object sender, NotifyCollectionChangedEventArgs args)
+		{
+			switch (args.Action)
+			{
+				case NotifyCollectionChangedAction.Add:
+					foreach (ConnectionPointMark mark in args.NewItems)
+					{
+						ModelDesignerCanvas.Children.Add(mark.Mark);
+						DesignerCanvas.SetZIndex(mark.Mark, DesignerCanvas.ConnectionPointZIndex);
+					}
+					break;
+				case NotifyCollectionChangedAction.Remove:
+					foreach(ConnectionPointMark mark in args.OldItems)
+					{
+						ModelDesignerCanvas.Children.Remove(mark.Mark);
+					}
+					break;
+			}
+		}
+
+		private void ItemOnSelectionChange(object sender, bool val)
+		{
+			var conn = sender as ConnectionInfo;
+			if (val)
+			{
+				foreach (ConnectionInfo info in _connections.Where(t => !t.Equals(conn)))
+				{
+					info.IsSelected = false;
+				}
 			}
 		}
 
@@ -167,7 +185,8 @@ namespace ER_Diagram_Modeler.Views.Canvas
 			switch (ViewModel.MouseMode)
 			{
 				case MouseMode.Select:
-					ModelDesignerCanvas.DeselectAll();
+					ModelDesignerCanvas.DeselectTables();
+					DeselectConnections();
 					ModelDesignerCanvas.ResetZIndexes();
 					break;
 				case MouseMode.NewTable:
@@ -258,6 +277,14 @@ namespace ER_Diagram_Modeler.Views.Canvas
 			}
 		}
 
+		private void DeselectConnections()
+		{
+			foreach (ConnectionInfo info in _connections)
+			{
+				info.IsSelected = false;
+			}
+		}
+
 		private void DesignerScrollViewerOnScrollChanged(object sender, ScrollChangedEventArgs args)
 		{
 			//Extent size glith-stop
@@ -306,7 +333,6 @@ namespace ER_Diagram_Modeler.Views.Canvas
 			{
 				X = 400, Y = 300
 			});
-
 			info.BuildLinesFromPoints();
 
 			return info;
@@ -317,31 +343,13 @@ namespace ER_Diagram_Modeler.Views.Canvas
 		{
 			var info = TestNewConnectionCreate();
 			_connections.Add(info);
+			info.SynchronizeBendingPoints();
 		}
 
 		//Test command F5
 		private void CommandBinding_OnExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
-			var info = _connections[0];
-
-			_connections.Remove(info);
-
-			foreach (ConnectionPoint connectionPoint in info.Points)
-			{
-				Trace.WriteLine($"{connectionPoint.X}:{connectionPoint.Y}");
-			}
-
-			info.BuildPointsFromLines();
-
-			Trace.WriteLine("---");
-			foreach (ConnectionPoint connectionPoint in info.Points)
-			{
-				Trace.WriteLine($"{connectionPoint.X}:{connectionPoint.Y}");
-			}
-
-			info.BuildLinesFromPoints();
-
-			_connections.Add(info);
+			
 		}
 
 		#endregion

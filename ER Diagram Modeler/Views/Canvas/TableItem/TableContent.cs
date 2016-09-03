@@ -110,7 +110,7 @@ namespace ER_Diagram_Modeler.Views.Canvas.TableItem
 					if (!IsSelected)
 					{
 						canvas.ResetZIndexes();
-						canvas.DeselectAll();
+						canvas.DeselectTables();
 						IsSelected = true;
 						DesignerCanvas.SetZIndex(this, ZIndexSelectedValue);
 					}

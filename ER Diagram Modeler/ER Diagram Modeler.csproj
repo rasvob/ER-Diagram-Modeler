@@ -149,6 +149,7 @@
     <Compile Include="Views\Canvas\Connection\ConnectionInfo.cs" />
     <Compile Include="Views\Canvas\Connection\ConnectionLine.cs" />
     <Compile Include="Views\Canvas\Connection\ConnectionPoint.cs" />
+    <Compile Include="Views\Canvas\Connection\ConnectionPointMark.cs" />
     <Compile Include="Views\Canvas\DesignerCanvas.cs" />
     <Compile Include="Views\Canvas\TableItem\DesignerItemDecorator.cs" />
     <Compile Include="Views\Canvas\DatabaseModelDesigner.xaml.cs">

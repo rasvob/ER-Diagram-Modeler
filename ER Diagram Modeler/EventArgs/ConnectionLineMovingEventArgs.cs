@@ -3,10 +3,9 @@ using ER_Diagram_Modeler.Views.Canvas.Connection;
 
 namespace ER_Diagram_Modeler.EventArgs
 {
-	public class ConnectionLineMovingEventArgs
+	public class ConnectionLineBeforeMoveEventArgs
 	{
 		public ConnectionPoint OriginalStartPoint { get; set; }
 		public ConnectionPoint OriginalEndPoint { get; set; }
-		public Vector Offset { get; set; }
 	}
 }

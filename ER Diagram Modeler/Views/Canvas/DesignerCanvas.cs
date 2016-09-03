@@ -16,11 +16,12 @@ namespace ER_Diagram_Modeler.Views.Canvas
 		public static int TableSelectedZIndex = 100;
 		public static int TableUnselectedZIndex = 10;
 		public static int ConnectionLineZIndex = 5;
+		public static int ConnectionPointZIndex = 6;
 
 		public IEnumerable<TableContent> SelectedTables => Children.OfType<TableContent>().Where(t => t.IsSelected);
 		public IEnumerable<TableContent> Tables => Children.OfType<TableContent>();
 
-		public void DeselectAll()
+		public void DeselectTables()
 		{
 			foreach (TableContent item in SelectedTables)
 			{
