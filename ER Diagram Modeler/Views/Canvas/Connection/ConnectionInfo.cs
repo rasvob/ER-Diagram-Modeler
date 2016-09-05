@@ -28,7 +28,7 @@ namespace ER_Diagram_Modeler.Views.Canvas.Connection
 		private ConnectionPointMark _bendPoint1 = null;
 		private ConnectionPointMark _bendPoint2 = null;
 		private bool _isSelected;
-		private List<ConnectionPoint> _newBendPoints = new List<ConnectionPoint>(); 
+		private readonly List<ConnectionPoint> _newBendPoints = new List<ConnectionPoint>(); 
 
 		public event EventHandler<bool> SelectionChange; 
 
@@ -261,20 +261,20 @@ namespace ER_Diagram_Modeler.Views.Canvas.Connection
 
 		private void RemoveRedundandBendPoints()
 		{
-			var duplicate = Points.GroupBy(t => t).Where(s => s.Count() > 1).Select(u => u.Key);
+			var duplicate = Points.Skip(1).Take(Points.Count - 2).GroupBy(t => t).Where(s => s.Count() > 1).Select(u => u.Key);
 			var forRemove = Points.Where(t => duplicate.Any(s => s.Equals(t))).Where(s => !_newBendPoints.Any(r => r.Equals(s))).ToList();
 
-			if (forRemove.Contains(Points[0]))
-			{
-				var item = forRemove.FirstOrDefault(t => t.Equals(Points[0]));
-				forRemove.Remove(item);
-			}
+			//if (forRemove.Contains(Points[0]))
+			//{
+			//	var item = forRemove.FirstOrDefault(t => t.Equals(Points[0]));
+			//	forRemove.Remove(item);
+			//}
 
-			if (forRemove.Contains(Points[Points.Count - 1]))
-			{
-				var item = forRemove.FirstOrDefault(t => t.Equals(Points[Points.Count - 1]));
-				forRemove.Remove(item);
-			}
+			//if (forRemove.Contains(Points[Points.Count - 1]))
+			//{
+			//	var item = forRemove.FirstOrDefault(t => t.Equals(Points[Points.Count - 1]));
+			//	forRemove.Remove(item);
+			//}
 
 			foreach (ConnectionPoint connectionPoint in forRemove)
 			{

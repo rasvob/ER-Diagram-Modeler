@@ -1,5 +1,7 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
 using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows;
@@ -73,6 +75,7 @@ namespace ER_Diagram_Modeler.Views.Canvas
 					foreach (TableViewModel item in args.NewItems)
 					{
 						AddTableElement(item);
+						item.PropertyChanged += ItemOnPropertyChanged;
 					}
 					break;
 				case NotifyCollectionChangedAction.Remove:
@@ -81,6 +84,18 @@ namespace ER_Diagram_Modeler.Views.Canvas
 						RemoveTableElement(item);
 					}
 					break;
+			}
+		}
+
+		private void ItemOnPropertyChanged(object sender, PropertyChangedEventArgs args)
+		{
+			if (args.PropertyName.Equals("IsSelected", StringComparison.CurrentCultureIgnoreCase))
+			{
+				var table = sender as TableViewModel;
+				if (table != null && table.IsSelected)
+				{
+					DeselectConnections();
+				}
 			}
 		}
 
@@ -145,6 +160,8 @@ namespace ER_Diagram_Modeler.Views.Canvas
 				{
 					info.IsSelected = false;
 				}
+				ModelDesignerCanvas.DeselectTables();
+
 			}
 		}
 

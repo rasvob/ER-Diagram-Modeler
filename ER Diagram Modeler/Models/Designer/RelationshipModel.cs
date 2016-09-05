@@ -4,7 +4,7 @@ namespace ER_Diagram_Modeler.Models.Designer
 {
 	public class RelationshipModel
 	{
-		public RelationshipType RelationshipType { get; set; }
+		public Cardinality Cardinality { get; set; }
 		public TableModel Source { get; set; }
 		public TableModel Destination { get; set; }
 		public TableRowModel SourceAttribute { get; set; }
