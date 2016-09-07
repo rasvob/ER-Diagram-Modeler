@@ -139,6 +139,7 @@
     <Compile Include="ValueConverters\TableViewModeToVisibilityConverter.cs" />
     <Compile Include="ViewModels\DatabaseModelDesignerViewModel.cs" />
     <Compile Include="ViewModels\Enums\ConnectionType.cs" />
+    <Compile Include="ViewModels\Enums\ConnectorOrientation.cs" />
     <Compile Include="ViewModels\Enums\LineOrientation.cs" />
     <Compile Include="ViewModels\Enums\MouseMode.cs" />
     <Compile Include="ViewModels\Enums\Cardinality.cs" />

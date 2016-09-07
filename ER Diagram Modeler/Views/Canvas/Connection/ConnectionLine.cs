@@ -5,6 +5,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Shapes;
 using ER_Diagram_Modeler.EventArgs;
 using ER_Diagram_Modeler.ViewModels.Enums;
@@ -34,6 +35,8 @@ namespace ER_Diagram_Modeler.Views.Canvas.Connection
 				Line.Stroke = value ? _selectedColor : _unselectedColor;
 			}
 		}
+
+		public static double StrokeThickness = 3;
 
 		public event EventHandler LineSelected;
 		public event EventHandler LineMoved;
@@ -65,7 +68,7 @@ namespace ER_Diagram_Modeler.Views.Canvas.Connection
 			EndPoint = new ConnectionPoint();
 
 			Line.Stroke = _unselectedColor;
-			Line.StrokeThickness = 4;
+			Line.StrokeThickness = StrokeThickness;
 			Line.SnapsToDevicePixels = true;
 			Line.StrokeEndLineCap = PenLineCap.Round;
 			Line.StrokeStartLineCap = PenLineCap.Round;

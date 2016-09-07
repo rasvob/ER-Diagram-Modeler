@@ -1,12 +1,16 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Net;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Shapes;
 using ER_Diagram_Modeler.Dialogs;
 using ER_Diagram_Modeler.EventArgs;
 using ER_Diagram_Modeler.Models.Designer;
@@ -366,9 +370,28 @@ namespace ER_Diagram_Modeler.Views.Canvas
 		//Test command F5
 		private void CommandBinding_OnExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
-			
-		}
+			var figure1 = new PathFigure(new Point(50, 50), new[] {new LineSegment(new Point(70,50), true) }, false);
+			var figure2 = new PathFigure(new Point(70, 50), new[] {new LineSegment(new Point(90,40), true) }, false);
+			var figure3 = new PathFigure(new Point(70, 50), new[] {new LineSegment(new Point(90,50), true) }, false);
+			var figure4 = new PathFigure(new Point(70, 50), new[] {new LineSegment(new Point(90,60), true) }, false);
 
+			var geometry = new PathGeometry();
+			geometry.Figures.Add(figure1);
+			geometry.Figures.Add(figure2);
+			geometry.Figures.Add(figure3);
+			geometry.Figures.Add(figure4);
+
+			Path path = new Path();
+			path.Data = geometry;
+			path.SnapsToDevicePixels = true;
+			path.StrokeThickness = ConnectionLine.StrokeThickness;
+			path.StrokeEndLineCap = PenLineCap.Round;
+			path.StrokeStartLineCap = PenLineCap.Round;
+			path.Stroke = Application.Current.FindResource("PrimaryColorBrush") as SolidColorBrush;
+
+			ModelDesignerCanvas.Children.Add(path);
+		}
+	 
 		#endregion
 
 		private void DesignerScrollViewer_OnPreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
