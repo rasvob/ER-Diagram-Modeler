@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing.Drawing2D;
 using System.Linq;
@@ -12,6 +13,7 @@ using System.Windows.Media;
 using System.Windows.Shapes;
 using ER_Diagram_Modeler.EventArgs;
 using ER_Diagram_Modeler.Models.Designer;
+using ER_Diagram_Modeler.ViewModels;
 using ER_Diagram_Modeler.ViewModels.Enums;
 
 namespace ER_Diagram_Modeler.Views.Canvas.Connection
@@ -21,16 +23,45 @@ namespace ER_Diagram_Modeler.Views.Canvas.Connection
 		public RelationshipModel RelationshipModel { get; set; }
 		public ObservableCollection<ConnectionLine> Lines { get; } = new ObservableCollection<ConnectionLine>();
 		public ObservableCollection<ConnectionPoint> Points { get; } = new ObservableCollection<ConnectionPoint>();
-		public ObservableCollection<ConnectionPointMark> Marks { get; } = new ObservableCollection<ConnectionPointMark>(); 
+		public ObservableCollection<ConnectionPointMark> Marks { get; } = new ObservableCollection<ConnectionPointMark>();
+		public Connector SourceConnector { get; } = new Connector();
+		public Connector DestinationConnector { get; } = new Connector();
 
 		private ConnectionLine _moveLine1 = null;
 		private ConnectionLine _moveLine2 = null;
 		private ConnectionPointMark _bendPoint1 = null;
 		private ConnectionPointMark _bendPoint2 = null;
+		private ConnectionPoint _sourcePoint = null;
+		private ConnectionPoint _destinationPoint = null;
 		private bool _isSelected;
-		private readonly List<ConnectionPoint> _newBendPoints = new List<ConnectionPoint>(); 
+		private readonly List<ConnectionPoint> _newBendPoints = new List<ConnectionPoint>();
+		private TableViewModel _sourceViewModel;
+		private TableViewModel _destinationViewModel;
 
-		public event EventHandler<bool> SelectionChange; 
+		public event EventHandler<bool> SelectionChange;
+		public event EventHandler<Connector> ConnectorChange;
+
+		public TableViewModel SourceViewModel
+		{
+			get { return _sourceViewModel; }
+			set
+			{
+				_sourceViewModel = value;
+				SourceViewModel.PositionAndMeasureChanged += SourceViewModelOnPositionAndMeasureChanged;
+				SourceViewModel.PositionAndMeasureChangesCompleted += OnPositionAndMeasureChangesCompleted;
+			}
+		}
+
+		public TableViewModel DestinationViewModel
+		{
+			get { return _destinationViewModel; }
+			set
+			{
+				_destinationViewModel = value;
+				DestinationViewModel.PositionAndMeasureChanged += DestinationViewModelOnPositionAndMeasureChanged;
+				DestinationViewModel.PositionAndMeasureChangesCompleted += OnPositionAndMeasureChangesCompleted;
+			}
+		}
 
 		public bool IsSelected
 		{
@@ -46,6 +77,8 @@ namespace ER_Diagram_Modeler.Views.Canvas.Connection
 				{
 					mark.Mark.Visibility = value ? Visibility.Visible : Visibility.Hidden;
 				}
+				SourceConnector.IsSelected = value;
+				DestinationConnector.IsSelected = value;
 				OnSelectionChange(value);
 			}
 		}
@@ -53,6 +86,67 @@ namespace ER_Diagram_Modeler.Views.Canvas.Connection
 		public ConnectionInfo()
 		{
 			Points.CollectionChanged += PointsOnCollectionChanged;
+			SourceConnector.ConnectorSelected += OnConnectorSelected;
+			DestinationConnector.ConnectorSelected += OnConnectorSelected;
+		}
+
+		private void OnConnectorSelected(object sender, System.EventArgs eventArgs)
+		{
+			IsSelected = true;
+		}
+
+		private void SourceViewModelOnPositionAndMeasureChanged(object sender, TablePositionAndMeasureEventArgs e)
+		{
+			switch (SourceConnector.Orientation)
+			{
+				case ConnectorOrientation.Up:
+					break;
+				case ConnectorOrientation.Down:
+					break;
+				case ConnectorOrientation.Left:
+					break;
+				case ConnectorOrientation.Right:
+					break;
+			}
+		}
+
+		private void DestinationViewModelOnPositionAndMeasureChanged(object sender, TablePositionAndMeasureEventArgs e)
+		{
+			var line = Lines.LastOrDefault();
+			var prevLineIdx = Lines.IndexOf(line) - 1;
+			ConnectionLine prevLine = null;
+
+			if (prevLineIdx >= 0)
+			{
+				prevLine = Lines[prevLineIdx];
+			}
+
+			if (line == null || prevLine == null)
+			{
+				return;
+			}
+
+			switch(DestinationConnector.Orientation)
+			{
+				case ConnectorOrientation.Up:
+					break;
+				case ConnectorOrientation.Down:
+					break;
+				case ConnectorOrientation.Left:
+					line.EndPoint.Y += e.TopDelta;
+					line.StartPoint.Y += e.TopDelta;
+					prevLine.EndPoint.Y += e.TopDelta;
+
+					line.EndPoint.X += e.LeftDelta;
+					break;
+				case ConnectorOrientation.Right:
+					break;
+			}
+		}
+
+		private void OnPositionAndMeasureChangesCompleted(object sender, System.EventArgs eventArgs)
+		{
+			SynchronizeBendingPoints();
 		}
 
 		private void PointsOnCollectionChanged(object sender, NotifyCollectionChangedEventArgs args)
@@ -114,6 +208,11 @@ namespace ER_Diagram_Modeler.Views.Canvas.Connection
 
 				Lines.Add(line);
 			}
+
+			SourceConnector.EndPoint = Lines[0].StartPoint;
+			DestinationConnector.EndPoint = Lines[Lines.Count - 1].EndPoint;
+			SourceConnector.UpdateConnector();
+			DestinationConnector.UpdateConnector();
 		}
 
 		private void LineOnLineSelected(object sender, System.EventArgs eventArgs)
@@ -141,6 +240,11 @@ namespace ER_Diagram_Modeler.Views.Canvas.Connection
 			{
 				Points.Add(line.EndPoint);
 			}
+
+			SourceConnector.EndPoint = Points[0];
+			DestinationConnector.EndPoint = Points[Points.Count - 1];
+			SourceConnector.UpdateConnector();
+			DestinationConnector.UpdateConnector();
 		}
 
 		private void LineOnBeforeLineMove(object sender, ConnectionLineBeforeMoveEventArgs args)
@@ -154,10 +258,18 @@ namespace ER_Diagram_Modeler.Views.Canvas.Connection
 			{
 				_moveLine1 = Lines[moveLine1Idx];
 			}
+			else
+			{
+				_sourcePoint = Points[0];
+			}
 
 			if (moveLine2Idx < Lines.Count)
 			{
 				_moveLine2 = Lines[moveLine2Idx];
+			}
+			else
+			{
+				_destinationPoint = Points[Points.Count - 1];
 			}
 
 			_bendPoint1 = Marks.FirstOrDefault(t => t.Point.Equals(line?.StartPoint));
@@ -194,10 +306,22 @@ namespace ER_Diagram_Modeler.Views.Canvas.Connection
 				_bendPoint1.Point.Y = line.StartPoint.Y;
 			}
 
-			if(_bendPoint2 != null)
+			if (_bendPoint2 != null)
 			{
 				_bendPoint2.Point.X = line.EndPoint.X;
 				_bendPoint2.Point.Y = line.EndPoint.Y;
+			}
+
+			if (_sourcePoint != null)
+			{
+				_sourcePoint.X = line.StartPoint.X;
+				_sourcePoint.Y = line.StartPoint.Y;
+			}
+
+			if (_destinationPoint != null)
+			{
+				_destinationPoint.X = line.EndPoint.X;
+				_destinationPoint.Y = line.EndPoint.Y;
 			}
 
 			_newBendPoints.Clear();
@@ -219,22 +343,36 @@ namespace ER_Diagram_Modeler.Views.Canvas.Connection
 				_moveLine2.StartPoint.Y = line.EndPoint.Y;
 			}
 
-			if(_bendPoint1 != null)
+			if (_bendPoint1 != null)
 			{
 				_bendPoint1.Point.X = line.StartPoint.X;
 				_bendPoint1.Point.Y = line.StartPoint.Y;
 			}
 
-			if(_bendPoint2 != null)
+			if (_bendPoint2 != null)
 			{
 				_bendPoint2.Point.X = line.EndPoint.X;
 				_bendPoint2.Point.Y = line.EndPoint.Y;
+			}
+
+			if (_sourcePoint != null)
+			{
+				_sourcePoint.X = line.StartPoint.X;
+				_sourcePoint.Y = line.StartPoint.Y;
+			}
+
+			if (_destinationPoint != null)
+			{
+				_destinationPoint.X = line.EndPoint.X;
+				_destinationPoint.Y = line.EndPoint.Y;
 			}
 
 			_moveLine1 = null;
 			_moveLine2 = null;
 			_bendPoint1 = null;
 			_bendPoint2 = null;
+			_sourcePoint = null;
+			_destinationPoint = null;
 
 			SynchronizeBendingPoints();
 		}
@@ -293,7 +431,7 @@ namespace ER_Diagram_Modeler.Views.Canvas.Connection
 		private void AdjustBendPointMarks()
 		{
 			Marks.RemoveAt(0);
-			Marks.RemoveAt(Marks.Count-1);
+			Marks.RemoveAt(Marks.Count - 1);
 		}
 
 		private void SplitLine(ConnectionLine line, ConnectionPoint point)
@@ -327,6 +465,11 @@ namespace ER_Diagram_Modeler.Views.Canvas.Connection
 		protected virtual void OnSelectionChange(bool e)
 		{
 			SelectionChange?.Invoke(this, e);
+		}
+
+		protected virtual void OnConnectorChange(Connector e)
+		{
+			ConnectorChange?.Invoke(this, e);
 		}
 	}
 }

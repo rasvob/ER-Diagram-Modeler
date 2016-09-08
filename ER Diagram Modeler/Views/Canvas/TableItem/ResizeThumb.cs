@@ -22,6 +22,12 @@ namespace ER_Diagram_Modeler.Views.Canvas.TableItem
 		{
 			DragStarted += ResizeThumb_DragStarted;
 			DragDelta += ResizeThumb_DragDelta;
+			DragCompleted += OnDragCompleted;
+		}
+
+		private void OnDragCompleted(object sender, DragCompletedEventArgs dragCompletedEventArgs)
+		{
+			_item.TableViewModel.OnPositionAndMeasureChangesCompleted();
 		}
 
 		private void ResizeThumb_DragStarted(object sender, DragStartedEventArgs e)

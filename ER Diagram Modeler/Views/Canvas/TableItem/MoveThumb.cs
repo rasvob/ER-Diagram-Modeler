@@ -16,6 +16,12 @@ namespace ER_Diagram_Modeler.Views.Canvas.TableItem
 		{
 			DragDelta += OnDragDelta;
 			DragStarted += OnDragStarted;
+			DragCompleted += OnDragCompleted;
+		}
+
+		private void OnDragCompleted(object sender, DragCompletedEventArgs dragCompletedEventArgs)
+		{
+			_item.TableViewModel.OnPositionAndMeasureChangesCompleted();
 		}
 
 		private void OnDragStarted(object sender, DragStartedEventArgs dragStartedEventArgs)

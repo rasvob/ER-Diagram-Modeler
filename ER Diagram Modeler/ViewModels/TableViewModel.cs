@@ -1,8 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using ER_Diagram_Modeler.Annotations;
 using ER_Diagram_Modeler.Configuration.Providers;
+using ER_Diagram_Modeler.EventArgs;
 using ER_Diagram_Modeler.Models.Designer;
 using ER_Diagram_Modeler.ViewModels.Enums;
 
@@ -24,7 +26,12 @@ namespace ER_Diagram_Modeler.ViewModels
 			set
 			{
 				if (value.Equals(_height)) return;
+				var args = new TablePositionAndMeasureEventArgs()
+				{
+					HeightDelta = value - _height
+				};
 				_height = value;
+				OnPositionAndMeasureChanged(args);
 				OnPropertyChanged();
 			}
 		}
@@ -35,7 +42,12 @@ namespace ER_Diagram_Modeler.ViewModels
 			set
 			{
 				if (value.Equals(_width)) return;
+				var args = new TablePositionAndMeasureEventArgs()
+				{
+					WidthDelta = value - _width
+				};
 				_width = value;
+				OnPositionAndMeasureChanged(args);
 				OnPropertyChanged();
 			}
 		}
@@ -79,7 +91,12 @@ namespace ER_Diagram_Modeler.ViewModels
 			set
 			{
 				if (value.Equals(_left)) return;
+				var args = new TablePositionAndMeasureEventArgs()
+				{
+					LeftDelta = value - _left
+				};
 				_left = value;
+				OnPositionAndMeasureChanged(args);
 				OnPropertyChanged();
 			}
 		}
@@ -90,7 +107,12 @@ namespace ER_Diagram_Modeler.ViewModels
 			set
 			{
 				if (value.Equals(_top)) return;
+				var args = new TablePositionAndMeasureEventArgs()
+				{
+					TopDelta = value - _top
+				};
 				_top = value;
+				OnPositionAndMeasureChanged(args);
 				OnPropertyChanged();
 			}
 		}
@@ -106,11 +128,23 @@ namespace ER_Diagram_Modeler.ViewModels
 		}
 
 		public event PropertyChangedEventHandler PropertyChanged;
+		public event EventHandler<TablePositionAndMeasureEventArgs> PositionAndMeasureChanged;
+		public event EventHandler PositionAndMeasureChangesCompleted;
 
 		[NotifyPropertyChangedInvocator]
 		protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
 		{
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+		}
+
+		protected virtual void OnPositionAndMeasureChanged(TablePositionAndMeasureEventArgs e)
+		{
+			PositionAndMeasureChanged?.Invoke(this, e);
+		}
+
+		public void OnPositionAndMeasureChangesCompleted()
+		{
+			PositionAndMeasureChangesCompleted?.Invoke(this, System.EventArgs.Empty);
 		}
 	}
 }
