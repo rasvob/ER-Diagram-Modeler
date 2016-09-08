@@ -321,6 +321,9 @@ namespace ER_Diagram_Modeler.Views.Canvas
 
 		#region TestRegion
 
+		private int i = 0;
+		private Connector connector;
+
 		private ConnectionInfo TestNewConnectionCreate()
 		{
 			var info = new ConnectionInfo();
@@ -370,28 +373,50 @@ namespace ER_Diagram_Modeler.Views.Canvas
 		//Test command F5
 		private void CommandBinding_OnExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
-			var figure1 = new PathFigure(new Point(50, 50), new[] {new LineSegment(new Point(70,50), true) }, false);
-			var figure2 = new PathFigure(new Point(70, 50), new[] {new LineSegment(new Point(90,40), true) }, false);
-			var figure3 = new PathFigure(new Point(70, 50), new[] {new LineSegment(new Point(90,50), true) }, false);
-			var figure4 = new PathFigure(new Point(70, 50), new[] {new LineSegment(new Point(90,60), true) }, false);
+			//var figure1 = new PathFigure(new Point(50, 50), new[] {new LineSegment(new Point(70,50), true) }, false);
+			//var figure2 = new PathFigure(new Point(70, 50), new[] {new LineSegment(new Point(90,42), true) }, false);
+			//var figure3 = new PathFigure(new Point(70, 50), new[] {new LineSegment(new Point(90,50), true) }, false);
+			//var figure4 = new PathFigure(new Point(70, 50), new[] {new LineSegment(new Point(90,58), true) }, false);
 
-			var geometry = new PathGeometry();
-			geometry.Figures.Add(figure1);
-			geometry.Figures.Add(figure2);
-			geometry.Figures.Add(figure3);
-			geometry.Figures.Add(figure4);
+			//var geometry = new PathGeometry();
+			//geometry.Figures.Add(figure1);
+			//geometry.Figures.Add(figure2);
+			//geometry.Figures.Add(figure3);
+			//geometry.Figures.Add(figure4);
 
-			Path path = new Path();
-			path.Data = geometry;
-			path.SnapsToDevicePixels = true;
-			path.StrokeThickness = ConnectionLine.StrokeThickness;
-			path.StrokeEndLineCap = PenLineCap.Round;
-			path.StrokeStartLineCap = PenLineCap.Round;
-			path.Stroke = Application.Current.FindResource("PrimaryColorBrush") as SolidColorBrush;
+			//Path path = new Path();
+			//path.Data = geometry;
+			//path.SnapsToDevicePixels = true;
+			//path.StrokeThickness = ConnectionLine.StrokeThickness;
+			//path.StrokeEndLineCap = PenLineCap.Round;
+			//path.StrokeStartLineCap = PenLineCap.Round;
+			//path.Stroke = Application.Current.FindResource("PrimaryColorBrush") as SolidColorBrush;
 
-			ModelDesignerCanvas.Children.Add(path);
+			//ModelDesignerCanvas.Children.Add(path);
+
+			if (i > 0)
+			{
+				connector.EndPoint.X += 10;
+				connector.EndPoint.Y += 10;
+			}
+			else
+			{
+				connector = new Connector();
+				connector.Cardinality = Cardinality.Many;
+				connector.Optionality = Optionality.Optional;
+				connector.Orientation = ConnectorOrientation.Left;
+				connector.EndPoint = new ConnectionPoint(50, 50);
+				connector.UpdateConnector();
+
+				ModelDesignerCanvas.Children.Add(connector.ConnectionPath);
+				ModelDesignerCanvas.Children.Add(connector.Symbol);
+
+				DesignerCanvas.SetZIndex(connector.ConnectionPath, DesignerCanvas.ConnectionLineZIndex);
+				DesignerCanvas.SetZIndex(connector.Symbol, DesignerCanvas.ConnectionLineZIndex);
+			}
+			i++;
 		}
-	 
+
 		#endregion
 
 		private void DesignerScrollViewer_OnPreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)

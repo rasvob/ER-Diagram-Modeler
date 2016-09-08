@@ -29,6 +29,17 @@ namespace ER_Diagram_Modeler.Views.Canvas.Connection
 			}
 		}
 
+		public ConnectionPoint()
+		{
+			
+		}
+
+		public ConnectionPoint(double x, double y)
+		{
+			X = x;
+			Y = y;
+		}
+
 		public void MoveByOffset(double xOffset, double yOffset)
 		{
 			X += xOffset;
