@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Media;
@@ -21,7 +22,7 @@ namespace ER_Diagram_Modeler.Views.Canvas.TableItem
 
 		private void OnDragCompleted(object sender, DragCompletedEventArgs dragCompletedEventArgs)
 		{
-			_item.TableViewModel.OnPositionAndMeasureChangesCompleted();
+			_item?.TableViewModel.OnPositionAndMeasureChangesCompleted();
 		}
 
 		private void OnDragStarted(object sender, DragStartedEventArgs dragStartedEventArgs)
@@ -31,6 +32,7 @@ namespace ER_Diagram_Modeler.Views.Canvas.TableItem
 			if (_item != null)
 			{
 				_canvas = VisualTreeHelper.GetParent(_item) as DesignerCanvas;
+				_item.TableViewModel.OnPositionAndMeasureChangesStarted();
 			}
 		}
 
@@ -65,12 +67,16 @@ namespace ER_Diagram_Modeler.Views.Canvas.TableItem
 					deltaVertical = 0;
 				}
 
-				foreach (TableContent item in _canvas.SelectedTables)
+				var selected = _canvas.SelectedTables.ToArray();
+
+				foreach (TableContent item in selected)
 				{
-					item.TableViewModel.Left = DesignerCanvas.GetLeft(item) + deltaHorizontal;
-					item.TableViewModel.Top = DesignerCanvas.GetTop(item) + deltaVertical;
-					DesignerCanvas.SetLeft(item, item.TableViewModel.Left);
-					DesignerCanvas.SetTop(item, item.TableViewModel.Top);
+					var leftPos = DesignerCanvas.GetLeft(item) + deltaHorizontal;
+					var topPos = DesignerCanvas.GetTop(item) + deltaVertical;
+					DesignerCanvas.SetLeft(item, leftPos);
+					DesignerCanvas.SetTop(item, topPos);
+					item.TableViewModel.Left = leftPos;
+					item.TableViewModel.Top = topPos;
 				}
 
 				dragDeltaEventArgs.Handled = true;

@@ -37,6 +37,7 @@ namespace ER_Diagram_Modeler.Views.Canvas.TableItem
 			if (_item != null)
 			{
 				_canvas = VisualTreeHelper.GetParent(_item) as DesignerCanvas;
+				_item.TableViewModel.OnPositionAndMeasureChangesStarted();
 			}
 		}
 
@@ -91,10 +92,11 @@ namespace ER_Diagram_Modeler.Views.Canvas.TableItem
 								break;
 							case VerticalAlignment.Top:
 								deltaVertical = Math.Min(Math.Max(-minTop, e.VerticalChange), minDeltaVertical);
-								item.TableViewModel.Top = DesignerCanvas.GetTop(item) + deltaVertical;
-								DesignerCanvas.SetTop(item, item.TableViewModel.Top);
+								var topPos = DesignerCanvas.GetTop(item) + deltaVertical;
+								DesignerCanvas.SetTop(item, topPos);
 								item.Height = item.ActualHeight - deltaVertical;
 								item.TableViewModel.Height = item.Height;
+								item.TableViewModel.Top = topPos;
 								break;
 						}
 					}
@@ -104,10 +106,11 @@ namespace ER_Diagram_Modeler.Views.Canvas.TableItem
 					{
 						case HorizontalAlignment.Left:
 							deltaHorizontal = Math.Min(Math.Max(-minLeft, e.HorizontalChange), minDeltaHorizontal);
-							item.TableViewModel.Left = DesignerCanvas.GetLeft(item) + deltaHorizontal;
-							DesignerCanvas.SetLeft(item, item.TableViewModel.Left);
+							var leftPos = DesignerCanvas.GetLeft(item) + deltaHorizontal;
+							DesignerCanvas.SetLeft(item, leftPos);
 							item.Width = item.ActualWidth - deltaHorizontal;
 							item.TableViewModel.Width = item.Width;
+							item.TableViewModel.Left = leftPos;
 							break;
 						case HorizontalAlignment.Right:
 							deltaHorizontal = e.HorizontalChange > 0 && e.HorizontalChange >= maxDeltaHorizontal ? 0 : Math.Min(-e.HorizontalChange, minDeltaHorizontal);

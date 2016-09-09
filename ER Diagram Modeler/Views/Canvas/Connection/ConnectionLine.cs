@@ -178,15 +178,13 @@ namespace ER_Diagram_Modeler.Views.Canvas.Connection
 			Line.Y1 = args.Y;
 		}
 
-		public Point GetMiddle()
+		public double GetLenght()
 		{
-			Point res = new Point()
+			if (Orientation == LineOrientation.Horizontal)
 			{
-				X = (StartPoint.X + EndPoint.X)/2,
-				Y = (EndPoint.X + EndPoint.X)/2
-			};
-
-			return res;
+				return Math.Abs(EndPoint.X - StartPoint.X);
+			}
+			return Math.Abs(EndPoint.Y - StartPoint.Y);
 		}
 
 		public override string ToString()

@@ -338,20 +338,20 @@ namespace ER_Diagram_Modeler.Views.Canvas
 		{
 			var info = new ConnectionInfo();
 
-			info.Points.Add(new ConnectionPoint()
-			{
-				X = 100, Y = 75
-			});
+			//info.Points.Add(new ConnectionPoint()
+			//{
+			//	X = 100, Y = 75
+			//});
 
-			info.Points.Add(new ConnectionPoint()
-			{
-				X = 100, Y = 80
-			});
+			//info.Points.Add(new ConnectionPoint()
+			//{
+			//	X = 100, Y = 80
+			//});
 
-			info.Points.Add(new ConnectionPoint()
-			{
-				X = 210, Y = 80
-			});
+			//info.Points.Add(new ConnectionPoint()
+			//{
+			//	X = 210, Y = 80
+			//});
 
 			info.Points.Add(new ConnectionPoint()
 			{
@@ -390,17 +390,22 @@ namespace ER_Diagram_Modeler.Views.Canvas
 			info.SourceViewModel = ViewModel.TableViewModels.FirstOrDefault();
 			info.DestinationViewModel = ViewModel.TableViewModels.LastOrDefault();
 
-			info.Points.Add(new ConnectionPoint(info.SourceViewModel.Left + 50, info.SourceViewModel.Top + info.SourceViewModel.Height));
-			info.Points.Add(new ConnectionPoint(info.SourceViewModel.Left + 50, info.SourceViewModel.Top + info.SourceViewModel.Height + 200));
-			info.Points.Add(new ConnectionPoint(info.DestinationViewModel.Left - Connector.ConnectorLenght, info.SourceViewModel.Top + info.SourceViewModel.Height + 200));
+			info.Points.Add(new ConnectionPoint(info.DestinationViewModel.Left + info.DestinationViewModel.Width + Connector.ConnectionPathLength + Connector.SymbolLinesLength, 400));
+			info.Points.Add(new ConnectionPoint(1200, 400));
 
 			info.SourceConnector.Cardinality = Cardinality.One;
 			info.SourceConnector.Optionality = Optionality.Mandatory;
-			info.SourceConnector.Orientation = ConnectorOrientation.Down;
+			info.SourceConnector.Orientation = ConnectorOrientation.Left;
+			info.SourceConnector.EndPoint =
+				new ConnectionPoint(1200, 400);
 
 			info.DestinationConnector.Cardinality = Cardinality.Many;
-			info.DestinationConnector.Optionality = Optionality.Optional;
-			info.DestinationConnector.Orientation = ConnectorOrientation.Left;
+			info.DestinationConnector.Optionality = Optionality.Mandatory;
+			info.DestinationConnector.Orientation = ConnectorOrientation.Right;
+			info.DestinationConnector.EndPoint = new ConnectionPoint(
+					info.DestinationViewModel.Left + info.DestinationViewModel.Width + Connector.ConnectionPathLength +
+					Connector.SymbolLinesLength, 400);
+
 			info.BuildLinesFromPoints();
 			_connections.Add(info);
 			info.SynchronizeBendingPoints();

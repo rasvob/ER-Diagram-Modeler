@@ -130,6 +130,7 @@ namespace ER_Diagram_Modeler.ViewModels
 		public event PropertyChangedEventHandler PropertyChanged;
 		public event EventHandler<TablePositionAndMeasureEventArgs> PositionAndMeasureChanged;
 		public event EventHandler PositionAndMeasureChangesCompleted;
+		public event EventHandler PositionAndMeasureChangesStarted;
 
 		[NotifyPropertyChangedInvocator]
 		protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
@@ -145,6 +146,11 @@ namespace ER_Diagram_Modeler.ViewModels
 		public void OnPositionAndMeasureChangesCompleted()
 		{
 			PositionAndMeasureChangesCompleted?.Invoke(this, System.EventArgs.Empty);
+		}
+
+		public void OnPositionAndMeasureChangesStarted()
+		{
+			PositionAndMeasureChangesStarted?.Invoke(this, System.EventArgs.Empty);
 		}
 	}
 }
