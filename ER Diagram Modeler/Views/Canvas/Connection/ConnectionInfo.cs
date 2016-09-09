@@ -196,7 +196,7 @@ namespace ER_Diagram_Modeler.Views.Canvas.Connection
 
 		private void DestinationViewModelOnPositionAndMeasureChangesStarted(object sender, System.EventArgs eventArgs)
 		{
-			if (Lines.Count == 1)
+			if(Lines.Count == 1)
 			{
 				SplitLineInMiddleNonDestructiveDestination(Lines.FirstOrDefault());
 			}
@@ -606,9 +606,20 @@ namespace ER_Diagram_Modeler.Views.Canvas.Connection
 			Lines.Add(newLine);
 			Points.Add(splitLine.StartPoint);
 			Points.Add(newLine.EndPoint);
-			DestinationConnector.EndPoint = newLine.EndPoint;
-			DestinationConnector.EndPoint.X = newLine.EndPoint.X;
-			DestinationConnector.EndPoint.Y = newLine.EndPoint.Y;
+
+			//TODO: CONNECTOR ERROR
+			if (DestinationConnector.EndPoint.Equals(newLine.EndPoint))
+			{
+				DestinationConnector.EndPoint = newLine.EndPoint;
+				DestinationConnector.EndPoint.X = newLine.EndPoint.X;
+				DestinationConnector.EndPoint.Y = newLine.EndPoint.Y;
+			}
+			else if (DestinationConnector.EndPoint.Equals(line.StartPoint))
+			{
+				DestinationConnector.EndPoint = line.StartPoint;
+				DestinationConnector.EndPoint.X = line.StartPoint.X;
+				DestinationConnector.EndPoint.Y = line.StartPoint.Y;
+			}
 		}
 
 		private void ConfigureSplitLine(ConnectionLine line)
