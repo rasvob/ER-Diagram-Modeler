@@ -248,8 +248,10 @@ namespace ER_Diagram_Modeler.Views.Canvas
 				DesignerCanvas.SetZIndex(content, DesignerCanvas.TableUnselectedZIndex);
 				DesignerCanvas.SetTop(content, viewModel.Top);
 				DesignerCanvas.SetLeft(content, viewModel.Left);
-				viewModel.Height = content.ActualHeight;
-				viewModel.Width = content.ActualWidth;
+				content.Height = content.ActualHeight + 30;
+				content.Width = content.ActualWidth + 30;
+				viewModel.Height = content.Height;
+				viewModel.Width = content.Width;
 			};
 		}
 
@@ -375,8 +377,8 @@ namespace ER_Diagram_Modeler.Views.Canvas
 			var destTable = MainWindow.SeedDataTable();
 
 			sourceTable.Left = 50;
-			sourceTable.Top = 50;
-			destTable.Left = 600;
+			sourceTable.Top = 350;
+			destTable.Left = 700;
 			destTable.Top = 350;
 
 			ViewModel.TableViewModels.Add(sourceTable);
@@ -391,23 +393,24 @@ namespace ER_Diagram_Modeler.Views.Canvas
 			info.SourceViewModel = ViewModel.TableViewModels.FirstOrDefault();
 			info.DestinationViewModel = ViewModel.TableViewModels.LastOrDefault();
 
+			//ToRight
 			var point1 =
-				new ConnectionPoint(650, 800);
+				new ConnectionPoint(info.SourceViewModel.Left + info.SourceViewModel.Width + Connector.ConnectorLenght, 450);
 			var point2 =
-				new ConnectionPoint(650
-					, 350 + info.DestinationViewModel.Height + Connector.ConnectorLenght);
+				new ConnectionPoint(info.DestinationViewModel.Left - Connector.ConnectorLenght
+					, 450);
 
 			info.Points.Add(point1);
 			info.Points.Add(point2);
 
 			info.SourceConnector.Cardinality = Cardinality.One;
 			info.SourceConnector.Optionality = Optionality.Mandatory;
-			info.SourceConnector.Orientation = ConnectorOrientation.Up;
+			info.SourceConnector.Orientation = ConnectorOrientation.Right;
 			info.SourceConnector.EndPoint = point1;
 
 			info.DestinationConnector.Cardinality = Cardinality.Many;
 			info.DestinationConnector.Optionality = Optionality.Mandatory;
-			info.DestinationConnector.Orientation = ConnectorOrientation.Down;
+			info.DestinationConnector.Orientation = ConnectorOrientation.Left;
 			info.DestinationConnector.EndPoint = point2;
 
 			info.BuildLinesFromPoints();
