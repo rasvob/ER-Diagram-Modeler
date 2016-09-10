@@ -29,6 +29,8 @@ namespace ER_Diagram_Modeler.Views.Canvas.Connection
 			}
 		}
 
+		public static readonly double EqualityTolerance = 0.005;
+
 		public ConnectionPoint()
 		{
 			
@@ -48,7 +50,12 @@ namespace ER_Diagram_Modeler.Views.Canvas.Connection
 
 		public bool Equals(ConnectionPoint other)
 		{
-			return X == other.X && Y == other.Y;
+			return (Math.Abs(X - other.X) < EqualityTolerance) && (Math.Abs(Y - other.Y) < EqualityTolerance);
+		}
+
+		public double GetDistanceToPoint(ConnectionPoint other)
+		{
+			return Math.Sqrt(Math.Pow(X - other.X, 2) + Math.Pow(Y - other.Y, 2));
 		}
 
 		public override int GetHashCode()

@@ -355,13 +355,14 @@ namespace ER_Diagram_Modeler.Views.Canvas
 
 			info.Points.Add(new ConnectionPoint()
 			{
-				X = 210, Y = 300
+				X = 400, Y = 300
 			});
 
 			info.Points.Add(new ConnectionPoint()
 			{
-				X = 400, Y = 300
+				X = 210, Y = 300
 			});
+
 			info.BuildLinesFromPoints();
 
 			return info;
@@ -390,25 +391,34 @@ namespace ER_Diagram_Modeler.Views.Canvas
 			info.SourceViewModel = ViewModel.TableViewModels.FirstOrDefault();
 			info.DestinationViewModel = ViewModel.TableViewModels.LastOrDefault();
 
-			info.Points.Add(new ConnectionPoint(info.DestinationViewModel.Left + info.DestinationViewModel.Width + Connector.ConnectionPathLength + Connector.SymbolLinesLength, 400));
-			info.Points.Add(new ConnectionPoint(1200, 400));
+			var point1 =
+				new ConnectionPoint(650, 800);
+			var point2 =
+				new ConnectionPoint(650
+					, 350 + info.DestinationViewModel.Height + Connector.ConnectorLenght);
+
+			info.Points.Add(point1);
+			info.Points.Add(point2);
 
 			info.SourceConnector.Cardinality = Cardinality.One;
 			info.SourceConnector.Optionality = Optionality.Mandatory;
-			info.SourceConnector.Orientation = ConnectorOrientation.Left;
-			info.SourceConnector.EndPoint =
-				new ConnectionPoint(1200, 400);
+			info.SourceConnector.Orientation = ConnectorOrientation.Up;
+			info.SourceConnector.EndPoint = point1;
 
 			info.DestinationConnector.Cardinality = Cardinality.Many;
 			info.DestinationConnector.Optionality = Optionality.Mandatory;
-			info.DestinationConnector.Orientation = ConnectorOrientation.Right;
-			info.DestinationConnector.EndPoint = new ConnectionPoint(
-					info.DestinationViewModel.Left + info.DestinationViewModel.Width + Connector.ConnectionPathLength +
-					Connector.SymbolLinesLength, 400);
+			info.DestinationConnector.Orientation = ConnectorOrientation.Down;
+			info.DestinationConnector.EndPoint = point2;
 
 			info.BuildLinesFromPoints();
 			_connections.Add(info);
 			info.SynchronizeBendingPoints();
+		}
+
+		//Test command F6
+		private void CommandBinding3_OnExecuted(object sender, ExecutedRoutedEventArgs e)
+		{
+			
 		}
 
 		#endregion
@@ -509,5 +519,7 @@ namespace ER_Diagram_Modeler.Views.Canvas
 				e.Handled = true;
 			}
 		}
+
+		
 	}
 }

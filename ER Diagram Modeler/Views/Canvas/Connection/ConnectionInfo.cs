@@ -41,6 +41,8 @@ namespace ER_Diagram_Modeler.Views.Canvas.Connection
 		public event EventHandler<bool> SelectionChange;
 		public event EventHandler<Connector> ConnectorChange;
 
+		public static readonly double PointsDistaceTolerance = 4.0;
+
 		public TableViewModel SourceViewModel
 		{
 			get { return _sourceViewModel; }
@@ -52,8 +54,6 @@ namespace ER_Diagram_Modeler.Views.Canvas.Connection
 				SourceViewModel.PositionAndMeasureChangesStarted += SourceViewModelOnPositionAndMeasureChangesStarted;
 			}
 		}
-
-		
 
 		public TableViewModel DestinationViewModel
 		{
@@ -104,83 +104,189 @@ namespace ER_Diagram_Modeler.Views.Canvas.Connection
 			switch (SourceConnector.Orientation)
 			{
 				case ConnectorOrientation.Up:
+				{
+
 					break;
+				}
+
 				case ConnectorOrientation.Down:
+				{
+
 					break;
+				}
 				case ConnectorOrientation.Left:
+				{
+
 					break;
+				}
 				case ConnectorOrientation.Right:
+				{
+
 					break;
+				}
 			}
 		}
 
 		private void DestinationViewModelOnPositionAndMeasureChanged(object sender, TablePositionAndMeasureEventArgs e)
 		{
-			ConnectionLine line = null;
-			ConnectionLine prevLine = null;
-			ConnectionLine nextLine = null;
-			int prevLineIdx = -1;
-			int nextLineIdx = -1;
-
 			switch(DestinationConnector.Orientation)
 			{
 				case ConnectorOrientation.Up:
-					break;
+				{
+						ConnectionLine endLine = null;
+						if(DestinationConnector.EndPoint.Equals(Lines.FirstOrDefault()?.StartPoint))
+						{
+							endLine = Lines.FirstOrDefault();
+							int nextLineIdx = Lines.IndexOf(endLine) + 1;
+							ConnectionLine nextLine = Lines[nextLineIdx];
+
+							endLine.StartPoint.Y += e.TopDelta;
+
+							endLine.StartPoint.X += e.LeftDelta;
+							endLine.EndPoint.X += e.LeftDelta;
+
+							if(nextLine != null)
+							{
+								nextLine.StartPoint.X += e.LeftDelta;
+							}
+
+						}
+						else if(DestinationConnector.EndPoint.Equals(Lines.LastOrDefault()?.EndPoint))
+						{
+							endLine = Lines.LastOrDefault();
+							int nextLineIdx = Lines.IndexOf(endLine) - 1;
+							ConnectionLine nextLine = Lines[nextLineIdx];
+
+							endLine.EndPoint.Y += e.TopDelta;
+
+							endLine.StartPoint.X += e.LeftDelta;
+							endLine.EndPoint.X += e.LeftDelta;
+
+							if(nextLine != null)
+							{
+								nextLine.EndPoint.X += e.LeftDelta;
+							}
+						}
+						break;
+				}
+				
+				//TODO	
 				case ConnectorOrientation.Down:
-					break;
+				{
+						ConnectionLine endLine = null;
+						if(DestinationConnector.EndPoint.Equals(Lines.FirstOrDefault()?.StartPoint))
+						{
+							endLine = Lines.FirstOrDefault();
+							int nextLineIdx = Lines.IndexOf(endLine) + 1;
+							ConnectionLine nextLine = Lines[nextLineIdx];
+
+							endLine.StartPoint.Y += e.TopDelta;
+
+							endLine.StartPoint.X += e.LeftDelta;
+							endLine.EndPoint.X += e.LeftDelta;
+
+							if(nextLine != null)
+							{
+								nextLine.StartPoint.X += e.LeftDelta;
+							}
+
+						}
+						else if(DestinationConnector.EndPoint.Equals(Lines.LastOrDefault()?.EndPoint))
+						{
+							endLine = Lines.LastOrDefault();
+							int nextLineIdx = Lines.IndexOf(endLine) - 1;
+							ConnectionLine nextLine = Lines[nextLineIdx];
+
+							endLine.EndPoint.Y += e.TopDelta;
+
+							endLine.StartPoint.X += e.LeftDelta;
+							endLine.EndPoint.X += e.LeftDelta;
+
+							if(nextLine != null)
+							{
+								nextLine.EndPoint.X += e.LeftDelta;
+							}
+						}
+						break;
+				}
 				case ConnectorOrientation.Left:
-					line = Lines.LastOrDefault();
+				{
+						ConnectionLine endLine = null;
+						if(DestinationConnector.EndPoint.Equals(Lines.FirstOrDefault()?.StartPoint))
+						{
+							endLine = Lines.FirstOrDefault();
+							int nextLineIdx = Lines.IndexOf(endLine) + 1;
+							ConnectionLine nextLine = Lines[nextLineIdx];
 
-					if(line == null)
-					{
-						return;
+							endLine.StartPoint.X += e.LeftDelta;
+
+							endLine.StartPoint.Y += e.TopDelta;
+							endLine.EndPoint.Y += e.TopDelta;
+
+							if(nextLine != null)
+							{
+								nextLine.StartPoint.Y += e.TopDelta;
+							}
+
+						}
+						else if(DestinationConnector.EndPoint.Equals(Lines.LastOrDefault()?.EndPoint))
+						{
+							endLine = Lines.LastOrDefault();
+							int nextLineIdx = Lines.IndexOf(endLine) - 1;
+							ConnectionLine nextLine = Lines[nextLineIdx];
+
+							endLine.EndPoint.X += e.LeftDelta;
+
+							endLine.StartPoint.Y += e.TopDelta;
+							endLine.EndPoint.Y += e.TopDelta;
+
+							if(nextLine != null)
+							{
+								nextLine.EndPoint.Y += e.TopDelta;
+							}
+						}
+						break;
 					}
-
-					prevLineIdx = Lines.IndexOf(line) - 1;
-
-					if(prevLineIdx >= 0)
-					{
-						prevLine = Lines[prevLineIdx];
-					}
-
-					line.EndPoint.Y += e.TopDelta;
-					line.StartPoint.Y += e.TopDelta;
-
-					if (prevLine != null)
-					{
-						prevLine.EndPoint.Y += e.TopDelta;
-					}
-
-					line.EndPoint.X += e.LeftDelta;
-
-					break;
 				case ConnectorOrientation.Right:
-					line = Lines.FirstOrDefault();
-
-					if (line == null)
 					{
-						return;
+						ConnectionLine endLine = null;
+						if (DestinationConnector.EndPoint.Equals(Lines.FirstOrDefault()?.StartPoint))
+						{
+							endLine = Lines.FirstOrDefault();
+							int nextLineIdx = Lines.IndexOf(endLine) + 1;
+							ConnectionLine nextLine = Lines[nextLineIdx];
+
+							endLine.StartPoint.X += e.LeftDelta;
+							endLine.StartPoint.X += e.WidthDelta;
+
+							endLine.StartPoint.Y += e.TopDelta;
+							endLine.EndPoint.Y += e.TopDelta;
+
+							if (nextLine != null)
+							{
+								nextLine.StartPoint.Y += e.TopDelta;
+							}
+
+						}
+						else if(DestinationConnector.EndPoint.Equals(Lines.LastOrDefault()?.EndPoint))
+						{
+							endLine = Lines.LastOrDefault();
+							int nextLineIdx = Lines.IndexOf(endLine) - 1;
+							ConnectionLine nextLine = Lines[nextLineIdx];
+
+							endLine.EndPoint.X += e.LeftDelta;
+							endLine.EndPoint.X += e.WidthDelta;
+
+							endLine.StartPoint.Y += e.TopDelta;
+							endLine.EndPoint.Y += e.TopDelta;
+
+							if(nextLine != null)
+							{
+								nextLine.EndPoint.Y += e.TopDelta;
+							}
+						}
+						break;
 					}
-
-					line.StartPoint.X += e.LeftDelta;
-					line.StartPoint.X += e.WidthDelta;
-
-					line.StartPoint.Y += e.TopDelta;
-					line.EndPoint.Y += e.TopDelta;
-
-					nextLineIdx = Lines.IndexOf(line) + 1;
-
-					if (nextLineIdx < Lines.Count)
-					{
-						nextLine = Lines[nextLineIdx];
-					}
-
-					if(nextLine != null)
-					{
-						nextLine.StartPoint.Y += e.TopDelta;
-					}
-
-					break;
 			}
 		}
 
@@ -191,6 +297,7 @@ namespace ER_Diagram_Modeler.Views.Canvas.Connection
 
 		private void SourceViewModelOnPositionAndMeasureChangesCompleted(object sender, System.EventArgs eventArgs)
 		{
+			_newBendPoints.Clear();
 			SynchronizeBendingPoints();
 		}
 
@@ -198,12 +305,14 @@ namespace ER_Diagram_Modeler.Views.Canvas.Connection
 		{
 			if(Lines.Count == 1)
 			{
-				SplitLineInMiddleNonDestructiveDestination(Lines.FirstOrDefault());
+				SplitLine(Lines.FirstOrDefault(), Lines.FirstOrDefault()?.GetMiddlePoint());
+				SynchronizeBendingPoints();
 			}
 		}
 
 		private void DestinationViewModelOnPositionAndMeasureChangesCompleted(object sender, System.EventArgs eventArgs)
 		{
+			_newBendPoints.Clear();
 			SynchronizeBendingPoints();
 		}
 
@@ -317,11 +426,6 @@ namespace ER_Diagram_Modeler.Views.Canvas.Connection
 			{
 				Points.Add(line.EndPoint);
 			}
-
-			//SourceConnector.EndPoint = Points[0];
-			//DestinationConnector.EndPoint = Points[Points.Count - 1];
-			//SourceConnector.UpdateConnector();
-			//DestinationConnector.UpdateConnector();
 		}
 
 		private void LineOnBeforeLineMove(object sender, ConnectionLineBeforeMoveEventArgs args)
@@ -452,6 +556,7 @@ namespace ER_Diagram_Modeler.Views.Canvas.Connection
 			_destinationPoint = null;
 
 			SynchronizeBendingPoints();
+			_newBendPoints.Clear();
 		}
 
 		private void ClearPoints()
@@ -480,21 +585,23 @@ namespace ER_Diagram_Modeler.Views.Canvas.Connection
 			var duplicate = forSelection.GroupBy(t => t).Where(s => s.Count() > 1).Select(u => u.Key);
 			var forRemove = Points.Where(t => duplicate.Any(s => s.Equals(t))).Where(s => !_newBendPoints.Any(r => r.Equals(s))).ToList();
 
-			//if (forRemove.Contains(Points[0]))
-			//{
-			//	var item = forRemove.FirstOrDefault(t => t.Equals(Points[0]));
-			//	forRemove.Remove(item);
-			//}
-
-			//if (forRemove.Contains(Points[Points.Count - 1]))
-			//{
-			//	var item = forRemove.FirstOrDefault(t => t.Equals(Points[Points.Count - 1]));
-			//	forRemove.Remove(item);
-			//}
-
 			foreach (ConnectionPoint connectionPoint in forRemove)
 			{
 				Points.Remove(connectionPoint);
+			}
+		}
+
+		private void RemoveBendPointsWithTolerance()
+		{
+			if (Points.Count < 4)
+			{
+				return;
+			}
+
+			for (int i = 1; i < Points.Count - 1; i++)
+			{
+				var point = Points[i];
+				var nextPoint = Points[i + 1];
 			}
 		}
 
@@ -502,23 +609,18 @@ namespace ER_Diagram_Modeler.Views.Canvas.Connection
 		{
 			BuildPointsFromLines();
 			RemoveRedundandBendPoints();
+			RemoveBendPointsWithTolerance();
 			BuildLinesFromPoints();
 			AdjustBendPointMarks();
 		}
 
-		private void RemoveGlitchedLines()
+		private void NormalizePoints()
 		{
-			int tolerance = 5;
-
-			if (Lines.Count < 3)
+			for (int i = 0; i < Points.Count; i++)
 			{
-				return;
+				Points[i].X = (int) Points[i].X;
+				Points[i].Y = (int)Points[i].Y;
 			}
-
-			var forSelection = Lines.Skip(1).Take(Lines.Count - 2).ToList();
-			var forRemove = forSelection.Where(t => t.GetLenght() < tolerance);
-
-
 		}
 
 		private void AdjustBendPointMarks()
@@ -545,29 +647,17 @@ namespace ER_Diagram_Modeler.Views.Canvas.Connection
 
 		private void MergeLines(ConnectionLine line1, ConnectionLine line2)
 		{
+			//TODO: Unfinished
 			line1.EndPoint.X = line2.EndPoint.X;
 			line1.EndPoint.Y = line2.EndPoint.Y;
 			Lines.Remove(line2);
 		}
 
-		private void SplitLineInMiddleNonDestructiveDestination(ConnectionLine line)
+		private void SplitLineInMiddleNonDestructive(ConnectionLine line)
 		{
 			var endPoint = Points.LastOrDefault();
 
-			Point middle = new Point();
-			if (line.Orientation == LineOrientation.Horizontal)
-			{
-				middle.Y = line.StartPoint.Y;
-				var sum = line.StartPoint.X + line.EndPoint.X;
-				middle.X = sum/2.0;
-			}
-			else
-			{
-				middle.X = line.StartPoint.X;
-				var sum = line.StartPoint.Y + line.EndPoint.Y;
-				middle.Y = sum/2.0;
-			}
-
+			ConnectionPoint middle = line.GetMiddlePoint();
 			var newLine = new ConnectionLine();
 
 			newLine.StartPoint.X = middle.X;

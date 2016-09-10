@@ -75,8 +75,6 @@ namespace ER_Diagram_Modeler.Views.Canvas.TableItem
 					maxDeltaHorizontal = Math.Min(_canvas.ActualWidth - (DesignerCanvas.GetLeft(item) + item.ActualWidth), maxDeltaHorizontal);
 				}
 
-
-
 				foreach(TableContent item in _canvas.SelectedTables)
 				{
 
@@ -87,11 +85,11 @@ namespace ER_Diagram_Modeler.Views.Canvas.TableItem
 						{
 							case VerticalAlignment.Bottom:
 								deltaVertical = e.VerticalChange > 0 && e.VerticalChange >= maxDeltaVertical ? 0 : Math.Min(-e.VerticalChange, minDeltaVertical);
-								item.Height = item.ActualHeight - deltaVertical;
+								item.Height = item.ActualHeight - (int)deltaVertical;
 								item.TableViewModel.Height = item.Height;
 								break;
 							case VerticalAlignment.Top:
-								deltaVertical = Math.Min(Math.Max(-minTop, e.VerticalChange), minDeltaVertical);
+								deltaVertical = (int)Math.Min(Math.Max(-minTop, e.VerticalChange), minDeltaVertical);
 								var topPos = DesignerCanvas.GetTop(item) + deltaVertical;
 								DesignerCanvas.SetTop(item, topPos);
 								item.Height = item.ActualHeight - deltaVertical;
@@ -105,7 +103,7 @@ namespace ER_Diagram_Modeler.Views.Canvas.TableItem
 					switch (HorizontalAlignment)
 					{
 						case HorizontalAlignment.Left:
-							deltaHorizontal = Math.Min(Math.Max(-minLeft, e.HorizontalChange), minDeltaHorizontal);
+							deltaHorizontal = (int)Math.Min(Math.Max(-minLeft, e.HorizontalChange), minDeltaHorizontal);
 							var leftPos = DesignerCanvas.GetLeft(item) + deltaHorizontal;
 							DesignerCanvas.SetLeft(item, leftPos);
 							item.Width = item.ActualWidth - deltaHorizontal;
@@ -113,7 +111,7 @@ namespace ER_Diagram_Modeler.Views.Canvas.TableItem
 							item.TableViewModel.Left = leftPos;
 							break;
 						case HorizontalAlignment.Right:
-							deltaHorizontal = e.HorizontalChange > 0 && e.HorizontalChange >= maxDeltaHorizontal ? 0 : Math.Min(-e.HorizontalChange, minDeltaHorizontal);
+							deltaHorizontal = e.HorizontalChange > 0 && e.HorizontalChange >= maxDeltaHorizontal ? 0 : (int)Math.Min(-e.HorizontalChange, minDeltaHorizontal);
 							item.Width = item.ActualWidth - deltaHorizontal;
 							item.TableViewModel.Width = item.Width;
 							break;

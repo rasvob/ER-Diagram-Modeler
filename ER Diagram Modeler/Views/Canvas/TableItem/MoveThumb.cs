@@ -54,8 +54,8 @@ namespace ER_Diagram_Modeler.Views.Canvas.TableItem
 					maxTop = Math.Max(DesignerCanvas.GetTop(item) + item.ActualHeight, maxTop);
 				}
 
-				double deltaHorizontal = Math.Max(-minLeft, dragDeltaEventArgs.HorizontalChange);
-				double deltaVertical = Math.Max(-minTop, dragDeltaEventArgs.VerticalChange);
+				double deltaHorizontal = (int)Math.Max(-minLeft, dragDeltaEventArgs.HorizontalChange);
+				double deltaVertical = (int)Math.Max(-minTop, dragDeltaEventArgs.VerticalChange);
 
 				if (maxLeft >= _canvas.ActualWidth && dragDeltaEventArgs.HorizontalChange > 0)
 				{

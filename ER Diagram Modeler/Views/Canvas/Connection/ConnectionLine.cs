@@ -187,6 +187,24 @@ namespace ER_Diagram_Modeler.Views.Canvas.Connection
 			return Math.Abs(EndPoint.Y - StartPoint.Y);
 		}
 
+		public ConnectionPoint GetMiddlePoint()
+		{
+			ConnectionPoint middle = new ConnectionPoint();
+			if(Orientation == LineOrientation.Horizontal)
+			{
+				middle.Y = StartPoint.Y;
+				var sum = StartPoint.X + EndPoint.X;
+				middle.X = sum / 2.0;
+			}
+			else
+			{
+				middle.X = StartPoint.X;
+				var sum = StartPoint.Y + EndPoint.Y;
+				middle.Y = sum / 2.0;
+			}
+			return middle;
+		}
+
 		public override string ToString()
 		{
 			return $"{StartPoint} | {EndPoint}";
