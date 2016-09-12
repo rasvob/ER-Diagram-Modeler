@@ -107,19 +107,202 @@ namespace ER_Diagram_Modeler.Views.Canvas.Connection
 			{
 				case ConnectorOrientation.Up:
 				{
+						ConnectionLine endLine = null;
+						if(SourceConnector.EndPoint.Equals(Lines.FirstOrDefault()?.StartPoint))
+						{
+							endLine = Lines.FirstOrDefault();
+							int nextLineIdx = Lines.IndexOf(endLine) + 1;
+							ConnectionLine nextLine = Lines[nextLineIdx];
 
-					break;
+							endLine.StartPoint.Y += e.TopDelta;
+
+							if(SourceConnector.EndPoint.X + Connector.SymbolLineEndsDiff < table.Left + table.Width || e.LeftDelta < 0)
+							{
+								endLine.StartPoint.X += e.LeftDelta;
+								endLine.EndPoint.X += e.LeftDelta;
+
+								if(nextLine != null)
+								{
+									nextLine.StartPoint.X += e.LeftDelta;
+								}
+							}
+
+							if(SourceConnector.EndPoint.X + Connector.SymbolLineEndsDiff >= table.Left + table.Width - 10 && e.WidthDelta <= 0)
+							{
+								endLine.StartPoint.X += e.WidthDelta;
+								endLine.EndPoint.X += e.WidthDelta;
+
+								if(nextLine != null)
+								{
+									nextLine.StartPoint.X += e.WidthDelta;
+								}
+							}
+
+						}
+						else if(SourceConnector.EndPoint.Equals(Lines.LastOrDefault()?.EndPoint))
+						{
+							endLine = Lines.LastOrDefault();
+							int nextLineIdx = Lines.IndexOf(endLine) - 1;
+							ConnectionLine nextLine = Lines[nextLineIdx];
+
+							endLine.EndPoint.Y += e.TopDelta;
+
+							if(SourceConnector.EndPoint.X + Connector.SymbolLineEndsDiff < table.Left + table.Width || e.LeftDelta < 0)
+							{
+								endLine.StartPoint.X += e.LeftDelta;
+								endLine.EndPoint.X += e.LeftDelta;
+
+								if(nextLine != null)
+								{
+									nextLine.EndPoint.X += e.LeftDelta;
+								}
+							}
+
+							if(SourceConnector.EndPoint.X + Connector.SymbolLineEndsDiff >= table.Left + table.Width - 10 && e.WidthDelta <= 0)
+							{
+								endLine.StartPoint.X += e.WidthDelta;
+								endLine.EndPoint.X += e.WidthDelta;
+
+								if(nextLine != null)
+								{
+									nextLine.EndPoint.X += e.WidthDelta;
+								}
+							}
+						}
+						break;
 				}
 
 				case ConnectorOrientation.Down:
 				{
+						ConnectionLine endLine = null;
+						if(SourceConnector.EndPoint.Equals(Lines.FirstOrDefault()?.StartPoint))
+						{
+							endLine = Lines.FirstOrDefault();
+							int nextLineIdx = Lines.IndexOf(endLine) + 1;
+							ConnectionLine nextLine = Lines[nextLineIdx];
 
-					break;
+							endLine.StartPoint.Y += e.TopDelta;
+							endLine.StartPoint.Y += e.HeightDelta;
+
+							if(SourceConnector.EndPoint.X + Connector.SymbolLineEndsDiff < table.Left + table.Width || e.LeftDelta < 0)
+							{
+								endLine.StartPoint.X += e.LeftDelta;
+								endLine.EndPoint.X += e.LeftDelta;
+
+								if(nextLine != null)
+								{
+									nextLine.StartPoint.X += e.LeftDelta;
+								}
+							}
+
+							if(SourceConnector.EndPoint.X + Connector.SymbolLineEndsDiff >= table.Left + table.Width - 10 && e.WidthDelta <= 0)
+							{
+								endLine.StartPoint.X += e.WidthDelta;
+								endLine.EndPoint.X += e.WidthDelta;
+
+								if(nextLine != null)
+								{
+									nextLine.StartPoint.X += e.WidthDelta;
+								}
+							}
+						}
+						else if(SourceConnector.EndPoint.Equals(Lines.LastOrDefault()?.EndPoint))
+						{
+							endLine = Lines.LastOrDefault();
+							int nextLineIdx = Lines.IndexOf(endLine) - 1;
+							ConnectionLine nextLine = Lines[nextLineIdx];
+
+							endLine.EndPoint.Y += e.TopDelta;
+							endLine.EndPoint.Y += e.HeightDelta;
+
+							if(SourceConnector.EndPoint.X + Connector.SymbolLineEndsDiff < table.Left + table.Width || e.LeftDelta < 0)
+							{
+								endLine.StartPoint.X += e.LeftDelta;
+								endLine.EndPoint.X += e.LeftDelta;
+
+								if(nextLine != null)
+								{
+									nextLine.EndPoint.X += e.LeftDelta;
+								}
+							}
+
+							if(SourceConnector.EndPoint.X + Connector.SymbolLineEndsDiff >= table.Left + table.Width - 10 && e.WidthDelta <= 0)
+							{
+								endLine.StartPoint.X += e.WidthDelta;
+								endLine.EndPoint.X += e.WidthDelta;
+
+								if(nextLine != null)
+								{
+									nextLine.EndPoint.X += e.WidthDelta;
+								}
+							}
+						}
+						break;
 				}
 				case ConnectorOrientation.Left:
 				{
+						ConnectionLine endLine = null;
+						if(SourceConnector.EndPoint.Equals(Lines.FirstOrDefault()?.StartPoint))
+						{
+							endLine = Lines.FirstOrDefault();
+							int nextLineIdx = Lines.IndexOf(endLine) + 1;
+							ConnectionLine nextLine = Lines[nextLineIdx];
 
-					break;
+							endLine.StartPoint.X += e.LeftDelta;
+
+							if(SourceConnector.EndPoint.Y + Connector.SymbolLineEndsDiff < table.Top + table.Height || e.TopDelta < 0)
+							{
+								endLine.StartPoint.Y += e.TopDelta;
+								endLine.EndPoint.Y += e.TopDelta;
+
+								if(nextLine != null)
+								{
+									nextLine.StartPoint.Y += e.TopDelta;
+								}
+							}
+
+							if(SourceConnector.EndPoint.Y + Connector.SymbolLineEndsDiff >= table.Top + table.Height - 4 && e.HeightDelta <= 0)
+							{
+								endLine.StartPoint.Y += e.HeightDelta;
+								endLine.EndPoint.Y += e.HeightDelta;
+
+								if(nextLine != null)
+								{
+									nextLine.StartPoint.Y += e.HeightDelta;
+								}
+							}
+						}
+						else if(SourceConnector.EndPoint.Equals(Lines.LastOrDefault()?.EndPoint))
+						{
+							endLine = Lines.LastOrDefault();
+							int nextLineIdx = Lines.IndexOf(endLine) - 1;
+							ConnectionLine nextLine = Lines[nextLineIdx];
+
+							endLine.EndPoint.X += e.LeftDelta;
+
+							if(SourceConnector.EndPoint.Y + Connector.SymbolLineEndsDiff < table.Top + table.Height || e.TopDelta < 0)
+							{
+								endLine.StartPoint.Y += e.TopDelta;
+								endLine.EndPoint.Y += e.TopDelta;
+
+								if(nextLine != null)
+								{
+									nextLine.EndPoint.Y += e.TopDelta;
+								}
+							}
+
+							if(SourceConnector.EndPoint.Y + Connector.SymbolLineEndsDiff >= table.Top + table.Height - 4 && e.HeightDelta <= 0)
+							{
+								endLine.StartPoint.Y += e.HeightDelta;
+								endLine.EndPoint.Y += e.HeightDelta;
+
+								if(nextLine != null)
+								{
+									nextLine.EndPoint.Y += e.HeightDelta;
+								}
+							}
+						}
+						break;
 				}
 				case ConnectorOrientation.Right:
 				{
