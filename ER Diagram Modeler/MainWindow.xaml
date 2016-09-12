@@ -16,10 +16,11 @@
 		mc:Ignorable="d"
 		d:DataContext="{d:DesignInstance viewModels:MainWindowViewModel}"
 		WindowStartupLocation="CenterScreen"
+		GlowBrush="{StaticResource AccentColorBrush}"
 		BorderThickness="1"
 		Icon="icon.ico"
-		GlowBrush="{StaticResource AccentColorBrush}"
-        Title="ER Diagram Modeler" Height="700" Width="1200">
+        Title="ER Diagram Modeler" 
+		Height="700" Width="1200">
 	<Window.Resources>
 		<ResourceDictionary>
 			<ResourceDictionary.MergedDictionaries>
