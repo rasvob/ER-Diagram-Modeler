@@ -50,6 +50,7 @@ namespace ER_Diagram_Modeler.Views.Canvas.Connection
 			set
 			{
 				_sourceViewModel = value;
+				if (value == null) return;
 				SourceViewModel.PositionAndMeasureChanged += SourceViewModelOnPositionAndMeasureChanged;
 				SourceViewModel.PositionAndMeasureChangesCompleted += SourceViewModelOnPositionAndMeasureChangesCompleted;
 				SourceViewModel.PositionAndMeasureChangesStarted += SourceViewModelOnPositionAndMeasureChangesStarted;
@@ -62,6 +63,7 @@ namespace ER_Diagram_Modeler.Views.Canvas.Connection
 			set
 			{
 				_destinationViewModel = value;
+				if (value == null) return;
 				DestinationViewModel.PositionAndMeasureChanged += DestinationViewModelOnPositionAndMeasureChanged;
 				DestinationViewModel.PositionAndMeasureChangesCompleted += DestinationViewModelOnPositionAndMeasureChangesCompleted;
 				DestinationViewModel.PositionAndMeasureChangesStarted += DestinationViewModelOnPositionAndMeasureChangesStarted;
@@ -102,6 +104,10 @@ namespace ER_Diagram_Modeler.Views.Canvas.Connection
 
 		private void SourceViewModelOnPositionAndMeasureChanged(object sender, TablePositionAndMeasureEventArgs e)
 		{
+			if (SourceViewModel.Equals(DestinationViewModel))
+			{
+				return;
+			}
 			var table = sender as TableViewModel;
 			switch (SourceConnector.Orientation)
 			{
@@ -377,7 +383,24 @@ namespace ER_Diagram_Modeler.Views.Canvas.Connection
 
 		private void DestinationViewModelOnPositionAndMeasureChanged(object sender, TablePositionAndMeasureEventArgs e)
 		{
+			//TODO: Self connection movement update
 			var table = DestinationViewModel;
+			if (DestinationViewModel.Equals(SourceViewModel))
+			{
+				foreach (ConnectionLine line in Lines)
+				{
+					line.EndPoint.X += e.WidthDelta;
+					line.EndPoint.X += e.LeftDelta;
+					line.EndPoint.Y += e.TopDelta;
+					line.EndPoint.Y += e.HeightDelta;
+
+					line.StartPoint.X += e.WidthDelta;
+					line.StartPoint.X += e.LeftDelta;
+					line.StartPoint.Y += e.TopDelta;
+					line.StartPoint.Y += e.HeightDelta;
+				}
+				return;
+			}
 			switch(DestinationConnector.Orientation)
 			{
 				case ConnectorOrientation.Up:
