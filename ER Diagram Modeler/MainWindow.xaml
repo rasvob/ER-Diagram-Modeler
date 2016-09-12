@@ -19,7 +19,7 @@
 		BorderThickness="1"
 		Icon="icon.ico"
 		GlowBrush="{StaticResource AccentColorBrush}"
-        Title="ER Diagram Modeler" Height="1000" Width="1500">
+        Title="ER Diagram Modeler" Height="700" Width="1200">
 	<Window.Resources>
 		<ResourceDictionary>
 			<ResourceDictionary.MergedDictionaries>
