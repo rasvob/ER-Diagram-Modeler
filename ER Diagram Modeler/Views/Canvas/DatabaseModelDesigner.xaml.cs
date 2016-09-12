@@ -569,11 +569,18 @@ namespace ER_Diagram_Modeler.Views.Canvas
 				TableViewControl viewControl = e.Source as TableViewControl;
 				if (viewControl != null)
 				{
-					var grid = viewControl.TableDataGrid;
-					var item = grid.SelectedItem;
-					var row = grid.ItemContainerGenerator.ContainerFromItem(item) as DataGridRow;
-					var cbox = VisualTreeHelperEx.FindDescendantByName(row, "DataTypeComboBox") as ComboBox;
-					if (cbox != null) cbox.IsDropDownOpen = false;
+					try
+					{
+						var grid = viewControl.TableDataGrid;
+						var item = grid.SelectedItem;
+						var row = grid.ItemContainerGenerator.ContainerFromItem(item) as DataGridRow;
+						var cbox = VisualTreeHelperEx.FindDescendantByName(row, "DataTypeComboBox") as ComboBox;
+						if (cbox != null) cbox.IsDropDownOpen = false;
+					}
+					catch (Exception exc)
+					{
+						Trace.WriteLine(exc.Message);
+					}
 				}
 			}
 
