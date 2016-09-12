@@ -23,9 +23,9 @@
 		Height="700" Width="1200">
 	<Window.Resources>
 		<ResourceDictionary>
-			<ResourceDictionary.MergedDictionaries>
+			<!--<ResourceDictionary.MergedDictionaries>
 				<ResourceDictionary Source="Views/Canvas/TableItem/TableItem.xaml"></ResourceDictionary>
-			</ResourceDictionary.MergedDictionaries>
+			</ResourceDictionary.MergedDictionaries>-->
 
 			<RoutedUICommand x:Key="Commands.NewTable"></RoutedUICommand>
 			<RoutedUICommand x:Key="Commands.DeleteItems"></RoutedUICommand>
