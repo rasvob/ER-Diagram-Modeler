@@ -1,9 +1,9 @@
-﻿<controls:MetroWindow x:Class="ER_Diagram_Modeler.MainWindow"
+﻿<Controls:MetroWindow x:Class="ER_Diagram_Modeler.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-		xmlns:controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+		xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
         xmlns:local="clr-namespace:ER_Diagram_Modeler"
 		xml:lang="en-US"
 		xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
@@ -16,10 +16,11 @@
 		mc:Ignorable="d"
 		d:DataContext="{d:DesignInstance viewModels:MainWindowViewModel}"
 		WindowStartupLocation="CenterScreen"
+		GlowBrush="{StaticResource AccentColorBrush}"
 		BorderThickness="1"
 		Icon="icon.ico"
-		GlowBrush="{StaticResource AccentColorBrush}"
-        Title="ER Diagram Modeler" Height="700" Width="1200">
+        Title="ER Diagram Modeler" 
+		Height="700" Width="1200">
 	<Window.Resources>
 		<ResourceDictionary>
 			<ResourceDictionary.MergedDictionaries>
@@ -118,23 +119,7 @@
 		</StatusBar>
 
 	</Grid>
-</controls:MetroWindow>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+</Controls:MetroWindow>
 
 
 
