@@ -54,10 +54,10 @@
     <ApplicationIcon>icon.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestCertificateThumbprint>6AB9039244DFFAE8FBA0B4A557B322062B746FD5</ManifestCertificateThumbprint>
+    <ManifestCertificateThumbprint>7F7FEA7C59D58EA0621A28766FD0BDD3DE383DD5</ManifestCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestKeyFile>ER Diagram Modeler_1_TemporaryKey.pfx</ManifestKeyFile>
+    <ManifestKeyFile>ER Diagram Modeler_TemporaryKey.pfx</ManifestKeyFile>
   </PropertyGroup>
   <PropertyGroup>
     <GenerateManifests>true</GenerateManifests>

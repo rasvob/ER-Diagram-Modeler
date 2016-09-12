@@ -19,7 +19,7 @@ namespace ER_Diagram_Modeler
 		protected override void OnStartup(StartupEventArgs e)
 		{
 			base.OnStartup(e);
-			//this.DispatcherUnhandledException += OnDispatcherUnhandledException;
+			this.DispatcherUnhandledException += OnDispatcherUnhandledException;
 		}
 
 		private void OnDispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs dispatcherUnhandledExceptionEventArgs)
