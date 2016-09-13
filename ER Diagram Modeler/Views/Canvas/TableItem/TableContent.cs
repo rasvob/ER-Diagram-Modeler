@@ -80,6 +80,7 @@ namespace ER_Diagram_Modeler.Views.Canvas.TableItem
 					case TableViewMode.Standard:
 						Height = _oldHeight;
 						TableViewModel.Height = _oldHeight;
+						TableViewModel.OnTableViewModeChanged();
 						break;
 					case TableViewMode.NameOnly:
 						_oldHeight = TableViewModel.Height;
@@ -87,6 +88,7 @@ namespace ER_Diagram_Modeler.Views.Canvas.TableItem
 						Width = ActualWidth;
 						TableViewModel.Height = Height;
 						TableViewModel.Width = Width;
+						TableViewModel.OnTableViewModeChanged();
 						break;
 				}
 			}

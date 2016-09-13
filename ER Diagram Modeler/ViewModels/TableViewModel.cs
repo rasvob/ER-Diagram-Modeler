@@ -19,6 +19,18 @@ namespace ER_Diagram_Modeler.ViewModels
 		private bool _isSelected;
 		private double _width;
 		private double _height;
+		private bool _isMoving;
+
+		public bool IsMoving
+		{
+			get { return _isMoving; }
+			set
+			{
+				if (value == _isMoving) return;
+				_isMoving = value;
+				OnPropertyChanged();
+			}
+		}
 
 		public double Height
 		{
@@ -131,6 +143,7 @@ namespace ER_Diagram_Modeler.ViewModels
 		public event EventHandler<TablePositionAndMeasureEventArgs> PositionAndMeasureChanged;
 		public event EventHandler PositionAndMeasureChangesCompleted;
 		public event EventHandler PositionAndMeasureChangesStarted;
+		public event EventHandler TableViewModeChanged; 
 
 		[NotifyPropertyChangedInvocator]
 		protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
@@ -151,6 +164,11 @@ namespace ER_Diagram_Modeler.ViewModels
 		public void OnPositionAndMeasureChangesStarted()
 		{
 			PositionAndMeasureChangesStarted?.Invoke(this, System.EventArgs.Empty);
+		}
+
+		public void OnTableViewModeChanged()
+		{
+			TableViewModeChanged?.Invoke(this, System.EventArgs.Empty);
 		}
 	}
 }

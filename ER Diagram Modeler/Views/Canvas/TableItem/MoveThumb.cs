@@ -23,6 +23,7 @@ namespace ER_Diagram_Modeler.Views.Canvas.TableItem
 		private void OnDragCompleted(object sender, DragCompletedEventArgs dragCompletedEventArgs)
 		{
 			_item?.TableViewModel.OnPositionAndMeasureChangesCompleted();
+			_item.TableViewModel.IsMoving = false;
 		}
 
 		private void OnDragStarted(object sender, DragStartedEventArgs dragStartedEventArgs)
@@ -33,6 +34,7 @@ namespace ER_Diagram_Modeler.Views.Canvas.TableItem
 			{
 				_canvas = VisualTreeHelper.GetParent(_item) as DesignerCanvas;
 				_item.TableViewModel.OnPositionAndMeasureChangesStarted();
+				_item.TableViewModel.IsMoving = true;
 			}
 		}
 

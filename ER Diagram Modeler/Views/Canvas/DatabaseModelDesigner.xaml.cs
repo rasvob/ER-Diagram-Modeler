@@ -394,17 +394,17 @@ namespace ER_Diagram_Modeler.Views.Canvas
 			info.DestinationViewModel = ViewModel.TableViewModels.LastOrDefault();
 
 			//Right
-			//var point1 =
-			//	new ConnectionPoint(info.SourceViewModel.Left + info.SourceViewModel.Width + Connector.ConnectorLenght, 450);
-			//var point2 =
-			//	new ConnectionPoint(info.DestinationViewModel.Left - Connector.ConnectorLenght
-			//		, 450);
-			//info.Points.Add(point1);
-			//info.Points.Add(point2);
-			//info.SourceConnector.Orientation = ConnectorOrientation.Right;
-			//info.DestinationConnector.Orientation = ConnectorOrientation.Left;
-			//info.SourceConnector.EndPoint = point1;
-			//info.DestinationConnector.EndPoint = point2;
+			var point1 =
+				new ConnectionPoint(info.SourceViewModel.Left + info.SourceViewModel.Width + Connector.ConnectorLenght, 450);
+			var point2 =
+				new ConnectionPoint(info.DestinationViewModel.Left - Connector.ConnectorLenght
+					, 450);
+			info.Points.Add(point1);
+			info.Points.Add(point2);
+			info.SourceConnector.Orientation = ConnectorOrientation.Right;
+			info.DestinationConnector.Orientation = ConnectorOrientation.Left;
+			info.SourceConnector.EndPoint = point1;
+			info.DestinationConnector.EndPoint = point2;
 
 			//Up
 			//var point1 =
@@ -425,22 +425,22 @@ namespace ER_Diagram_Modeler.Views.Canvas
 			//info.DestinationConnector.EndPoint = point5;
 
 			//Down
-			var point1 =
-				new ConnectionPoint(info.SourceViewModel.Left + 30, info.SourceViewModel.Top + info.SourceViewModel.Height + Connector.ConnectorLenght);
-			var point2 =
-				new ConnectionPoint(info.SourceViewModel.Left + 30, info.SourceViewModel.Top + info.SourceViewModel.Height + Connector.ConnectorLenght + 30);
-			var point3 = new ConnectionPoint(info.SourceViewModel.Left + +info.SourceViewModel.Width + 50, info.SourceViewModel.Top + info.SourceViewModel.Height + Connector.ConnectorLenght + 30);
-			var point4 = new ConnectionPoint(info.SourceViewModel.Left + +info.SourceViewModel.Width + 50, info.DestinationViewModel.Top + 50);
-			var point5 = new ConnectionPoint(info.DestinationViewModel.Left - Connector.ConnectorLenght, info.DestinationViewModel.Top + 50);
-			info.Points.Add(point1);
-			info.Points.Add(point2);
-			info.Points.Add(point3);
-			info.Points.Add(point4);
-			info.Points.Add(point5);
-			info.SourceConnector.Orientation = ConnectorOrientation.Down;
-			info.DestinationConnector.Orientation = ConnectorOrientation.Left;
-			info.SourceConnector.EndPoint = point1;
-			info.DestinationConnector.EndPoint = point5;
+			//var point1 =
+			//	new ConnectionPoint(info.SourceViewModel.Left + 30, info.SourceViewModel.Top + info.SourceViewModel.Height + Connector.ConnectorLenght);
+			//var point2 =
+			//	new ConnectionPoint(info.SourceViewModel.Left + 30, info.SourceViewModel.Top + info.SourceViewModel.Height + Connector.ConnectorLenght + 30);
+			//var point3 = new ConnectionPoint(info.SourceViewModel.Left + +info.SourceViewModel.Width + 50, info.SourceViewModel.Top + info.SourceViewModel.Height + Connector.ConnectorLenght + 30);
+			//var point4 = new ConnectionPoint(info.SourceViewModel.Left + +info.SourceViewModel.Width + 50, info.DestinationViewModel.Top + 50);
+			//var point5 = new ConnectionPoint(info.DestinationViewModel.Left - Connector.ConnectorLenght, info.DestinationViewModel.Top + 50);
+			//info.Points.Add(point1);
+			//info.Points.Add(point2);
+			//info.Points.Add(point3);
+			//info.Points.Add(point4);
+			//info.Points.Add(point5);
+			//info.SourceConnector.Orientation = ConnectorOrientation.Down;
+			//info.DestinationConnector.Orientation = ConnectorOrientation.Left;
+			//info.SourceConnector.EndPoint = point1;
+			//info.DestinationConnector.EndPoint = point5;
 
 			//Left
 			//var point1 =
@@ -471,7 +471,7 @@ namespace ER_Diagram_Modeler.Views.Canvas
 			//	new ConnectionPoint(info.DestinationViewModel.Left - Connector.ConnectorLenght - 3, info.DestinationViewModel.Top + 30);
 			//var point3 = new ConnectionPoint(info.SourceViewModel.Left - Connector.ConnectorLenght - 3, info.DestinationViewModel.Top - 50);
 			//var point4 = new ConnectionPoint(info.SourceViewModel.Left + 50, info.DestinationViewModel.Top - 50);
-			//var point5 = new ConnectionPoint(info.SourceViewModel.Left + 50, info.DestinationViewModel.Top -Connector.ConnectorLenght);
+			//var point5 = new ConnectionPoint(info.SourceViewModel.Left + 50, info.DestinationViewModel.Top - Connector.ConnectorLenght);
 			//info.Points.Add(point1);
 			//info.Points.Add(point2);
 			//info.Points.Add(point3);

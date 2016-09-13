@@ -54,6 +54,7 @@ namespace ER_Diagram_Modeler.Views.Canvas.Connection
 				SourceViewModel.PositionAndMeasureChanged += SourceViewModelOnPositionAndMeasureChanged;
 				SourceViewModel.PositionAndMeasureChangesCompleted += SourceViewModelOnPositionAndMeasureChangesCompleted;
 				SourceViewModel.PositionAndMeasureChangesStarted += SourceViewModelOnPositionAndMeasureChangesStarted;
+				SourceViewModel.TableViewModeChanged += ViewModelOnTableViewModeChanged;
 			}
 		}
 
@@ -67,6 +68,7 @@ namespace ER_Diagram_Modeler.Views.Canvas.Connection
 				DestinationViewModel.PositionAndMeasureChanged += DestinationViewModelOnPositionAndMeasureChanged;
 				DestinationViewModel.PositionAndMeasureChangesCompleted += DestinationViewModelOnPositionAndMeasureChangesCompleted;
 				DestinationViewModel.PositionAndMeasureChangesStarted += DestinationViewModelOnPositionAndMeasureChangesStarted;
+				DestinationViewModel.TableViewModeChanged += ViewModelOnTableViewModeChanged;
 			}
 		}
 
@@ -102,13 +104,52 @@ namespace ER_Diagram_Modeler.Views.Canvas.Connection
 			IsSelected = true;
 		}
 
+
+		private void ViewModelOnTableViewModeChanged(object sender, System.EventArgs eventArgs)
+		{
+			var table = sender as TableViewModel;
+
+			if (table?.ViewMode == TableViewMode.NameOnly)
+			{
+				if (table.Equals(SourceViewModel))
+				{
+					if(DestinationConnector.Orientation == ConnectorOrientation.Left || DestinationConnector.Orientation == ConnectorOrientation.Right)
+					{
+
+					}
+				}
+				else if (table.Equals(DestinationViewModel))
+				{
+					if(DestinationConnector.Orientation == ConnectorOrientation.Left || DestinationConnector.Orientation == ConnectorOrientation.Right)
+					{
+
+					}
+				}
+			}
+		}
+
 		private void SourceViewModelOnPositionAndMeasureChanged(object sender, TablePositionAndMeasureEventArgs e)
 		{
-			if (SourceViewModel.Equals(DestinationViewModel))
+			var table = sender as TableViewModel;
+
+			if(IsSourceAndDestinationSelected() && !IsSelfConnection())
+			{
+				if (SourceViewModel.IsMoving)
+				{
+					MoveAllLines(e);
+					return;
+				}
+				if (DestinationViewModel.IsMoving)
+				{
+					return;
+				}
+			}
+
+			if (table != null && (IsSelfConnection() && table.IsMoving))
 			{
 				return;
 			}
-			var table = sender as TableViewModel;
+
 			switch (SourceConnector.Orientation)
 			{
 				case ConnectorOrientation.Up:
@@ -122,28 +163,7 @@ namespace ER_Diagram_Modeler.Views.Canvas.Connection
 
 							endLine.StartPoint.Y += e.TopDelta;
 
-							if(SourceConnector.EndPoint.X + Connector.SymbolLineEndsDiff < table.Left + table.Width || e.LeftDelta < 0)
-							{
-								endLine.StartPoint.X += e.LeftDelta;
-								endLine.EndPoint.X += e.LeftDelta;
-
-								if(nextLine != null)
-								{
-									nextLine.StartPoint.X += e.LeftDelta;
-								}
-							}
-
-							if(SourceConnector.EndPoint.X + Connector.SymbolLineEndsDiff >= table.Left + table.Width - 10 && e.WidthDelta <= 0)
-							{
-								endLine.StartPoint.X += e.WidthDelta;
-								endLine.EndPoint.X += e.WidthDelta;
-
-								if(nextLine != null)
-								{
-									nextLine.StartPoint.X += e.WidthDelta;
-								}
-							}
-
+							AdjustConnectorMarkToHorizontalLimits(SourceConnector, table, endLine, nextLine, e, true);
 						}
 						else if(SourceConnector.EndPoint.Equals(Lines.LastOrDefault()?.EndPoint))
 						{
@@ -153,27 +173,7 @@ namespace ER_Diagram_Modeler.Views.Canvas.Connection
 
 							endLine.EndPoint.Y += e.TopDelta;
 
-							if(SourceConnector.EndPoint.X + Connector.SymbolLineEndsDiff < table.Left + table.Width || e.LeftDelta < 0)
-							{
-								endLine.StartPoint.X += e.LeftDelta;
-								endLine.EndPoint.X += e.LeftDelta;
-
-								if(nextLine != null)
-								{
-									nextLine.EndPoint.X += e.LeftDelta;
-								}
-							}
-
-							if(SourceConnector.EndPoint.X + Connector.SymbolLineEndsDiff >= table.Left + table.Width - 10 && e.WidthDelta <= 0)
-							{
-								endLine.StartPoint.X += e.WidthDelta;
-								endLine.EndPoint.X += e.WidthDelta;
-
-								if(nextLine != null)
-								{
-									nextLine.EndPoint.X += e.WidthDelta;
-								}
-							}
+							AdjustConnectorMarkToHorizontalLimits(SourceConnector, table, endLine, nextLine, e, false);
 						}
 						break;
 				}
@@ -190,27 +190,7 @@ namespace ER_Diagram_Modeler.Views.Canvas.Connection
 							endLine.StartPoint.Y += e.TopDelta;
 							endLine.StartPoint.Y += e.HeightDelta;
 
-							if(SourceConnector.EndPoint.X + Connector.SymbolLineEndsDiff < table.Left + table.Width || e.LeftDelta < 0)
-							{
-								endLine.StartPoint.X += e.LeftDelta;
-								endLine.EndPoint.X += e.LeftDelta;
-
-								if(nextLine != null)
-								{
-									nextLine.StartPoint.X += e.LeftDelta;
-								}
-							}
-
-							if(SourceConnector.EndPoint.X + Connector.SymbolLineEndsDiff >= table.Left + table.Width - 10 && e.WidthDelta <= 0)
-							{
-								endLine.StartPoint.X += e.WidthDelta;
-								endLine.EndPoint.X += e.WidthDelta;
-
-								if(nextLine != null)
-								{
-									nextLine.StartPoint.X += e.WidthDelta;
-								}
-							}
+							AdjustConnectorMarkToHorizontalLimits(SourceConnector, table, endLine, nextLine, e, true);
 						}
 						else if(SourceConnector.EndPoint.Equals(Lines.LastOrDefault()?.EndPoint))
 						{
@@ -221,27 +201,7 @@ namespace ER_Diagram_Modeler.Views.Canvas.Connection
 							endLine.EndPoint.Y += e.TopDelta;
 							endLine.EndPoint.Y += e.HeightDelta;
 
-							if(SourceConnector.EndPoint.X + Connector.SymbolLineEndsDiff < table.Left + table.Width || e.LeftDelta < 0)
-							{
-								endLine.StartPoint.X += e.LeftDelta;
-								endLine.EndPoint.X += e.LeftDelta;
-
-								if(nextLine != null)
-								{
-									nextLine.EndPoint.X += e.LeftDelta;
-								}
-							}
-
-							if(SourceConnector.EndPoint.X + Connector.SymbolLineEndsDiff >= table.Left + table.Width - 10 && e.WidthDelta <= 0)
-							{
-								endLine.StartPoint.X += e.WidthDelta;
-								endLine.EndPoint.X += e.WidthDelta;
-
-								if(nextLine != null)
-								{
-									nextLine.EndPoint.X += e.WidthDelta;
-								}
-							}
+							AdjustConnectorMarkToHorizontalLimits(SourceConnector, table, endLine, nextLine, e, false);
 						}
 						break;
 				}
@@ -256,27 +216,7 @@ namespace ER_Diagram_Modeler.Views.Canvas.Connection
 
 							endLine.StartPoint.X += e.LeftDelta;
 
-							if(SourceConnector.EndPoint.Y + Connector.SymbolLineEndsDiff < table.Top + table.Height || e.TopDelta < 0)
-							{
-								endLine.StartPoint.Y += e.TopDelta;
-								endLine.EndPoint.Y += e.TopDelta;
-
-								if(nextLine != null)
-								{
-									nextLine.StartPoint.Y += e.TopDelta;
-								}
-							}
-
-							if(SourceConnector.EndPoint.Y + Connector.SymbolLineEndsDiff >= table.Top + table.Height - 4 && e.HeightDelta <= 0)
-							{
-								endLine.StartPoint.Y += e.HeightDelta;
-								endLine.EndPoint.Y += e.HeightDelta;
-
-								if(nextLine != null)
-								{
-									nextLine.StartPoint.Y += e.HeightDelta;
-								}
-							}
+							AdjustConnectorMarkToVerticalLimits(SourceConnector, table, endLine, nextLine, e, true);
 						}
 						else if(SourceConnector.EndPoint.Equals(Lines.LastOrDefault()?.EndPoint))
 						{
@@ -286,27 +226,7 @@ namespace ER_Diagram_Modeler.Views.Canvas.Connection
 
 							endLine.EndPoint.X += e.LeftDelta;
 
-							if(SourceConnector.EndPoint.Y + Connector.SymbolLineEndsDiff < table.Top + table.Height || e.TopDelta < 0)
-							{
-								endLine.StartPoint.Y += e.TopDelta;
-								endLine.EndPoint.Y += e.TopDelta;
-
-								if(nextLine != null)
-								{
-									nextLine.EndPoint.Y += e.TopDelta;
-								}
-							}
-
-							if(SourceConnector.EndPoint.Y + Connector.SymbolLineEndsDiff >= table.Top + table.Height - 4 && e.HeightDelta <= 0)
-							{
-								endLine.StartPoint.Y += e.HeightDelta;
-								endLine.EndPoint.Y += e.HeightDelta;
-
-								if(nextLine != null)
-								{
-									nextLine.EndPoint.Y += e.HeightDelta;
-								}
-							}
+							AdjustConnectorMarkToVerticalLimits(SourceConnector, table, endLine, nextLine, e, false);
 						}
 						break;
 				}
@@ -322,28 +242,7 @@ namespace ER_Diagram_Modeler.Views.Canvas.Connection
 							endLine.StartPoint.X += e.LeftDelta;
 							endLine.StartPoint.X += e.WidthDelta;
 
-							if(SourceConnector.EndPoint.Y + Connector.SymbolLineEndsDiff < table.Top + table.Height || e.TopDelta < 0)
-							{
-								endLine.StartPoint.Y += e.TopDelta;
-								endLine.EndPoint.Y += e.TopDelta;
-
-								if(nextLine != null)
-								{
-									nextLine.StartPoint.Y += e.TopDelta;
-								}
-							}
-
-							if(SourceConnector.EndPoint.Y + Connector.SymbolLineEndsDiff >= table.Top + table.Height - 4 && e.HeightDelta <= 0)
-							{
-								endLine.StartPoint.Y += e.HeightDelta;
-								endLine.EndPoint.Y += e.HeightDelta;
-
-								if(nextLine != null)
-								{
-									nextLine.StartPoint.Y += e.HeightDelta;
-								}
-							}
-
+							AdjustConnectorMarkToVerticalLimits(SourceConnector, table, endLine, nextLine, e, true);
 						}
 						else if(SourceConnector.EndPoint.Equals(Lines.LastOrDefault()?.EndPoint))
 						{
@@ -354,51 +253,32 @@ namespace ER_Diagram_Modeler.Views.Canvas.Connection
 							endLine.EndPoint.X += e.LeftDelta;
 							endLine.EndPoint.X += e.WidthDelta;
 
-							if(SourceConnector.EndPoint.Y + Connector.SymbolLineEndsDiff < table.Top + table.Height || e.TopDelta < 0)
-							{
-								endLine.StartPoint.Y += e.TopDelta;
-								endLine.EndPoint.Y += e.TopDelta;
-
-								if(nextLine != null)
-								{
-									nextLine.EndPoint.Y += e.TopDelta;
-								}
-							}
-
-							if(SourceConnector.EndPoint.Y + Connector.SymbolLineEndsDiff >= table.Top + table.Height - 4 && e.HeightDelta <= 0)
-							{
-								endLine.StartPoint.Y += e.HeightDelta;
-								endLine.EndPoint.Y += e.HeightDelta;
-
-								if(nextLine != null)
-								{
-									nextLine.EndPoint.Y += e.HeightDelta;
-								}
-							}
+							AdjustConnectorMarkToVerticalLimits(SourceConnector, table, endLine, nextLine, e, false);
 						}
 						break;
 				}
 			}
 		}
-
 		private void DestinationViewModelOnPositionAndMeasureChanged(object sender, TablePositionAndMeasureEventArgs e)
 		{
-			//TODO: Self connection movement update
 			var table = DestinationViewModel;
-			if (DestinationViewModel.Equals(SourceViewModel))
-			{
-				foreach (ConnectionLine line in Lines)
-				{
-					line.EndPoint.X += e.WidthDelta;
-					line.EndPoint.X += e.LeftDelta;
-					line.EndPoint.Y += e.TopDelta;
-					line.EndPoint.Y += e.HeightDelta;
 
-					line.StartPoint.X += e.WidthDelta;
-					line.StartPoint.X += e.LeftDelta;
-					line.StartPoint.Y += e.TopDelta;
-					line.StartPoint.Y += e.HeightDelta;
+			if(IsSourceAndDestinationSelected() && !IsSelfConnection())
+			{
+				if(DestinationViewModel.IsMoving)
+				{
+					MoveAllLines(e);
+					return;
 				}
+				if(SourceViewModel.IsMoving)
+				{
+					return;
+				}
+			}
+
+			if(table != null && (IsSelfConnection() && table.IsMoving))
+			{
+				MoveAllLines(e);
 				return;
 			}
 			switch(DestinationConnector.Orientation)
@@ -414,28 +294,7 @@ namespace ER_Diagram_Modeler.Views.Canvas.Connection
 
 							endLine.StartPoint.Y += e.TopDelta;
 
-							if (DestinationConnector.EndPoint.X + Connector.SymbolLineEndsDiff < table.Left + table.Width || e.LeftDelta < 0)
-							{
-								endLine.StartPoint.X += e.LeftDelta;
-								endLine.EndPoint.X += e.LeftDelta;
-
-								if (nextLine != null)
-								{
-									nextLine.StartPoint.X += e.LeftDelta;
-								}
-							}
-
-							if(DestinationConnector.EndPoint.X + Connector.SymbolLineEndsDiff >= table.Left + table.Width - 10 && e.WidthDelta <= 0)
-							{
-								endLine.StartPoint.X += e.WidthDelta;
-								endLine.EndPoint.X += e.WidthDelta;
-
-								if(nextLine != null)
-								{
-									nextLine.StartPoint.X += e.WidthDelta;
-								}
-							}
-
+							AdjustConnectorMarkToHorizontalLimits(DestinationConnector, table, endLine, nextLine, e, true);
 						}
 						else if(DestinationConnector.EndPoint.Equals(Lines.LastOrDefault()?.EndPoint))
 						{
@@ -445,27 +304,7 @@ namespace ER_Diagram_Modeler.Views.Canvas.Connection
 
 							endLine.EndPoint.Y += e.TopDelta;
 
-							if (DestinationConnector.EndPoint.X + Connector.SymbolLineEndsDiff < table.Left + table.Width || e.LeftDelta < 0)
-							{
-								endLine.StartPoint.X += e.LeftDelta;
-								endLine.EndPoint.X += e.LeftDelta;
-
-								if (nextLine != null)
-								{
-									nextLine.EndPoint.X += e.LeftDelta;
-								}
-							}
-
-							if(DestinationConnector.EndPoint.X + Connector.SymbolLineEndsDiff >= table.Left + table.Width - 10 && e.WidthDelta <= 0)
-							{
-								endLine.StartPoint.X += e.WidthDelta;
-								endLine.EndPoint.X += e.WidthDelta;
-
-								if(nextLine != null)
-								{
-									nextLine.EndPoint.X += e.WidthDelta;
-								}
-							}
+							AdjustConnectorMarkToHorizontalLimits(DestinationConnector, table, endLine, nextLine, e, false);
 						}
 						break;
 				}
@@ -481,27 +320,7 @@ namespace ER_Diagram_Modeler.Views.Canvas.Connection
 							endLine.StartPoint.Y += e.TopDelta;
 							endLine.StartPoint.Y += e.HeightDelta;
 
-							if (DestinationConnector.EndPoint.X + Connector.SymbolLineEndsDiff < table.Left + table.Width || e.LeftDelta < 0)
-							{
-								endLine.StartPoint.X += e.LeftDelta;
-								endLine.EndPoint.X += e.LeftDelta;
-
-								if(nextLine != null)
-								{
-									nextLine.StartPoint.X += e.LeftDelta;
-								}
-							}
-
-							if (DestinationConnector.EndPoint.X + Connector.SymbolLineEndsDiff >= table.Left + table.Width - 10 && e.WidthDelta <= 0)
-							{
-								endLine.StartPoint.X += e.WidthDelta;
-								endLine.EndPoint.X += e.WidthDelta;
-
-								if(nextLine != null)
-								{
-									nextLine.StartPoint.X += e.WidthDelta;
-								}
-							}
+							AdjustConnectorMarkToHorizontalLimits(DestinationConnector, table, endLine, nextLine, e, true);
 						}
 						else if(DestinationConnector.EndPoint.Equals(Lines.LastOrDefault()?.EndPoint))
 						{
@@ -512,27 +331,7 @@ namespace ER_Diagram_Modeler.Views.Canvas.Connection
 							endLine.EndPoint.Y += e.TopDelta;
 							endLine.EndPoint.Y += e.HeightDelta;
 
-							if (DestinationConnector.EndPoint.X + Connector.SymbolLineEndsDiff < table.Left + table.Width || e.LeftDelta < 0)
-							{
-								endLine.StartPoint.X += e.LeftDelta;
-								endLine.EndPoint.X += e.LeftDelta;
-
-								if (nextLine != null)
-								{
-									nextLine.EndPoint.X += e.LeftDelta;
-								}
-							}
-
-							if(DestinationConnector.EndPoint.X + Connector.SymbolLineEndsDiff >= table.Left + table.Width - 10 && e.WidthDelta <= 0)
-							{
-								endLine.StartPoint.X += e.WidthDelta;
-								endLine.EndPoint.X += e.WidthDelta;
-
-								if(nextLine != null)
-								{
-									nextLine.EndPoint.X += e.WidthDelta;
-								}
-							}
+							AdjustConnectorMarkToHorizontalLimits(DestinationConnector, table, endLine, nextLine, e, false);
 						}
 						break;
 				}
@@ -547,27 +346,7 @@ namespace ER_Diagram_Modeler.Views.Canvas.Connection
 
 							endLine.StartPoint.X += e.LeftDelta;
 
-							if(DestinationConnector.EndPoint.Y + Connector.SymbolLineEndsDiff < table.Top + table.Height || e.TopDelta < 0)
-							{
-								endLine.StartPoint.Y += e.TopDelta;
-								endLine.EndPoint.Y += e.TopDelta;
-
-								if (nextLine != null)
-								{
-									nextLine.StartPoint.Y += e.TopDelta;
-								}
-							}
-
-							if(DestinationConnector.EndPoint.Y + Connector.SymbolLineEndsDiff >= table.Top + table.Height - 4 && e.HeightDelta <= 0)
-							{
-								endLine.StartPoint.Y += e.HeightDelta;
-								endLine.EndPoint.Y += e.HeightDelta;
-
-								if(nextLine != null)
-								{
-									nextLine.StartPoint.Y += e.HeightDelta;
-								}
-							}
+							AdjustConnectorMarkToVerticalLimits(DestinationConnector, table, endLine, nextLine, e, true);
 						}
 						else if(DestinationConnector.EndPoint.Equals(Lines.LastOrDefault()?.EndPoint))
 						{
@@ -577,27 +356,7 @@ namespace ER_Diagram_Modeler.Views.Canvas.Connection
 
 							endLine.EndPoint.X += e.LeftDelta;
 
-							if (DestinationConnector.EndPoint.Y + Connector.SymbolLineEndsDiff < table.Top + table.Height || e.TopDelta < 0)
-							{
-								endLine.StartPoint.Y += e.TopDelta;
-								endLine.EndPoint.Y += e.TopDelta;
-
-								if (nextLine != null)
-								{
-									nextLine.EndPoint.Y += e.TopDelta;
-								}
-							}
-
-							if(DestinationConnector.EndPoint.Y + Connector.SymbolLineEndsDiff >= table.Top + table.Height - 4 && e.HeightDelta <= 0)
-							{
-								endLine.StartPoint.Y += e.HeightDelta;
-								endLine.EndPoint.Y += e.HeightDelta;
-
-								if(nextLine != null)
-								{
-									nextLine.EndPoint.Y += e.HeightDelta;
-								}
-							}
+							AdjustConnectorMarkToVerticalLimits(DestinationConnector, table, endLine, nextLine, e, false);
 						}
 						break;
 					}
@@ -613,28 +372,7 @@ namespace ER_Diagram_Modeler.Views.Canvas.Connection
 							endLine.StartPoint.X += e.LeftDelta;
 							endLine.StartPoint.X += e.WidthDelta;
 
-							if (DestinationConnector.EndPoint.Y + Connector.SymbolLineEndsDiff < table.Top + table.Height || e.TopDelta < 0)
-							{
-								endLine.StartPoint.Y += e.TopDelta;
-								endLine.EndPoint.Y += e.TopDelta;
-
-								if (nextLine != null)
-								{
-									nextLine.StartPoint.Y += e.TopDelta;
-								}
-							}
-
-							if(DestinationConnector.EndPoint.Y + Connector.SymbolLineEndsDiff >= table.Top + table.Height - 4 && e.HeightDelta <= 0)
-							{
-								endLine.StartPoint.Y += e.HeightDelta;
-								endLine.EndPoint.Y += e.HeightDelta;
-
-								if(nextLine != null)
-								{
-									nextLine.StartPoint.Y += e.HeightDelta;
-								}
-							}
-
+							AdjustConnectorMarkToVerticalLimits(DestinationConnector, table, endLine, nextLine, e, true);
 						}
 						else if(DestinationConnector.EndPoint.Equals(Lines.LastOrDefault()?.EndPoint))
 						{
@@ -645,27 +383,7 @@ namespace ER_Diagram_Modeler.Views.Canvas.Connection
 							endLine.EndPoint.X += e.LeftDelta;
 							endLine.EndPoint.X += e.WidthDelta;
 
-							if (DestinationConnector.EndPoint.Y + Connector.SymbolLineEndsDiff < table.Top + table.Height || e.TopDelta < 0)
-							{
-								endLine.StartPoint.Y += e.TopDelta;
-								endLine.EndPoint.Y += e.TopDelta;
-
-								if (nextLine != null)
-								{
-									nextLine.EndPoint.Y += e.TopDelta;
-								}
-							}
-
-							if(DestinationConnector.EndPoint.Y + Connector.SymbolLineEndsDiff >= table.Top + table.Height - 4 && e.HeightDelta <= 0)
-							{
-								endLine.StartPoint.Y += e.HeightDelta;
-								endLine.EndPoint.Y += e.HeightDelta;
-
-								if(nextLine != null)
-								{
-									nextLine.EndPoint.Y += e.HeightDelta;
-								}
-							}
+							AdjustConnectorMarkToVerticalLimits(DestinationConnector, table, endLine, nextLine, e, false);
 						}
 						break;
 					}
@@ -674,11 +392,7 @@ namespace ER_Diagram_Modeler.Views.Canvas.Connection
 
 		private void SourceViewModelOnPositionAndMeasureChangesStarted(object sender, System.EventArgs eventArgs)
 		{
-			if(Lines.Count == 1)
-			{
-				SplitLine(Lines.FirstOrDefault(), Lines.FirstOrDefault()?.GetMiddlePoint());
-				SynchronizeBendingPoints();
-			}
+			SplitLinesIfNeeded();
 		}
 
 		private void SourceViewModelOnPositionAndMeasureChangesCompleted(object sender, System.EventArgs eventArgs)
@@ -841,9 +555,6 @@ namespace ER_Diagram_Modeler.Views.Canvas.Connection
 
 			_bendPoint1 = Marks.FirstOrDefault(t => t.Point.Equals(line?.StartPoint));
 			_bendPoint2 = Marks.FirstOrDefault(t => t.Point.Equals(line?.EndPoint));
-
-			//_moveLine1 = Lines.FirstOrDefault(t => t.EndPoint.Equals(args.OriginalStartPoint));
-			//_moveLine2 = Lines.FirstOrDefault(t => t.StartPoint.Equals(args.OriginalEndPoint));
 		}
 
 		private void LineOnLineMoving(object sender, System.EventArgs args)
@@ -1000,15 +711,6 @@ namespace ER_Diagram_Modeler.Views.Canvas.Connection
 			AdjustBendPointMarks();
 		}
 
-		private void NormalizePoints()
-		{
-			for (int i = 0; i < Points.Count; i++)
-			{
-				Points[i].X = (int) Points[i].X;
-				Points[i].Y = (int)Points[i].Y;
-			}
-		}
-
 		private void AdjustBendPointMarks()
 		{
 			Marks.RemoveAt(0);
@@ -1039,65 +741,6 @@ namespace ER_Diagram_Modeler.Views.Canvas.Connection
 			Lines.Remove(line2);
 		}
 
-		private void SplitLineInMiddleNonDestructive(ConnectionLine line)
-		{
-			var endPoint = Points.LastOrDefault();
-
-			ConnectionPoint middle = line.GetMiddlePoint();
-			var newLine = new ConnectionLine();
-
-			newLine.StartPoint.X = middle.X;
-			newLine.StartPoint.Y = middle.Y;
-			newLine.EndPoint.X = line.EndPoint.X;
-			newLine.EndPoint.Y = line.EndPoint.Y;
-			newLine.Orientation = line.Orientation;
-
-			newLine.BeforeLineMove += LineOnBeforeLineMove;
-			newLine.LineMoving += LineOnLineMoving;
-			newLine.LineMoved += LineOnLineMoved;
-			newLine.LineSplit += LineOnLineSplit;
-			newLine.LineSelected += LineOnLineSelected;
-
-			line.EndPoint.X = middle.X;
-			line.EndPoint.Y = middle.Y;
-
-			endPoint.X = middle.X;
-			endPoint.Y = middle.Y;
-
-			var splitLine = new ConnectionLine();
-			splitLine.StartPoint.X = middle.X;
-			splitLine.StartPoint.Y = middle.Y;
-			splitLine.EndPoint.X = middle.X;
-			splitLine.EndPoint.Y = middle.Y;
-
-			splitLine.BeforeLineMove += LineOnBeforeLineMove;
-			splitLine.LineMoving += LineOnLineMoving;
-			splitLine.LineMoved += LineOnLineMoved;
-			splitLine.LineSplit += LineOnLineSplit;
-			splitLine.LineSelected += LineOnLineSelected;
-			
-			ConfigureSplitLine(splitLine);
-			
-			Lines.Add(splitLine);
-			Lines.Add(newLine);
-			Points.Add(splitLine.StartPoint);
-			Points.Add(newLine.EndPoint);
-
-			//TODO: CONNECTOR ERROR
-			if (DestinationConnector.EndPoint.Equals(newLine.EndPoint))
-			{
-				DestinationConnector.EndPoint = newLine.EndPoint;
-				DestinationConnector.EndPoint.X = newLine.EndPoint.X;
-				DestinationConnector.EndPoint.Y = newLine.EndPoint.Y;
-			}
-			else if (DestinationConnector.EndPoint.Equals(line.StartPoint))
-			{
-				DestinationConnector.EndPoint = line.StartPoint;
-				DestinationConnector.EndPoint.X = line.StartPoint.X;
-				DestinationConnector.EndPoint.Y = line.StartPoint.Y;
-			}
-		}
-
 		private void ConfigureSplitLine(ConnectionLine line)
 		{
 			if (line.StartPoint.Equals(line.EndPoint))
@@ -1108,6 +751,122 @@ namespace ER_Diagram_Modeler.Views.Canvas.Connection
 					line.Orientation = previous.Orientation == LineOrientation.Vertical ? LineOrientation.Horizontal : LineOrientation.Vertical;
 				}
 			}
+		}
+
+		private bool IsSelfConnection()
+		{
+			return DestinationViewModel.Equals(SourceViewModel);
+		}
+
+		private bool IsSourceAndDestinationSelected()
+		{
+			return SourceViewModel.IsSelected && DestinationViewModel.IsSelected;
+		}
+
+		private void MoveAllLines(TablePositionAndMeasureEventArgs args)
+		{
+			foreach(ConnectionLine line in Lines)
+			{
+				line.EndPoint.X += args.LeftDelta;
+				line.EndPoint.Y += args.TopDelta;
+
+				line.StartPoint.X += args.LeftDelta;
+				line.StartPoint.Y += args.TopDelta;
+			}
+		}
+
+		private void AdjustConnectorMarkToHorizontalLimits(Connector connector, TableViewModel table,ConnectionLine endLine, 
+			ConnectionLine nextLine, TablePositionAndMeasureEventArgs e, bool isFirstLine)
+		{
+			if(connector.EndPoint.X + Connector.SymbolLineEndsDiff < table.Left + table.Width || e.LeftDelta < 0)
+			{
+				endLine.StartPoint.X += e.LeftDelta;
+				endLine.EndPoint.X += e.LeftDelta;
+
+				if(nextLine != null)
+				{
+					if (isFirstLine)
+					{
+						nextLine.StartPoint.X += e.LeftDelta;
+					}
+					else
+					{
+						nextLine.EndPoint.X += e.LeftDelta;
+					}
+				}
+			}
+
+			if(connector.EndPoint.X + Connector.SymbolLineEndsDiff >= table.Left + table.Width - 10 && e.WidthDelta <= 0)
+			{
+				endLine.StartPoint.X += e.WidthDelta;
+				endLine.EndPoint.X += e.WidthDelta;
+
+				if(nextLine != null)
+				{
+					if(isFirstLine)
+					{
+						nextLine.StartPoint.X += e.WidthDelta;
+					}
+					else
+					{
+						nextLine.EndPoint.X += e.WidthDelta;
+					}
+				}
+			}
+		}
+
+		private void AdjustConnectorMarkToVerticalLimits(Connector connector, TableViewModel table, ConnectionLine endLine,
+			ConnectionLine nextLine, TablePositionAndMeasureEventArgs e, bool isFirstLine)
+		{
+			if(connector.EndPoint.Y + Connector.SymbolLineEndsDiff < table.Top + table.Height || e.TopDelta < 0)
+			{
+				endLine.StartPoint.Y += e.TopDelta;
+				endLine.EndPoint.Y += e.TopDelta;
+
+				if(nextLine != null)
+				{
+					if (isFirstLine)
+					{
+						nextLine.StartPoint.Y += e.TopDelta;
+					}
+					else
+					{
+						nextLine.EndPoint.Y += e.TopDelta;
+					}
+				}
+			}
+
+			if(connector.EndPoint.Y + Connector.SymbolLineEndsDiff >= table.Top + table.Height - 4 && e.HeightDelta <= 0)
+			{
+				endLine.StartPoint.Y += e.HeightDelta;
+				endLine.EndPoint.Y += e.HeightDelta;
+
+				if(nextLine != null)
+				{
+					if (isFirstLine)
+					{
+						nextLine.StartPoint.Y += e.HeightDelta;
+					}
+					else
+					{
+						nextLine.EndPoint.Y += e.HeightDelta;
+					}
+				}
+			}
+		}
+
+		private void SplitLinesIfNeeded()
+		{
+			if(Lines.Count == 1)
+			{
+				SplitLine(Lines.FirstOrDefault(), Lines.FirstOrDefault()?.GetMiddlePoint());
+				SynchronizeBendingPoints();
+			}
+		}
+
+		private void MoveConnectorOnTableViewModeChange(Connector connector)
+		{
+			
 		}
 
 		protected virtual void OnSelectionChange(bool e)
