@@ -20,7 +20,6 @@ namespace ER_Diagram_Modeler.Views.Canvas.Connection
 {
 	public class ConnectionInfo
 	{
-		//TODO: Name only mode connector position
 		public RelationshipModel RelationshipModel { get; set; }
 		public ObservableCollection<ConnectionLine> Lines { get; } = new ObservableCollection<ConnectionLine>();
 		public ObservableCollection<ConnectionPoint> Points { get; } = new ObservableCollection<ConnectionPoint>();
@@ -113,17 +112,11 @@ namespace ER_Diagram_Modeler.Views.Canvas.Connection
 			{
 				if (table.Equals(SourceViewModel))
 				{
-					if(DestinationConnector.Orientation == ConnectorOrientation.Left || DestinationConnector.Orientation == ConnectorOrientation.Right)
-					{
-
-					}
+					MoveConnectorOnTableViewModeChange(SourceConnector, table);
 				}
 				else if (table.Equals(DestinationViewModel))
 				{
-					if(DestinationConnector.Orientation == ConnectorOrientation.Left || DestinationConnector.Orientation == ConnectorOrientation.Right)
-					{
-
-					}
+					MoveConnectorOnTableViewModeChange(DestinationConnector, table);
 				}
 			}
 		}
@@ -146,6 +139,11 @@ namespace ER_Diagram_Modeler.Views.Canvas.Connection
 			}
 
 			if (table != null && (IsSelfConnection() && table.IsMoving))
+			{
+				return;
+			}
+
+			if (Lines.Count == 1)
 			{
 				return;
 			}
@@ -281,6 +279,12 @@ namespace ER_Diagram_Modeler.Views.Canvas.Connection
 				MoveAllLines(e);
 				return;
 			}
+
+			if(Lines.Count == 1)
+			{
+				return;
+			}
+
 			switch(DestinationConnector.Orientation)
 			{
 				case ConnectorOrientation.Up:
@@ -864,9 +868,29 @@ namespace ER_Diagram_Modeler.Views.Canvas.Connection
 			}
 		}
 
-		private void MoveConnectorOnTableViewModeChange(Connector connector)
+		private void MoveConnectorOnTableViewModeChange(Connector connector, TableViewModel table)
 		{
-			
+			if (connector.Orientation == ConnectorOrientation.Right || connector.Orientation == ConnectorOrientation.Left)
+			{
+				SplitLinesIfNeeded();
+				var endLine =
+					Lines.FirstOrDefault(t => t.EndPoint.Equals(connector.EndPoint) || t.StartPoint.Equals(connector.EndPoint));
+				int endLineIdx = Lines.IndexOf(endLine);
+				endLine.StartPoint.Y = table.Top + table.Height/2;
+				endLine.EndPoint.Y = table.Top + table.Height/2;
+
+				ConnectionLine nextLine = null;
+				if (endLineIdx == 0)
+				{
+					nextLine = Lines[endLineIdx + 1];
+					nextLine.StartPoint.Y = table.Top + table.Height/2;
+				}
+				else
+				{
+					nextLine = Lines[endLineIdx - 1];
+					nextLine.EndPoint.Y = table.Top + table.Height / 2;
+				}
+			}
 		}
 
 		protected virtual void OnSelectionChange(bool e)
