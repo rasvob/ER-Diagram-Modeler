@@ -71,5 +71,23 @@ namespace ER_Diagram_Modeler.Views.Canvas.TableItem
 			};
 			dialog.ShowDialog();
 		}
+
+		private void MenuItemShowDatatype_OnClick(object sender, RoutedEventArgs e)
+		{
+			var item = sender as MenuItem;
+
+			if (item != null)
+			{
+				if (item.IsChecked)
+				{
+					TableDataGrid.Columns[2].Visibility = Visibility.Collapsed;
+				}
+				else
+				{
+					TableDataGrid.Columns[2].Visibility = Visibility.Visible;
+				}
+				item.IsChecked = !item.IsChecked;
+			}
+		}
 	}
 }

@@ -1,0 +1,9 @@
+﻿Hide zoombox
+Hide datatype
+Grid in Canvas with snap to grid option
+Canvas size
+Export to PNG
+
+---
+
+Save to XML/DB
