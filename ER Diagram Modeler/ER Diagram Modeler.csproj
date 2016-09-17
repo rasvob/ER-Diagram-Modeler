@@ -149,7 +149,7 @@
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
     <Compile Include="ViewModels\SimpleCommand.cs" />
     <Compile Include="ViewModels\TableViewModel.cs" />
-    <Compile Include="Views\Canvas\Connection\ConnectionInfo.cs" />
+    <Compile Include="ViewModels\ConnectionInfoViewModel.cs" />
     <Compile Include="Views\Canvas\Connection\ConnectionLine.cs" />
     <Compile Include="Views\Canvas\Connection\ConnectionPoint.cs" />
     <Compile Include="Views\Canvas\Connection\ConnectionPointMark.cs" />

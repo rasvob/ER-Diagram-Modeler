@@ -27,7 +27,7 @@ namespace ER_Diagram_Modeler.Views.Canvas
 	/// </summary>
 	public partial class DatabaseModelDesigner : UserControl
 	{
-		private readonly ObservableCollection<ConnectionInfo> _connections; 
+		private readonly ObservableCollection<ConnectionInfoViewModel> _connections; 
 		private DatabaseModelDesignerViewModel _viewModel;
 		private Point? _dragStartPoint = null;
 		private double _capturedVerticalOffset;
@@ -105,7 +105,7 @@ namespace ER_Diagram_Modeler.Views.Canvas
 		public DatabaseModelDesigner()
 		{
 			InitializeComponent();
-			_connections = new ObservableCollection<ConnectionInfo>();
+			_connections = new ObservableCollection<ConnectionInfoViewModel>();
 
 			DataContextChanged += OnDataContextChanged;
 			_connections.CollectionChanged += ConnectionsOnCollectionChanged;
@@ -116,7 +116,7 @@ namespace ER_Diagram_Modeler.Views.Canvas
 			switch (args.Action)
 			{
 				case NotifyCollectionChangedAction.Add:
-					foreach (ConnectionInfo item in args.NewItems)
+					foreach (ConnectionInfoViewModel item in args.NewItems)
 					{
 						AddConnectionElement(item);
 						item.Lines.CollectionChanged += LinesOnCollectionChanged;
@@ -126,7 +126,7 @@ namespace ER_Diagram_Modeler.Views.Canvas
 					}
 					break;
 				case NotifyCollectionChangedAction.Remove:
-					foreach(ConnectionInfo item in args.OldItems)
+					foreach(ConnectionInfoViewModel item in args.OldItems)
 					{
 						RemoveConnectionElement(item);
 					}
@@ -156,10 +156,10 @@ namespace ER_Diagram_Modeler.Views.Canvas
 
 		private void ItemOnSelectionChange(object sender, bool val)
 		{
-			var conn = sender as ConnectionInfo;
+			var conn = sender as ConnectionInfoViewModel;
 			if (val)
 			{
-				foreach (ConnectionInfo info in _connections.Where(t => !t.Equals(conn)))
+				foreach (ConnectionInfoViewModel info in _connections.Where(t => !t.Equals(conn)))
 				{
 					info.IsSelected = false;
 				}
@@ -261,7 +261,7 @@ namespace ER_Diagram_Modeler.Views.Canvas
 			ModelDesignerCanvas.Children.Remove(table);
 		}
 
-		private void AddConnectionElement(ConnectionInfo connection)
+		private void AddConnectionElement(ConnectionInfoViewModel connection)
 		{
 			foreach (ConnectionLine connectionLine in connection.Lines)
 			{
@@ -273,7 +273,7 @@ namespace ER_Diagram_Modeler.Views.Canvas
 			ModelDesignerCanvas.Children.Add(connection.DestinationConnector.Symbol);
 		}
 
-		private void RemoveConnectionElement(ConnectionInfo connection)
+		private void RemoveConnectionElement(ConnectionInfoViewModel connection)
 		{
 			foreach (ConnectionLine connectionLine in connection.Lines)
 			{
@@ -293,7 +293,7 @@ namespace ER_Diagram_Modeler.Views.Canvas
 				ViewModel.TableViewModels.Remove(item);
 				var connectionsForRemove =
 					_connections.Where(t => t.RelationshipModel.Destination.Equals(item.Model) || t.RelationshipModel.Source.Equals(item.Model));
-				foreach (ConnectionInfo connectionInfo in connectionsForRemove)
+				foreach (ConnectionInfoViewModel connectionInfo in connectionsForRemove)
 				{
 					_connections.Remove(connectionInfo);
 				}
@@ -315,7 +315,7 @@ namespace ER_Diagram_Modeler.Views.Canvas
 
 		private void DeselectConnections()
 		{
-			foreach (ConnectionInfo info in _connections)
+			foreach (ConnectionInfoViewModel info in _connections)
 			{
 				info.IsSelected = false;
 			}
@@ -336,9 +336,9 @@ namespace ER_Diagram_Modeler.Views.Canvas
 
 		#region TestRegion
 
-		private ConnectionInfo TestNewConnectionCreate()
+		private ConnectionInfoViewModel TestNewConnectionCreate()
 		{
-			var info = new ConnectionInfo();
+			var info = new ConnectionInfoViewModel();
 
 			//info.Points.Add(new ConnectionPoint()
 			//{
@@ -389,7 +389,7 @@ namespace ER_Diagram_Modeler.Views.Canvas
 		//Test command F5
 		private void CommandBinding_OnExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
-			var info = new ConnectionInfo();
+			var info = new ConnectionInfoViewModel();
 			info.SourceViewModel = ViewModel.TableViewModels.FirstOrDefault();
 			info.DestinationViewModel = ViewModel.TableViewModels.LastOrDefault();
 
@@ -399,8 +399,8 @@ namespace ER_Diagram_Modeler.Views.Canvas
 			var point2 =
 				new ConnectionPoint(info.DestinationViewModel.Left - Connector.ConnectorLenght
 					, 450);
-			info.Points.Add(point1);
 			info.Points.Add(point2);
+			info.Points.Add(point1);
 			info.SourceConnector.Orientation = ConnectorOrientation.Right;
 			info.DestinationConnector.Orientation = ConnectorOrientation.Left;
 			info.SourceConnector.EndPoint = point1;
