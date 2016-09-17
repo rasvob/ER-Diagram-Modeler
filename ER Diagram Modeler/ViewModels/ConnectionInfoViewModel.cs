@@ -663,7 +663,7 @@ namespace ER_Diagram_Modeler.ViewModels
 				{
 					if (line.StartPoint.Equals(SourceConnector.EndPoint))
 					{
-
+						CorrectPosition(SourceConnector, line, SourceViewModel, true);
 					}
 					else if (line.StartPoint.Equals(DestinationConnector.EndPoint))
 					{
@@ -674,7 +674,7 @@ namespace ER_Diagram_Modeler.ViewModels
 				{
 					if (line.EndPoint.Equals(SourceConnector.EndPoint))
 					{
-						
+						CorrectPosition(SourceConnector, line, SourceViewModel, false);
 					}
 					else if (line.EndPoint.Equals(DestinationConnector.EndPoint))
 					{
@@ -684,6 +684,7 @@ namespace ER_Diagram_Modeler.ViewModels
 			}
 		}
 
+		//TODO: Down orientation
 		private void CorrectPosition(Connector connector, ConnectionLine line, TableViewModel vm, bool isFirstLine)
 		{
 			const int correctionLenght1 = 10;
@@ -691,6 +692,90 @@ namespace ER_Diagram_Modeler.ViewModels
 			switch(connector.Orientation)
 			{
 				case ConnectorOrientation.Up:
+					if(connector.EndPoint.X < vm.Left + Connector.SymbolLineEndsDiff)
+					{
+						if(isFirstLine)
+						{
+							line.StartPoint.Y = vm.Top + correctionLenght2;
+							if(line.StartPoint.X >= vm.Left - Connector.ConnectorLenght)
+							{
+								var prevLine = Lines[1];
+								line.StartPoint.X = vm.Left - Connector.ConnectorLenght - correctionLenght1;
+								line.EndPoint.X = vm.Left - Connector.ConnectorLenght - correctionLenght1;
+								prevLine.StartPoint.X = line.StartPoint.X;
+							}
+
+							ConnectionLine newLine = new ConnectionLine();
+							newLine.EndPoint.X = line.StartPoint.X;
+							newLine.EndPoint.Y = line.StartPoint.Y;
+							newLine.StartPoint.X = vm.Left - Connector.ConnectorLenght;
+							newLine.StartPoint.Y = line.StartPoint.Y;
+							connector.EndPoint = newLine.StartPoint;
+							Lines.Insert(0, newLine);
+						}
+						else
+						{
+							line.EndPoint.Y = vm.Top + correctionLenght2;
+							if(line.EndPoint.X >= vm.Left - Connector.ConnectorLenght)
+							{
+								var prevLine = Lines[Lines.Count - 2];
+								line.StartPoint.X = vm.Left - Connector.ConnectorLenght - correctionLenght1;
+								line.EndPoint.X = vm.Left - Connector.ConnectorLenght - correctionLenght1;
+								prevLine.EndPoint.X = line.StartPoint.X;
+							}
+
+							ConnectionLine newLine = new ConnectionLine();
+							newLine.StartPoint.X = line.EndPoint.X;
+							newLine.StartPoint.Y = line.EndPoint.Y;
+							newLine.EndPoint.X = vm.Left - Connector.ConnectorLenght;
+							newLine.EndPoint.Y = line.EndPoint.Y;
+							connector.EndPoint = newLine.EndPoint;
+							Lines.Add(newLine);
+						}
+						connector.Orientation = ConnectorOrientation.Left;
+					}
+					else if(connector.EndPoint.X > vm.Left + vm.Width - Connector.SymbolLineEndsDiff)
+					{
+						if(isFirstLine)
+						{
+							line.StartPoint.Y = vm.Top + correctionLenght2;
+							if(line.StartPoint.X <= vm.Left + vm.Width + Connector.ConnectorLenght)
+							{
+								var prevLine = Lines[1];
+								line.StartPoint.X = vm.Left + vm.Width + Connector.ConnectorLenght + correctionLenght1;
+								line.EndPoint.X = vm.Left + vm.Width + Connector.ConnectorLenght + correctionLenght1;
+								prevLine.StartPoint.X = line.StartPoint.X;
+							}
+
+							ConnectionLine newLine = new ConnectionLine();
+							newLine.EndPoint.X = line.StartPoint.X;
+							newLine.EndPoint.Y = line.StartPoint.Y;
+							newLine.StartPoint.X = vm.Left + vm.Width + Connector.ConnectorLenght;
+							newLine.StartPoint.Y = line.StartPoint.Y;
+							connector.EndPoint = newLine.StartPoint;
+							Lines.Insert(0, newLine);
+						}
+						else
+						{
+							line.EndPoint.Y = vm.Top + correctionLenght2;
+							if(line.EndPoint.X <= vm.Left + vm.Width + Connector.ConnectorLenght)
+							{
+								var prevLine = Lines[Lines.Count - 2];
+								line.StartPoint.X = vm.Left + vm.Width + Connector.ConnectorLenght + correctionLenght1;
+								line.EndPoint.X = vm.Left + vm.Width + Connector.ConnectorLenght + correctionLenght1;
+								prevLine.EndPoint.X = line.StartPoint.X;
+							}
+
+							ConnectionLine newLine = new ConnectionLine();
+							newLine.StartPoint.X = line.EndPoint.X;
+							newLine.StartPoint.Y = line.EndPoint.Y;
+							newLine.EndPoint.X = vm.Left + vm.Width + Connector.ConnectorLenght;
+							newLine.EndPoint.Y = line.EndPoint.Y;
+							connector.EndPoint = newLine.EndPoint;
+							Lines.Add(newLine);
+						}
+						connector.Orientation = ConnectorOrientation.Right;
+					}
 					break;
 				case ConnectorOrientation.Down:
 					break;
@@ -699,7 +784,7 @@ namespace ER_Diagram_Modeler.ViewModels
 					{
 						if (isFirstLine)
 						{
-							line.StartPoint.X = DestinationViewModel.Left + correctionLenght2;
+							line.StartPoint.X = vm.Left + correctionLenght2;
 							if(line.StartPoint.Y >= vm.Top - Connector.ConnectorLenght)
 							{
 								var prevLine = Lines[1];
@@ -711,7 +796,6 @@ namespace ER_Diagram_Modeler.ViewModels
 							ConnectionLine newLine = new ConnectionLine();
 							newLine.EndPoint.X = line.StartPoint.X;
 							newLine.EndPoint.Y = line.StartPoint.Y;
-							newLine.Orientation = LineOrientation.Vertical;
 							newLine.StartPoint.X = line.StartPoint.X;
 							newLine.StartPoint.Y = vm.Top - Connector.ConnectorLenght;
 							connector.EndPoint = newLine.StartPoint;
@@ -719,7 +803,7 @@ namespace ER_Diagram_Modeler.ViewModels
 						}
 						else
 						{
-							line.EndPoint.X = DestinationViewModel.Left + correctionLenght2;
+							line.EndPoint.X = vm.Left + correctionLenght2;
 							if(line.EndPoint.Y >= vm.Top - Connector.ConnectorLenght)
 							{
 								var prevLine = Lines[Lines.Count - 2];
@@ -731,7 +815,6 @@ namespace ER_Diagram_Modeler.ViewModels
 							ConnectionLine newLine = new ConnectionLine();
 							newLine.StartPoint.X = line.EndPoint.X;
 							newLine.StartPoint.Y = line.EndPoint.Y;
-							newLine.Orientation = LineOrientation.Vertical;
 							newLine.EndPoint.X = newLine.StartPoint.X;
 							newLine.EndPoint.Y = vm.Top - Connector.ConnectorLenght;
 							connector.EndPoint = newLine.EndPoint;
@@ -741,10 +824,132 @@ namespace ER_Diagram_Modeler.ViewModels
 					}
 					else if(connector.EndPoint.Y > vm.Top + vm.Height - Connector.SymbolLineEndsDiff)
 					{
+						if(isFirstLine)
+						{
+							line.StartPoint.X = vm.Left + correctionLenght2;
+							if(line.StartPoint.Y <= vm.Top + vm.Height + Connector.ConnectorLenght)
+							{
+								var prevLine = Lines[1];
+								line.StartPoint.Y = vm.Top + vm.Height + Connector.ConnectorLenght + correctionLenght1;
+								line.EndPoint.Y = vm.Top + vm.Height + Connector.ConnectorLenght + correctionLenght1;
+								prevLine.StartPoint.Y = line.StartPoint.Y;
+							}
 
+							ConnectionLine newLine = new ConnectionLine();
+							newLine.EndPoint.X = line.StartPoint.X;
+							newLine.EndPoint.Y = line.StartPoint.Y;
+							newLine.StartPoint.X = line.StartPoint.X;
+							newLine.StartPoint.Y = vm.Top + vm.Height + Connector.ConnectorLenght;
+							connector.EndPoint = newLine.StartPoint;
+							Lines.Insert(0, newLine);
+						}
+						else
+						{
+							line.EndPoint.X = vm.Left + correctionLenght2;
+							if(line.EndPoint.Y <= vm.Top + vm.Height + Connector.ConnectorLenght)
+							{
+								var prevLine = Lines[Lines.Count - 2];
+								line.StartPoint.Y = vm.Top + vm.Height + Connector.ConnectorLenght + correctionLenght1;
+								line.EndPoint.Y = vm.Top + vm.Height + Connector.ConnectorLenght + correctionLenght1;
+								prevLine.EndPoint.Y = line.StartPoint.Y;
+							}
+
+							ConnectionLine newLine = new ConnectionLine();
+							newLine.StartPoint.X = line.EndPoint.X;
+							newLine.StartPoint.Y = line.EndPoint.Y;
+							newLine.EndPoint.X = newLine.StartPoint.X;
+							newLine.EndPoint.Y = vm.Top + vm.Height + Connector.ConnectorLenght;
+							connector.EndPoint = newLine.EndPoint;
+							Lines.Add(newLine);
+						}
+						connector.Orientation = ConnectorOrientation.Down;
 					}
 					break;
 				case ConnectorOrientation.Right:
+					if(connector.EndPoint.Y < vm.Top + Connector.SymbolLineEndsDiff)
+					{
+						if(isFirstLine)
+						{
+							line.StartPoint.X = vm.Left + vm.Width - correctionLenght2;
+							if(line.StartPoint.Y >= vm.Top - Connector.ConnectorLenght)
+							{
+								var prevLine = Lines[1];
+								line.StartPoint.Y = vm.Top - Connector.ConnectorLenght - correctionLenght1;
+								line.EndPoint.Y = vm.Top - Connector.ConnectorLenght - correctionLenght1;
+								prevLine.StartPoint.Y = line.StartPoint.Y;
+							}
+
+							ConnectionLine newLine = new ConnectionLine();
+							newLine.EndPoint.X = line.StartPoint.X;
+							newLine.EndPoint.Y = line.StartPoint.Y;
+							newLine.StartPoint.X = line.StartPoint.X;
+							newLine.StartPoint.Y = vm.Top - Connector.ConnectorLenght;
+							connector.EndPoint = newLine.StartPoint;
+							Lines.Insert(0, newLine);
+						}
+						else
+						{
+							line.EndPoint.X = vm.Left + vm.Width - correctionLenght2;
+							if(line.EndPoint.Y >= vm.Top - Connector.ConnectorLenght)
+							{
+								var prevLine = Lines[Lines.Count - 2];
+								line.StartPoint.Y = vm.Top - Connector.ConnectorLenght - correctionLenght1;
+								line.EndPoint.Y = vm.Top - Connector.ConnectorLenght - correctionLenght1;
+								prevLine.EndPoint.Y = line.StartPoint.Y;
+							}
+
+							ConnectionLine newLine = new ConnectionLine();
+							newLine.StartPoint.X = line.EndPoint.X;
+							newLine.StartPoint.Y = line.EndPoint.Y;
+							newLine.EndPoint.X = newLine.StartPoint.X;
+							newLine.EndPoint.Y = vm.Top - Connector.ConnectorLenght;
+							connector.EndPoint = newLine.EndPoint;
+							Lines.Add(newLine);
+						}
+						connector.Orientation = ConnectorOrientation.Up;
+					}
+					else if(connector.EndPoint.Y > vm.Top + vm.Height - Connector.SymbolLineEndsDiff)
+					{
+						if(isFirstLine)
+						{
+							line.StartPoint.X = vm.Left + vm.Width - correctionLenght2;
+							if(line.StartPoint.Y <= vm.Top + vm.Height + Connector.ConnectorLenght)
+							{
+								var prevLine = Lines[1];
+								line.StartPoint.Y = vm.Top + vm.Height + Connector.ConnectorLenght + correctionLenght1;
+								line.EndPoint.Y = vm.Top + vm.Height + Connector.ConnectorLenght + correctionLenght1;
+								prevLine.StartPoint.Y = line.StartPoint.Y;
+							}
+
+							ConnectionLine newLine = new ConnectionLine();
+							newLine.EndPoint.X = line.StartPoint.X;
+							newLine.EndPoint.Y = line.StartPoint.Y;
+							newLine.StartPoint.X = line.StartPoint.X;
+							newLine.StartPoint.Y = vm.Top + vm.Height + Connector.ConnectorLenght;
+							connector.EndPoint = newLine.StartPoint;
+							Lines.Insert(0, newLine);
+						}
+						else
+						{
+							line.EndPoint.X = vm.Left + vm.Width - correctionLenght2;
+							if(line.EndPoint.Y <= vm.Top + vm.Height + Connector.ConnectorLenght)
+							{
+								var prevLine = Lines[Lines.Count - 2];
+								line.StartPoint.Y = vm.Top + vm.Height + Connector.ConnectorLenght + correctionLenght1;
+								line.EndPoint.Y = vm.Top + vm.Height + Connector.ConnectorLenght + correctionLenght1;
+								prevLine.EndPoint.Y = line.StartPoint.Y;
+							}
+
+							ConnectionLine newLine = new ConnectionLine();
+							newLine.StartPoint.X = line.EndPoint.X;
+							newLine.StartPoint.Y = line.EndPoint.Y;
+							newLine.EndPoint.X = newLine.StartPoint.X;
+							newLine.EndPoint.Y = vm.Top + vm.Height + Connector.ConnectorLenght;
+							connector.EndPoint = newLine.EndPoint;
+							Lines.Add(newLine);
+						}
+						connector.Orientation = ConnectorOrientation.Down;
+					}
 					break;
 			}
 		}

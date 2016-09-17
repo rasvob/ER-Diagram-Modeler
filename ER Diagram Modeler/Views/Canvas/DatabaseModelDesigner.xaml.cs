@@ -399,8 +399,8 @@ namespace ER_Diagram_Modeler.Views.Canvas
 			var point2 =
 				new ConnectionPoint(info.DestinationViewModel.Left - Connector.ConnectorLenght
 					, 450);
-			info.Points.Add(point2);
 			info.Points.Add(point1);
+			info.Points.Add(point2);
 			info.SourceConnector.Orientation = ConnectorOrientation.Right;
 			info.DestinationConnector.Orientation = ConnectorOrientation.Left;
 			info.SourceConnector.EndPoint = point1;
