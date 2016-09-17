@@ -73,17 +73,22 @@
 					  PreviewKeyUp="DesignerScrollViewer_OnPreviewKeyUp"
 					  PreviewMouseWheel="DesignerScrollViewer_OnPreviewMouseWheel"
 					  >
-				<local:DesignerCanvas x:Name="ModelDesignerCanvas"
-								  Height="{Binding CanvasHeight}"
-								  Width="{Binding CanvasWidth}"
-								  IsEnabled="{Binding MouseMode, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource CanvasEnabledConverter}}"
-								  Cursor="{Binding MouseMode, Mode=OneWay, Converter={StaticResource MouseModeToCursorConverter}, UpdateSourceTrigger=PropertyChanged}"
-								  MouseDown="ModelDesignerCanvasOnMouseDown"
-								  Background="White">
-					<local:DesignerCanvas.LayoutTransform>
-						<ScaleTransform ScaleX="{Binding Scale}" ScaleY="{Binding Scale}"></ScaleTransform>
-					</local:DesignerCanvas.LayoutTransform>
-				</local:DesignerCanvas>
+
+			<local:DesignerCanvas x:Name="ModelDesignerCanvas"
+				                      Height="{Binding CanvasHeight, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+				                      Width="{Binding CanvasWidth, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+				                      IsEnabled="{Binding MouseMode, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource CanvasEnabledConverter}}"
+				                      Cursor="{Binding MouseMode, Mode=OneWay, Converter={StaticResource MouseModeToCursorConverter}, UpdateSourceTrigger=PropertyChanged}"
+				                      MouseDown="ModelDesignerCanvasOnMouseDown"
+				                      Background="White">
+				<local:DesignerCanvas.LayoutTransform>
+					<ScaleTransform ScaleX="{Binding Scale}" ScaleY="{Binding Scale}"></ScaleTransform>
+				</local:DesignerCanvas.LayoutTransform>
+
+				<!--<local:DesignerCanvas.Effect>
+					<DropShadowEffect Color="Black" BlurRadius="25" Opacity="0.1" RenderingBias="Performance"></DropShadowEffect>
+				</local:DesignerCanvas.Effect>-->
+			</local:DesignerCanvas>
 		</ScrollViewer>
 
 		<zoomBox:ZoomBox x:Name="ZoomBox" 
@@ -95,6 +100,22 @@
 						 />
 	</Grid>
 </UserControl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

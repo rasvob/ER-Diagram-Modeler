@@ -60,5 +60,10 @@ namespace ER_Diagram_Modeler.Views.Canvas.ZoomBox
 			ScrollOwner.ScrollToVerticalOffset(ScrollOwner.VerticalOffset + e.VerticalChange);
 			ScrollOwner.ScrollToHorizontalOffset(ScrollOwner.HorizontalOffset + e.HorizontalChange);
 		}
+
+		private void ShowHideButton_OnClick(object sender, RoutedEventArgs e)
+		{
+			ViewModel.ZoomBoxVisibility = ViewModel.ZoomBoxVisibility ==  Visibility.Visible ? Visibility.Collapsed : Visibility.Visible;
+		}
 	}
 }

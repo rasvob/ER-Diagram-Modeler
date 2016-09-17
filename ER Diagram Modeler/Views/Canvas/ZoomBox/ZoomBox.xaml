@@ -16,6 +16,7 @@
 		<ResourceDictionary>
 			<ResourceDictionary.MergedDictionaries>
 				<ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/FlatSlider.xaml" />
+				<ResourceDictionary Source="../../../Themes/ZoomBoxDropdown.xaml"></ResourceDictionary>
 			</ResourceDictionary.MergedDictionaries>
 			<valueConverters:ScaleToPercentConverter x:Key="ScaleToPercentConverter"/>
 		</ResourceDictionary>
@@ -26,7 +27,7 @@
 			BorderBrush="{StaticResource PrimaryColorBrush}"
 			BorderThickness="1"
 			>
-		<Grid>
+		<Grid Width="{Binding ZoomBoxCanvasWidth}">
 			<Grid.RowDefinitions>
 				<RowDefinition Height="Auto"></RowDefinition>
 				<RowDefinition Height="Auto"></RowDefinition>
@@ -39,10 +40,27 @@
 					<RowDefinition Height="*"></RowDefinition>
 				</Grid.RowDefinitions>
 
-				<Label  Background="{StaticResource AccentColorBrush}"
-						Foreground="White"
-						ContentStringFormat="Scale ({0}%)"
-						Content="{Binding ElementName=ScaleSlider, Path=Value, Converter={StaticResource ScaleToPercentConverter}, Mode=OneWay}" />
+				<Grid>
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="*"></ColumnDefinition>
+						<ColumnDefinition Width="Auto"></ColumnDefinition>
+					</Grid.ColumnDefinitions>
+					<Label x:Name="ZommBoxTitle"
+						   Background="{StaticResource PrimaryColorBrush}"
+						   Grid.Column="0"
+						   Height="25"
+					       Foreground="White"
+					       ContentStringFormat="Scale ({0}%)"
+					       Content="{Binding ElementName=ScaleSlider, Path=Value, Converter={StaticResource ScaleToPercentConverter}, Mode=OneWay}" />
+					<Button Content="Menu"
+				        Grid.Column="1"
+						Height="25"
+						Width="25"
+						Click="ShowHideButton_OnClick"
+				        Style="{StaticResource ZoomBoxDropdownButtonStyle}"
+						>
+					</Button>
+				</Grid>
 
 				<Slider x:Name="ScaleSlider"
 						Grid.Row="1"
@@ -56,7 +74,8 @@
 						Style="{StaticResource FlatSlider}" />	
 			</Grid>
 
-			<Canvas x:Name="ZoomBoxCanvas"
+			<Canvas x:Name="ZoomBoxCanvas" 
+					Visibility="{Binding ZoomBoxVisibility, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
 					Grid.Row="1"
 					Height="{Binding ZoomBoxCanvasHeight}"
 					Width="{Binding ZoomBoxCanvasWidth}">
@@ -80,7 +99,8 @@
 				</Thumb>
 			</Canvas>
 
-			<Grid Grid.Row="2">
+			<Grid Grid.Row="2" 
+				  Visibility="{Binding ZoomBoxVisibility, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
 				<Grid.ColumnDefinitions>
 					<ColumnDefinition Width="*"></ColumnDefinition>
 					<ColumnDefinition Width="*"></ColumnDefinition>

@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Windows;
 using System.Windows.Input;
 using ER_Diagram_Modeler.Annotations;
 using ER_Diagram_Modeler.Configuration.Providers;
@@ -30,6 +31,18 @@ namespace ER_Diagram_Modeler.ViewModels
 		private double _horizontalScrollOffset;
 		private double _maxScale = 5;
 		private double _minScale = 0.25;
+		private Visibility _zoomBoxVisibility = Visibility.Visible;
+
+		public Visibility ZoomBoxVisibility
+		{
+			get { return _zoomBoxVisibility; }
+			set
+			{
+				if (value == _zoomBoxVisibility) return;
+				_zoomBoxVisibility = value;
+				OnPropertyChanged();
+			}
+		}
 
 		public double MinScale
 		{

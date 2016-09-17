@@ -61,6 +61,10 @@
 				<MenuItem Name="MenuItemTest" Header="Test PK" Click="MenuItemTest_OnClick"/>
 				<MenuItem Header="Exit"/>
 			</MenuItem>
+			<MenuItem Header="Settings">
+				<MenuItem Header="Canvas size change" Click="MenuItemCanvasSize_OnClick"></MenuItem>
+			</MenuItem>
+			<MenuItem Header="About"></MenuItem>
 		</Menu>
 
 		<!--ToolBar-->

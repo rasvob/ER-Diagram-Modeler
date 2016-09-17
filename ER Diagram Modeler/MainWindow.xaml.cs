@@ -116,5 +116,11 @@ namespace ER_Diagram_Modeler
 			if (MainWindowViewModel != null)
 				e.CanExecute = MainWindowViewModel.DatabaseModelDesignerViewModel.TableViewModels.Any(t => t.IsSelected);
 		}
+
+		private void MenuItemCanvasSize_OnClick(object sender, RoutedEventArgs e)
+		{
+			MainWindowViewModel.DatabaseModelDesignerViewModel.CanvasHeight = 5000;
+			MainWindowViewModel.DatabaseModelDesignerViewModel.CanvasWidth = 5000;
+		}
 	}
 }
