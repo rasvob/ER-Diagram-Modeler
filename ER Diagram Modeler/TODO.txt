@@ -1,8 +1,8 @@
 ﻿---Designer_part
-ConnectionInfo - connector orientation change, limits to table resize/move, merge lines with tolerance
+ConnectionInfo - limits to table resize/move, merge lines with tolerance
 FK Creation with dialog and/or drag
 Grid in Canvas with snap to grid option
-Canvas size
+Canvas size - adeed to menu - only for testing
 Export to PNG
 
 ---DB_Part
