@@ -45,56 +45,54 @@ namespace ER_Diagram_Modeler.Views.Canvas.TableItem
 		{
 			if(_item != null && _canvas != null && _item.IsSelected)
 			{
-				double minLeft = double.MaxValue;
-				double minTop = double.MaxValue;
+				//double minLeft = double.MaxValue;
+				//double minTop = double.MaxValue;
 
-				double maxTop = double.MinValue;
-				double maxLeft = double.MinValue;
+				//double maxTop = double.MinValue;
+				//double maxLeft = double.MinValue;
 
-				double minDeltaVertical = double.MaxValue; 
-				double minDeltaHorizontal = double.MaxValue;
+				double maxDeltaVertical = _canvas.ActualHeight - (DesignerCanvas.GetTop(_item) + _item.ActualHeight);
+				double maxDeltaHorizontal = _canvas.ActualWidth - (DesignerCanvas.GetLeft(_item) + _item.ActualWidth);
 
-				double maxDeltaVertical = double.MaxValue;
-				double maxDeltaHorizontal = double.MaxValue;
+				var minDeltaVertical = _item.ActualHeight - _item.MinHeight;
+				var minDeltaHorizontal = _item.ActualWidth - _item.MinWidth;
 
-				foreach(TableContent item in _canvas.SelectedTables)
-				{
-					minLeft = Math.Min(DesignerCanvas.GetLeft(item), minLeft);
-					minTop = Math.Min(DesignerCanvas.GetTop(item), minTop);
+				//Bad approach
+				//foreach(TableContent item in _canvas.SelectedTables)
+				//{
+				//	minLeft = Math.Min(DesignerCanvas.GetLeft(item), minLeft);
+				//	minTop = Math.Min(DesignerCanvas.GetTop(item), minTop);
 
-					maxLeft = Math.Max(DesignerCanvas.GetLeft(item) + item.ActualWidth, maxLeft);
-					maxTop = Math.Max(DesignerCanvas.GetTop(item) + item.ActualHeight, maxTop);
+				//	maxLeft = Math.Max(DesignerCanvas.GetLeft(item) + item.ActualWidth, maxLeft);
+				//	maxTop = Math.Max(DesignerCanvas.GetTop(item) + item.ActualHeight, maxTop);
 
-					if (item.TableViewModel.ViewMode != TableViewMode.NameOnly)
-					{
-						minDeltaVertical = Math.Min(item.ActualHeight - item.MinHeight, minDeltaVertical);
-					}
-					minDeltaHorizontal = Math.Min(item.ActualWidth - item.MinWidth, minDeltaHorizontal);
+				//	if (item.TableViewModel.ViewMode != TableViewMode.NameOnly)
+				//	{
+				//		minDeltaVertical = Math.Min(item.ActualHeight - item.MinHeight, minDeltaVertical);
+				//	}
+				//	minDeltaHorizontal = Math.Min(item.ActualWidth - item.MinWidth, minDeltaHorizontal);
 
-					maxDeltaVertical = Math.Min(_canvas.ActualHeight - (DesignerCanvas.GetTop(item) + item.ActualHeight), maxDeltaVertical);
-					maxDeltaHorizontal = Math.Min(_canvas.ActualWidth - (DesignerCanvas.GetLeft(item) + item.ActualWidth), maxDeltaHorizontal);
-				}
+				//	maxDeltaVertical = Math.Min(_canvas.ActualHeight - (DesignerCanvas.GetTop(item) + item.ActualHeight), maxDeltaVertical);
+				//	maxDeltaHorizontal = Math.Min(_canvas.ActualWidth - (DesignerCanvas.GetLeft(item) + item.ActualWidth), maxDeltaHorizontal);
+				//}
 
-				foreach(TableContent item in _canvas.SelectedTables)
-				{
-
-					if (item.TableViewModel.ViewMode != TableViewMode.NameOnly)
+					if (_item.TableViewModel.ViewMode != TableViewMode.NameOnly)
 					{
 						double deltaVertical;
 						switch (VerticalAlignment)
 						{
 							case VerticalAlignment.Bottom:
 								deltaVertical = e.VerticalChange > 0 && e.VerticalChange >= maxDeltaVertical ? 0 : Math.Min(-e.VerticalChange, minDeltaVertical);
-								item.Height = item.ActualHeight - (int)deltaVertical;
-								item.TableViewModel.Height = item.Height;
+								_item.Height = _item.ActualHeight - (int)deltaVertical;
+								_item.TableViewModel.Height = _item.Height;
 								break;
 							case VerticalAlignment.Top:
-								deltaVertical = (int)Math.Min(Math.Max(-minTop, e.VerticalChange), minDeltaVertical);
-								var topPos = DesignerCanvas.GetTop(item) + deltaVertical;
-								DesignerCanvas.SetTop(item, topPos);
-								item.Height = item.ActualHeight - deltaVertical;
-								item.TableViewModel.Height = item.Height;
-								item.TableViewModel.Top = topPos;
+								deltaVertical = (int)Math.Min(Math.Max(-DesignerCanvas.GetTop(_item), e.VerticalChange), minDeltaVertical);
+								var topPos = DesignerCanvas.GetTop(_item) + deltaVertical;
+								DesignerCanvas.SetTop(_item, topPos);
+								_item.Height = _item.ActualHeight - deltaVertical;
+								_item.TableViewModel.Height = _item.Height;
+								_item.TableViewModel.Top = topPos;
 								break;
 						}
 					}
@@ -103,21 +101,20 @@ namespace ER_Diagram_Modeler.Views.Canvas.TableItem
 					switch (HorizontalAlignment)
 					{
 						case HorizontalAlignment.Left:
-							deltaHorizontal = (int)Math.Min(Math.Max(-minLeft, e.HorizontalChange), minDeltaHorizontal);
-							var leftPos = DesignerCanvas.GetLeft(item) + deltaHorizontal;
-							DesignerCanvas.SetLeft(item, leftPos);
-							item.Width = item.ActualWidth - deltaHorizontal;
-							item.TableViewModel.Width = item.Width;
-							item.TableViewModel.Left = leftPos;
+							deltaHorizontal = (int)Math.Min(Math.Max(-DesignerCanvas.GetLeft(_item), e.HorizontalChange), minDeltaHorizontal);
+							var leftPos = DesignerCanvas.GetLeft(_item) + deltaHorizontal;
+							DesignerCanvas.SetLeft(_item, leftPos);
+							_item.Width = _item.ActualWidth - deltaHorizontal;
+							_item.TableViewModel.Width = _item.Width;
+							_item.TableViewModel.Left = leftPos;
 							break;
 						case HorizontalAlignment.Right:
 							deltaHorizontal = e.HorizontalChange > 0 && e.HorizontalChange >= maxDeltaHorizontal ? 0 : (int)Math.Min(-e.HorizontalChange, minDeltaHorizontal);
-							item.Width = item.ActualWidth - deltaHorizontal;
-							item.TableViewModel.Width = item.Width;
+							_item.Width = _item.ActualWidth - deltaHorizontal;
+							_item.TableViewModel.Width = _item.Width;
 							break;
 					}
 				}
-			}
 			e.Handled = true;
 		}
 	}
