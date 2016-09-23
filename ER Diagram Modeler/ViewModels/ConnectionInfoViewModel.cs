@@ -45,6 +45,13 @@ namespace ER_Diagram_Modeler.ViewModels
 			get { return _sourceViewModel; }
 			set
 			{
+				if (_sourceViewModel != null)
+				{
+					_sourceViewModel.PositionAndMeasureChanged -= SourceViewModelOnPositionAndMeasureChanged;
+					_sourceViewModel.PositionAndMeasureChangesCompleted -= SourceViewModelOnPositionAndMeasureChangesCompleted;
+					_sourceViewModel.PositionAndMeasureChangesStarted -= SourceViewModelOnPositionAndMeasureChangesStarted;
+					_sourceViewModel.TableViewModeChanged -= ViewModelOnTableViewModeChanged;
+				}
 				_sourceViewModel = value;
 				if (value == null) return;
 				SourceViewModel.PositionAndMeasureChanged += SourceViewModelOnPositionAndMeasureChanged;
@@ -59,6 +66,13 @@ namespace ER_Diagram_Modeler.ViewModels
 			get { return _destinationViewModel; }
 			set
 			{
+				if (_destinationViewModel != null)
+				{
+					_destinationViewModel.PositionAndMeasureChanged -= DestinationViewModelOnPositionAndMeasureChanged;
+					_destinationViewModel.PositionAndMeasureChangesCompleted -= DestinationViewModelOnPositionAndMeasureChangesCompleted;
+					_destinationViewModel.PositionAndMeasureChangesStarted -= DestinationViewModelOnPositionAndMeasureChangesStarted;
+					_destinationViewModel.TableViewModeChanged -= ViewModelOnTableViewModeChanged;
+				}
 				_destinationViewModel = value;
 				if (value == null) return;
 				DestinationViewModel.PositionAndMeasureChanged += DestinationViewModelOnPositionAndMeasureChanged;
@@ -135,7 +149,7 @@ namespace ER_Diagram_Modeler.ViewModels
 				}
 			}
 
-			if (table != null && (IsSelfConnection() && table.IsMoving))
+			if (table != null && IsSelfConnection() && (table.IsMoving || IsAnySelectedTableMoving()))
 			{
 				return;
 			}
@@ -271,7 +285,7 @@ namespace ER_Diagram_Modeler.ViewModels
 				}
 			}
 
-			if(table != null && (IsSelfConnection() && table.IsMoving))
+			if(table != null && IsSelfConnection() && (table.IsMoving || IsAnySelectedTableMoving()))
 			{
 				MoveAllLines(e);
 				return;
@@ -1387,6 +1401,22 @@ namespace ER_Diagram_Modeler.ViewModels
 				SplitLine(Lines.FirstOrDefault(), Lines.FirstOrDefault()?.GetMiddlePoint());
 				SynchronizeBendingPoints();
 			}
+		}
+
+		private bool IsAnySelectedTableMoving()
+		{
+			ConnectionLine line = Lines.FirstOrDefault();
+			var canvas = VisualTreeHelper.GetParent(line.Line) as DesignerCanvas;
+
+			if (canvas == null)
+			{
+				return false;
+			}
+
+			var itemsForCheck =
+				canvas.SelectedTables.Where(
+					t => !t.TableViewModel.Equals(SourceViewModel) && !t.TableViewModel.Equals(DestinationViewModel)).Where(s => s.TableViewModel.IsMoving);
+			return itemsForCheck.Any();
 		}
 
 		private void MoveConnectorOnTableViewModeChange(Connector connector, TableViewModel table)

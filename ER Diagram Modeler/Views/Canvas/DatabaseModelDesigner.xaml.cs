@@ -27,7 +27,6 @@ namespace ER_Diagram_Modeler.Views.Canvas
 	/// </summary>
 	public partial class DatabaseModelDesigner : UserControl
 	{
-		private readonly ObservableCollection<ConnectionInfoViewModel> _connections; 
 		private DatabaseModelDesignerViewModel _viewModel;
 		private Point? _dragStartPoint = null;
 		private double _capturedVerticalOffset;
@@ -42,6 +41,7 @@ namespace ER_Diagram_Modeler.Views.Canvas
 				DataContext = value;
 				ViewModel.TableViewModels.CollectionChanged += TableViewModelsOnCollectionChanged;
 				ViewModel.ScaleChanged += ViewModelOnScaleChanged;
+				ViewModel.ConnectionInfoViewModels.CollectionChanged += ConnectionsOnCollectionChanged;
 			}
 		}
 
@@ -105,10 +105,7 @@ namespace ER_Diagram_Modeler.Views.Canvas
 		public DatabaseModelDesigner()
 		{
 			InitializeComponent();
-			_connections = new ObservableCollection<ConnectionInfoViewModel>();
-
 			DataContextChanged += OnDataContextChanged;
-			_connections.CollectionChanged += ConnectionsOnCollectionChanged;
 		}
 
 		private void ConnectionsOnCollectionChanged(object sender, NotifyCollectionChangedEventArgs args)
@@ -159,7 +156,7 @@ namespace ER_Diagram_Modeler.Views.Canvas
 			var conn = sender as ConnectionInfoViewModel;
 			if (val)
 			{
-				foreach (ConnectionInfoViewModel info in _connections.Where(t => !t.Equals(conn)))
+				foreach (ConnectionInfoViewModel info in ViewModel.ConnectionInfoViewModels.Where(t => !t.Equals(conn)))
 				{
 					info.IsSelected = false;
 				}
@@ -292,10 +289,10 @@ namespace ER_Diagram_Modeler.Views.Canvas
 			{
 				ViewModel.TableViewModels.Remove(item);
 				var connectionsForRemove =
-					_connections.Where(t => t.RelationshipModel.Destination.Equals(item.Model) || t.RelationshipModel.Source.Equals(item.Model));
+					ViewModel.ConnectionInfoViewModels.Where(t => t.RelationshipModel.Destination.Equals(item.Model) || t.RelationshipModel.Source.Equals(item.Model));
 				foreach (ConnectionInfoViewModel connectionInfo in connectionsForRemove)
 				{
-					_connections.Remove(connectionInfo);
+					ViewModel.ConnectionInfoViewModels.Remove(connectionInfo);
 				}
 			}
 		}
@@ -315,7 +312,7 @@ namespace ER_Diagram_Modeler.Views.Canvas
 
 		private void DeselectConnections()
 		{
-			foreach (ConnectionInfoViewModel info in _connections)
+			foreach (ConnectionInfoViewModel info in ViewModel.ConnectionInfoViewModels)
 			{
 				info.IsSelected = false;
 			}
@@ -390,7 +387,7 @@ namespace ER_Diagram_Modeler.Views.Canvas
 		private void CommandBinding_OnExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
 			var info = new ConnectionInfoViewModel();
-			//info.SourceViewModel = ViewModel.TableViewModels.FirstOrDefault();
+			info.SourceViewModel = ViewModel.TableViewModels.FirstOrDefault();
 			info.DestinationViewModel = ViewModel.TableViewModels.LastOrDefault();
 
 			//Right
@@ -407,22 +404,22 @@ namespace ER_Diagram_Modeler.Views.Canvas
 			//info.DestinationConnector.EndPoint = point2;
 
 			//Up
-			//var point1 =
-			//	new ConnectionPoint(info.SourceViewModel.Left + 30, info.SourceViewModel.Top - Connector.ConnectorLenght);
-			//var point2 =
-			//	new ConnectionPoint(info.SourceViewModel.Left + 30, info.SourceViewModel.Top - Connector.ConnectorLenght - 30);
-			//var point3 = new ConnectionPoint(info.SourceViewModel.Left + +info.SourceViewModel.Width + 50, info.SourceViewModel.Top - Connector.ConnectorLenght - 30);
-			//var point4 = new ConnectionPoint(info.SourceViewModel.Left + +info.SourceViewModel.Width + 50, info.DestinationViewModel.Top + 50);
-			//var point5 = new ConnectionPoint(info.DestinationViewModel.Left - Connector.ConnectorLenght, info.DestinationViewModel.Top + 50);
-			//info.Points.Add(point1);
-			//info.Points.Add(point2);
-			//info.Points.Add(point3);
-			//info.Points.Add(point4);
-			//info.Points.Add(point5);
-			//info.SourceConnector.Orientation = ConnectorOrientation.Up;
-			//info.DestinationConnector.Orientation = ConnectorOrientation.Left;
-			//info.SourceConnector.EndPoint = point1;
-			//info.DestinationConnector.EndPoint = point5;
+			var point1 =
+				new ConnectionPoint(info.SourceViewModel.Left + 30, info.SourceViewModel.Top - Connector.ConnectorLenght);
+			var point2 =
+				new ConnectionPoint(info.SourceViewModel.Left + 30, info.SourceViewModel.Top - Connector.ConnectorLenght - 30);
+			var point3 = new ConnectionPoint(info.SourceViewModel.Left + +info.SourceViewModel.Width + 50, info.SourceViewModel.Top - Connector.ConnectorLenght - 30);
+			var point4 = new ConnectionPoint(info.SourceViewModel.Left + +info.SourceViewModel.Width + 50, info.DestinationViewModel.Top + 50);
+			var point5 = new ConnectionPoint(info.DestinationViewModel.Left - Connector.ConnectorLenght, info.DestinationViewModel.Top + 50);
+			info.Points.Add(point1);
+			info.Points.Add(point2);
+			info.Points.Add(point3);
+			info.Points.Add(point4);
+			info.Points.Add(point5);
+			info.SourceConnector.Orientation = ConnectorOrientation.Up;
+			info.DestinationConnector.Orientation = ConnectorOrientation.Left;
+			info.SourceConnector.EndPoint = point1;
+			info.DestinationConnector.EndPoint = point5;
 
 			//Down
 			//var point1 =
@@ -464,23 +461,23 @@ namespace ER_Diagram_Modeler.Views.Canvas
 
 			//Self
 			//info.SourceViewModel = null;
-			info.SourceViewModel = info.DestinationViewModel;
-			var point1 =
-				new ConnectionPoint(info.DestinationViewModel.Left - Connector.ConnectorLenght, info.DestinationViewModel.Top + 30);
-			var point2 =
-				new ConnectionPoint(info.DestinationViewModel.Left - Connector.ConnectorLenght - 3, info.DestinationViewModel.Top + 30);
-			var point3 = new ConnectionPoint(info.SourceViewModel.Left - Connector.ConnectorLenght - 3, info.DestinationViewModel.Top - 50);
-			var point4 = new ConnectionPoint(info.SourceViewModel.Left + 50, info.DestinationViewModel.Top - 50);
-			var point5 = new ConnectionPoint(info.SourceViewModel.Left + 50, info.DestinationViewModel.Top - Connector.ConnectorLenght);
-			info.Points.Add(point1);
-			info.Points.Add(point2);
-			info.Points.Add(point3);
-			info.Points.Add(point4);
-			info.Points.Add(point5);
-			info.SourceConnector.Orientation = ConnectorOrientation.Left;
-			info.DestinationConnector.Orientation = ConnectorOrientation.Up;
-			info.SourceConnector.EndPoint = point1;
-			info.DestinationConnector.EndPoint = point5;
+			//info.SourceViewModel = info.DestinationViewModel;
+			//var point1 =
+			//	new ConnectionPoint(info.DestinationViewModel.Left - Connector.ConnectorLenght, info.DestinationViewModel.Top + 30);
+			//var point2 =
+			//	new ConnectionPoint(info.DestinationViewModel.Left - Connector.ConnectorLenght - 3, info.DestinationViewModel.Top + 30);
+			//var point3 = new ConnectionPoint(info.SourceViewModel.Left - Connector.ConnectorLenght - 3, info.DestinationViewModel.Top - 50);
+			//var point4 = new ConnectionPoint(info.SourceViewModel.Left + 50, info.DestinationViewModel.Top - 50);
+			//var point5 = new ConnectionPoint(info.SourceViewModel.Left + 50, info.DestinationViewModel.Top - Connector.ConnectorLenght);
+			//info.Points.Add(point1);
+			//info.Points.Add(point2);
+			//info.Points.Add(point3);
+			//info.Points.Add(point4);
+			//info.Points.Add(point5);
+			//info.SourceConnector.Orientation = ConnectorOrientation.Left;
+			//info.DestinationConnector.Orientation = ConnectorOrientation.Up;
+			//info.SourceConnector.EndPoint = point1;
+			//info.DestinationConnector.EndPoint = point5;
 
 
 			info.SourceConnector.Cardinality = Cardinality.One;
@@ -489,7 +486,7 @@ namespace ER_Diagram_Modeler.Views.Canvas
 			info.DestinationConnector.Optionality = Optionality.Mandatory;
 
 			info.BuildLinesFromPoints();
-			_connections.Add(info);
+			ViewModel.ConnectionInfoViewModels.Add(info);
 			info.SynchronizeBendingPoints();
 		}
 

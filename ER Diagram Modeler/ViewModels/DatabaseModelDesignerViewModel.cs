@@ -32,6 +32,18 @@ namespace ER_Diagram_Modeler.ViewModels
 		private double _maxScale = 5;
 		private double _minScale = 0.25;
 		private Visibility _zoomBoxVisibility = Visibility.Visible;
+		private ObservableCollection<ConnectionInfoViewModel> _connectionInfoViewModels;
+
+		public ObservableCollection<ConnectionInfoViewModel> ConnectionInfoViewModels
+		{
+			get { return _connectionInfoViewModels; }
+			set
+			{
+				if (Equals(value, _connectionInfoViewModels)) return;
+				_connectionInfoViewModels = value;
+				OnPropertyChanged();
+			}
+		}
 
 		public Visibility ZoomBoxVisibility
 		{
@@ -262,6 +274,7 @@ namespace ER_Diagram_Modeler.ViewModels
 		public DatabaseModelDesignerViewModel()
 		{
 			TableViewModels = new ObservableCollection<TableViewModel>();
+			ConnectionInfoViewModels = new ObservableCollection<ConnectionInfoViewModel>();
 			ChangeZoomCommand = new SimpleCommand(ChangeZoomCommand_Executed);
 		}
 
