@@ -1,10 +1,14 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Media;
+using ER_Diagram_Modeler.ViewModels;
+using Xceed.Wpf.Toolkit.Core.Utilities;
 
 namespace ER_Diagram_Modeler.Views.Canvas.TableItem
 {
@@ -12,6 +16,7 @@ namespace ER_Diagram_Modeler.Views.Canvas.TableItem
 	{
 		private DesignerCanvas _canvas;
 		private TableContent _item;
+		private List<ConnectionInfoViewModel> _connections; 
 
 		public MoveThumb()
 		{
@@ -33,6 +38,10 @@ namespace ER_Diagram_Modeler.Views.Canvas.TableItem
 			if (_item != null)
 			{
 				_canvas = VisualTreeHelper.GetParent(_item) as DesignerCanvas;
+				if (_canvas != null)
+				{
+					_connections = VisualTreeHelperEx.FindAncestorByType<DatabaseModelDesigner>(_canvas).ViewModel.ConnectionInfoViewModels.ToList();
+				}
 				_item.TableViewModel.OnPositionAndMeasureChangesStarted();
 				_item.TableViewModel.IsMoving = true;
 			}
@@ -54,6 +63,11 @@ namespace ER_Diagram_Modeler.Views.Canvas.TableItem
 					minTop = Math.Min(DesignerCanvas.GetTop(item), minTop);
 					maxLeft = Math.Max(DesignerCanvas.GetLeft(item) + item.ActualWidth, maxLeft);
 					maxTop = Math.Max(DesignerCanvas.GetTop(item) + item.ActualHeight, maxTop);
+				}
+
+				foreach (TableContent item in _canvas.SelectedTables)
+				{
+					
 				}
 
 				double deltaHorizontal = (int)Math.Max(-minLeft, dragDeltaEventArgs.HorizontalChange);
