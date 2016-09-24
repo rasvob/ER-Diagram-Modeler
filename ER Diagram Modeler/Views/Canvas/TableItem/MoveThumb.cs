@@ -8,6 +8,8 @@ using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Media;
 using ER_Diagram_Modeler.ViewModels;
+using ER_Diagram_Modeler.ViewModels.Enums;
+using ER_Diagram_Modeler.Views.Canvas.Connection;
 using Xceed.Wpf.Toolkit.Core.Utilities;
 
 namespace ER_Diagram_Modeler.Views.Canvas.TableItem
@@ -40,7 +42,9 @@ namespace ER_Diagram_Modeler.Views.Canvas.TableItem
 				_canvas = VisualTreeHelper.GetParent(_item) as DesignerCanvas;
 				if (_canvas != null)
 				{
-					_connections = VisualTreeHelperEx.FindAncestorByType<DatabaseModelDesigner>(_canvas).ViewModel.ConnectionInfoViewModels.ToList();
+					_connections = VisualTreeHelperEx.FindAncestorByType<DatabaseModelDesigner>(_canvas).ViewModel.ConnectionInfoViewModels
+						.Where(t => !(t.DestinationViewModel.IsSelected && t.SourceViewModel.IsSelected))
+						.ToList();
 				}
 				_item.TableViewModel.OnPositionAndMeasureChangesStarted();
 				_item.TableViewModel.IsMoving = true;
@@ -65,13 +69,58 @@ namespace ER_Diagram_Modeler.Views.Canvas.TableItem
 					maxTop = Math.Max(DesignerCanvas.GetTop(item) + item.ActualHeight, maxTop);
 				}
 
-				foreach (TableContent item in _canvas.SelectedTables)
-				{
-					
-				}
-
 				double deltaHorizontal = (int)Math.Max(-minLeft, dragDeltaEventArgs.HorizontalChange);
 				double deltaVertical = (int)Math.Max(-minTop, dragDeltaEventArgs.VerticalChange);
+
+				double topConnectionLimit = double.MaxValue;
+				double bottomConnectionLimit = double.MaxValue;
+				double leftConnectionLimit = double.MaxValue;
+				double rightConnectionLimit = double.MaxValue;
+
+				foreach (TableContent item in _canvas.SelectedTables)
+				{
+					foreach (ConnectionInfoViewModel model in _connections.Where(t => t.SourceViewModel.Equals(item.TableViewModel)))
+					{
+						ConnectionInfoViewModel.GetConnectionLimits(ref topConnectionLimit, ref bottomConnectionLimit, ref leftConnectionLimit, ref rightConnectionLimit, model.SourceConnector, model);
+					}
+
+					foreach(ConnectionInfoViewModel model in _connections.Where(t => t.DestinationViewModel.Equals(item.TableViewModel)))
+					{
+						ConnectionInfoViewModel.GetConnectionLimits(ref topConnectionLimit, ref bottomConnectionLimit, ref leftConnectionLimit, ref rightConnectionLimit, model.DestinationConnector, model);
+					}
+				}
+
+				if (topConnectionLimit < double.MaxValue)
+				{
+					if (deltaVertical < 0 && minTop + deltaVertical <= minTop - topConnectionLimit)
+					{
+						deltaVertical = 0;
+					}
+				}
+
+				if (bottomConnectionLimit < double.MaxValue)
+				{
+					if(deltaVertical > 0 && maxTop + deltaVertical >= maxTop + bottomConnectionLimit)
+					{
+						deltaVertical = 0;
+					}
+				}
+
+				if (leftConnectionLimit < double.MaxValue)
+				{
+					if (deltaHorizontal < 0 && minLeft + deltaHorizontal <= minLeft - leftConnectionLimit)
+					{
+						deltaHorizontal = 0;
+					}
+				}
+
+				if (rightConnectionLimit < double.MaxValue)
+				{
+					if(deltaHorizontal > 0 && maxLeft + deltaHorizontal >= maxLeft + rightConnectionLimit)
+					{
+						deltaHorizontal = 0;
+					}
+				}
 
 				if (maxLeft >= _canvas.ActualWidth && dragDeltaEventArgs.HorizontalChange > 0)
 				{

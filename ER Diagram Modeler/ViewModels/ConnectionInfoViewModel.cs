@@ -1443,6 +1443,42 @@ namespace ER_Diagram_Modeler.ViewModels
 			}
 		}
 
+		public static void GetConnectionLimits(ref double top, ref double bot, ref double left, ref double right,
+			Connector connector, ConnectionInfoViewModel connection)
+		{
+			if(connection.Lines.Count <= 1)
+			{
+				return;
+			}
+
+			var line =
+				connection.Lines.FirstOrDefault(
+					t => t.EndPoint.Equals(connector.EndPoint) || t.StartPoint.Equals(connector.EndPoint));
+
+			if(line == null)
+			{
+				return;
+			}
+
+			var len = line.GetLenght();
+
+			switch(connector.Orientation)
+			{
+				case ConnectorOrientation.Up:
+					top = Math.Min(len, top);
+					break;
+				case ConnectorOrientation.Down:
+					bot = Math.Min(len, bot);
+					break;
+				case ConnectorOrientation.Left:
+					left = Math.Min(len, left);
+					break;
+				case ConnectorOrientation.Right:
+					right = Math.Min(len, right);
+					break;
+			}
+		}
+
 		protected virtual void OnSelectionChange(bool e)
 		{
 			SelectionChange?.Invoke(this, e);
