@@ -404,29 +404,11 @@ namespace ER_Diagram_Modeler.Views.Canvas
 			//info.DestinationConnector.EndPoint = point2;
 
 			//Up
-			var point1 =
-				new ConnectionPoint(info.SourceViewModel.Left + 30, info.SourceViewModel.Top - Connector.ConnectorLenght);
-			var point2 =
-				new ConnectionPoint(info.SourceViewModel.Left + 30, info.SourceViewModel.Top - Connector.ConnectorLenght - 30);
-			var point3 = new ConnectionPoint(info.SourceViewModel.Left + +info.SourceViewModel.Width + 50, info.SourceViewModel.Top - Connector.ConnectorLenght - 30);
-			var point4 = new ConnectionPoint(info.SourceViewModel.Left + +info.SourceViewModel.Width + 50, info.DestinationViewModel.Top + 50);
-			var point5 = new ConnectionPoint(info.DestinationViewModel.Left - Connector.ConnectorLenght, info.DestinationViewModel.Top + 50);
-			info.Points.Add(point1);
-			info.Points.Add(point2);
-			info.Points.Add(point3);
-			info.Points.Add(point4);
-			info.Points.Add(point5);
-			info.SourceConnector.Orientation = ConnectorOrientation.Up;
-			info.DestinationConnector.Orientation = ConnectorOrientation.Left;
-			info.SourceConnector.EndPoint = point1;
-			info.DestinationConnector.EndPoint = point5;
-
-			//Down
 			//var point1 =
-			//	new ConnectionPoint(info.SourceViewModel.Left + 30, info.SourceViewModel.Top + info.SourceViewModel.Height + Connector.ConnectorLenght);
+			//	new ConnectionPoint(info.SourceViewModel.Left + 30, info.SourceViewModel.Top - Connector.ConnectorLenght);
 			//var point2 =
-			//	new ConnectionPoint(info.SourceViewModel.Left + 30, info.SourceViewModel.Top + info.SourceViewModel.Height + Connector.ConnectorLenght + 30);
-			//var point3 = new ConnectionPoint(info.SourceViewModel.Left + +info.SourceViewModel.Width + 50, info.SourceViewModel.Top + info.SourceViewModel.Height + Connector.ConnectorLenght + 30);
+			//	new ConnectionPoint(info.SourceViewModel.Left + 30, info.SourceViewModel.Top - Connector.ConnectorLenght - 30);
+			//var point3 = new ConnectionPoint(info.SourceViewModel.Left + +info.SourceViewModel.Width + 50, info.SourceViewModel.Top - Connector.ConnectorLenght - 30);
 			//var point4 = new ConnectionPoint(info.SourceViewModel.Left + +info.SourceViewModel.Width + 50, info.DestinationViewModel.Top + 50);
 			//var point5 = new ConnectionPoint(info.DestinationViewModel.Left - Connector.ConnectorLenght, info.DestinationViewModel.Top + 50);
 			//info.Points.Add(point1);
@@ -434,10 +416,28 @@ namespace ER_Diagram_Modeler.Views.Canvas
 			//info.Points.Add(point3);
 			//info.Points.Add(point4);
 			//info.Points.Add(point5);
-			//info.SourceConnector.Orientation = ConnectorOrientation.Down;
+			//info.SourceConnector.Orientation = ConnectorOrientation.Up;
 			//info.DestinationConnector.Orientation = ConnectorOrientation.Left;
 			//info.SourceConnector.EndPoint = point1;
 			//info.DestinationConnector.EndPoint = point5;
+
+			//Down
+			var point1 =
+				new ConnectionPoint(info.SourceViewModel.Left + 30, info.SourceViewModel.Top + info.SourceViewModel.Height + Connector.ConnectorLenght);
+			var point2 =
+				new ConnectionPoint(info.SourceViewModel.Left + 30, info.SourceViewModel.Top + info.SourceViewModel.Height + Connector.ConnectorLenght + 30);
+			var point3 = new ConnectionPoint(info.SourceViewModel.Left + +info.SourceViewModel.Width + 50, info.SourceViewModel.Top + info.SourceViewModel.Height + Connector.ConnectorLenght + 30);
+			var point4 = new ConnectionPoint(info.SourceViewModel.Left + +info.SourceViewModel.Width + 50, info.DestinationViewModel.Top + 50);
+			var point5 = new ConnectionPoint(info.DestinationViewModel.Left - Connector.ConnectorLenght, info.DestinationViewModel.Top + 50);
+			info.Points.Add(point1);
+			info.Points.Add(point2);
+			info.Points.Add(point3);
+			info.Points.Add(point4);
+			info.Points.Add(point5);
+			info.SourceConnector.Orientation = ConnectorOrientation.Down;
+			info.DestinationConnector.Orientation = ConnectorOrientation.Left;
+			info.SourceConnector.EndPoint = point1;
+			info.DestinationConnector.EndPoint = point5;
 
 			//Left
 			//var point1 =
@@ -493,7 +493,9 @@ namespace ER_Diagram_Modeler.Views.Canvas
 		//Test command F6
 		private void CommandBinding3_OnExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
-			
+			ModelDesignerCanvas.CanvasGrid.Visibility = ModelDesignerCanvas.CanvasGrid.Visibility == Visibility.Visible
+				? Visibility.Hidden
+				: Visibility;
 		}
 
 		#endregion

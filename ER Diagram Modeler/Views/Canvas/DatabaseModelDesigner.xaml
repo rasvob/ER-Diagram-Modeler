@@ -84,7 +84,15 @@
 				<local:DesignerCanvas.LayoutTransform>
 					<ScaleTransform ScaleX="{Binding Scale}" ScaleY="{Binding Scale}"></ScaleTransform>
 				</local:DesignerCanvas.LayoutTransform>
+				
+				<!--Quality loss-->
+				<!--<local:DesignerCanvas.CacheMode>
+					<BitmapCache RenderAtScale="1"
+								 SnapsToDevicePixels="True"
+								 EnableClearType="True"></BitmapCache>
+				</local:DesignerCanvas.CacheMode>-->
 
+				<!--Performance loss-->
 				<!--<local:DesignerCanvas.Effect>
 					<DropShadowEffect Color="Black" BlurRadius="25" Opacity="0.1" RenderingBias="Performance"></DropShadowEffect>
 				</local:DesignerCanvas.Effect>-->
