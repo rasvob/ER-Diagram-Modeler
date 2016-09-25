@@ -493,9 +493,7 @@ namespace ER_Diagram_Modeler.Views.Canvas
 		//Test command F6
 		private void CommandBinding3_OnExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
-			ModelDesignerCanvas.CanvasGrid.Visibility = ModelDesignerCanvas.CanvasGrid.Visibility == Visibility.Visible
-				? Visibility.Hidden
-				: Visibility;
+			
 		}
 
 		#endregion
@@ -645,7 +643,8 @@ namespace ER_Diagram_Modeler.Views.Canvas
 
 		private void ShowGuideLinesCommand_OnExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
-			
+			ViewModel.AreGuideLinesVisible = !ViewModel.AreGuideLinesVisible;
+			ModelDesignerCanvas.SetGuideLinesVisible(ViewModel.AreGuideLinesVisible);
 		}
 
 		private void AddForeignKeyCommand_OnExecuted(object sender, ExecutedRoutedEventArgs e)

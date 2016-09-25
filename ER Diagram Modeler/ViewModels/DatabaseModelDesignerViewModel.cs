@@ -33,6 +33,18 @@ namespace ER_Diagram_Modeler.ViewModels
 		private double _minScale = 0.25;
 		private Visibility _zoomBoxVisibility = Visibility.Visible;
 		private ObservableCollection<ConnectionInfoViewModel> _connectionInfoViewModels;
+		private bool _areGuideLinesVisible = true;
+
+		public bool AreGuideLinesVisible
+		{
+			get { return _areGuideLinesVisible; }
+			set
+			{
+				if (value == _areGuideLinesVisible) return;
+				_areGuideLinesVisible = value;
+				OnPropertyChanged();
+			}
+		}
 
 		public ObservableCollection<ConnectionInfoViewModel> ConnectionInfoViewModels
 		{

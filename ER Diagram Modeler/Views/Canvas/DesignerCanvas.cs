@@ -21,21 +21,23 @@ namespace ER_Diagram_Modeler.Views.Canvas
 		public static int ConnectionPointZIndex = 6;
 		public static int CanvasGridZIndex = 2;
 		public static int GridCellWidth = 30;
+		private Path _canvasGrid;
 
 		public IEnumerable<TableContent> SelectedTables => Children.OfType<TableContent>().Where(t => t.IsSelected);
 		public IEnumerable<TableContent> Tables => Children.OfType<TableContent>();
-		public Path CanvasGrid { get; set; }
 
 		public DesignerCanvas()
 		{
-			CanvasGrid = new Path();
-			CanvasGrid.Stroke = new SolidColorBrush(Colors.DimGray);
-			CanvasGrid.StrokeThickness = 0.5;
-			CanvasGrid.SnapsToDevicePixels = true;
-			CanvasGrid.Opacity = 0.3;
-			CanvasGrid.CacheMode = new BitmapCache(1);
-			SetZIndex(CanvasGrid, CanvasGridZIndex);
-			Children.Add(CanvasGrid);
+			_canvasGrid = new Path
+			{
+				Stroke = new SolidColorBrush(Colors.DimGray),
+				StrokeThickness = 0.5,
+				SnapsToDevicePixels = true,
+				Opacity = 0.3,
+				CacheMode = new BitmapCache(1)
+			};
+			SetZIndex(_canvasGrid, CanvasGridZIndex);
+			Children.Add(_canvasGrid);
 
 			Loaded += OnLoaded;
 		}
@@ -63,7 +65,7 @@ namespace ER_Diagram_Modeler.Views.Canvas
 
 		public void RefreshGuideLines()
 		{
-			CanvasGrid.Data = CreateGridWithStreamGeometry();
+			_canvasGrid.Data = CreateGridWithStreamGeometry();
 		}
 
 		private StreamGeometry CreateGridWithStreamGeometry()
@@ -87,6 +89,11 @@ namespace ER_Diagram_Modeler.Views.Canvas
 
 			geometry.Freeze();
 			return geometry;
+		}
+
+		public void SetGuideLinesVisible(bool areGuideLinesVisible)
+		{
+			_canvasGrid.Visibility = areGuideLinesVisible ? Visibility.Visible : Visibility.Hidden;
 		}
 	}
 }

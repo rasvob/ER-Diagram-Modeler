@@ -135,11 +135,11 @@
     <Compile Include="Models\Designer\TableModel.cs" />
     <Compile Include="Models\Designer\TableRowModel.cs" />
     <Compile Include="Properties\Annotations1.cs" />
-    <Compile Include="ValueConverters\GuideLinesVisibilityToBoolValueConverter.cs" />
+    <Compile Include="ValueConverters\MouseModeToButtonCheckedConverter.cs" />
+    <Compile Include="ValueConverters\VisibilityToBoolValueConverter.cs" />
     <Compile Include="ValueConverters\MouseModeToCanvasEnabledConverter.cs" />
     <Compile Include="ValueConverters\MouseModeToCursorConverter.cs" />
     <Compile Include="ValueConverters\ScaleToPercentConverter.cs" />
-    <Compile Include="ValueConverters\SelectionModeToBoolValueConverter.cs" />
     <Compile Include="ValueConverters\TableViewModeToVisibilityConverter.cs" />
     <Compile Include="ViewModels\DatabaseModelDesignerViewModel.cs" />
     <Compile Include="ViewModels\Enums\ConnectionType.cs" />

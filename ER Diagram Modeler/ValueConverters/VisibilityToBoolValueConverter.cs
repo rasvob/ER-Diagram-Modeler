@@ -5,7 +5,7 @@ using System.Windows.Data;
 
 namespace ER_Diagram_Modeler.ValueConverters
 {
-	public class GuideLinesVisibilityToBoolValueConverter: IValueConverter
+	public class VisibilityToBoolValueConverter: IValueConverter
 	{
 		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
 		{
