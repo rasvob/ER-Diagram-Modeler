@@ -32,7 +32,7 @@ namespace ER_Diagram_Modeler.Views.Canvas
 			CanvasGrid.Stroke = new SolidColorBrush(Colors.DimGray);
 			CanvasGrid.StrokeThickness = 0.5;
 			CanvasGrid.SnapsToDevicePixels = true;
-			CanvasGrid.Opacity = 0.1;
+			CanvasGrid.Opacity = 0.3;
 			CanvasGrid.CacheMode = new BitmapCache(1);
 			SetZIndex(CanvasGrid, CanvasGridZIndex);
 			Children.Add(CanvasGrid);
@@ -42,8 +42,7 @@ namespace ER_Diagram_Modeler.Views.Canvas
 
 		private void OnLoaded(object sender, RoutedEventArgs routedEventArgs)
 		{
-			//Very bad performance
-			CanvasGrid.Data = CreateGridWithStreamGeometry();
+			RefreshGuideLines();
 		}
 
 		public void DeselectTables()
@@ -60,6 +59,11 @@ namespace ER_Diagram_Modeler.Views.Canvas
 			{
 				SetZIndex(item, TableUnselectedZIndex);
 			}
+		}
+
+		public void RefreshGuideLines()
+		{
+			CanvasGrid.Data = CreateGridWithStreamGeometry();
 		}
 
 		private StreamGeometry CreateGridWithStreamGeometry()

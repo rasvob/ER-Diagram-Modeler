@@ -604,6 +604,58 @@ namespace ER_Diagram_Modeler.Views.Canvas
 			}
 		}
 
-		
+
+		private void NewTableCommand_OnExecuted(object sender, ExecutedRoutedEventArgs e)
+		{
+			ViewModel.MouseMode = MouseMode.NewTable;
+		}
+
+		private void NewTableCommand_OnCanExecute(object sender, CanExecuteRoutedEventArgs e)
+		{
+			var parent = VisualTreeHelperEx.FindAncestorByType<MainWindow>(this);
+			if (parent == null)
+			{
+				return;
+			}
+			var focus = FocusManager.GetFocusedElement(parent);
+			var isSenderAllowed = focus is ScrollViewer || focus is Button;
+			if(!isSenderAllowed)
+			{
+				e.ContinueRouting = true;
+				e.CanExecute = false;
+			}
+			else
+			{
+				e.ContinueRouting = false;
+				e.CanExecute = true;
+			}
+		}
+
+		private void DeleteTablesCommand_OnExecuted(object sender, ExecutedRoutedEventArgs e)
+		{
+			DeleteSelectedTables();
+		}
+
+		private void DeleteTablesCommand_OnCanExecute(object sender, CanExecuteRoutedEventArgs e)
+		{
+			if(ViewModel != null)
+				e.CanExecute = ViewModel.TableViewModels.Any(t => t.IsSelected);
+		}
+
+
+		private void ShowGuideLinesCommand_OnExecuted(object sender, ExecutedRoutedEventArgs e)
+		{
+			
+		}
+
+		private void AddForeignKeyCommand_OnExecuted(object sender, ExecutedRoutedEventArgs e)
+		{
+			
+		}
+
+		private void SelectionModeCommand_OnExecuted(object sender, ExecutedRoutedEventArgs e)
+		{
+			ViewModel.MouseMode = MouseMode.Select;
+		}
 	}
 }

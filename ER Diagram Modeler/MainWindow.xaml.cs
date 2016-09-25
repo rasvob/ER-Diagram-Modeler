@@ -85,42 +85,5 @@ namespace ER_Diagram_Modeler
 			//MainWindowViewModel.DatabaseModelDesignerViewModel.TableViewModels.Add(SeedDataTable());
 			Trace.WriteLine(MainWindowViewModel.DatabaseModelDesignerViewModel.VeticalScrollOffset);
 		}
-
-		private void NewTableCommand_Executed(object sender, ExecutedRoutedEventArgs e)
-		{
-			MainWindowViewModel.DatabaseModelDesignerViewModel.MouseMode = MouseMode.NewTable;
-		}
-
-		private void DeleteItems_Executed(object sender, ExecutedRoutedEventArgs e)
-		{
-			DatabaseModelDesigner.DeleteSelectedTables();
-		}
-
-		private void NewTableCommand_CanExecute(object sender, CanExecuteRoutedEventArgs e)
-		{
-			var isSenderAllowed = (FocusManager.GetFocusedElement(this) is ScrollViewer) || (FocusManager.GetFocusedElement(this) is Button);
-			if (!isSenderAllowed)
-			{
-				e.ContinueRouting = true;
-				e.CanExecute = false;
-			}
-			else
-			{
-				e.ContinueRouting = false;
-				e.CanExecute = true;
-			}
-		}
-
-		private void DeleteItems_CanExecute(object sender, CanExecuteRoutedEventArgs e)
-		{
-			if (MainWindowViewModel != null)
-				e.CanExecute = MainWindowViewModel.DatabaseModelDesignerViewModel.TableViewModels.Any(t => t.IsSelected);
-		}
-
-		private void MenuItemCanvasSize_OnClick(object sender, RoutedEventArgs e)
-		{
-			MainWindowViewModel.DatabaseModelDesignerViewModel.CanvasHeight = 5000;
-			MainWindowViewModel.DatabaseModelDesignerViewModel.CanvasWidth = 5000;
-		}
 	}
 }

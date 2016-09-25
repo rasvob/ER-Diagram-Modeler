@@ -8,6 +8,7 @@
              xmlns:viewModels="clr-namespace:ER_Diagram_Modeler.ViewModels"
              xmlns:zoomBox="clr-namespace:ER_Diagram_Modeler.Views.Canvas.ZoomBox"
              xmlns:valueConverters="clr-namespace:ER_Diagram_Modeler.ValueConverters"
+             xmlns:buttons="clr-namespace:ER_Diagram_Modeler.Controls.Buttons"
              mc:Ignorable="d" 
 			 d:DataContext="{d:DesignInstance viewModels:DatabaseModelDesignerViewModel}"
 			 d:DesignHeight="300" d:DesignWidth="300">
@@ -16,9 +17,17 @@
 			<ResourceDictionary.MergedDictionaries>
 				<ResourceDictionary Source="TableItem/TableItem.xaml"></ResourceDictionary>
 				<ResourceDictionary Source="TableItem/ResizeDecoratorFlat.xaml"></ResourceDictionary>
+				<ResourceDictionary Source="../../Controls/Buttons/DesignerToolBarButton.xaml"></ResourceDictionary>
 			</ResourceDictionary.MergedDictionaries>
 			<valueConverters:MouseModeToCursorConverter x:Key="MouseModeToCursorConverter"></valueConverters:MouseModeToCursorConverter>
 			<valueConverters:MouseModeToCanvasEnabledConverter x:Key="CanvasEnabledConverter"></valueConverters:MouseModeToCanvasEnabledConverter>
+
+			<RoutedUICommand x:Key="Commands.NewTable"></RoutedUICommand>
+			<RoutedUICommand x:Key="Commands.DeleteItems"></RoutedUICommand>
+			<RoutedUICommand x:Key="Commands.ShowGuideLines"></RoutedUICommand>
+			<RoutedUICommand x:Key="Commands.NewForeignKey"></RoutedUICommand>
+			<RoutedUICommand x:Key="Commands.SelectionMode"></RoutedUICommand>
+
 			<RoutedCommand x:Key="TestCommand"></RoutedCommand>
 			<RoutedCommand x:Key="TestCommand2"></RoutedCommand>
 			<RoutedCommand x:Key="TestCommand3"></RoutedCommand>
@@ -46,6 +55,26 @@
 
 		<KeyBinding Command="{StaticResource TestCommand3}"
 					Key="F6" />
+
+		<KeyBinding Command="{StaticResource Commands.NewTable}"
+					Modifiers="Control"
+					Key="N" />
+
+		<KeyBinding Command="{StaticResource Commands.ShowGuideLines}"
+					Modifiers="Control"
+					Key="G" />
+
+		<KeyBinding Command="{StaticResource Commands.NewForeignKey}"
+					Modifiers="Control"
+					Key="K" />
+
+		<KeyBinding Command="{StaticResource Commands.SelectionMode}"
+					Modifiers="Control"
+					Key="T" />
+
+		<KeyBinding Command="{StaticResource Commands.DeleteItems}"
+					Key="Delete" />
+		
 	</UserControl.InputBindings>
 	
 	<UserControl.CommandBindings>
@@ -57,10 +86,43 @@
 
 		<CommandBinding Command="{StaticResource TestCommand3}"
 						Executed="CommandBinding3_OnExecuted"></CommandBinding>
+
+		<CommandBinding Command="{StaticResource Commands.NewTable}"
+						Executed="NewTableCommand_OnExecuted"
+						/>
+		<CommandBinding Command="{StaticResource Commands.DeleteItems}"
+						Executed="DeleteTablesCommand_OnExecuted"
+						CanExecute="DeleteTablesCommand_OnCanExecute"/>
+		
+		<CommandBinding Command="{StaticResource Commands.ShowGuideLines}"
+						Executed="ShowGuideLinesCommand_OnExecuted"></CommandBinding>
+
+		<CommandBinding Command="{StaticResource Commands.NewForeignKey}"
+						Executed="AddForeignKeyCommand_OnExecuted"></CommandBinding>
+
+		<CommandBinding Command="{StaticResource Commands.SelectionMode}"
+						Executed="SelectionModeCommand_OnExecuted"></CommandBinding>
 	</UserControl.CommandBindings>
 
 	<Grid Background="GhostWhite">
-		<ScrollViewer Name="DesignerScrollViewer"
+		<Grid.RowDefinitions>
+			<RowDefinition Height="30"></RowDefinition>
+			<RowDefinition Height="*"></RowDefinition>
+		</Grid.RowDefinitions>
+
+		<StackPanel x:Name="ToolbarItemsStackPanel"
+					Grid.Row="0"
+					Orientation="Horizontal"
+					Background="White">
+			<buttons:DesignerToolBarButton x:Name="SelectionModeButon" Icon="{StaticResource ArrowCursorIcon}" IsChecked="False" Command="{StaticResource Commands.SelectionMode}" ToolTip="Select items (Ctrl + T)"></buttons:DesignerToolBarButton>
+			<buttons:DesignerToolBarButton x:Name="NewTableButon" Icon="{StaticResource AddNewTableIcon}" IsChecked="False" Command="{StaticResource Commands.NewTable}" ToolTip="Add new table (Ctrl + N)"></buttons:DesignerToolBarButton>
+			<buttons:DesignerToolBarButton x:Name="DeleteTableButon" Icon="{StaticResource DeleteTableIcon}" IsChecked="False" Command="{StaticResource Commands.DeleteItems}" ToolTip="Delete table (Del)"></buttons:DesignerToolBarButton>
+			<buttons:DesignerToolBarButton x:Name="AddFkButon" Icon="{StaticResource AddNewForeignKeyIcon}" IsChecked="False" Command="{StaticResource Commands.NewForeignKey}" ToolTip="Add new foreign key (Ctrl + K)"></buttons:DesignerToolBarButton>
+			<buttons:DesignerToolBarButton x:Name="ShowGuidelinesButon" Icon="{StaticResource GuidelinesIcon}" IsChecked="True" Command="{StaticResource Commands.ShowGuideLines}" ToolTip="Show guidelines (Ctrl + G)"></buttons:DesignerToolBarButton>
+		</StackPanel>
+		
+		<ScrollViewer Grid.Row="1"
+					  Name="DesignerScrollViewer"
 					  Background="Transparent"
 					  HorizontalScrollBarVisibility="Visible"
 					  VerticalScrollBarVisibility="Visible"
@@ -99,12 +161,13 @@
 			</local:DesignerCanvas>
 		</ScrollViewer>
 
-		<zoomBox:ZoomBox x:Name="ZoomBox" 
+		<zoomBox:ZoomBox Grid.Row="1"
+						 x:Name="ZoomBox" 
 						 VerticalAlignment="Top"
 						 HorizontalAlignment="Right"
 						 ScrollOwner="{Binding ElementName=DesignerScrollViewer}"
 						 DesignerCanvas="{Binding ElementName=ModelDesignerCanvas}"
-						 Margin="0 10 20 0"
+						 Margin="0 10 10 0"
 						 />
 	</Grid>
 </UserControl>

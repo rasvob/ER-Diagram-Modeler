@@ -122,6 +122,7 @@
     </ApplicationDefinition>
     <Compile Include="Configuration\Providers\DatatypeProvider.cs" />
     <Compile Include="Configuration\Providers\SessionProvider.cs" />
+    <Compile Include="Controls\Buttons\DesignerToolBarButton.cs" />
     <Compile Include="Dialogs\TableNameDialog.xaml.cs">
       <DependentUpon>TableNameDialog.xaml</DependentUpon>
     </Compile>
@@ -134,9 +135,11 @@
     <Compile Include="Models\Designer\TableModel.cs" />
     <Compile Include="Models\Designer\TableRowModel.cs" />
     <Compile Include="Properties\Annotations1.cs" />
+    <Compile Include="ValueConverters\GuideLinesVisibilityToBoolValueConverter.cs" />
     <Compile Include="ValueConverters\MouseModeToCanvasEnabledConverter.cs" />
     <Compile Include="ValueConverters\MouseModeToCursorConverter.cs" />
     <Compile Include="ValueConverters\ScaleToPercentConverter.cs" />
+    <Compile Include="ValueConverters\SelectionModeToBoolValueConverter.cs" />
     <Compile Include="ValueConverters\TableViewModeToVisibilityConverter.cs" />
     <Compile Include="ViewModels\DatabaseModelDesignerViewModel.cs" />
     <Compile Include="ViewModels\Enums\ConnectionType.cs" />
@@ -173,6 +176,10 @@
     <Compile Include="Views\Panels\DatabaseConnectionPanel.xaml.cs">
       <DependentUpon>DatabaseConnectionPanel.xaml</DependentUpon>
     </Compile>
+    <Page Include="Controls\Buttons\DesignerToolBarButton.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Dialogs\TableNameDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

@@ -111,6 +111,7 @@
 					Grid.Column="0"
 					Command="{Binding ChangeZoomCommand}"
 					CommandParameter="0,5"
+					ToolTip="F1"
 					Content="50%">
 				</Button>
 
@@ -118,6 +119,7 @@
 					Grid.Column="1"
 					Command="{Binding ChangeZoomCommand}"
 					CommandParameter="1"
+					ToolTip="F2"
 					Content="100%">
 				</Button>
 
@@ -125,6 +127,7 @@
 					Grid.Column="2"
 					Command="{Binding ChangeZoomCommand}"
 					CommandParameter="2"
+					ToolTip="F3"
 					Content="200%">
 				</Button>
 			</Grid>

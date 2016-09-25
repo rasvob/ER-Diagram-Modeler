@@ -1,7 +1,7 @@
 ﻿---Designer_part
 ConnectionInfo - merge lines with tolerance
 FK Creation with dialog and/or drag
-Grid in Canvas with snap to grid option
+Grid in Canvas with snap to grid option - partly added, no snap yet
 Canvas size - adeed to menu - only for testing
 Export to PNG
 
