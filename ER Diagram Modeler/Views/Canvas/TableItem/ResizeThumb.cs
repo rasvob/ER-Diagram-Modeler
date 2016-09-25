@@ -86,6 +86,16 @@ namespace ER_Diagram_Modeler.Views.Canvas.TableItem
 				double leftConnectionLimit = double.MaxValue;
 				double rightConnectionLimit = double.MaxValue;
 
+				foreach(ConnectionInfoViewModel model in _connections.Where(t => t.SourceViewModel.Equals(_item.TableViewModel)))
+				{
+					ConnectionInfoViewModel.GetConnectionLimits(ref topConnectionLimit, ref bottomConnectionLimit, ref leftConnectionLimit, ref rightConnectionLimit, model.SourceConnector, model);
+				}
+
+				foreach(ConnectionInfoViewModel model in _connections.Where(t => t.DestinationViewModel.Equals(_item.TableViewModel)))
+				{
+					ConnectionInfoViewModel.GetConnectionLimits(ref topConnectionLimit, ref bottomConnectionLimit, ref leftConnectionLimit, ref rightConnectionLimit, model.DestinationConnector, model);
+				}
+
 				if(_item.TableViewModel.ViewMode != TableViewMode.NameOnly)
 				{
 					double deltaVertical;
@@ -93,11 +103,25 @@ namespace ER_Diagram_Modeler.Views.Canvas.TableItem
 					{
 						case VerticalAlignment.Bottom:
 							deltaVertical = e.VerticalChange > 0 && e.VerticalChange >= maxDeltaVertical ? 0 : Math.Min(-e.VerticalChange, minDeltaVertical);
+							if(bottomConnectionLimit < double.MaxValue)
+							{
+								if(DesignerCanvas.GetTop(_item) + _item.ActualHeight - deltaVertical >= (DesignerCanvas.GetTop(_item) + _item.ActualHeight) + bottomConnectionLimit)
+								{
+									deltaVertical = 0;
+								}
+							}
 							_item.Height = _item.ActualHeight - (int)deltaVertical;
 							_item.TableViewModel.Height = _item.Height;
 							break;
 						case VerticalAlignment.Top:
 							deltaVertical = (int)Math.Min(Math.Max(-DesignerCanvas.GetTop(_item), e.VerticalChange), minDeltaVertical);
+							if(topConnectionLimit < double.MaxValue)
+							{
+								if(deltaVertical < 0 && DesignerCanvas.GetTop(_item) + deltaVertical <= DesignerCanvas.GetTop(_item) - topConnectionLimit)
+								{
+									deltaVertical = 0;
+								}
+							}
 							var topPos = DesignerCanvas.GetTop(_item) + deltaVertical;
 							DesignerCanvas.SetTop(_item, topPos);
 							_item.Height = _item.ActualHeight - deltaVertical;
@@ -112,6 +136,13 @@ namespace ER_Diagram_Modeler.Views.Canvas.TableItem
 				{
 					case HorizontalAlignment.Left:
 						deltaHorizontal = (int)Math.Min(Math.Max(-DesignerCanvas.GetLeft(_item), e.HorizontalChange), minDeltaHorizontal);
+						if(leftConnectionLimit < double.MaxValue)
+						{
+							if(deltaHorizontal < 0 && DesignerCanvas.GetLeft(_item) + deltaHorizontal <= DesignerCanvas.GetLeft(_item) - leftConnectionLimit)
+							{
+								deltaHorizontal = 0;
+							}
+						}
 						var leftPos = DesignerCanvas.GetLeft(_item) + deltaHorizontal;
 						DesignerCanvas.SetLeft(_item, leftPos);
 						_item.Width = _item.ActualWidth - deltaHorizontal;
@@ -120,6 +151,13 @@ namespace ER_Diagram_Modeler.Views.Canvas.TableItem
 						break;
 					case HorizontalAlignment.Right:
 						deltaHorizontal = e.HorizontalChange > 0 && e.HorizontalChange >= maxDeltaHorizontal ? 0 : (int)Math.Min(-e.HorizontalChange, minDeltaHorizontal);
+						if(rightConnectionLimit < double.MaxValue)
+						{
+							if(DesignerCanvas.GetLeft(_item) + _item.ActualWidth - deltaHorizontal >= DesignerCanvas.GetLeft(_item) + _item.ActualWidth + rightConnectionLimit)
+							{
+								deltaHorizontal = 0;
+							}
+						}
 						_item.Width = _item.ActualWidth - deltaHorizontal;
 						_item.TableViewModel.Width = _item.Width;
 						break;
