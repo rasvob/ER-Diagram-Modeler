@@ -21,7 +21,7 @@ namespace ER_Diagram_Modeler
 		protected override void OnStartup(StartupEventArgs e)
 		{
 			base.OnStartup(e);
-			RenderOptions.ProcessRenderMode = RenderMode.SoftwareOnly;
+			//RenderOptions.ProcessRenderMode = RenderMode.SoftwareOnly;
 			//this.DispatcherUnhandledException += OnDispatcherUnhandledException;
 		}
 
