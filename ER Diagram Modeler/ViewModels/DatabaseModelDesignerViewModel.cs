@@ -315,6 +315,7 @@ namespace ER_Diagram_Modeler.ViewModels
 
 		public event PropertyChangedEventHandler PropertyChanged;
 		public event EventHandler<ScaleEventArgs> ScaleChanged;
+		public event EventHandler CanvasDimensionsChanged;
 
 		[NotifyPropertyChangedInvocator]
 		protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
@@ -333,6 +334,11 @@ namespace ER_Diagram_Modeler.ViewModels
 		protected virtual void OnScaleChanged(ScaleEventArgs args)
 		{
 			ScaleChanged?.Invoke(this, args);
+		}
+
+		protected virtual void OnCanvasDimensionsChanged()
+		{
+			CanvasDimensionsChanged?.Invoke(this, System.EventArgs.Empty);
 		}
 	}
 }

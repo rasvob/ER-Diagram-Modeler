@@ -1,16 +1,14 @@
-﻿using ER_Diagram_Modeler.ViewModels.Enums;
+﻿using System.Collections.Generic;
+using ER_Diagram_Modeler.ViewModels.Enums;
 
 namespace ER_Diagram_Modeler.Models.Designer
 {
 	public class RelationshipModel
 	{
-		public Cardinality SourdeCardinality { get; set; } = Cardinality.One;
-		public Cardinality DestinationCardinality { get; set; } = Cardinality.Many;
-		public Optionality DestinationOptionality { get; set; } = Optionality.Optional;
-		public Optionality SourceOptionality { get; set; } = Optionality.Mandatory;
+		//Source:Destination => 1:N
 		public TableModel Source { get; set; }
 		public TableModel Destination { get; set; }
-		public TableRowModel SourceAttribute { get; set; }
-		public TableRowModel DestinationAttribute { get; set; }
+		public Optionality Optionality { get; set; } = Optionality.Optional;
+		public Dictionary<TableRowModel, TableRowModel> Attributes { get; set; }
 	}
 }

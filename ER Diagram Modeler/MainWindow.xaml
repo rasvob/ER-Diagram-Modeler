@@ -23,11 +23,14 @@
 		Height="700" Width="1200">
 	<Window.Resources>
 		<ResourceDictionary>
+			<RoutedCommand x:Key="Commands.CanvasSizeCommand"></RoutedCommand>
 		</ResourceDictionary>
 	</Window.Resources>
 	
 	<Window.CommandBindings>
-		
+		<CommandBinding Command="{StaticResource Commands.CanvasSizeCommand}"
+						Executed="ChangeCanvasSize_OnExecuted"
+						CanExecute="ChangeCanvasSize_OnCanExecute"></CommandBinding>
 	</Window.CommandBindings>
 	
 	<Window.InputBindings>
@@ -49,7 +52,7 @@
 				<MenuItem Header="Exit"/>
 			</MenuItem>
 			<MenuItem Header="Settings">
-				<MenuItem Header="Canvas size change"></MenuItem>
+				<MenuItem Header="Change canvas dimensions" Command="{StaticResource Commands.CanvasSizeCommand}"></MenuItem>
 			</MenuItem>
 			<MenuItem Header="About"></MenuItem>
 		</Menu>
@@ -72,7 +75,7 @@
 						</xcad:LayoutAnchorablePane>
 					</xcad:LayoutAnchorablePaneGroup>
 
-					<xcad:LayoutDocumentPane>
+					<xcad:LayoutDocumentPane x:Name="MainDocumentPane">
 						<xcad:LayoutAnchorable ContentId="Diagram" Title="Designer" CanHide="False" CanClose="False" CanFloat="True">
 							<canvas:DatabaseModelDesigner x:Name="DatabaseModelDesigner"></canvas:DatabaseModelDesigner>
 						</xcad:LayoutAnchorable>

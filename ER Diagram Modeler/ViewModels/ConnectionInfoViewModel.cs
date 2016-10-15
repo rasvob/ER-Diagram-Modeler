@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using System.Windows.Media;
@@ -22,6 +23,7 @@ namespace ER_Diagram_Modeler.ViewModels
 		public ObservableCollection<ConnectionPointMark> Marks { get; } = new ObservableCollection<ConnectionPointMark>();
 		public Connector SourceConnector { get; } = new Connector();
 		public Connector DestinationConnector { get; } = new Connector();
+		public bool? IsSourceConnectorAtStartPoint { get; set; }
 
 		private ConnectionLine _moveLine1 = null;
 		private ConnectionLine _moveLine2 = null;
@@ -38,7 +40,7 @@ namespace ER_Diagram_Modeler.ViewModels
 		public event EventHandler<bool> SelectionChange;
 		public event EventHandler<Connector> ConnectorChange;
 
-		public static readonly double PointsDistaceTolerance = 4.0;
+		public static readonly double PointsDistaceTolerance = 8.0;
 
 		public TableViewModel SourceViewModel
 		{
@@ -489,6 +491,23 @@ namespace ER_Diagram_Modeler.ViewModels
 
 			var firstLine = Lines.FirstOrDefault();
 			var lastLine = Lines.LastOrDefault();
+
+			if(IsSourceConnectorAtStartPoint.HasValue)
+			{
+				if(IsSourceConnectorAtStartPoint.Value)
+				{
+					SourceConnector.EndPoint = firstLine?.StartPoint;
+					DestinationConnector.EndPoint = lastLine?.EndPoint;
+				}
+				else
+				{
+					SourceConnector.EndPoint = lastLine?.EndPoint;
+					DestinationConnector.EndPoint = firstLine?.StartPoint;
+				}
+				SourceConnector.UpdateConnector();
+				DestinationConnector.UpdateConnector();
+				return;
+			}
 
 			if (firstLine != null && firstLine.StartPoint.Equals(SourceConnector.EndPoint))
 			{
@@ -1229,28 +1248,48 @@ namespace ER_Diagram_Modeler.ViewModels
 			}
 		}
 
-		private void RemoveBendPointsWithTolerance()
+		private void NormalizeLinesWithTolerance(double tolerance)
 		{
-			if (Points.Count < 4)
+			if (Lines.Count < 3)
 			{
 				return;
 			}
 
-			for (int i = 1; i < Points.Count - 1; i++)
+			for (int i = 1; i < Lines.Count - 1; i++)
 			{
-				var point = Points[i];
-				var nextPoint = Points[i + 1];
+				var line = Lines[i];
+				
+				if (line.GetLenght() < tolerance)
+				{
+					var prevLine = Lines[i - 1];
+					var nextLine = Lines[i + 1];
+					if (line.Orientation == LineOrientation.Vertical)
+					{
+						line.StartPoint.Y = prevLine.EndPoint.Y;
+						line.EndPoint.Y = prevLine.EndPoint.Y;
+						nextLine.StartPoint.Y = prevLine.EndPoint.Y;
+						nextLine.EndPoint.Y = prevLine.EndPoint.Y;
+					}
+					else
+					{
+						line.StartPoint.X = prevLine.EndPoint.X;
+						line.EndPoint.X = prevLine.EndPoint.X;
+						nextLine.StartPoint.X = prevLine.EndPoint.X;
+						nextLine.EndPoint.X = prevLine.EndPoint.X;
+					}
+				}
 			}
 		}
 
 		public void SynchronizeBendingPoints()
 		{
+			NormalizeLinesWithTolerance(PointsDistaceTolerance);
 			BuildPointsFromLines();
 			RemoveRedundandBendPoints();
-			RemoveBendPointsWithTolerance();
 			BuildLinesFromPoints();
 			AdjustBendPointMarks();
 		}
+
 
 		private void AdjustBendPointMarks()
 		{
@@ -1272,14 +1311,6 @@ namespace ER_Diagram_Modeler.ViewModels
 			_newBendPoints.Add(point);
 
 			BuildLinesFromPoints();
-		}
-
-		private void MergeLines(ConnectionLine line1, ConnectionLine line2)
-		{
-			//TODO: Unfinished
-			line1.EndPoint.X = line2.EndPoint.X;
-			line1.EndPoint.Y = line2.EndPoint.Y;
-			Lines.Remove(line2);
 		}
 
 		private void ConfigureSplitLine(ConnectionLine line)

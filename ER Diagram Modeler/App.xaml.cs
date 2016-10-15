@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
@@ -21,6 +22,7 @@ namespace ER_Diagram_Modeler
 		protected override void OnStartup(StartupEventArgs e)
 		{
 			base.OnStartup(e);
+			SetEnglighCultureInfo();
 			//RenderOptions.ProcessRenderMode = RenderMode.SoftwareOnly;
 			//this.DispatcherUnhandledException += OnDispatcherUnhandledException;
 		}
@@ -29,6 +31,12 @@ namespace ER_Diagram_Modeler
 		{
 			Trace.WriteLine(dispatcherUnhandledExceptionEventArgs.Exception.Message);
 			dispatcherUnhandledExceptionEventArgs.Handled = true;
+		}
+
+		private void SetEnglighCultureInfo()
+		{
+			CultureInfo.CurrentCulture = new CultureInfo("en-US");
+			CultureInfo.CurrentUICulture = new CultureInfo("en-US");
 		}
 	}
 }

@@ -29,6 +29,7 @@ namespace ER_Diagram_Modeler.Views.Canvas.TableItem
 
 		private void OnDragCompleted(object sender, DragCompletedEventArgs dragCompletedEventArgs)
 		{
+			SnapToGrid();
 			_item?.TableViewModel.OnPositionAndMeasureChangesCompleted();
 			_item.TableViewModel.IsMoving = false;
 		}
@@ -146,6 +147,80 @@ namespace ER_Diagram_Modeler.Views.Canvas.TableItem
 
 				dragDeltaEventArgs.Handled = true;
 			}
+		}
+
+		private void SnapToGrid()
+		{
+			if (_canvas.IsGridEnabled)
+			{
+				int cellWidth = DesignerCanvas.GridCellWidth;
+
+				var selected = _canvas.SelectedTables.ToArray();
+
+				double topConnectionLimit = double.MaxValue;
+				double bottomConnectionLimit = double.MaxValue;
+				double leftConnectionLimit = double.MaxValue;
+				double rightConnectionLimit = double.MaxValue;
+
+				foreach(TableContent item in _canvas.SelectedTables)
+				{
+					foreach(ConnectionInfoViewModel model in _connections.Where(t => t.SourceViewModel.Equals(item.TableViewModel)))
+					{
+						ConnectionInfoViewModel.GetConnectionLimits(ref topConnectionLimit, ref bottomConnectionLimit, ref leftConnectionLimit, ref rightConnectionLimit, model.SourceConnector, model);
+					}
+
+					foreach(ConnectionInfoViewModel model in _connections.Where(t => t.DestinationViewModel.Equals(item.TableViewModel)))
+					{
+						ConnectionInfoViewModel.GetConnectionLimits(ref topConnectionLimit, ref bottomConnectionLimit, ref leftConnectionLimit, ref rightConnectionLimit, model.DestinationConnector, model);
+					}
+				}
+
+				foreach(TableContent item in selected)
+				{
+					double top = item.TableViewModel.Top;
+					double left = item.TableViewModel.Left;
+					double bottom = top + item.TableViewModel.Height;
+					double right = left + item.TableViewModel.Width;
+
+					double approxCellTop = Math.Round(top / cellWidth, MidpointRounding.AwayFromZero) * cellWidth;
+					double approxCellLeft = Math.Round(left / cellWidth, MidpointRounding.AwayFromZero) * cellWidth;
+
+					if (WillSnapToGridBrokeConnections(topConnectionLimit, leftConnectionLimit, bottomConnectionLimit, rightConnectionLimit, top, left, bottom, right, approxCellTop, approxCellLeft))
+					{
+						continue;
+					}
+					
+					DesignerCanvas.SetLeft(item, approxCellLeft);
+					DesignerCanvas.SetTop(item, approxCellTop);
+					item.TableViewModel.Left = approxCellLeft;
+					item.TableViewModel.Top = approxCellTop;
+				}
+			}
+		}
+
+		private bool WillSnapToGridBrokeConnections(double topLimit, double leftLimit, double botLimit, double rightLimit, double top, double left, double bottom, double right, double approxTop, double approxLeft)
+		{
+			if (topLimit < double.MaxValue && approxTop < top - topLimit)
+			{
+				return true;
+			}
+
+			if(leftLimit < double.MaxValue && approxLeft < left - leftLimit)
+			{
+				return true;
+			}
+
+			if(botLimit < double.MaxValue && approxTop + (bottom - top) > bottom + botLimit)
+			{
+				return true;
+			}
+
+			if(rightLimit < double.MaxValue && approxLeft + (right - left) > right + rightLimit)
+			{
+				return true;
+			}
+
+			return false;
 		}
 	}
 }

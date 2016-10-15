@@ -21,10 +21,11 @@ namespace ER_Diagram_Modeler.Views.Canvas
 		public static int ConnectionPointZIndex = 6;
 		public static int CanvasGridZIndex = 2;
 		public static int GridCellWidth = 30;
-		private Path _canvasGrid;
+		private readonly Path _canvasGrid;
 
 		public IEnumerable<TableContent> SelectedTables => Children.OfType<TableContent>().Where(t => t.IsSelected);
 		public IEnumerable<TableContent> Tables => Children.OfType<TableContent>();
+		public bool IsGridEnabled => _canvasGrid.Visibility == Visibility.Visible;
 
 		public DesignerCanvas()
 		{

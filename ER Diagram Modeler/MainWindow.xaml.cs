@@ -20,6 +20,7 @@ using ER_Diagram_Modeler.Configuration.Providers;
 using ER_Diagram_Modeler.Models.Designer;
 using ER_Diagram_Modeler.ViewModels;
 using ER_Diagram_Modeler.ViewModels.Enums;
+using ER_Diagram_Modeler.Views.Canvas;
 using MahApps.Metro.Controls;
 
 namespace ER_Diagram_Modeler
@@ -84,6 +85,28 @@ namespace ER_Diagram_Modeler
 		{
 			//MainWindowViewModel.DatabaseModelDesignerViewModel.TableViewModels.Add(SeedDataTable());
 			Trace.WriteLine(MainWindowViewModel.DatabaseModelDesignerViewModel.VeticalScrollOffset);
+		}
+
+		private void ChangeCanvasSize_OnExecuted(object sender, ExecutedRoutedEventArgs e)
+		{
+			var activeDiagramModeler = MainDocumentPane.SelectedContent.Content as DatabaseModelDesigner;
+			activeDiagramModeler.ViewModel.CanvasWidth = 8000;
+			activeDiagramModeler.ViewModel.CanvasHeight = 8000;
+			
+		}
+
+		private void ChangeCanvasSize_OnCanExecute(object sender, CanExecuteRoutedEventArgs e)
+		{
+			var activeDiagramModeler = MainDocumentPane.SelectedContent.Content as DatabaseModelDesigner;
+
+			if (activeDiagramModeler != null)
+			{
+				e.CanExecute = true;
+			}
+			else
+			{
+				e.CanExecute = false;
+			}
 		}
 	}
 }
