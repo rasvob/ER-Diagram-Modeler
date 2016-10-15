@@ -38,7 +38,7 @@
 	
 	<UserControl.InputBindings>
 		<KeyBinding Command="{Binding ChangeZoomCommand}"
-					CommandParameter="0,5"
+					CommandParameter="0.5"
 					Key="F1"/>
 
 		<KeyBinding Command="{Binding ChangeZoomCommand}"

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -45,7 +46,8 @@ namespace ER_Diagram_Modeler.Views.Canvas
 
 		private void OnLoaded(object sender, RoutedEventArgs routedEventArgs)
 		{
-			RefreshGuideLines();
+			var data = CreateGridWithStreamGeometry(Height, Width, GridCellWidth);
+			RefreshGuideLines(data);
 		}
 
 		public void DeselectTables()
@@ -64,27 +66,27 @@ namespace ER_Diagram_Modeler.Views.Canvas
 			}
 		}
 
-		public void RefreshGuideLines()
+		public void RefreshGuideLines(StreamGeometry geometry)
 		{
-			_canvasGrid.Data = CreateGridWithStreamGeometry();
+			_canvasGrid.Data = geometry;
 		}
 
-		private StreamGeometry CreateGridWithStreamGeometry()
+		public static StreamGeometry CreateGridWithStreamGeometry(double height, double width, double cellWidth)
 		{
 			StreamGeometry geometry = new StreamGeometry();
 
 			using (StreamGeometryContext context = geometry.Open())
 			{
-				for(int i = 1; i < Height / GridCellWidth; i++)
+				for(int i = 1; i < height / cellWidth; i++)
 				{
-					context.BeginFigure(new Point(0, i * GridCellWidth), true, false);
-					context.LineTo(new Point(Width, i * GridCellWidth), true, false);
+					context.BeginFigure(new Point(0, i * cellWidth), true, false);
+					context.LineTo(new Point(width, i * cellWidth), true, false);
 				}
 
-				for(int i = 1; i < Width / GridCellWidth; i++)
+				for(int i = 1; i < width / cellWidth; i++)
 				{
-					context.BeginFigure(new Point(i * GridCellWidth, 0), true, false);
-					context.LineTo(new Point(i * GridCellWidth, Height), true, false);
+					context.BeginFigure(new Point(i * cellWidth, 0), true, false);
+					context.LineTo(new Point(i * cellWidth, height), true, false);
 				}
 			}
 

@@ -123,6 +123,9 @@
     <Compile Include="Configuration\Providers\DatatypeProvider.cs" />
     <Compile Include="Configuration\Providers\SessionProvider.cs" />
     <Compile Include="Controls\Buttons\DesignerToolBarButton.cs" />
+    <Compile Include="Dialogs\CanvasDimensionDialog.xaml.cs">
+      <DependentUpon>CanvasDimensionDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Dialogs\TableNameDialog.xaml.cs">
       <DependentUpon>TableNameDialog.xaml</DependentUpon>
     </Compile>
@@ -177,6 +180,10 @@
       <DependentUpon>DatabaseConnectionPanel.xaml</DependentUpon>
     </Compile>
     <Page Include="Controls\Buttons\DesignerToolBarButton.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Dialogs\CanvasDimensionDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -17,6 +17,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Xml.Linq;
 using ER_Diagram_Modeler.Configuration.Providers;
+using ER_Diagram_Modeler.Dialogs;
 using ER_Diagram_Modeler.Models.Designer;
 using ER_Diagram_Modeler.ViewModels;
 using ER_Diagram_Modeler.ViewModels.Enums;
@@ -90,9 +91,20 @@ namespace ER_Diagram_Modeler
 		private void ChangeCanvasSize_OnExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
 			var activeDiagramModeler = MainDocumentPane.SelectedContent.Content as DatabaseModelDesigner;
-			activeDiagramModeler.ViewModel.CanvasWidth = 8000;
-			activeDiagramModeler.ViewModel.CanvasHeight = 8000;
-			
+			var dialog = new CanvasDimensionDialog();
+			dialog.Owner = this;
+			dialog.CanvasWidth = activeDiagramModeler.ViewModel.CanvasWidth;
+			dialog.CanvasHeight = activeDiagramModeler.ViewModel.CanvasWidth;
+			dialog.ShowDialog();
+
+			if (dialog.DialogResult.HasValue && dialog.DialogResult.Value)
+			{
+				activeDiagramModeler.ViewModel.CanvasWidth = dialog.CanvasWidth;
+				activeDiagramModeler.ViewModel.CanvasHeight = dialog.CanvasHeight;
+				activeDiagramModeler.ViewModel.ZoomBoxCanvasHeight = dialog.CanvasHeight/10;
+				activeDiagramModeler.ViewModel.ZoomBoxCanvasWidth = dialog.CanvasWidth/10;
+				activeDiagramModeler.CanvasDimensionsChanged();
+			}
 		}
 
 		private void ChangeCanvasSize_OnCanExecute(object sender, CanExecuteRoutedEventArgs e)

@@ -1,6 +1,5 @@
 ﻿---Designer_part
 FK Creation with dialog and/or drag
-Grid in Canvas with snap to grid option - partly added, no snap yet
 Canvas size - added to menu - only for testing
 Export to PNG
 

@@ -6,6 +6,8 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Net;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -18,6 +20,8 @@ using ER_Diagram_Modeler.ViewModels;
 using ER_Diagram_Modeler.ViewModels.Enums;
 using ER_Diagram_Modeler.Views.Canvas.Connection;
 using ER_Diagram_Modeler.Views.Canvas.TableItem;
+using MahApps.Metro.Controls;
+using MahApps.Metro.Controls.Dialogs;
 using Xceed.Wpf.Toolkit.Core.Utilities;
 
 namespace ER_Diagram_Modeler.Views.Canvas
@@ -43,6 +47,35 @@ namespace ER_Diagram_Modeler.Views.Canvas
 				ViewModel.ScaleChanged += ViewModelOnScaleChanged;
 				ViewModel.ConnectionInfoViewModels.CollectionChanged += ConnectionsOnCollectionChanged;
 			}
+		}
+
+		public async void CanvasDimensionsChanged()
+		{
+			var settings = new MetroDialogSettings()
+			{
+				AnimateHide = true, 
+				AnimateShow = false
+			};
+
+			var parent = VisualTreeHelperEx.FindAncestorByType<MetroWindow>(this);
+
+			var progressController = await parent.ShowProgressAsync("Please wait...", "Guidelines are updating", false, settings);
+			await UpdateLines();
+			await progressController.CloseAsync();
+			ViewModel.OnComputedPropertyChanged();
+		}
+
+		private async Task UpdateLines()
+		{
+			double cellWidth = DesignerCanvas.GridCellWidth;
+			double w = ModelDesignerCanvas.Width;
+			double h = ModelDesignerCanvas.Height;
+
+			//For progress dialog glitch-free opening
+			await Task.Delay(500);
+
+			var geometry = await Task.Run(() => DesignerCanvas.CreateGridWithStreamGeometry(h, w, cellWidth));
+			ModelDesignerCanvas.RefreshGuideLines(geometry);
 		}
 
 		private void ViewModelOnScaleChanged(object sender, ScaleEventArgs args)

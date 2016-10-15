@@ -27,7 +27,7 @@
 			BorderBrush="{StaticResource PrimaryColorBrush}"
 			BorderThickness="1"
 			>
-		<Grid Width="{Binding ZoomBoxCanvasWidth}">
+		<Grid Width="250">
 			<Grid.RowDefinitions>
 				<RowDefinition Height="Auto"></RowDefinition>
 				<RowDefinition Height="Auto"></RowDefinition>
@@ -77,8 +77,8 @@
 			<Canvas x:Name="ZoomBoxCanvas" 
 					Visibility="{Binding ZoomBoxVisibility, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
 					Grid.Row="1"
-					Height="{Binding ZoomBoxCanvasHeight}"
-					Width="{Binding ZoomBoxCanvasWidth}">
+					Height="250"
+					Width="250">
 				<Canvas.Background>
 					<VisualBrush Stretch="Fill" Visual="{Binding ElementName=ZoomBoxUserControl, Path=DesignerCanvas}"/>
 				</Canvas.Background>
@@ -110,7 +110,7 @@
 				<Button
 					Grid.Column="0"
 					Command="{Binding ChangeZoomCommand}"
-					CommandParameter="0,5"
+					CommandParameter="0.5"
 					ToolTip="F1"
 					Content="50%">
 				</Button>

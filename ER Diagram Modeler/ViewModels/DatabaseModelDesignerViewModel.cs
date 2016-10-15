@@ -144,6 +144,7 @@ namespace ER_Diagram_Modeler.ViewModels
 				if (value.Equals(_canvasHeight)) return;
 				_canvasHeight = value;
 				OnPropertyChanged();
+				OnCanvasDimensionsChanged();
 			}
 		}
 
@@ -155,6 +156,7 @@ namespace ER_Diagram_Modeler.ViewModels
 				if (value.Equals(_canvasWidth)) return;
 				_canvasWidth = value;
 				OnPropertyChanged();
+				OnCanvasDimensionsChanged();
 			}
 		}
 
@@ -323,7 +325,7 @@ namespace ER_Diagram_Modeler.ViewModels
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 		}
 
-		protected virtual void OnComputedPropertyChanged()
+		public virtual void OnComputedPropertyChanged()
 		{
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("ZoomBoxThumbWidth"));
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("ZoomBoxThumbHeight"));
