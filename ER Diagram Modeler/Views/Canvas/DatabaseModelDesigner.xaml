@@ -135,7 +135,7 @@
 										   Icon="{StaticResource AddNewForeignKeyIcon}" 
 										   IsChecked="False" 
 										   Command="{StaticResource Commands.NewForeignKey}" 
-										   ToolTip="Add new foreign key (Ctrl + K)" />
+										   ToolTip="Manage foreign keys(Ctrl + K)" />
 			
 			<Separator />
 			

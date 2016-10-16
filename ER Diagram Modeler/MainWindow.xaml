@@ -51,6 +51,9 @@
 				<MenuItem Name="MenuItemTest" Header="Test PK" Click="MenuItemTest_OnClick"/>
 				<MenuItem Header="Exit"/>
 			</MenuItem>
+			<MenuItem Header="Views">
+				
+			</MenuItem>
 			<MenuItem Header="Settings">
 				<MenuItem Header="Change canvas dimensions" Command="{StaticResource Commands.CanvasSizeCommand}"></MenuItem>
 			</MenuItem>

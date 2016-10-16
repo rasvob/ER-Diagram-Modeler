@@ -101,8 +101,6 @@ namespace ER_Diagram_Modeler
 			{
 				activeDiagramModeler.ViewModel.CanvasWidth = dialog.CanvasWidth;
 				activeDiagramModeler.ViewModel.CanvasHeight = dialog.CanvasHeight;
-				activeDiagramModeler.ViewModel.ZoomBoxCanvasHeight = dialog.CanvasHeight/10;
-				activeDiagramModeler.ViewModel.ZoomBoxCanvasWidth = dialog.CanvasWidth/10;
 				activeDiagramModeler.CanvasDimensionsChanged();
 			}
 		}

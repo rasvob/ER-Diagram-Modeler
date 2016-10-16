@@ -1,6 +1,5 @@
 ﻿---Designer_part
 FK Creation with dialog and/or drag
-Canvas size - added to menu - only for testing
 Export to PNG
 
 ---DB_Part
@@ -10,4 +9,3 @@ Save to XML/DB
 Add comments
 
 --Bugs
-NameOnly view connection adjusting

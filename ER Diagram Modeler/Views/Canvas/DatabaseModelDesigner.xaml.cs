@@ -49,35 +49,6 @@ namespace ER_Diagram_Modeler.Views.Canvas
 			}
 		}
 
-		public async void CanvasDimensionsChanged()
-		{
-			var settings = new MetroDialogSettings()
-			{
-				AnimateHide = true, 
-				AnimateShow = false
-			};
-
-			var parent = VisualTreeHelperEx.FindAncestorByType<MetroWindow>(this);
-
-			var progressController = await parent.ShowProgressAsync("Please wait...", "Guidelines are updating", false, settings);
-			await UpdateLines();
-			await progressController.CloseAsync();
-			ViewModel.OnComputedPropertyChanged();
-		}
-
-		private async Task UpdateLines()
-		{
-			double cellWidth = DesignerCanvas.GridCellWidth;
-			double w = ModelDesignerCanvas.Width;
-			double h = ModelDesignerCanvas.Height;
-
-			//For progress dialog glitch-free opening
-			await Task.Delay(500);
-
-			var geometry = await Task.Run(() => DesignerCanvas.CreateGridWithStreamGeometry(h, w, cellWidth));
-			ModelDesignerCanvas.RefreshGuideLines(geometry);
-		}
-
 		private void ViewModelOnScaleChanged(object sender, ScaleEventArgs args)
 		{
 			double contentHorizontalMiddle = (args.OldHorizontalOffset + args.OldViewportWidth/2)/args.OldScale;
@@ -688,6 +659,35 @@ namespace ER_Diagram_Modeler.Views.Canvas
 		private void SelectionModeCommand_OnExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
 			ViewModel.MouseMode = MouseMode.Select;
+		}
+
+		public async void CanvasDimensionsChanged()
+		{
+			var settings = new MetroDialogSettings()
+			{
+				AnimateHide = true,
+				AnimateShow = false
+			};
+
+			var parent = VisualTreeHelperEx.FindAncestorByType<MetroWindow>(this);
+
+			var progressController = await parent.ShowProgressAsync("Please wait...", "Guidelines are updating", false, settings);
+			await UpdateLines();
+			await progressController.CloseAsync();
+			ViewModel.OnComputedPropertyChanged();
+		}
+
+		private async Task UpdateLines()
+		{
+			double cellWidth = DesignerCanvas.GridCellWidth;
+			double w = ModelDesignerCanvas.Width;
+			double h = ModelDesignerCanvas.Height;
+
+			//For progress dialog glitch-free opening
+			await Task.Delay(500);
+
+			var geometry = await Task.Run(() => DesignerCanvas.CreateGridWithStreamGeometry(h, w, cellWidth));
+			ModelDesignerCanvas.RefreshGuideLines(geometry);
 		}
 	}
 }

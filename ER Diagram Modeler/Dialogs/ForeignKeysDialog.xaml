@@ -1,0 +1,30 @@
+﻿<controls:MetroWindow x:Class="ER_Diagram_Modeler.Dialogs.ForeignKeysDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ER_Diagram_Modeler.Dialogs"
+        xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
+        mc:Ignorable="d"
+		x:Name="DialogWindow"
+		ResizeMode="NoResize"
+		BorderThickness="1"
+		WindowStartupLocation="CenterOwner"
+		Style="{StaticResource BaseDialogStyle}"
+        Title="ForeignKeysDialog" Height="Auto" Width="500">
+
+	<controls:MetroWindow.Resources>
+		<ResourceDictionary>
+			<ResourceDictionary.MergedDictionaries>
+				<ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/FlatButton.xaml" />
+			</ResourceDictionary.MergedDictionaries>
+
+			<RoutedUICommand x:Key="CancelCommand"></RoutedUICommand>
+		</ResourceDictionary>
+	</controls:MetroWindow.Resources>
+	
+	<Grid>
+        
+    </Grid>
+</controls:MetroWindow>
+
