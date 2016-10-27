@@ -4,6 +4,8 @@ Export to PNG
 
 ---DB_Part
 Save to XML/DB
+Create script
+Automatic DB update
 
 ---Other
 Add comments
