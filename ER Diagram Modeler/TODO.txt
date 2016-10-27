@@ -6,6 +6,8 @@ Export to PNG
 Save to XML/DB
 Create script
 Automatic DB update
+Oracle support
+Connectin to DB
 
 ---Other
 Add comments
