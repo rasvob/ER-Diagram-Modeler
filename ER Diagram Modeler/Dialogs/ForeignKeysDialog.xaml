@@ -7,11 +7,11 @@
         xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
         mc:Ignorable="d"
 		x:Name="DialogWindow"
-		ResizeMode="NoResize"
+		ResizeMode="CanResize"
 		BorderThickness="1"
 		WindowStartupLocation="CenterOwner"
-		Style="{StaticResource BaseDialogStyle}"
-        Title="ForeignKeysDialog" Height="Auto" Width="500">
+		GlowBrush="{StaticResource AccentColorBrush}"
+        Title="Manage foreign keys" Height="Auto" Width="500">
 
 	<controls:MetroWindow.Resources>
 		<ResourceDictionary>
@@ -19,12 +19,138 @@
 				<ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/FlatButton.xaml" />
 			</ResourceDictionary.MergedDictionaries>
 
+			<RoutedUICommand x:Key="AddNewCommand"></RoutedUICommand>
+			<RoutedUICommand x:Key="RemoveCommand"></RoutedUICommand>
 			<RoutedUICommand x:Key="CancelCommand"></RoutedUICommand>
 		</ResourceDictionary>
 	</controls:MetroWindow.Resources>
-	
-	<Grid>
-        
-    </Grid>
+
+	<controls:MetroWindow.CommandBindings>
+		<CommandBinding Command="{StaticResource AddNewCommand}"
+						Executed="AddNew_OnExecuted"></CommandBinding>
+
+		<CommandBinding Command="{StaticResource RemoveCommand}"
+						Executed="Remove_OnExecuted"
+						CanExecute="Remove_OnCanExecute"></CommandBinding>
+
+		<CommandBinding Command="{StaticResource CancelCommand}"
+						Executed="Cancel_OnExecuted"></CommandBinding>
+
+	</controls:MetroWindow.CommandBindings>
+	<Grid Margin="10">
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto"></RowDefinition>
+			<RowDefinition Height="*"></RowDefinition>
+			<RowDefinition Height="Auto"></RowDefinition>
+		</Grid.RowDefinitions>
+
+		<Grid Grid.Row="0">
+			<Label Content="Relationships"></Label>
+			
+		</Grid>
+
+		<Grid Grid.Row="1" Margin="0 10">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="Auto"></ColumnDefinition>
+				<ColumnDefinition Width="*"></ColumnDefinition>
+			</Grid.ColumnDefinitions>
+
+			<ListBox 
+				Width="200"
+				x:Name="RelationshipsListBox"
+				Grid.Column="0"
+				>
+			</ListBox>
+			
+			<Grid
+				Grid.Column="1"
+				Margin="10 0 0 0">
+				<Grid.RowDefinitions>
+					<RowDefinition Height="Auto"></RowDefinition>
+					<RowDefinition Height="Auto"></RowDefinition>
+					<RowDefinition Height="*"></RowDefinition>
+				</Grid.RowDefinitions>
+
+				<TextBox x:Name="NameTextBox"
+				 Grid.Row="0"
+				 IsReadOnly="True"
+				 Text="{Binding ElementName=DialogWindow, Path=InfoViewModel.RelationshipModel.Name, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                 controls:TextBoxHelper.Watermark="Relationship name">
+				</TextBox>
+				
+				<Grid Grid.Row="1" Margin="0 10 0 0">
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="*"></ColumnDefinition>
+						<ColumnDefinition Width="*"></ColumnDefinition>
+					</Grid.ColumnDefinitions>
+
+					<TextBox
+						 x:Name="PrimaryTableTextBox"
+						 Grid.Column="0"
+						 IsReadOnly="True"
+						 Margin="0 0 5 0"
+						 Text="{Binding ElementName=DialogWindow, Path=InfoViewModel.RelationshipModel.Source.Title, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+						 >
+					</TextBox>
+
+					<TextBox 
+						 x:Name="ForeignTableTextBox"
+						 Grid.Column="1"
+						 IsReadOnly="True"
+						 Margin="5 0 0 0"
+						 Text="{Binding ElementName=DialogWindow, Path=InfoViewModel.RelationshipModel.Destination.Title, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+						 >
+					</TextBox>
+				</Grid>
+
+				<DataGrid 
+					x:Name="ForeignKeysGrid"
+					Margin="0 10 0 0"
+					Grid.Row="2"
+					ItemsSource="{Binding ElementName=DialogWindow, Path=GridData, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+					AutoGenerateColumns="False"
+					CanUserAddRows="False"
+					CanUserReorderColumns="False"
+					CanUserResizeColumns="False"
+					CanUserResizeRows="False"
+					CanUserDeleteRows="False"
+					CanUserSortColumns="False"
+					>
+					<DataGrid.Columns>
+						<DataGridTextColumn x:Name="PrimaryAttributes"
+											Header="Attribute (primary)"
+											IsReadOnly="True"
+											Binding="{Binding Source.Name}"
+											>
+						</DataGridTextColumn>
+
+						<DataGridTextColumn x:Name="ForeignAttributes"
+											Header="Attribute (foreign)"
+											IsReadOnly="True"
+											Binding="{Binding Destination.Name}"
+											>
+						</DataGridTextColumn>
+					</DataGrid.Columns>
+				</DataGrid>
+			</Grid>
+		</Grid>
+
+		<Grid Grid.Row="2">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="Auto"></ColumnDefinition>
+				<ColumnDefinition Width="*"></ColumnDefinition>
+				<ColumnDefinition Width="Auto"></ColumnDefinition>
+			</Grid.ColumnDefinitions>
+
+			<StackPanel Orientation="Horizontal" Grid.Column="0">
+				<Button Command="{StaticResource AddNewCommand}" Content="Add new"></Button>
+				<Button Command="{StaticResource RemoveCommand}" Content="Remove selected" Margin="5 0 0 0"></Button>
+			</StackPanel>
+
+			<StackPanel Orientation="Horizontal" Grid.Column="2">
+				<Button Command="{StaticResource CancelCommand}" Content="Close"></Button>
+			</StackPanel>
+		</Grid>
+	</Grid>
 </controls:MetroWindow>
 

@@ -11,6 +11,7 @@ namespace ER_Diagram_Modeler.Models.Designer
 {
 	public class TableModel: INotifyPropertyChanged, IDataErrorInfo
 	{
+		public string Id { get; set; } = Guid.NewGuid().ToString();
 		private string _title = "Table";
 		private List<TableRowModel> _attributes = new List<TableRowModel>();
 

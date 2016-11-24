@@ -650,9 +650,6 @@ namespace ER_Diagram_Modeler.ViewModels
 			_newBendPoints.Clear();
 		}
 
-		
-
-
 		private void LineOnLineMoved(object sender, System.EventArgs eventArgs)
 		{
 			var line = sender as ConnectionLine;
@@ -1508,6 +1505,37 @@ namespace ER_Diagram_Modeler.ViewModels
 					right = Math.Min(len, right);
 					break;
 			}
+		}
+
+		public void BuildConnection()
+		{
+			if (SourceViewModel == null)
+			{
+				throw new ApplicationException("SourceViewModel is null");
+			}
+
+			if(DestinationViewModel == null)
+			{
+				throw new ApplicationException("DestinationViewModel is null");
+			}
+
+			if (IsSelfConnection())
+			{
+				BuildSelfConnection();
+				return;
+			}
+
+			BuildConnectionBetweenViewModels();
+		}
+
+		private void BuildConnectionBetweenViewModels()
+		{
+			
+		}
+
+		private void BuildSelfConnection()
+		{
+			
 		}
 
 		protected virtual void OnSelectionChange(bool e)

@@ -13,9 +13,11 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
+using ER_Diagram_Modeler.Configuration.Providers;
 using ER_Diagram_Modeler.Dialogs;
 using ER_Diagram_Modeler.EventArgs;
 using ER_Diagram_Modeler.Models.Designer;
+using ER_Diagram_Modeler.Models.Helpers;
 using ER_Diagram_Modeler.ViewModels;
 using ER_Diagram_Modeler.ViewModels.Enums;
 using ER_Diagram_Modeler.Views.Canvas.Connection;
@@ -258,7 +260,7 @@ namespace ER_Diagram_Modeler.Views.Canvas
 
 		private void RemoveTableElement(TableViewModel viewModel)
 		{
-			var table = ModelDesignerCanvas.Children.Cast<TableContent>().FirstOrDefault(t => t.TableViewModel.Equals(viewModel));
+			var table = ModelDesignerCanvas.Children.OfType<TableContent>().FirstOrDefault(t => t.TableViewModel.Equals(viewModel));
 			ModelDesignerCanvas.Children.Remove(table);
 		}
 
@@ -385,6 +387,9 @@ namespace ER_Diagram_Modeler.Views.Canvas
 			ViewModel.TableViewModels.Add(sourceTable);
 			ViewModel.TableViewModels.Add(destTable);
 
+			sourceTable.Model.Title = "Source";
+			destTable.Model.Title = "Destination";
+
 		}
 
 		//Test command F5
@@ -490,6 +495,12 @@ namespace ER_Diagram_Modeler.Views.Canvas
 			info.DestinationConnector.Optionality = Optionality.Mandatory;
 
 			info.BuildLinesFromPoints();
+			info.RelationshipModel = new RelationshipModel();
+			info.RelationshipModel.Name = "Testovaci FK";
+			info.RelationshipModel.Optionality = Optionality.Optional;
+			info.RelationshipModel.Source = info.SourceViewModel.Model;
+			info.RelationshipModel.Destination = info.DestinationViewModel.Model;
+			info.RelationshipModel.Attributes.Add(new RowModelPair() {Destination = new TableRowModel("aaa", DatatypeProvider.Instance.SqlServerDatatypes.FirstOrDefault()), Source = new TableRowModel("bbb", DatatypeProvider.Instance.SqlServerDatatypes.Skip(2).FirstOrDefault())});
 			ViewModel.ConnectionInfoViewModels.Add(info);
 			info.SynchronizeBendingPoints();
 		}
@@ -653,7 +664,9 @@ namespace ER_Diagram_Modeler.Views.Canvas
 
 		private void AddForeignKeyCommand_OnExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
-			
+			ForeignKeysDialog dialog = new ForeignKeysDialog(ViewModel);
+			dialog.Owner = Application.Current.MainWindow;
+			dialog.ShowDialog();
 		}
 
 		private void SelectionModeCommand_OnExecuted(object sender, ExecutedRoutedEventArgs e)

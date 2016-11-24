@@ -140,6 +140,7 @@
     <Compile Include="Models\Designer\RelationshipModel.cs" />
     <Compile Include="Models\Designer\TableModel.cs" />
     <Compile Include="Models\Designer\TableRowModel.cs" />
+    <Compile Include="Models\Helpers\RowModelPair.cs" />
     <Compile Include="Properties\Annotations1.cs" />
     <Compile Include="ValueConverters\MouseModeToButtonCheckedConverter.cs" />
     <Compile Include="ValueConverters\VisibilityToBoolValueConverter.cs" />
