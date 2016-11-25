@@ -126,6 +126,9 @@
     <Compile Include="Dialogs\CanvasDimensionDialog.xaml.cs">
       <DependentUpon>CanvasDimensionDialog.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Dialogs\ForeignKeyCreatorDialog.xaml.cs">
+      <DependentUpon>ForeignKeyCreatorDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Dialogs\ForeignKeysDialog.xaml.cs">
       <DependentUpon>ForeignKeysDialog.xaml</DependentUpon>
     </Compile>
@@ -188,6 +191,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Dialogs\CanvasDimensionDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Dialogs\ForeignKeyCreatorDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

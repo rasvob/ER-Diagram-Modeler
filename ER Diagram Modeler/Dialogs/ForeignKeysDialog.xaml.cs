@@ -65,6 +65,19 @@ namespace ER_Diagram_Modeler.Dialogs
 			RelationshipsListBox.DisplayMemberPath = "RelationshipModel.Name";
 			RelationshipsListBox.SelectionChanged += RelationshipsListBoxOnSelectionChanged;
 			RelationshipsListBox.SelectedIndex = 0;
+
+			SetupFlyout();
+		}
+
+		private void SetupFlyout()
+		{
+			FlyoutPrimaryTableComboBox.ItemsSource = DatabaseModelDesignerViewModel.TableViewModels;
+			FlyoutPrimaryTableComboBox.DisplayMemberPath = "Model.Title";
+			FlyoutPrimaryTableComboBox.SelectedIndex = 0;
+
+			FlyoutForeignTableComboBox.ItemsSource = DatabaseModelDesignerViewModel.TableViewModels;
+			FlyoutForeignTableComboBox.DisplayMemberPath = "Model.Title";
+			FlyoutForeignTableComboBox.SelectedIndex = 0;
 		}
 
 		private void RelationshipsListBoxOnSelectionChanged(object sender, SelectionChangedEventArgs selectionChangedEventArgs)
@@ -74,7 +87,7 @@ namespace ER_Diagram_Modeler.Dialogs
 
 			if (InfoViewModel?.RelationshipModel != null)
 			{
-				GridData.Clear();
+				GridData = new List<RowModelPair>();
 				GridData.AddRange(InfoViewModel.RelationshipModel.Attributes);
 				OnPropertyChanged(nameof(GridData));
 			}
@@ -82,12 +95,21 @@ namespace ER_Diagram_Modeler.Dialogs
 
 		private void AddNew_OnExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
-			Debug.WriteLine("Add test");
+			var flyout = Flyouts.Items[0] as Flyout;
+
+			if (flyout != null)
+			{
+				flyout.IsOpen = !flyout.IsOpen;
+			}
 		}
 
 		private void Remove_OnExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
-
+			DatabaseModelDesignerViewModel.ConnectionInfoViewModels.Remove(InfoViewModel);
+			InfoViewModel = null;
+			GridData = new List<RowModelPair>();
+			OnPropertyChanged(nameof(GridData));
+			RelationshipsListBox.SelectedIndex = 0;
 		}
 
 		private void Remove_OnCanExecute(object sender, CanExecuteRoutedEventArgs e)
@@ -112,6 +134,51 @@ namespace ER_Diagram_Modeler.Dialogs
 		protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
 		{
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+		}
+
+		private void CreateRelationship_OnExecuted(object sender, ExecutedRoutedEventArgs e)
+		{
+			var source = FlyoutPrimaryTableComboBox.SelectedItem as TableViewModel;
+			var dest = FlyoutForeignTableComboBox.SelectedItem as TableViewModel;
+
+			var dialog = new ForeignKeyCreatorDialog(NewRelationshipTextBox.Text, source, dest, DatabaseModelDesignerViewModel);
+			dialog.Owner = this;
+
+			var flyout = Flyouts.Items[0] as Flyout;
+
+			if(flyout != null)
+			{
+				flyout.IsOpen = false;
+			}
+
+			bool? res = dialog.ShowDialog();
+
+			if (res.HasValue && res.Value)
+			{
+				RelationshipsListBox.SelectedIndex = RelationshipsListBox.Items.Count - 1;
+			}
+		}
+
+		private void CreateRelationship_OnCanExecute(object sender, CanExecuteRoutedEventArgs e)
+		{
+			var source = FlyoutPrimaryTableComboBox.SelectedItem as TableViewModel;
+			var dest = FlyoutForeignTableComboBox.SelectedItem as TableViewModel;
+			var text = NewRelationshipTextBox.Text;
+
+			if (source == null || dest == null)
+			{
+				e.CanExecute = false;
+				return;
+			}
+
+			if (text.Length == 0)
+			{
+				NewRelationshipTextBox.Text = $"{source.Model.Title}_{dest.Model.Title}_FK";
+				e.CanExecute = true;
+				return;
+			}
+
+			e.CanExecute = !DatabaseModelDesignerViewModel.ConnectionInfoViewModels.Any(t => t.RelationshipModel.Name.Equals(text));
 		}
 	}
 }

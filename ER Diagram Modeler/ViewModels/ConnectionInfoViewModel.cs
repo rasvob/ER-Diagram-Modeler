@@ -17,7 +17,7 @@ namespace ER_Diagram_Modeler.ViewModels
 {
 	public class ConnectionInfoViewModel
 	{
-		public RelationshipModel RelationshipModel { get; set; }
+		public RelationshipModel RelationshipModel { get; set; } = new RelationshipModel();
 		public ObservableCollection<ConnectionLine> Lines { get; } = new ObservableCollection<ConnectionLine>();
 		public ObservableCollection<ConnectionPoint> Points { get; } = new ObservableCollection<ConnectionPoint>();
 		public ObservableCollection<ConnectionPointMark> Marks { get; } = new ObservableCollection<ConnectionPointMark>();

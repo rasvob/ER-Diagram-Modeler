@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ER_Diagram_Modeler.Dialogs"
         xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
+        xmlns:input="clr-namespace:System.Windows.Input;assembly=System"
         mc:Ignorable="d"
 		x:Name="DialogWindow"
 		ResizeMode="CanResize"
@@ -22,6 +23,7 @@
 			<RoutedUICommand x:Key="AddNewCommand"></RoutedUICommand>
 			<RoutedUICommand x:Key="RemoveCommand"></RoutedUICommand>
 			<RoutedUICommand x:Key="CancelCommand"></RoutedUICommand>
+			<RoutedUICommand x:Key="CreateRelationshipCommand"></RoutedUICommand>
 		</ResourceDictionary>
 	</controls:MetroWindow.Resources>
 
@@ -36,8 +38,61 @@
 		<CommandBinding Command="{StaticResource CancelCommand}"
 						Executed="Cancel_OnExecuted"></CommandBinding>
 
+		<CommandBinding Command="{StaticResource CreateRelationshipCommand}"
+						Executed="CreateRelationship_OnExecuted"
+						CanExecute="CreateRelationship_OnCanExecute"></CommandBinding>
+
 	</controls:MetroWindow.CommandBindings>
-	<Grid Margin="10">
+
+	<controls:MetroWindow.InputBindings>
+		<KeyBinding Command="{StaticResource RemoveCommand}" Key="Delete"></KeyBinding>
+		<KeyBinding Command="{StaticResource AddNewCommand}" Key="N" Modifiers="Control"></KeyBinding>
+		<!--<KeyBinding Command="{StaticResource CancelCommand}" Key="Escape"></KeyBinding>-->
+	</controls:MetroWindow.InputBindings>
+
+	<controls:MetroWindow.Flyouts>
+		<controls:FlyoutsControl x:Name="FlyoutControls">
+			<controls:Flyout
+				x:Name="TableSelectionFlyout"
+				AreAnimationsEnabled="True"
+				Header="Select tables"
+				Position="Left"
+				CloseButtonIsCancel="False"
+				AnimateOnPositionChange="True"
+				AnimateOpacity="False"
+				Theme="Light"
+				IsModal="True"
+				>
+
+				<Grid Margin="10" Width="200">
+					<Grid.RowDefinitions>
+						<RowDefinition Height="Auto"></RowDefinition>
+						<RowDefinition Height="Auto"></RowDefinition>
+						<RowDefinition Height="Auto"></RowDefinition>
+					</Grid.RowDefinitions>
+
+					<TextBox x:Name="NewRelationshipTextBox"
+						 Grid.Row="0"
+						 IsReadOnly="False"
+						 Text=""
+						 controls:TextBoxHelper.ClearTextButton="True"
+						 controls:TextBoxHelper.UseFloatingWatermark="True"
+						 controls:TextBoxHelper.Watermark="Relationship name">
+					</TextBox>
+
+					<StackPanel Orientation="Vertical" Grid.Row="1">
+						<Label Content="Select primary key table"></Label>
+						<ComboBox x:Name="FlyoutPrimaryTableComboBox" />
+						<Label Content="Select foreign key table"></Label>
+						<ComboBox x:Name="FlyoutForeignTableComboBox" />
+					</StackPanel>
+					<Button Content="Create" Grid.Row="2" Margin="0 10" Command="{StaticResource CreateRelationshipCommand}"/>
+				</Grid>
+			</controls:Flyout>
+		</controls:FlyoutsControl>
+	</controls:MetroWindow.Flyouts> 
+
+		<Grid Margin="10">
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto"></RowDefinition>
 			<RowDefinition Height="*"></RowDefinition>
