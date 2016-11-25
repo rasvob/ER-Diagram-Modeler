@@ -132,6 +132,11 @@ namespace ER_Diagram_Modeler.Views.Canvas
 					foreach(ConnectionInfoViewModel item in args.OldItems)
 					{
 						RemoveConnectionElement(item);
+						item.ClearLines();
+						item.ClearPoints();
+						item.ClearMarks();
+						item.SourceViewModel = null;
+						item.DestinationViewModel = null;
 					}
 					break;
 			}
@@ -293,13 +298,16 @@ namespace ER_Diagram_Modeler.Views.Canvas
 			var delete = ViewModel.TableViewModels.Where(t => t.IsSelected).ToList();
 			foreach (TableViewModel item in delete)
 			{
-				ViewModel.TableViewModels.Remove(item);
+				
 				var connectionsForRemove =
-					ViewModel.ConnectionInfoViewModels.Where(t => t.RelationshipModel.Destination.Equals(item.Model) || t.RelationshipModel.Source.Equals(item.Model));
-				foreach (ConnectionInfoViewModel connectionInfo in connectionsForRemove)
+					ViewModel.ConnectionInfoViewModels.Where(t => t.RelationshipModel.Destination.Equals(item.Model) || t.RelationshipModel.Source.Equals(item.Model)).ToList();
+
+				foreach (ConnectionInfoViewModel connectionInfoViewModel in connectionsForRemove)
 				{
-					ViewModel.ConnectionInfoViewModels.Remove(connectionInfo);
+					ViewModel.ConnectionInfoViewModels.Remove(connectionInfoViewModel);
 				}
+
+				ViewModel.TableViewModels.Remove(item);
 			}
 		}
 

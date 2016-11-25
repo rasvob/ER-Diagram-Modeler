@@ -1213,7 +1213,7 @@ namespace ER_Diagram_Modeler.ViewModels
 			return Lines.IndexOf(line) == Lines.Count - 1;
 		}
 
-		private void ClearPoints()
+		public void ClearPoints()
 		{
 			var len = Points.Count;
 			for (int i = 0; i < len; i++)
@@ -1223,7 +1223,7 @@ namespace ER_Diagram_Modeler.ViewModels
 			Points.Clear();
 		}
 
-		private void ClearLines()
+		public void ClearLines()
 		{
 			int len = Lines.Count;
 			for (int i = 0; i < len; i++)
@@ -1231,6 +1231,16 @@ namespace ER_Diagram_Modeler.ViewModels
 				Lines.RemoveAt(0);
 			}
 			Lines.Clear();
+		}
+
+		public void ClearMarks()
+		{
+			int len = Marks.Count;
+			for(int i = 0; i < len; i++)
+			{
+				Marks.RemoveAt(0);
+			}
+			Marks.Clear();
 		}
 
 		private void RemoveRedundandBendPoints()
