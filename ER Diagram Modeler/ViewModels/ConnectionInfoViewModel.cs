@@ -1540,12 +1540,34 @@ namespace ER_Diagram_Modeler.ViewModels
 
 		private void BuildConnectionBetweenViewModels()
 		{
-			
+			//TODO
+			var point1 = new ConnectionPoint(SourceViewModel.Left + 50, SourceViewModel.Top - Connector.ConnectorLenght);
+			var point2 = new ConnectionPoint(SourceViewModel.Left + 50, SourceViewModel.Top - Connector.ConnectorLenght - 50);
+			var point3 = new ConnectionPoint(DestinationViewModel.Left + 50, SourceViewModel.Top - Connector.ConnectorLenght - 50);
+			var point4 = new ConnectionPoint(DestinationViewModel.Left + 50, DestinationViewModel.Top - Connector.ConnectorLenght);
+
+			Points.Add(point1);
+			Points.Add(point2);
+			Points.Add(point3);
+			Points.Add(point4);
+
+			SourceConnector.Orientation = ConnectorOrientation.Up;;
+			DestinationConnector.Orientation = ConnectorOrientation.Up;
+
+			SourceConnector.Cardinality = Cardinality.One;
+			DestinationConnector.Cardinality = Cardinality.Many;
+
+			SourceConnector.EndPoint = point1;
+			DestinationConnector.EndPoint = point4;
+
+			IsSourceConnectorAtStartPoint = true;
+
+			BuildLinesFromPoints();
 		}
 
 		private void BuildSelfConnection()
 		{
-			
+			//TODO
 		}
 
 		protected virtual void OnSelectionChange(bool e)
