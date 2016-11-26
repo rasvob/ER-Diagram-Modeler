@@ -41,6 +41,7 @@ namespace ER_Diagram_Modeler.ViewModels
 		public event EventHandler<Connector> ConnectorChange;
 
 		public static readonly double PointsDistaceTolerance = 8.0;
+		public static readonly double DefaultConnectionLineLength = 80;
 
 		public TableViewModel SourceViewModel
 		{
@@ -123,7 +124,12 @@ namespace ER_Diagram_Modeler.ViewModels
 
 			if (table?.ViewMode == TableViewMode.NameOnly)
 			{
-				if (table.Equals(SourceViewModel))
+				if (IsSelfConnection())
+				{
+					MoveConnectorOnTableViewModeChange(SourceConnector, SourceViewModel);
+					MoveConnectorOnTableViewModeChange(DestinationConnector, DestinationViewModel);
+				}
+				else if (table.Equals(SourceViewModel))
 				{
 					MoveConnectorOnTableViewModeChange(SourceConnector, table);
 				}
@@ -1540,7 +1546,7 @@ namespace ER_Diagram_Modeler.ViewModels
 
 		private void BuildConnectionBetweenViewModels()
 		{
-			//TODO
+			//TODO ConnectionsForPositions
 			var point1 = new ConnectionPoint(SourceViewModel.Left + 50, SourceViewModel.Top - Connector.ConnectorLenght);
 			var point2 = new ConnectionPoint(SourceViewModel.Left + 50, SourceViewModel.Top - Connector.ConnectorLenght - 50);
 			var point3 = new ConnectionPoint(DestinationViewModel.Left + 50, SourceViewModel.Top - Connector.ConnectorLenght - 50);
@@ -1556,6 +1562,7 @@ namespace ER_Diagram_Modeler.ViewModels
 
 			SourceConnector.Cardinality = Cardinality.One;
 			DestinationConnector.Cardinality = Cardinality.Many;
+			DestinationConnector.Optionality = RelationshipModel.Optionality;
 
 			SourceConnector.EndPoint = point1;
 			DestinationConnector.EndPoint = point4;
@@ -1567,7 +1574,31 @@ namespace ER_Diagram_Modeler.ViewModels
 
 		private void BuildSelfConnection()
 		{
-			//TODO
+			var point1 = new ConnectionPoint(SourceViewModel.Left + (SourceViewModel.Width/2), SourceViewModel.Top - Connector.ConnectorLenght);
+			var point2 = new ConnectionPoint(SourceViewModel.Left + (SourceViewModel.Width / 2), SourceViewModel.Top - Connector.ConnectorLenght - DefaultConnectionLineLength);
+			var point3 = new ConnectionPoint(DestinationViewModel.Left + DestinationViewModel.Width + DefaultConnectionLineLength + Connector.ConnectorLenght, SourceViewModel.Top - Connector.ConnectorLenght - DefaultConnectionLineLength);
+			var point4 = new ConnectionPoint(DestinationViewModel.Left + DestinationViewModel.Width + DefaultConnectionLineLength + Connector.ConnectorLenght, DestinationViewModel.Top + (DestinationViewModel.Height/2));
+			var point5 = new ConnectionPoint(DestinationViewModel.Left + DestinationViewModel.Width + Connector.ConnectorLenght, DestinationViewModel.Top + (DestinationViewModel.Height / 2));
+
+			Points.Add(point1);
+			Points.Add(point2);
+			Points.Add(point3);
+			Points.Add(point4);
+			Points.Add(point5);
+
+			SourceConnector.Orientation = ConnectorOrientation.Up; ;
+			DestinationConnector.Orientation = ConnectorOrientation.Right;
+
+			SourceConnector.Cardinality = Cardinality.One;
+			DestinationConnector.Cardinality = Cardinality.Many;
+			DestinationConnector.Optionality = RelationshipModel.Optionality;
+
+			SourceConnector.EndPoint = point1;
+			DestinationConnector.EndPoint = point5;
+
+			IsSourceConnectorAtStartPoint = true;
+
+			BuildLinesFromPoints();
 		}
 
 		protected virtual void OnSelectionChange(bool e)

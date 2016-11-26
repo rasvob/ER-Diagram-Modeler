@@ -20,6 +20,7 @@ using ER_Diagram_Modeler.Annotations;
 using ER_Diagram_Modeler.Models.Designer;
 using ER_Diagram_Modeler.Models.Helpers;
 using ER_Diagram_Modeler.ViewModels;
+using ER_Diagram_Modeler.ViewModels.Enums;
 using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
 
@@ -122,6 +123,10 @@ namespace ER_Diagram_Modeler.Dialogs
 				model.RelationshipModel.Source = SourceTableVm.Model;
 				model.RelationshipModel.Destination = DestinationTableVm.Model;
 				model.RelationshipModel.Attributes.AddRange(GridData);
+				model.RelationshipModel.Optionality = model.RelationshipModel.Attributes.All(t => t.Destination.AllowNull)
+					? Optionality.Optional
+					: Optionality.Mandatory;
+
 				model.BuildConnection();
 
 				DesignerViewModel.ConnectionInfoViewModels.Add(model);
