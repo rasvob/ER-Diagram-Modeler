@@ -604,14 +604,24 @@ namespace ER_Diagram_Modeler.ViewModels
 				return;
 			}
 
-			if (Lines.IndexOf(line) == 1)
+			if(Lines.Count == 3 && DestinationConnector.Orientation == SourceConnector.Orientation)
 			{
-				if (EnsureBoundsForSecondLine(line)) return;
+				if(Lines.IndexOf(line) == 1)
+				{
+					if(EnsureBoundsForMiddleLine(line)) return;
+				}
 			}
-
-			if (Lines.IndexOf(line) == Lines.Count - 2)
+			else
 			{
-				if(EnsureBoundsForLastButOneLine(line)) return;
+				if(Lines.IndexOf(line) == 1)
+				{
+					if(EnsureBoundsForSecondLine(line)) return;
+				}
+
+				if(Lines.IndexOf(line) == Lines.Count - 2)
+				{
+					if(EnsureBoundsForLastButOneLine(line)) return;
+				}
 			}
 
 			if (EnsureBoundsToCanvasDimensions(line)) return;
@@ -654,6 +664,28 @@ namespace ER_Diagram_Modeler.ViewModels
 			}
 
 			_newBendPoints.Clear();
+		}
+
+		private bool EnsureBoundsForMiddleLine(ConnectionLine line)
+		{
+			Connector connector = null;
+			switch (SourceConnector.Orientation)
+			{
+				case ConnectorOrientation.Up:
+					connector = SourceConnector.EndPoint.Y < DestinationConnector.EndPoint.Y ? SourceConnector : DestinationConnector;
+					break;
+				case ConnectorOrientation.Down:
+					connector = SourceConnector.EndPoint.Y > DestinationConnector.EndPoint.Y ? SourceConnector : DestinationConnector;
+					break;
+				case ConnectorOrientation.Left:
+					connector = SourceConnector.EndPoint.X < DestinationConnector.EndPoint.X ? SourceConnector : DestinationConnector;
+					break;
+				case ConnectorOrientation.Right:
+					connector = SourceConnector.EndPoint.X > DestinationConnector.EndPoint.X ? SourceConnector : DestinationConnector;
+					break;
+
+			}
+			return EnsureBoundsForLineByConnectorPosition(line, connector);
 		}
 
 		private void LineOnLineMoved(object sender, System.EventArgs eventArgs)
@@ -773,7 +805,7 @@ namespace ER_Diagram_Modeler.ViewModels
 
 		private bool EnsureBoundsToCanvasDimensions(ConnectionLine line)
 		{
-			switch(line.Orientation)
+			switch (line.Orientation)
 			{
 				case LineOrientation.Vertical:
 					if (line.StartPoint.X <= 0)
@@ -790,13 +822,13 @@ namespace ER_Diagram_Modeler.ViewModels
 					}
 					break;
 				case LineOrientation.Horizontal:
-					if(line.StartPoint.Y <= 0)
+					if (line.StartPoint.Y <= 0)
 					{
 						line.StartPoint.Y = 1;
 						line.EndPoint.Y = 1;
 						return true;
 					}
-					if(line.StartPoint.Y >= _canvas.Height)
+					if (line.StartPoint.Y >= _canvas.Height)
 					{
 						line.StartPoint.Y = _canvas.Height - 1;
 						line.EndPoint.Y = _canvas.Height - 1;
@@ -1242,7 +1274,7 @@ namespace ER_Diagram_Modeler.ViewModels
 		public void ClearMarks()
 		{
 			int len = Marks.Count;
-			for(int i = 0; i < len; i++)
+			for (int i = 0; i < len; i++)
 			{
 				Marks.RemoveAt(0);
 			}
@@ -1271,7 +1303,7 @@ namespace ER_Diagram_Modeler.ViewModels
 			for (int i = 1; i < Lines.Count - 1; i++)
 			{
 				var line = Lines[i];
-				
+
 				if (line.GetLenght() < tolerance)
 				{
 					var prevLine = Lines[i - 1];
@@ -1457,9 +1489,7 @@ namespace ER_Diagram_Modeler.ViewModels
 				return false;
 			}
 
-			var itemsForCheck =
-				canvas.SelectedTables.Where(
-					t => !t.TableViewModel.Equals(SourceViewModel) && !t.TableViewModel.Equals(DestinationViewModel)).Where(s => s.TableViewModel.IsMoving);
+			var itemsForCheck = canvas.SelectedTables.Where(t => !t.TableViewModel.Equals(SourceViewModel) && !t.TableViewModel.Equals(DestinationViewModel)).Where(s => s.TableViewModel.IsMoving);
 			return itemsForCheck.Any();
 		}
 
@@ -1487,26 +1517,23 @@ namespace ER_Diagram_Modeler.ViewModels
 			}
 		}
 
-		public static void GetConnectionLimits(ref double top, ref double bot, ref double left, ref double right,
-			Connector connector, ConnectionInfoViewModel connection)
+		public static void GetConnectionLimits(ref double top, ref double bot, ref double left, ref double right, Connector connector, ConnectionInfoViewModel connection)
 		{
-			if(connection.Lines.Count <= 1)
+			if (connection.Lines.Count <= 1)
 			{
 				return;
 			}
 
-			var line =
-				connection.Lines.FirstOrDefault(
-					t => t.EndPoint.Equals(connector.EndPoint) || t.StartPoint.Equals(connector.EndPoint));
+			var line = connection.Lines.FirstOrDefault(t => t.EndPoint.Equals(connector.EndPoint) || t.StartPoint.Equals(connector.EndPoint));
 
-			if(line == null)
+			if (line == null)
 			{
 				return;
 			}
 
 			var len = line.GetLenght();
 
-			switch(connector.Orientation)
+			switch (connector.Orientation)
 			{
 				case ConnectorOrientation.Up:
 					top = Math.Min(len, top);
@@ -1530,7 +1557,7 @@ namespace ER_Diagram_Modeler.ViewModels
 				throw new ApplicationException("SourceViewModel is null");
 			}
 
-			if(DestinationViewModel == null)
+			if (DestinationViewModel == null)
 			{
 				throw new ApplicationException("DestinationViewModel is null");
 			}
@@ -1557,7 +1584,8 @@ namespace ER_Diagram_Modeler.ViewModels
 			Points.Add(point3);
 			Points.Add(point4);
 
-			SourceConnector.Orientation = ConnectorOrientation.Up;;
+			SourceConnector.Orientation = ConnectorOrientation.Up;
+			;
 			DestinationConnector.Orientation = ConnectorOrientation.Up;
 
 			SourceConnector.Cardinality = Cardinality.One;
@@ -1575,10 +1603,10 @@ namespace ER_Diagram_Modeler.ViewModels
 		private void BuildSelfConnection()
 		{
 			var point1 = new ConnectionPoint(SourceViewModel.Left + (SourceViewModel.Width/2), SourceViewModel.Top - Connector.ConnectorLenght);
-			var point2 = new ConnectionPoint(SourceViewModel.Left + (SourceViewModel.Width / 2), SourceViewModel.Top - Connector.ConnectorLenght - DefaultConnectionLineLength);
+			var point2 = new ConnectionPoint(SourceViewModel.Left + (SourceViewModel.Width/2), SourceViewModel.Top - Connector.ConnectorLenght - DefaultConnectionLineLength);
 			var point3 = new ConnectionPoint(DestinationViewModel.Left + DestinationViewModel.Width + DefaultConnectionLineLength + Connector.ConnectorLenght, SourceViewModel.Top - Connector.ConnectorLenght - DefaultConnectionLineLength);
 			var point4 = new ConnectionPoint(DestinationViewModel.Left + DestinationViewModel.Width + DefaultConnectionLineLength + Connector.ConnectorLenght, DestinationViewModel.Top + (DestinationViewModel.Height/2));
-			var point5 = new ConnectionPoint(DestinationViewModel.Left + DestinationViewModel.Width + Connector.ConnectorLenght, DestinationViewModel.Top + (DestinationViewModel.Height / 2));
+			var point5 = new ConnectionPoint(DestinationViewModel.Left + DestinationViewModel.Width + Connector.ConnectorLenght, DestinationViewModel.Top + (DestinationViewModel.Height/2));
 
 			Points.Add(point1);
 			Points.Add(point2);
@@ -1586,7 +1614,8 @@ namespace ER_Diagram_Modeler.ViewModels
 			Points.Add(point4);
 			Points.Add(point5);
 
-			SourceConnector.Orientation = ConnectorOrientation.Up; ;
+			SourceConnector.Orientation = ConnectorOrientation.Up;
+			;
 			DestinationConnector.Orientation = ConnectorOrientation.Right;
 
 			SourceConnector.Cardinality = Cardinality.One;

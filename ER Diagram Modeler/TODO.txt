@@ -1,6 +1,5 @@
 ﻿---Designer_part
-Delete table with relationship
-FK Creation with dialog and/or drag
+FK Creation drag
 Export to PNG
 
 ---DB_Part
