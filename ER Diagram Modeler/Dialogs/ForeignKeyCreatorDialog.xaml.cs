@@ -21,6 +21,7 @@ using ER_Diagram_Modeler.Models.Designer;
 using ER_Diagram_Modeler.Models.Helpers;
 using ER_Diagram_Modeler.ViewModels;
 using ER_Diagram_Modeler.ViewModels.Enums;
+using ER_Diagram_Modeler.Views.Canvas;
 using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
 
@@ -47,6 +48,8 @@ namespace ER_Diagram_Modeler.Dialogs
 				OnPropertyChanged();
 			}
 		}
+
+		public DesignerCanvas Canvas { get; set; }
 
 		public TableViewModel SourceTableVm
 		{
@@ -92,13 +95,14 @@ namespace ER_Diagram_Modeler.Dialogs
 			}
 		}
 
-		public ForeignKeyCreatorDialog(string relationShipName, TableViewModel source, TableViewModel dest, DatabaseModelDesignerViewModel designerViewModel)
+		public ForeignKeyCreatorDialog(string relationShipName, TableViewModel source, TableViewModel dest, DatabaseModelDesignerViewModel designerViewModel, DesignerCanvas canvas)
 		{
 			InitializeComponent();
 			RelationshipName = relationShipName;
 			SourceTableVm = source;
 			DestinationTableVm = dest;
 			DesignerViewModel = designerViewModel;
+			Canvas = canvas;
 
 			PrimaryAttributes.ItemsSource = SourceTableVm.Model.Attributes;
 			PrimaryAttributes.DisplayMemberPath = "Name";
@@ -117,6 +121,7 @@ namespace ER_Diagram_Modeler.Dialogs
 				{
 					DestinationViewModel = DestinationTableVm,
 					SourceViewModel = SourceTableVm,
+					DesignerCanvas = Canvas
 				};
 
 				model.RelationshipModel.Name = RelationshipName;

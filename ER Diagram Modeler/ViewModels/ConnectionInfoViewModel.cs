@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Diagnostics;
+using System.Drawing;
 using System.Linq;
 using System.Windows;
 using System.Windows.Media;
@@ -12,6 +13,7 @@ using ER_Diagram_Modeler.ViewModels.Enums;
 using ER_Diagram_Modeler.Views.Canvas;
 using ER_Diagram_Modeler.Views.Canvas.Connection;
 using Xceed.Wpf.Toolkit.Core.Utilities;
+using Point = System.Drawing.Point;
 
 namespace ER_Diagram_Modeler.ViewModels
 {
@@ -24,6 +26,12 @@ namespace ER_Diagram_Modeler.ViewModels
 		public Connector SourceConnector { get; } = new Connector();
 		public Connector DestinationConnector { get; } = new Connector();
 		public bool? IsSourceConnectorAtStartPoint { get; set; }
+
+		public DesignerCanvas DesignerCanvas
+		{
+			get { return _canvas; }
+			set { _canvas = value; }
+		}
 
 		private ConnectionLine _moveLine1 = null;
 		private ConnectionLine _moveLine2 = null;
@@ -1573,31 +1581,333 @@ namespace ER_Diagram_Modeler.ViewModels
 
 		private void BuildConnectionBetweenViewModels()
 		{
-			//TODO ConnectionsForPositions
-			var point1 = new ConnectionPoint(SourceViewModel.Left + 50, SourceViewModel.Top - Connector.ConnectorLenght);
-			var point2 = new ConnectionPoint(SourceViewModel.Left + 50, SourceViewModel.Top - Connector.ConnectorLenght - 50);
-			var point3 = new ConnectionPoint(DestinationViewModel.Left + 50, SourceViewModel.Top - Connector.ConnectorLenght - 50);
-			var point4 = new ConnectionPoint(DestinationViewModel.Left + 50, DestinationViewModel.Top - Connector.ConnectorLenght);
+			if (AreTablesOverlaping())
+			{
+				BuildOverlapConnection();
+				return;
+			}
+
+			var position = GetRelativePositionOfDestinationTable();
+
+			switch (position)
+			{
+				case RelativeTablePosition.LeftTop:
+					BuildLeftTopConnection();
+					break;
+				case RelativeTablePosition.Top:
+					BuildTopConnection(true);
+					break;
+				case RelativeTablePosition.RightTop:
+					BuildRightTopConnection();
+					break;
+				case RelativeTablePosition.Right:
+					BuildRightConnection(false);
+					break;
+				case RelativeTablePosition.RightBottom:
+					BuildRightBottomConnection();
+					break;
+				case RelativeTablePosition.Bottom:
+					BuildBottomConnection(true);
+					break;
+				case RelativeTablePosition.LeftBottom:
+					BuildLeftBottomConnection();
+					break;
+				case RelativeTablePosition.Left:
+					BuildLeftConnection(false);
+					break;
+				case RelativeTablePosition.TopR:
+					BuildTopConnection(false);
+					break;
+				case RelativeTablePosition.LeftB:
+					BuildLeftConnection(true);
+					break;
+				case RelativeTablePosition.BottomR:
+					BuildBottomConnection(false);
+					break;
+				case RelativeTablePosition.RightB:
+					BuildRightConnection(true);
+					break;
+			}
+
+
+			SourceConnector.Cardinality = Cardinality.One;
+			DestinationConnector.Cardinality = Cardinality.Many;
+			DestinationConnector.Optionality = RelationshipModel.Optionality;
+
+			SourceConnector.EndPoint = Points.FirstOrDefault();
+			DestinationConnector.EndPoint = Points.LastOrDefault();
+
+			IsSourceConnectorAtStartPoint = true;
+
+			BuildLinesFromPoints();
+		}
+
+		private void BuildLeftTopConnection()
+		{
+			var point1 = new ConnectionPoint(SourceViewModel.Left + SourceViewModel.Width/2, SourceViewModel.Top - Connector.ConnectorLenght);
+			var point2 = new ConnectionPoint(SourceViewModel.Left + SourceViewModel.Width/2, (int) (DestinationViewModel.Top + DestinationViewModel.Height/2));
+			var point3 = new ConnectionPoint(DestinationViewModel.Left + DestinationViewModel.Width + Connector.ConnectorLenght, (int) (DestinationViewModel.Top + DestinationViewModel.Height/2));
+
+			Points.Add(point1);
+			Points.Add(point2);
+			Points.Add(point3);
+
+			SourceConnector.Orientation = ConnectorOrientation.Up;
+			DestinationConnector.Orientation = ConnectorOrientation.Right;
+		}
+
+		private void BuildRightTopConnection()
+		{
+			var point1 = new ConnectionPoint(SourceViewModel.Left + SourceViewModel.Width/2, SourceViewModel.Top - Connector.ConnectorLenght);
+			var point2 = new ConnectionPoint(SourceViewModel.Left + SourceViewModel.Width/2, (int) (DestinationViewModel.Top + DestinationViewModel.Height/2));
+			var point3 = new ConnectionPoint(DestinationViewModel.Left - Connector.ConnectorLenght, (int) (DestinationViewModel.Top + DestinationViewModel.Height/2));
+
+			Points.Add(point1);
+			Points.Add(point2);
+			Points.Add(point3);
+
+			SourceConnector.Orientation = ConnectorOrientation.Up;
+			DestinationConnector.Orientation = ConnectorOrientation.Left;
+		}
+
+		private void BuildLeftBottomConnection()
+		{
+			var point1 = new ConnectionPoint(SourceViewModel.Left + SourceViewModel.Width/2, SourceViewModel.Top + SourceViewModel.Height + Connector.ConnectorLenght);
+			var point2 = new ConnectionPoint(SourceViewModel.Left + SourceViewModel.Width/2, (int) (DestinationViewModel.Top + DestinationViewModel.Height/2));
+			var point3 = new ConnectionPoint(DestinationViewModel.Left + DestinationViewModel.Width + Connector.ConnectorLenght, (int) (DestinationViewModel.Top + DestinationViewModel.Height/2));
+
+			Points.Add(point1);
+			Points.Add(point2);
+			Points.Add(point3);
+
+			SourceConnector.Orientation = ConnectorOrientation.Down;
+			DestinationConnector.Orientation = ConnectorOrientation.Right;
+		}
+
+		private void BuildRightBottomConnection()
+		{
+			var point1 = new ConnectionPoint(SourceViewModel.Left + SourceViewModel.Width/2, SourceViewModel.Top + SourceViewModel.Height + Connector.ConnectorLenght);
+			var point2 = new ConnectionPoint(SourceViewModel.Left + SourceViewModel.Width/2, (int) (DestinationViewModel.Top + DestinationViewModel.Height/2));
+			var point3 = new ConnectionPoint(DestinationViewModel.Left - Connector.ConnectorLenght, (int) (DestinationViewModel.Top + DestinationViewModel.Height/2));
+
+			Points.Add(point1);
+			Points.Add(point2);
+			Points.Add(point3);
+
+			SourceConnector.Orientation = ConnectorOrientation.Down;
+			DestinationConnector.Orientation = ConnectorOrientation.Left;
+		}
+
+		private void BuildTopConnection(bool fromRight = false)
+		{
+			int x;
+
+			if (fromRight)
+			{
+				x = (int) (DestinationViewModel.Left + Connector.SymbolLineEndsDiff + 5);
+			}
+			else
+			{
+				x = (int) (DestinationViewModel.Left + DestinationViewModel.Width - Connector.SymbolLineEndsDiff - 5);
+			}
+
+			var point1 = new ConnectionPoint(x, SourceViewModel.Top - Connector.ConnectorLenght);
+			var point2 = new ConnectionPoint(x, (int)(DestinationViewModel.Top + DestinationViewModel.Height + Connector.ConnectorLenght));
+
+			Points.Add(point1);
+			Points.Add(point2);
+
+			SourceConnector.Orientation = ConnectorOrientation.Up;
+			DestinationConnector.Orientation = ConnectorOrientation.Down;
+		}
+
+		private void BuildBottomConnection(bool fromRight = false)
+		{
+			int x;
+
+			if(fromRight)
+			{
+				x = (int)(DestinationViewModel.Left + Connector.SymbolLineEndsDiff + 5);
+			}
+			else
+			{
+				x = (int)(DestinationViewModel.Left + DestinationViewModel.Width - Connector.SymbolLineEndsDiff - 5);
+			}
+
+			var point1 = new ConnectionPoint(x, SourceViewModel.Top + SourceViewModel.Height + Connector.ConnectorLenght);
+			var point2 = new ConnectionPoint(x, (int)(DestinationViewModel.Top - Connector.ConnectorLenght));
+
+			Points.Add(point1);
+			Points.Add(point2);
+
+			SourceConnector.Orientation = ConnectorOrientation.Down;
+			DestinationConnector.Orientation = ConnectorOrientation.Up;
+		}
+
+		private void BuildLeftConnection(bool fromBottom = false)
+		{
+			int y;
+
+			if(fromBottom)
+			{
+				y = (int)(DestinationViewModel.Top + DestinationViewModel.Height - Connector.SymbolLineEndsDiff - 5);
+			}
+			else
+			{
+				y = (int)(DestinationViewModel.Top + Connector.SymbolLineEndsDiff + 5);
+			}
+
+			var point1 = new ConnectionPoint(SourceViewModel.Left - Connector.ConnectorLenght, y);
+			var point2 = new ConnectionPoint(DestinationViewModel.Left + DestinationViewModel.Width + Connector.ConnectorLenght, y);
+
+			Points.Add(point1);
+			Points.Add(point2);
+
+			SourceConnector.Orientation = ConnectorOrientation.Left;
+			DestinationConnector.Orientation = ConnectorOrientation.Right;
+		}
+
+		private void BuildRightConnection(bool fromBottom = false)
+		{
+			int y;
+
+			if(fromBottom)
+			{
+				y = (int)(DestinationViewModel.Top + DestinationViewModel.Height - Connector.SymbolLineEndsDiff - 5);
+			}
+			else
+			{
+				y = (int)(DestinationViewModel.Top + Connector.SymbolLineEndsDiff + 5);
+			}
+
+			var point1 = new ConnectionPoint(SourceViewModel.Left + SourceViewModel.Width + Connector.ConnectorLenght, y);
+			var point2 = new ConnectionPoint(DestinationViewModel.Left - Connector.ConnectorLenght, y);
+
+			Points.Add(point1);
+			Points.Add(point2);
+
+			SourceConnector.Orientation = ConnectorOrientation.Right;
+			DestinationConnector.Orientation = ConnectorOrientation.Left;
+		}
+
+		private RelativeTablePosition GetRelativePositionOfDestinationTable()
+		{
+			var rectangles = new Rectangle[8];
+			rectangles[0] = new Rectangle(0, 0, (int) SourceViewModel.Left, (int) SourceViewModel.Top);
+			rectangles[1] = new Rectangle((int) SourceViewModel.Left, 0, (int) SourceViewModel.Width, (int) SourceViewModel.Top);
+			rectangles[2] = new Rectangle((int) (SourceViewModel.Left + SourceViewModel.Width), 0, (int) (_canvas.ActualWidth - SourceViewModel.Left - SourceViewModel.Width), (int) SourceViewModel.Top);
+			rectangles[3] = new Rectangle((int) (SourceViewModel.Left + SourceViewModel.Width), (int) SourceViewModel.Top, (int) (_canvas.ActualWidth - SourceViewModel.Left - SourceViewModel.Width), (int) SourceViewModel.Height);
+			rectangles[4] = new Rectangle((int) (SourceViewModel.Left + SourceViewModel.Width), (int) (SourceViewModel.Top + SourceViewModel.Height), (int) (_canvas.ActualWidth - SourceViewModel.Left - SourceViewModel.Width), (int) (_canvas.ActualHeight - SourceViewModel.Height - SourceViewModel.Top));
+			rectangles[5] = new Rectangle((int) (SourceViewModel.Left), (int) (SourceViewModel.Top + SourceViewModel.Height), (int) SourceViewModel.Width, (int) (_canvas.ActualWidth - SourceViewModel.Left - SourceViewModel.Width));
+			rectangles[6] = new Rectangle(0, (int) (SourceViewModel.Top + SourceViewModel.Height), (int) SourceViewModel.Left, (int) (_canvas.ActualHeight - SourceViewModel.Height - SourceViewModel.Top));
+			rectangles[7] = new Rectangle(0, (int) (SourceViewModel.Top), (int) SourceViewModel.Left, (int) (SourceViewModel.Height));
+
+			var points = new Point[4];
+			points[0] = new Point((int) DestinationViewModel.Left, (int) (DestinationViewModel.Top));
+			points[1] = new Point((int) (DestinationViewModel.Left + DestinationViewModel.Width), (int) (DestinationViewModel.Top));
+			points[2] = new Point((int) (DestinationViewModel.Left + DestinationViewModel.Width), (int) (DestinationViewModel.Top + DestinationViewModel.Height));
+			points[3] = new Point((int) DestinationViewModel.Left, (int) (DestinationViewModel.Top + DestinationViewModel.Height));
+
+			if (rectangles[0].Contains(points[2]))
+			{
+				return RelativeTablePosition.LeftTop;
+			}
+
+			if (rectangles[1].Contains(points[2]))
+			{
+				return RelativeTablePosition.TopR;
+			}
+
+			if (rectangles[1].Contains(points[3]))
+			{
+				return RelativeTablePosition.Top;
+			}
+
+			if (rectangles[2].Contains(points[3]))
+			{
+				return RelativeTablePosition.RightTop;
+			}
+
+			if (rectangles[3].Contains(points[0]))
+			{
+				return RelativeTablePosition.Right;
+			}
+
+			if (rectangles[3].Contains(points[3]))
+			{
+				return RelativeTablePosition.RightB;
+			}
+
+			if (rectangles[4].Contains(points[0]))
+			{
+				return RelativeTablePosition.RightBottom;
+			}
+
+			if (rectangles[5].Contains(points[0]))
+			{
+				return RelativeTablePosition.Bottom;
+			}
+
+			if (rectangles[5].Contains(points[1]))
+			{
+				return RelativeTablePosition.BottomR;
+			}
+
+			if (rectangles[6].Contains(points[1]))
+			{
+				return RelativeTablePosition.LeftBottom;
+			}
+
+			if (rectangles[7].Contains(points[1]))
+			{
+				return RelativeTablePosition.Left;
+			}
+
+			if (rectangles[7].Contains(points[2]))
+			{
+				return RelativeTablePosition.LeftB;
+			}
+
+			return RelativeTablePosition.LeftTop;
+		}
+
+		private void BuildOverlapConnection()
+		{
+			var point1 = new ConnectionPoint(SourceViewModel.Left + (SourceViewModel.Width/2), SourceViewModel.Top - Connector.ConnectorLenght);
+			var point2 = new ConnectionPoint(SourceViewModel.Left + (SourceViewModel.Width/2), SourceViewModel.Top - Connector.ConnectorLenght - DefaultConnectionLineLength);
+			var point3 = new ConnectionPoint(DestinationViewModel.Left + DestinationViewModel.Width + DefaultConnectionLineLength + Connector.ConnectorLenght, SourceViewModel.Top - Connector.ConnectorLenght - DefaultConnectionLineLength);
+			var point4 = new ConnectionPoint(DestinationViewModel.Left + DestinationViewModel.Width + DefaultConnectionLineLength + Connector.ConnectorLenght, DestinationViewModel.Top + (DestinationViewModel.Height/2));
+			var point5 = new ConnectionPoint(DestinationViewModel.Left + DestinationViewModel.Width + Connector.ConnectorLenght, DestinationViewModel.Top + (DestinationViewModel.Height/2));
 
 			Points.Add(point1);
 			Points.Add(point2);
 			Points.Add(point3);
 			Points.Add(point4);
+			Points.Add(point5);
 
 			SourceConnector.Orientation = ConnectorOrientation.Up;
-			;
-			DestinationConnector.Orientation = ConnectorOrientation.Up;
+			DestinationConnector.Orientation = ConnectorOrientation.Right;
 
 			SourceConnector.Cardinality = Cardinality.One;
 			DestinationConnector.Cardinality = Cardinality.Many;
 			DestinationConnector.Optionality = RelationshipModel.Optionality;
 
 			SourceConnector.EndPoint = point1;
-			DestinationConnector.EndPoint = point4;
+			DestinationConnector.EndPoint = point5;
 
 			IsSourceConnectorAtStartPoint = true;
 
 			BuildLinesFromPoints();
+		}
+
+		private bool AreTablesOverlaping()
+		{
+			if (SourceViewModel.Left < DestinationViewModel.Left + DestinationViewModel.Width && SourceViewModel.Left + SourceViewModel.Width + Connector.ConnectorLenght > DestinationViewModel.Left && SourceViewModel.Top < DestinationViewModel.Top + DestinationViewModel.Height && SourceViewModel.Height + SourceViewModel.Top > DestinationViewModel.Top)
+			{
+				return true;
+			}
+
+			return false;
 		}
 
 		private void BuildSelfConnection()
@@ -1615,7 +1925,6 @@ namespace ER_Diagram_Modeler.ViewModels
 			Points.Add(point5);
 
 			SourceConnector.Orientation = ConnectorOrientation.Up;
-			;
 			DestinationConnector.Orientation = ConnectorOrientation.Right;
 
 			SourceConnector.Cardinality = Cardinality.One;

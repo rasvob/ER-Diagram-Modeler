@@ -439,22 +439,22 @@ namespace ER_Diagram_Modeler.Views.Canvas
 			//info.DestinationConnector.EndPoint = point5;
 
 			//Down
-			var point1 =
-				new ConnectionPoint(info.SourceViewModel.Left + 30, info.SourceViewModel.Top + info.SourceViewModel.Height + Connector.ConnectorLenght);
-			var point2 =
-				new ConnectionPoint(info.SourceViewModel.Left + 30, info.SourceViewModel.Top + info.SourceViewModel.Height + Connector.ConnectorLenght + 30);
-			var point3 = new ConnectionPoint(info.SourceViewModel.Left + +info.SourceViewModel.Width + 50, info.SourceViewModel.Top + info.SourceViewModel.Height + Connector.ConnectorLenght + 30);
-			var point4 = new ConnectionPoint(info.SourceViewModel.Left + +info.SourceViewModel.Width + 50, info.DestinationViewModel.Top + 50);
-			var point5 = new ConnectionPoint(info.DestinationViewModel.Left - Connector.ConnectorLenght, info.DestinationViewModel.Top + 50);
-			info.Points.Add(point1);
-			info.Points.Add(point2);
-			info.Points.Add(point3);
-			info.Points.Add(point4);
-			info.Points.Add(point5);
-			info.SourceConnector.Orientation = ConnectorOrientation.Down;
-			info.DestinationConnector.Orientation = ConnectorOrientation.Left;
-			info.SourceConnector.EndPoint = point1;
-			info.DestinationConnector.EndPoint = point5;
+			//var point1 =
+			//	new ConnectionPoint(info.SourceViewModel.Left + 30, info.SourceViewModel.Top + info.SourceViewModel.Height + Connector.ConnectorLenght);
+			//var point2 =
+			//	new ConnectionPoint(info.SourceViewModel.Left + 30, info.SourceViewModel.Top + info.SourceViewModel.Height + Connector.ConnectorLenght + 30);
+			//var point3 = new ConnectionPoint(info.SourceViewModel.Left + +info.SourceViewModel.Width + 50, info.SourceViewModel.Top + info.SourceViewModel.Height + Connector.ConnectorLenght + 30);
+			//var point4 = new ConnectionPoint(info.SourceViewModel.Left + +info.SourceViewModel.Width + 50, info.DestinationViewModel.Top + 50);
+			//var point5 = new ConnectionPoint(info.DestinationViewModel.Left - Connector.ConnectorLenght, info.DestinationViewModel.Top + 50);
+			//info.Points.Add(point1);
+			//info.Points.Add(point2);
+			//info.Points.Add(point3);
+			//info.Points.Add(point4);
+			//info.Points.Add(point5);
+			//info.SourceConnector.Orientation = ConnectorOrientation.Down;
+			//info.DestinationConnector.Orientation = ConnectorOrientation.Left;
+			//info.SourceConnector.EndPoint = point1;
+			//info.DestinationConnector.EndPoint = point5;
 
 			//Left
 			//var point1 =
@@ -497,20 +497,23 @@ namespace ER_Diagram_Modeler.Views.Canvas
 			//info.DestinationConnector.EndPoint = point5;
 
 
-			info.SourceConnector.Cardinality = Cardinality.One;
-			info.SourceConnector.Optionality = Optionality.Mandatory;
-			info.DestinationConnector.Cardinality = Cardinality.Many;
-			info.DestinationConnector.Optionality = Optionality.Mandatory;
+			//info.SourceConnector.Cardinality = Cardinality.One;
+			//info.SourceConnector.Optionality = Optionality.Mandatory;
+			//info.DestinationConnector.Cardinality = Cardinality.Many;
+			//info.DestinationConnector.Optionality = Optionality.Mandatory;
 
-			info.BuildLinesFromPoints();
+			//info.BuildLinesFromPoints();
+
 			info.RelationshipModel = new RelationshipModel();
 			info.RelationshipModel.Name = "Testovaci FK";
 			info.RelationshipModel.Optionality = Optionality.Optional;
 			info.RelationshipModel.Source = info.SourceViewModel.Model;
 			info.RelationshipModel.Destination = info.DestinationViewModel.Model;
 			info.RelationshipModel.Attributes.Add(new RowModelPair() {Destination = new TableRowModel("aaa", DatatypeProvider.Instance.SqlServerDatatypes.FirstOrDefault()), Source = new TableRowModel("bbb", DatatypeProvider.Instance.SqlServerDatatypes.Skip(2).FirstOrDefault())});
+			info.DesignerCanvas = ModelDesignerCanvas;
+			info.BuildConnection();
+
 			ViewModel.ConnectionInfoViewModels.Add(info);
-			info.SynchronizeBendingPoints();
 		}
 
 		//Test command F6
@@ -674,6 +677,7 @@ namespace ER_Diagram_Modeler.Views.Canvas
 		{
 			ForeignKeysDialog dialog = new ForeignKeysDialog(ViewModel);
 			dialog.Owner = Application.Current.MainWindow;
+			dialog.Canvas = ModelDesignerCanvas;
 			dialog.ShowDialog();
 		}
 

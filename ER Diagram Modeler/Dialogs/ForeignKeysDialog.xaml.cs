@@ -19,6 +19,7 @@ using ER_Diagram_Modeler.Annotations;
 using ER_Diagram_Modeler.Models.Designer;
 using ER_Diagram_Modeler.Models.Helpers;
 using ER_Diagram_Modeler.ViewModels;
+using ER_Diagram_Modeler.Views.Canvas;
 using MahApps.Metro.Controls;
 
 namespace ER_Diagram_Modeler.Dialogs
@@ -53,6 +54,8 @@ namespace ER_Diagram_Modeler.Dialogs
 				OnPropertyChanged();
 			}
 		}
+
+		public DesignerCanvas Canvas { get; set; }
 
 		public ForeignKeysDialog(DatabaseModelDesignerViewModel viewModel)
 		{
@@ -141,7 +144,7 @@ namespace ER_Diagram_Modeler.Dialogs
 			var source = FlyoutPrimaryTableComboBox.SelectedItem as TableViewModel;
 			var dest = FlyoutForeignTableComboBox.SelectedItem as TableViewModel;
 
-			var dialog = new ForeignKeyCreatorDialog(NewRelationshipTextBox.Text, source, dest, DatabaseModelDesignerViewModel);
+			var dialog = new ForeignKeyCreatorDialog(NewRelationshipTextBox.Text, source, dest, DatabaseModelDesignerViewModel, Canvas);
 			dialog.Owner = this;
 
 			var flyout = Flyouts.Items[0] as Flyout;

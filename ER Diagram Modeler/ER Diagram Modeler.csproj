@@ -158,6 +158,7 @@
     <Compile Include="ViewModels\Enums\MouseMode.cs" />
     <Compile Include="ViewModels\Enums\Cardinality.cs" />
     <Compile Include="ViewModels\Enums\Optionality.cs" />
+    <Compile Include="ViewModels\Enums\RelativeTablePosition.cs" />
     <Compile Include="ViewModels\Enums\TableViewMode.cs" />
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
     <Compile Include="ViewModels\SimpleCommand.cs" />
