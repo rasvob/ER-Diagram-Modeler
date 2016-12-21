@@ -1,5 +1,4 @@
 ﻿---Designer_part
-FK Creation drag
 Export to PNG
 
 ---DB_Part

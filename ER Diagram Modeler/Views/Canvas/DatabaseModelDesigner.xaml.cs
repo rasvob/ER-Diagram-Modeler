@@ -38,6 +38,9 @@ namespace ER_Diagram_Modeler.Views.Canvas
 		private double _capturedVerticalOffset;
 		private double _capturedHorizontalOffset;
 
+		private TableViewModel _sourceModel;
+		private TableViewModel _destinationModel;
+
 		public DatabaseModelDesignerViewModel ViewModel
 		{
 			get { return _viewModel; }
@@ -104,6 +107,18 @@ namespace ER_Diagram_Modeler.Views.Canvas
 				if (table != null && table.IsSelected)
 				{
 					DeselectConnections();
+				}
+
+				var selectedCount = ViewModel.TableViewModels.Count(t => t.IsSelected);
+
+				switch (selectedCount)
+				{
+					case 1:
+						_sourceModel = table;
+						break;
+					case 2:
+						_destinationModel = table;
+						break;
 				}
 			}
 		}
@@ -172,7 +187,8 @@ namespace ER_Diagram_Modeler.Views.Canvas
 					info.IsSelected = false;
 				}
 				ModelDesignerCanvas.DeselectTables();
-
+				_sourceModel = null;
+				_destinationModel = null;
 			}
 		}
 
@@ -214,6 +230,8 @@ namespace ER_Diagram_Modeler.Views.Canvas
 			{
 				case MouseMode.Select:
 					ModelDesignerCanvas.DeselectTables();
+					_sourceModel = null;
+					_destinationModel = null;
 					DeselectConnections();
 					ModelDesignerCanvas.ResetZIndexes();
 					break;
@@ -308,6 +326,15 @@ namespace ER_Diagram_Modeler.Views.Canvas
 				}
 
 				ViewModel.TableViewModels.Remove(item);
+			}
+		}
+
+		private void DeleteSelectedConnections()
+		{
+			var connectionsForRemove = ViewModel.ConnectionInfoViewModels.Where(t => t.IsSelected).ToList();
+			foreach(ConnectionInfoViewModel connectionInfoViewModel in connectionsForRemove)
+			{
+				ViewModel.ConnectionInfoViewModels.Remove(connectionInfoViewModel);
 			}
 		}
 
@@ -658,12 +685,15 @@ namespace ER_Diagram_Modeler.Views.Canvas
 		private void DeleteTablesCommand_OnExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
 			DeleteSelectedTables();
+			DeleteSelectedConnections();
 		}
+
+		
 
 		private void DeleteTablesCommand_OnCanExecute(object sender, CanExecuteRoutedEventArgs e)
 		{
 			if(ViewModel != null)
-				e.CanExecute = ViewModel.TableViewModels.Any(t => t.IsSelected);
+				e.CanExecute = ViewModel.TableViewModels.Any(t => t.IsSelected) || ViewModel.ConnectionInfoViewModels.Any(s => s.IsSelected);
 		}
 
 
@@ -675,6 +705,14 @@ namespace ER_Diagram_Modeler.Views.Canvas
 
 		private void AddForeignKeyCommand_OnExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
+			if (ViewModel.TableViewModels.Count(t => t.IsSelected) == 2)
+			{
+				var dialogCreate = new ForeignKeyCreatorDialog($"{_sourceModel.Model.Title}_{_destinationModel.Model.Title}_FK", _sourceModel, _destinationModel, ViewModel, ModelDesignerCanvas);
+				dialogCreate.Owner = Application.Current.MainWindow;
+				dialogCreate.ShowDialog();
+				return;
+			}
+
 			ForeignKeysDialog dialog = new ForeignKeysDialog(ViewModel);
 			dialog.Owner = Application.Current.MainWindow;
 			dialog.Canvas = ModelDesignerCanvas;
