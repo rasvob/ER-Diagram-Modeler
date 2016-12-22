@@ -6,14 +6,51 @@
              xmlns:local="clr-namespace:ER_Diagram_Modeler.Views.Panels"
              xmlns:xcad="http://schemas.xceed.com/wpf/xaml/avalondock"
              xmlns:system="clr-namespace:System;assembly=mscorlib"
+			 xmlns:buttons="clr-namespace:ER_Diagram_Modeler.Controls.Buttons"
              mc:Ignorable="d" 
             >
+	
+	<UserControl.Resources>
+		<ResourceDictionary>
+			<ResourceDictionary.MergedDictionaries>
+				<ResourceDictionary Source="../../Controls/Buttons/DesignerToolBarButton.xaml"></ResourceDictionary>
+			</ResourceDictionary.MergedDictionaries>
+			<RoutedCommand x:Key="DisconnectFromServerCommand"></RoutedCommand>
+		</ResourceDictionary>
+	</UserControl.Resources>
+
+	<UserControl.CommandBindings>
+		<CommandBinding Command="{StaticResource DisconnectFromServerCommand}" 
+				Executed="Disconnect_OnExecuted"
+				CanExecute="Disconnect_OnCanExecute">
+			
+		</CommandBinding>
+	</UserControl.CommandBindings>
+	
+	
 	<StackPanel Orientation="Vertical">
-			<ListBox>
-				<system:String>SYSDB</system:String>
-				<system:String>Oracle</system:String>
-				<system:String>MS SQL Server</system:String>
-			</ListBox>
-			<Button x:Name="button" Content="Button" Width="74"/>
+		<StackPanel Orientation="Horizontal" Background="White" Height="30">
+			<buttons:DesignerToolBarButton x:Name="ConnectoToServerButton"
+										   Click="ConnectoToServerButton_OnClick"
+										   Height="30"
+										   Width="30"
+										   ToolTip="Connect to server"
+										   IsChecked="False"
+										   Icon="{StaticResource ConnectToServerIcon}">
+				<Button.ContextMenu>
+					<ContextMenu>
+						<MenuItem Header="MS SQL Server" Name="ConnectToSqlServerMenuItem" Click="ConnectToSqlServerMenuItem_OnClick"></MenuItem>
+						<MenuItem Header="Oracle" Name="ConnectToOracleMenuItem" Click="ConnectToOracleMenuItem_OnClick"></MenuItem>
+					</ContextMenu>
+				</Button.ContextMenu>
+			</buttons:DesignerToolBarButton>
+
+			<buttons:DesignerToolBarButton x:Name="DisconnectFromServerButton"
+										   ToolTip="Disconnect from server"
+										   IsChecked="False"
+										   Command="{StaticResource DisconnectFromServerCommand}"
+										   Icon="{StaticResource DisconnectFromServerIcon}">
+			</buttons:DesignerToolBarButton>
 		</StackPanel>
+	</StackPanel>
 </UserControl>
