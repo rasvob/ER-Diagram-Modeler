@@ -10,7 +10,7 @@ using ER_Diagram_Modeler.Configuration.Providers;
 
 namespace ER_Diagram_Modeler.Models.Designer
 {
-	public class TableRowModel: INotifyPropertyChanged
+	public class TableRowModel: INotifyPropertyChanged, IDataErrorInfo
 	{
 		private string _name;
 		private Datatype _datatype;
@@ -156,5 +156,27 @@ namespace ER_Diagram_Modeler.Models.Designer
 		{
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 		}
+
+		public string this[string columnName]
+		{
+			get
+			{
+				switch(columnName)
+				{
+					case "Name":
+						if (Name.Length == 0)
+						{
+							return "Name can't be empty";
+						}
+						break;
+					default:
+						return null;
+				}
+
+				return Error;
+			}
+		}
+
+		public string Error => string.Empty;
 	}
 }

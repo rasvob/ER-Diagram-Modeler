@@ -70,6 +70,10 @@
       <HintPath>..\packages\MahApps.Metro.1.2.3.0\lib\net45\MahApps.Metro.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Oracle.ManagedDataAccess, Version=4.121.2.0, Culture=neutral, PublicKeyToken=89b483f429c47342, processorArchitecture=MSIL">
+      <HintPath>..\packages\Oracle.ManagedDataAccess.12.1.24160719\lib\net40\Oracle.ManagedDataAccess.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
@@ -123,6 +127,12 @@
     <Compile Include="Configuration\Providers\DatatypeProvider.cs" />
     <Compile Include="Configuration\Providers\SessionProvider.cs" />
     <Compile Include="Controls\Buttons\DesignerToolBarButton.cs" />
+    <Compile Include="DatabaseConnection\DatabaseProxy.cs" />
+    <Compile Include="DatabaseConnection\IMapper.cs" />
+    <Compile Include="DatabaseConnection\Oracle\OracleDatabase.cs" />
+    <Compile Include="DatabaseConnection\Oracle\OracleMapper.cs" />
+    <Compile Include="DatabaseConnection\SqlServer\MsSqlDatabase.cs" />
+    <Compile Include="DatabaseConnection\SqlServer\MsSqlMapper.cs" />
     <Compile Include="Dialogs\CanvasDimensionDialog.xaml.cs">
       <DependentUpon>CanvasDimensionDialog.xaml</DependentUpon>
     </Compile>
@@ -139,6 +149,7 @@
     <Compile Include="EventArgs\ConnectionPointEventArgs.cs" />
     <Compile Include="EventArgs\ScaleEventArgs.cs" />
     <Compile Include="EventArgs\TablePositionAndMeasureEventArgs.cs" />
+    <Compile Include="Models\Database\DatabaseInfo.cs" />
     <Compile Include="Models\Designer\Datatype.cs" />
     <Compile Include="Models\Designer\RelationshipModel.cs" />
     <Compile Include="Models\Designer\TableModel.cs" />
@@ -315,7 +326,6 @@
     </Resource>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Configuration\Oracle\" />
     <Folder Include="ValidationRules\" />
   </ItemGroup>
   <ItemGroup>
@@ -327,6 +337,11 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="TODO.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Configuration\Oracle\DataTypesOracle.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

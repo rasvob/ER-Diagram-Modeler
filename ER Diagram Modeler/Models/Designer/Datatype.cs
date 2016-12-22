@@ -268,8 +268,7 @@ namespace ER_Diagram_Modeler.Models.Designer
 				return res;
 			}
 
-			//TODO Add Oracle resource
-			var resource = connectionType == ConnectionType.SqlServer ? Resources.DataTypesMicrosoft : Resources.DataTypesMicrosoft;
+			var resource = connectionType == ConnectionType.SqlServer ? Resources.DataTypesMicrosoft : Resources.DataTypesOracle;
 
 			XDocument document = XDocument.Parse(resource);
 			var nodes = document.Root.Elements();

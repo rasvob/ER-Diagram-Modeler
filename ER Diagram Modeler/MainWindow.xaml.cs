@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -35,7 +36,7 @@ namespace ER_Diagram_Modeler
 
 		public MainWindow()
 		{
-			SessionProvider.Instance.ConnectionType = ConnectionType.SqlServer;
+			SessionProvider.Instance.ConnectionType = ConnectionType.Oracle;
 			InitializeComponent();
 			MainWindowViewModel = new MainWindowViewModel();
 			DatabaseModelDesigner.ViewModel = MainWindowViewModel.DatabaseModelDesignerViewModel;
@@ -85,7 +86,7 @@ namespace ER_Diagram_Modeler
 		private void MenuItemTest_OnClick(object sender, RoutedEventArgs e)
 		{
 			//MainWindowViewModel.DatabaseModelDesignerViewModel.TableViewModels.Add(SeedDataTable());
-			Trace.WriteLine(MainWindowViewModel.DatabaseModelDesignerViewModel.VeticalScrollOffset);
+			ObservableCollection<TableViewModel> models = MainWindowViewModel.DatabaseModelDesignerViewModel.TableViewModels;
 		}
 
 		private void ChangeCanvasSize_OnExecuted(object sender, ExecutedRoutedEventArgs e)

@@ -89,5 +89,10 @@ namespace ER_Diagram_Modeler.Views.Canvas.TableItem
 				item.IsChecked = !item.IsChecked;
 			}
 		}
+
+		private void TableDataGrid_OnCellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
+		{
+			Trace.WriteLine(e.EditAction);
+		}
 	}
 }

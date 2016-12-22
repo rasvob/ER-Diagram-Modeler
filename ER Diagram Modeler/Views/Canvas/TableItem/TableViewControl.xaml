@@ -71,6 +71,7 @@
 				          CanUserSortColumns="False"
 				          CanUserDeleteRows="True"
 				          GridLinesVisibility="All"
+						  CellEditEnding="TableDataGrid_OnCellEditEnding"
 				          AutoGenerateColumns="False">
 				<DataGrid.Columns>
 					<DataGridCheckBoxColumn Binding="{Binding PrimaryKey, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
@@ -78,7 +79,7 @@
 						                        ElementStyle="{DynamicResource MetroDataGridCheckBox}">
 					</DataGridCheckBoxColumn>
 
-					<DataGridTextColumn Binding="{Binding Name, Mode=TwoWay}"
+					<DataGridTextColumn Binding="{Binding Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, NotifyOnValidationError=True, ValidatesOnDataErrors=True}"
 						                    Header="Name" />
 
 					<DataGridTemplateColumn Header="Data Type" x:Name="DataTypeColumn">
@@ -188,7 +189,6 @@
 											</Style>
 										</TextBox.Style>
 									</TextBox>
-
 								</Grid>
 							</DataTemplate>
 						</DataGridTemplateColumn.CellTemplate>

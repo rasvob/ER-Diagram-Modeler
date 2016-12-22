@@ -15,5 +15,6 @@ namespace ER_Diagram_Modeler.Configuration.Providers
 		public static SessionProvider Instance => _instance.Value;
 
 		public ConnectionType ConnectionType { get; set; }
+		public string ConnectionString { get; set; }
 	}
 }

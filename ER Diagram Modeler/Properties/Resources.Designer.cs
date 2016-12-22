@@ -72,5 +72,18 @@ namespace ER_Diagram_Modeler.Properties {
                 return ResourceManager.GetString("DataTypesMicrosoft", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
+        ///&lt;DataTypes&gt;
+        ///	&lt;t Name=&quot;char&quot; MaxLenght=&quot;2000&quot; Precision=&quot;0&quot; Scale=&quot;0&quot; IsNullable=&quot;1&quot; HasLenght=&quot;1&quot; HasPrecision=&quot;0&quot; HasScale=&quot;0&quot; DefaultLenght=&quot;0&quot; DefaultPrecision=&quot;0&quot; DefaultScale=&quot;0&quot; /&gt;
+        ///	&lt;t Name=&quot;nchar&quot; MaxLenght=&quot;2000&quot; Precision=&quot;0&quot; Scale=&quot;0&quot; IsNullable=&quot;1&quot; HasLenght=&quot;1&quot; HasPrecision=&quot;0&quot; HasScale=&quot;0&quot; DefaultLenght=&quot;0&quot; DefaultPrecision=&quot;0&quot; DefaultScale=&quot;0&quot; /&gt;
+        ///	&lt;t Name=&quot;nvarchar2&quot; MaxLenght=&quot;4000&quot; Precision=&quot;0&quot; Scale=&quot;0&quot; IsNullable=&quot;1&quot; HasLenght=&quot;1&quot; HasPrecision=&quot;0 [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string DataTypesOracle {
+            get {
+                return ResourceManager.GetString("DataTypesOracle", resourceCulture);
+            }
+        }
     }
 }
