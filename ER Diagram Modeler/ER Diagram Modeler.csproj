@@ -149,7 +149,8 @@
     <Compile Include="EventArgs\ConnectionPointEventArgs.cs" />
     <Compile Include="EventArgs\ScaleEventArgs.cs" />
     <Compile Include="EventArgs\TablePositionAndMeasureEventArgs.cs" />
-    <Compile Include="Models\Database\DatabaseInfo.cs" />
+    <Compile Include="Models\Database\DiagramModel.cs" />
+    <Compile Include="Models\Database\MsSqlDatabaseInfo.cs" />
     <Compile Include="Models\Designer\Datatype.cs" />
     <Compile Include="Models\Designer\RelationshipModel.cs" />
     <Compile Include="Models\Designer\TableModel.cs" />

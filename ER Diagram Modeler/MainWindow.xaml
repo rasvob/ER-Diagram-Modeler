@@ -13,6 +13,7 @@
 		xmlns:panels="clr-namespace:ER_Diagram_Modeler.Views.Panels"
 		xmlns:canvas="clr-namespace:ER_Diagram_Modeler.Views.Canvas"
 		xmlns:viewModels="clr-namespace:ER_Diagram_Modeler.ViewModels"
+		xmlns:input="clr-namespace:System.Windows.Input;assembly=System"
 		mc:Ignorable="d"
 		d:DataContext="{d:DesignInstance viewModels:MainWindowViewModel}"
 		WindowStartupLocation="CenterScreen"
@@ -24,6 +25,10 @@
 	<Window.Resources>
 		<ResourceDictionary>
 			<RoutedCommand x:Key="Commands.CanvasSizeCommand"></RoutedCommand>
+			<RoutedUICommand x:Key="Commands.ConnectToMsSqlServer" />
+			<RoutedUICommand x:Key="Commands.ConnectToOracle" />
+			<RoutedUICommand x:Key="Commands.ShowDatabaseConnectionLayout" />
+			<RoutedUICommand x:Key="Commands.NewDiagram" />
 		</ResourceDictionary>
 	</Window.Resources>
 	
@@ -31,12 +36,84 @@
 		<CommandBinding Command="{StaticResource Commands.CanvasSizeCommand}"
 						Executed="ChangeCanvasSize_OnExecuted"
 						CanExecute="ChangeCanvasSize_OnCanExecute"></CommandBinding>
+		
+		<CommandBinding Command="{StaticResource Commands.ConnectToMsSqlServer}"
+						Executed="ConnectToMsSql_OnExecuted"
+						CanExecute="ConnectToMsSql_OnCanExecute"></CommandBinding>
+
+		<CommandBinding Command="{StaticResource Commands.ShowDatabaseConnectionLayout}"
+						Executed="ShowDatabaseConnectionLayout_OnExecuted"
+						CanExecute="ShowDatabaseConnectionLayout_OnCanExecute"></CommandBinding>
+
+		<CommandBinding Command="{StaticResource Commands.NewDiagram}"
+						Executed="NewDiagram_OnExecuted"
+						CanExecute="NewDiagram_OnCanExecute"></CommandBinding>
 	</Window.CommandBindings>
 	
 	<Window.InputBindings>
 		
 	</Window.InputBindings>
-	
+
+	<Controls:MetroWindow.Flyouts>
+		<Controls:FlyoutsControl x:Name="FlyoutControls">
+			<Controls:Flyout
+				x:Name="MsSqlConnectionFlyout"
+				AreAnimationsEnabled="True"
+				Header="MS SQL Server Connection"
+				Position="Left"
+				CloseButtonIsCancel="False"
+				AnimateOnPositionChange="True"
+				AnimateOpacity="False"
+				Theme="Light"
+				IsModal="True"
+				>
+
+				<Grid Margin="10">
+					<Grid.RowDefinitions>
+						<RowDefinition Height="Auto"></RowDefinition>
+						<RowDefinition Height="Auto"></RowDefinition>
+						<RowDefinition Height="Auto"></RowDefinition>
+						<RowDefinition Height="Auto"></RowDefinition>
+					</Grid.RowDefinitions>
+
+					<TextBox x:Name="MsSqlServerNameTextBox"
+						 Grid.Row="0"
+						 IsReadOnly="False"
+						 Text="(localdb)\MSSQLLocalDB"
+						 Controls:TextBoxHelper.ClearTextButton="True"
+						 Controls:TextBoxHelper.UseFloatingWatermark="True"
+						 Controls:TextBoxHelper.Watermark="Server name">
+					</TextBox>
+
+					<Controls:ToggleSwitch x:Name="WinAuthSwitch" Grid.Row="1"
+                                   IsChecked="False"
+                                   OffLabel="Don't Use Windows Authentication"
+                                   OnLabel="Don't Use Windows Authentication" />
+
+					<StackPanel Orientation="Vertical" Grid.Row="2" IsEnabled="{Binding ElementName=WinAuthSwitch, Path=IsChecked}">
+						<Label Content="Username"></Label>
+						<TextBox x:Name="MsSqlUsernameTextBox"
+						 IsReadOnly="False"
+						 Text=""
+						 Controls:TextBoxHelper.ClearTextButton="True"
+						 Controls:TextBoxHelper.UseFloatingWatermark="True"
+						 Controls:TextBoxHelper.Watermark="Username">
+						</TextBox>
+						
+						<Label Content="Password"></Label>
+						<PasswordBox x:Name="MsSqlPasswordBox"
+							Style="{StaticResource MetroButtonRevealedPasswordBox}"
+							Controls:TextBoxHelper.ClearTextButton="True"
+							Controls:TextBoxHelper.UseFloatingWatermark="True"
+							Controls:TextBoxHelper.Watermark="Password"
+									 />
+					</StackPanel>
+					<Button Content="Connect" Grid.Row="3" Margin="0 10" Command="{StaticResource Commands.ConnectToMsSqlServer}"/>
+				</Grid>
+			</Controls:Flyout>
+		</Controls:FlyoutsControl>
+	</Controls:MetroWindow.Flyouts>
+
 	<Grid> 
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto"></RowDefinition>
@@ -49,10 +126,11 @@
 		<Menu Grid.Row="0">
 			<MenuItem Header="File">
 				<MenuItem Name="MenuItemTest" Header="Test PK" Click="MenuItemTest_OnClick"/>
+				<MenuItem Name="MenuItemAddDiagram" Header="Add new diagram" Command="{StaticResource Commands.NewDiagram}"/>
 				<MenuItem Header="Exit"/>
 			</MenuItem>
 			<MenuItem Header="Views">
-				
+				<MenuItem Name="MenuItemConnectionPanel" Header="Database Connection" Command="{StaticResource Commands.ShowDatabaseConnectionLayout}"/>
 			</MenuItem>
 			<MenuItem Header="Settings">
 				<MenuItem Header="Change canvas dimensions" Command="{StaticResource Commands.CanvasSizeCommand}"></MenuItem>
@@ -70,31 +148,19 @@
 			</xcad:DockingManager.Theme>
 			<xcad:LayoutRoot x:Name="LayoutRoot">
 				<xcad:LayoutPanel Orientation="Horizontal">
-					<xcad:LayoutAnchorablePaneGroup DockWidth="125">
+					<xcad:LayoutAnchorablePaneGroup DockWidth="160">
 						<xcad:LayoutAnchorablePane>
-							<xcad:LayoutAnchorable ContentId="DatabaseConnectionPanel" Title="Database Connection">
-								<panels:DatabaseConnectionPanel></panels:DatabaseConnectionPanel>
+							<xcad:LayoutAnchorable x:Name="DatabaseConnectionLayoutAnchorable" ContentId="DatabaseConnectionPanel" Title="Database Connection" CanClose="False" CanHide="True" CanAutoHide="True">
+								<panels:DatabaseConnectionPanel x:Name="DatabaseConnectionSidebar"></panels:DatabaseConnectionPanel>
 							</xcad:LayoutAnchorable>
 						</xcad:LayoutAnchorablePane>
 					</xcad:LayoutAnchorablePaneGroup>
 
 					<xcad:LayoutDocumentPane x:Name="MainDocumentPane">
-						<xcad:LayoutAnchorable ContentId="Diagram" Title="Designer" CanHide="False" CanClose="False" CanFloat="True">
+						<!--<xcad:LayoutAnchorable ContentId="Diagram" Title="Designer" CanHide="False" CanClose="True" CanFloat="True">
 							<canvas:DatabaseModelDesigner x:Name="DatabaseModelDesigner"></canvas:DatabaseModelDesigner>
-						</xcad:LayoutAnchorable>
+						</xcad:LayoutAnchorable>-->
 					</xcad:LayoutDocumentPane>
-
-					<xcad:LayoutAnchorablePaneGroup DockWidth="125">
-						<xcad:LayoutAnchorablePane>
-							<xcad:LayoutAnchorable ContentId="PropertiesPanel" Title="Properties" CanClose="False" CanHide="True">
-								<ListBox>
-									<system:String>Alarm 1</system:String>
-									<system:String>Alarm 2</system:String>
-									<system:String>Alarm 3</system:String>
-								</ListBox>
-							</xcad:LayoutAnchorable>
-						</xcad:LayoutAnchorablePane>
-					</xcad:LayoutAnchorablePaneGroup>
 				</xcad:LayoutPanel>
 			</xcad:LayoutRoot>
 		</xcad:DockingManager>
@@ -107,6 +173,54 @@
 
 	</Grid>
 </Controls:MetroWindow>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

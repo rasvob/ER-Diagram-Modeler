@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
@@ -10,22 +11,22 @@ namespace ER_Diagram_Modeler.ViewModels
 {
 	public class MainWindowViewModel: INotifyPropertyChanged
 	{
-		private DatabaseModelDesignerViewModel _databaseModelDesignerViewModel;
-		
-		public DatabaseModelDesignerViewModel DatabaseModelDesignerViewModel
+		private List<DatabaseModelDesignerViewModel> _databaseModelDesignerViewModels;
+
+		public List<DatabaseModelDesignerViewModel> DatabaseModelDesignerViewModels
 		{
-			get { return _databaseModelDesignerViewModel; }
+			get { return _databaseModelDesignerViewModels; }
 			set
 			{
-				if (Equals(value, _databaseModelDesignerViewModel)) return;
-				_databaseModelDesignerViewModel = value;
+				if (Equals(value, _databaseModelDesignerViewModels)) return;
+				_databaseModelDesignerViewModels = value;
 				OnPropertyChanged();
 			}
 		}
 
 		public MainWindowViewModel()
 		{
-			DatabaseModelDesignerViewModel = new DatabaseModelDesignerViewModel();
+			DatabaseModelDesignerViewModels = new List<DatabaseModelDesignerViewModel>();
 		}
 
 		public event PropertyChangedEventHandler PropertyChanged;

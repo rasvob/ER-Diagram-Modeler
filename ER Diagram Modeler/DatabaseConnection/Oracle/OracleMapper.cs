@@ -27,7 +27,7 @@ namespace ER_Diagram_Modeler.DatabaseConnection.Oracle
 			throw new System.NotImplementedException();
 		}
 
-		public IEnumerable<DatabaseInfo> ListDatabases()
+		public IEnumerable<MsSqlDatabaseInfo> ListDatabases()
 		{
 			throw new System.NotImplementedException();
 		}

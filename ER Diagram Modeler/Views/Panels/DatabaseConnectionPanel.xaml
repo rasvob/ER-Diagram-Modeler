@@ -7,6 +7,7 @@
              xmlns:xcad="http://schemas.xceed.com/wpf/xaml/avalondock"
              xmlns:system="clr-namespace:System;assembly=mscorlib"
 			 xmlns:buttons="clr-namespace:ER_Diagram_Modeler.Controls.Buttons"
+			 x:Name="Panel"
              mc:Ignorable="d" 
             >
 	
@@ -28,8 +29,12 @@
 	</UserControl.CommandBindings>
 	
 	
-	<StackPanel Orientation="Vertical">
-		<StackPanel Orientation="Horizontal" Background="White" Height="30">
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto"></RowDefinition>
+			<RowDefinition Height="*"></RowDefinition>
+		</Grid.RowDefinitions>
+		<StackPanel Orientation="Horizontal" Background="White" Height="30" Grid.Row="0">
 			<buttons:DesignerToolBarButton x:Name="ConnectoToServerButton"
 										   Click="ConnectoToServerButton_OnClick"
 										   Height="30"
@@ -52,5 +57,22 @@
 										   Icon="{StaticResource DisconnectFromServerIcon}">
 			</buttons:DesignerToolBarButton>
 		</StackPanel>
-	</StackPanel>
+
+		<Grid Grid.Row="1" x:Name="MsSqlServerGrid" Visibility="Collapsed">
+			<Grid.RowDefinitions>
+				<RowDefinition Height="Auto"></RowDefinition>
+				<RowDefinition Height="*"></RowDefinition>
+			</Grid.RowDefinitions>
+			<ComboBox Grid.Row="0" x:Name="MsSqlDatabaseComboBox" SelectionChanged="MsSqlDatabaseComboBox_OnSelectionChanged">
+
+			</ComboBox>
+			<TreeView Grid.Row="1" x:Name="MsSqlTreeView" 
+				  Style="{StaticResource VirtualisedMetroTreeView}">
+			</TreeView>
+		</Grid>
+
+		<Grid Grid.Row="1" x:Name="OracleStackPanel"  Visibility="Collapsed">
+
+		</Grid>
+	</Grid>
 </UserControl>
