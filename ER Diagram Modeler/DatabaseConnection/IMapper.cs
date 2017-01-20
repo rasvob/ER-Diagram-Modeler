@@ -8,7 +8,7 @@ namespace ER_Diagram_Modeler.DatabaseConnection
 	public interface IMapper: IDisposable
 	{
 		int CreateTable(string name);
-		IEnumerable<MsSqlDatabaseInfo> ListDatabases();
 		IEnumerable<TableModel> ListTables();
+		TableModel SelectTableDetails(string id, string name);
 	}
 }

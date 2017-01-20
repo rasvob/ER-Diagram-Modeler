@@ -5,7 +5,7 @@ using ER_Diagram_Modeler.Models.Designer;
 
 namespace ER_Diagram_Modeler.DatabaseConnection.Oracle
 {
-	public class OracleMapper: IMapper
+	public class OracleMapper: IOracleMapper
 	{
 		private readonly OracleDatabase _database = new OracleDatabase();
 
@@ -27,12 +27,12 @@ namespace ER_Diagram_Modeler.DatabaseConnection.Oracle
 			throw new System.NotImplementedException();
 		}
 
-		public IEnumerable<MsSqlDatabaseInfo> ListDatabases()
+		public IEnumerable<TableModel> ListTables()
 		{
 			throw new System.NotImplementedException();
 		}
 
-		public IEnumerable<TableModel> ListTables()
+		public TableModel SelectTableDetails(string id, string name)
 		{
 			throw new System.NotImplementedException();
 		}

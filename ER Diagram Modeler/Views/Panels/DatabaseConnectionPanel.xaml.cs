@@ -17,7 +17,9 @@ using ER_Diagram_Modeler.Controls.Buttons;
 using ER_Diagram_Modeler.DatabaseConnection.SqlServer;
 using ER_Diagram_Modeler.Models.Database;
 using ER_Diagram_Modeler.Models.Designer;
+using ER_Diagram_Modeler.ViewModels;
 using ER_Diagram_Modeler.ViewModels.Enums;
+using Xceed.Wpf.AvalonDock.Controls;
 using Xceed.Wpf.AvalonDock.Layout;
 
 namespace ER_Diagram_Modeler.Views.Panels
@@ -28,6 +30,7 @@ namespace ER_Diagram_Modeler.Views.Panels
 	public partial class DatabaseConnectionPanel : UserControl
 	{
 		public event EventHandler<ConnectionType> ConnectionClick;
+		public event EventHandler<TableModel> AddTable; 
 		public List<MsSqlDatabaseInfo> MsSqlDatabaseInfos { get; set; }
 
 		public DatabaseConnectionPanel()
@@ -132,10 +135,14 @@ namespace ER_Diagram_Modeler.Views.Panels
 					{
 						databaseInfo.Tables.Add(model);
 
-						tables.Items.Add(new TreeViewItem()
+						TreeViewItem item = new TreeViewItem
 						{
-							Header = model.Title
-						});
+							Header = model.Title,
+							IsEnabled = databaseInfo.Name.Equals(origdb)
+						};
+
+						SetupTreeViewItemContextMenu(item, model);
+						tables.Items.Add(item);
 					}
 
 					root.Items.Add(tables);
@@ -144,6 +151,20 @@ namespace ER_Diagram_Modeler.Views.Panels
 			}
 
 			SessionProvider.Instance.Database = origdb;
+		}
+
+		private void SetupTreeViewItemContextMenu(TreeViewItem item, TableModel model)
+		{
+			ContextMenu menu = new ContextMenu();
+			MenuItem addTableToDiagramItem = new MenuItem {Header = $"Add {model.Title} to diagram"};
+			addTableToDiagramItem.Click += (sender, args) => OnAddTable(model);
+			menu.Items.Add(addTableToDiagramItem);
+			item.ContextMenu = menu;
+		}
+
+		protected virtual void OnAddTable(TableModel e)
+		{
+			AddTable?.Invoke(this, e);
 		}
 	}
 }

@@ -129,10 +129,17 @@
     <Compile Include="Controls\Buttons\DesignerToolBarButton.cs" />
     <Compile Include="DatabaseConnection\DatabaseProxy.cs" />
     <Compile Include="DatabaseConnection\IMapper.cs" />
+    <Compile Include="DatabaseConnection\Oracle\IOracleMapper.cs" />
     <Compile Include="DatabaseConnection\Oracle\OracleDatabase.cs" />
     <Compile Include="DatabaseConnection\Oracle\OracleMapper.cs" />
+    <Compile Include="DatabaseConnection\SqlServer\IMsSqlMapper.cs" />
     <Compile Include="DatabaseConnection\SqlServer\MsSqlDatabase.cs" />
     <Compile Include="DatabaseConnection\SqlServer\MsSqlMapper.cs" />
+    <Compile Include="DiagramConstruction\DiagramFacade.cs" />
+    <Compile Include="DiagramConstruction\Strategy\DatabaseContext.cs" />
+    <Compile Include="DiagramConstruction\Strategy\IDatabseStrategy.cs" />
+    <Compile Include="DiagramConstruction\Strategy\MsSqlStrategy.cs" />
+    <Compile Include="DiagramConstruction\Strategy\OracleStrategy.cs" />
     <Compile Include="Dialogs\CanvasDimensionDialog.xaml.cs">
       <DependentUpon>CanvasDimensionDialog.xaml</DependentUpon>
     </Compile>

@@ -21,6 +21,7 @@ using System.Xml.Linq;
 using ER_Diagram_Modeler.Configuration.Providers;
 using ER_Diagram_Modeler.DatabaseConnection;
 using ER_Diagram_Modeler.DatabaseConnection.SqlServer;
+using ER_Diagram_Modeler.DiagramConstruction;
 using ER_Diagram_Modeler.Dialogs;
 using ER_Diagram_Modeler.Models.Designer;
 using ER_Diagram_Modeler.ViewModels;
@@ -47,6 +48,28 @@ namespace ER_Diagram_Modeler
 			MainWindowViewModel = new MainWindowViewModel();
 			DataContext = MainWindowViewModel;
 			DatabaseConnectionSidebar.ConnectionClick += DatabaseConnectionSidebarOnConnectionClick;
+			DatabaseConnectionSidebar.AddTable += DatabaseConnectionSidebarOnAddTable;
+		}
+
+		private void DatabaseConnectionSidebarOnAddTable(object sender, TableModel model)
+		{
+			var idx = MainDocumentPane.SelectedContentIndex;
+
+			if (idx < 0)
+			{
+				return;
+			}
+
+			var content = MainDocumentPane.Children[idx].Content;
+
+			var diagram = content as DatabaseModelDesigner;
+			if (diagram == null)
+			{
+				return;
+			}
+
+			var facade = new DiagramFacade(diagram.ViewModel);
+			facade.AddTable(model);
 		}
 
 		private void AddNewDiagramDocument(string title)
@@ -65,6 +88,7 @@ namespace ER_Diagram_Modeler
 			{
 				DiagramTitle = title
 			};
+
 			MainWindowViewModel.DatabaseModelDesignerViewModels.Add(designerViewModel);
 
 			anchorable.Content = new DatabaseModelDesigner()
@@ -127,7 +151,21 @@ namespace ER_Diagram_Modeler
 
 		private void MenuItemTest_OnClick(object sender, RoutedEventArgs e)
 		{
-			//MainWindowViewModel.DatabaseModelDesignerViewModel.TableViewModels.Add(SeedDataTable());
+			Trace.WriteLine("ssss");
+
+			var idx = MainDocumentPane.SelectedContentIndex;
+
+			if(idx < 0)
+			{
+				return;
+			}
+
+			var content = MainDocumentPane.Children[idx].Content;
+
+			var diagram = content as DatabaseModelDesigner;
+
+			Debug.Assert(diagram != null, "diagram != null");
+			var vm = diagram.ViewModel;
 		}
 
 		private void ChangeCanvasSize_OnExecuted(object sender, ExecutedRoutedEventArgs e)

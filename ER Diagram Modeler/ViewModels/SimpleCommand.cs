@@ -11,8 +11,8 @@ namespace ER_Diagram_Modeler.ViewModels
 
 		public SimpleCommand(Predicate<object> canExecuteDelegate, Action<object> executeDelegate)
 		{
-			CanExecuteDelegate = CanExecuteDelegate;
-			ExecuteDelegate = ExecuteDelegate;
+			CanExecuteDelegate = canExecuteDelegate;
+			ExecuteDelegate = executeDelegate;
 		}
 
 		public SimpleCommand(Action<object> executeDelegate)

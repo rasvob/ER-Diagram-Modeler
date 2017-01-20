@@ -20,6 +20,18 @@ namespace ER_Diagram_Modeler.Models.Designer
 
 		private IEnumerable<Datatype> _datatypesItemSource = DatatypeProvider.Instance.SessionBasedDatatypes;
 		private Datatype _selectedDatatype;
+		private string _id;
+
+		public string Id
+		{
+			get { return _id; }
+			set
+			{
+				if (value == _id) return;
+				_id = value;
+				OnPropertyChanged();
+			}
+		}
 
 		public Datatype SelectedDatatype
 		{

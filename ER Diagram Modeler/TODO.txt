@@ -6,7 +6,7 @@ Save to XML/DB
 Create script
 Automatic DB update
 Oracle support
-Connectin to DB
+Connection to DB - Only Oracle missing
 
 ---Other
 Add comments
