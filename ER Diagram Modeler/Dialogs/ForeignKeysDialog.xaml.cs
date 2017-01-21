@@ -91,8 +91,15 @@ namespace ER_Diagram_Modeler.Dialogs
 			if (InfoViewModel?.RelationshipModel != null)
 			{
 				GridData = new List<RowModelPair>();
-				GridData.AddRange(InfoViewModel.RelationshipModel.Attributes);
+
+				foreach (RowModelPair pair in InfoViewModel.RelationshipModel.Attributes)
+				{
+					GridData.Add(pair);
+				}
+
 				OnPropertyChanged(nameof(GridData));
+
+				ForeignKeysGrid.ItemsSource = GridData;
 			}
 		}
 

@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using ER_Diagram_Modeler.Annotations;
 using ER_Diagram_Modeler.Configuration.Providers;
+using ER_Diagram_Modeler.Models.Designer;
 using ER_Diagram_Modeler.ViewModels.Enums;
 
 namespace ER_Diagram_Modeler.ViewModels
@@ -12,6 +13,18 @@ namespace ER_Diagram_Modeler.ViewModels
 	public class MainWindowViewModel: INotifyPropertyChanged
 	{
 		private List<DatabaseModelDesignerViewModel> _databaseModelDesignerViewModels;
+		private TableRowModel _flyoutRowModel;
+
+		public TableRowModel FlyoutRowModel
+		{
+			get { return _flyoutRowModel; }
+			set
+			{
+				if (Equals(value, _flyoutRowModel)) return;
+				_flyoutRowModel = value;
+				OnPropertyChanged();
+			}
+		}
 
 		public List<DatabaseModelDesignerViewModel> DatabaseModelDesignerViewModels
 		{
@@ -27,6 +40,7 @@ namespace ER_Diagram_Modeler.ViewModels
 		public MainWindowViewModel()
 		{
 			DatabaseModelDesignerViewModels = new List<DatabaseModelDesignerViewModel>();
+			FlyoutRowModel = new TableRowModel();
 		}
 
 		public event PropertyChangedEventHandler PropertyChanged;

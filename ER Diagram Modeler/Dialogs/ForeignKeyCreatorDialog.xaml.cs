@@ -134,6 +134,8 @@ namespace ER_Diagram_Modeler.Dialogs
 
 				model.BuildConnection();
 
+				await Task.Delay(100);
+
 				DesignerViewModel.ConnectionInfoViewModels.Add(model);
 				DialogResult = true;
 				Close();

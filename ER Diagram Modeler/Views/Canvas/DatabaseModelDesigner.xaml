@@ -9,6 +9,7 @@
              xmlns:zoomBox="clr-namespace:ER_Diagram_Modeler.Views.Canvas.ZoomBox"
              xmlns:valueConverters="clr-namespace:ER_Diagram_Modeler.ValueConverters"
              xmlns:buttons="clr-namespace:ER_Diagram_Modeler.Controls.Buttons"
+             xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
              mc:Ignorable="d" 
 			 d:DataContext="{d:DesignInstance viewModels:DatabaseModelDesignerViewModel}"
 			 d:DesignHeight="300" d:DesignWidth="300">
@@ -78,7 +79,7 @@
 					Key="Delete" />
 		
 	</UserControl.InputBindings>
-	
+
 	<UserControl.CommandBindings>
 		<CommandBinding Command="{StaticResource TestCommand}"
 						Executed="TestCommand_OnExecuted"></CommandBinding>
@@ -95,7 +96,7 @@
 		<CommandBinding Command="{StaticResource Commands.DeleteItems}"
 						Executed="DeleteTablesCommand_OnExecuted"
 						CanExecute="DeleteTablesCommand_OnCanExecute"/>
-		
+
 		<CommandBinding Command="{StaticResource Commands.ShowGuideLines}"
 						Executed="ShowGuideLinesCommand_OnExecuted"></CommandBinding>
 

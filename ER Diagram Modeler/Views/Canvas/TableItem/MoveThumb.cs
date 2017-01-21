@@ -73,14 +73,15 @@ namespace ER_Diagram_Modeler.Views.Canvas.TableItem
 				double deltaHorizontal = (int)Math.Max(-minLeft, dragDeltaEventArgs.HorizontalChange);
 				double deltaVertical = (int)Math.Max(-minTop, dragDeltaEventArgs.VerticalChange);
 
+				//Limit movement by connection position
 				double topConnectionLimit = double.MaxValue;
 				double bottomConnectionLimit = double.MaxValue;
 				double leftConnectionLimit = double.MaxValue;
 				double rightConnectionLimit = double.MaxValue;
 
-				foreach (TableContent item in _canvas.SelectedTables)
+				foreach(TableContent item in _canvas.SelectedTables)
 				{
-					foreach (ConnectionInfoViewModel model in _connections.Where(t => t.SourceViewModel.Equals(item.TableViewModel)))
+					foreach(ConnectionInfoViewModel model in _connections.Where(t => t.SourceViewModel.Equals(item.TableViewModel)))
 					{
 						ConnectionInfoViewModel.GetConnectionLimits(ref topConnectionLimit, ref bottomConnectionLimit, ref leftConnectionLimit, ref rightConnectionLimit, model.SourceConnector, model);
 					}
@@ -91,15 +92,15 @@ namespace ER_Diagram_Modeler.Views.Canvas.TableItem
 					}
 				}
 
-				if (topConnectionLimit < double.MaxValue)
+				if(topConnectionLimit < double.MaxValue)
 				{
-					if (deltaVertical < 0 && minTop + deltaVertical <= minTop - topConnectionLimit)
+					if(deltaVertical < 0 && minTop + deltaVertical <= minTop - topConnectionLimit)
 					{
 						deltaVertical = 0;
 					}
 				}
 
-				if (bottomConnectionLimit < double.MaxValue)
+				if(bottomConnectionLimit < double.MaxValue)
 				{
 					if(deltaVertical > 0 && maxTop + deltaVertical >= maxTop + bottomConnectionLimit)
 					{
@@ -107,15 +108,15 @@ namespace ER_Diagram_Modeler.Views.Canvas.TableItem
 					}
 				}
 
-				if (leftConnectionLimit < double.MaxValue)
+				if(leftConnectionLimit < double.MaxValue)
 				{
-					if (deltaHorizontal < 0 && minLeft + deltaHorizontal <= minLeft - leftConnectionLimit)
+					if(deltaHorizontal < 0 && minLeft + deltaHorizontal <= minLeft - leftConnectionLimit)
 					{
 						deltaHorizontal = 0;
 					}
 				}
 
-				if (rightConnectionLimit < double.MaxValue)
+				if(rightConnectionLimit < double.MaxValue)
 				{
 					if(deltaHorizontal > 0 && maxLeft + deltaHorizontal >= maxLeft + rightConnectionLimit)
 					{
@@ -123,12 +124,12 @@ namespace ER_Diagram_Modeler.Views.Canvas.TableItem
 					}
 				}
 
-				if (maxLeft >= _canvas.ActualWidth && dragDeltaEventArgs.HorizontalChange > 0)
+				if(maxLeft >= _canvas.ActualWidth && dragDeltaEventArgs.HorizontalChange > 0)
 				{
 					deltaHorizontal = 0;
 				}
 
-				if (maxTop >= _canvas.ActualHeight && dragDeltaEventArgs.VerticalChange > 0)
+				if(maxTop >= _canvas.ActualHeight && dragDeltaEventArgs.VerticalChange > 0)
 				{
 					deltaVertical = 0;
 				}

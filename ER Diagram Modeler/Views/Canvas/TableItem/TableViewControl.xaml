@@ -17,6 +17,7 @@
 
 			<ResourceDictionary.MergedDictionaries>
 				<ResourceDictionary Source="../../../Themes/TableSettingsDropdownButton.xaml"></ResourceDictionary>
+				<ResourceDictionary Source="../../../Themes/TableAddRowButton.xaml"></ResourceDictionary>
 			</ResourceDictionary.MergedDictionaries>
 		</ResourceDictionary>
 	</UserControl.Resources>
@@ -30,6 +31,7 @@
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition Width="*"></ColumnDefinition>
 				<ColumnDefinition Width="Auto"></ColumnDefinition>
+				<ColumnDefinition Width="Auto"></ColumnDefinition>
 			</Grid.ColumnDefinitions>
 			<Label
 					Grid.Column="0"
@@ -42,8 +44,17 @@
 					IsHitTestVisible="False"
 					VerticalContentAlignment="Center">
 			</Label>
+			
+			<Button 
+				Content="AddNewRow"
+				Grid.Column="1"
+				Click="AddNewRow_OnClick"
+				Style="{StaticResource TableAddRowButtonStyle}">
+				
+			</Button>
+			
 			<Button Content="Menu"
-				        Grid.Column="1"
+				        Grid.Column="2"
 				        Style="{StaticResource TableSettingsDropdownButtonStyle}">
 				<Button.ContextMenu>
 					<ContextMenu>
@@ -63,15 +74,15 @@
 			        Visibility="{Binding ViewMode, Converter={StaticResource TableViewModeToVisibilityConverter}}">
 			<DataGrid x:Name="TableDataGrid"
 				          ItemsSource="{Binding Model.Attributes}"
+						  MouseDoubleClick="TableDataGrid_OnMouseDoubleClick"
 				          SelectionMode="Single"
 				          SelectionUnit="FullRow"
-				          CanUserAddRows="True"
+				          CanUserAddRows="False"
 				          CanUserReorderColumns="True"
 				          CanUserResizeColumns="True"
 				          CanUserSortColumns="False"
 				          CanUserDeleteRows="True"
 				          GridLinesVisibility="All"
-						  CellEditEnding="TableDataGrid_OnCellEditEnding"
 				          AutoGenerateColumns="False">
 				<DataGrid.Columns>
 					<DataGridCheckBoxColumn Binding="{Binding PrimaryKey, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
@@ -79,7 +90,7 @@
 						                        ElementStyle="{DynamicResource MetroDataGridCheckBox}">
 					</DataGridCheckBoxColumn>
 
-					<DataGridTextColumn Binding="{Binding Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, NotifyOnValidationError=True, ValidatesOnDataErrors=True}"
+					<DataGridTextColumn Binding="{Binding Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, NotifyOnValidationError=True, ValidatesOnDataErrors=True}" IsReadOnly="True"
 						                    Header="Name" />
 
 					<DataGridTemplateColumn Header="Data Type" x:Name="DataTypeColumn">

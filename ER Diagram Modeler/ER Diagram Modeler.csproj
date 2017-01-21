@@ -155,6 +155,7 @@
     </Compile>
     <Compile Include="EventArgs\ConnectionLineMovingEventArgs.cs" />
     <Compile Include="EventArgs\ConnectionPointEventArgs.cs" />
+    <Compile Include="EventArgs\EditRowEventArgs.cs" />
     <Compile Include="EventArgs\ScaleEventArgs.cs" />
     <Compile Include="EventArgs\TablePositionAndMeasureEventArgs.cs" />
     <Compile Include="Models\Database\DiagramModel.cs" />
@@ -252,6 +253,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Resources\Icons.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Themes\TableAddRowButton.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

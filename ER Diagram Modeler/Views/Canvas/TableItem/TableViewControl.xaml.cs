@@ -14,6 +14,8 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using ER_Diagram_Modeler.Dialogs;
+using ER_Diagram_Modeler.EventArgs;
+using ER_Diagram_Modeler.Models.Designer;
 using ER_Diagram_Modeler.ViewModels;
 using ER_Diagram_Modeler.ViewModels.Enums;
 
@@ -25,6 +27,8 @@ namespace ER_Diagram_Modeler.Views.Canvas.TableItem
 	public partial class TableViewControl : UserControl
 	{
 		public TableViewModel ViewModel { get; set; }
+		public event EventHandler<TableModel> AddNewRow;
+		public event EventHandler<EditRowEventArgs> EditSelectedRow; 
 
 		public TableViewControl()
 		{
@@ -90,9 +94,35 @@ namespace ER_Diagram_Modeler.Views.Canvas.TableItem
 			}
 		}
 
-		private void TableDataGrid_OnCellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
+		private void TableDataGrid_OnMouseDoubleClick(object sender, MouseButtonEventArgs e)
 		{
-			Trace.WriteLine(e.EditAction);
+			int index = TableDataGrid.SelectedIndex;
+
+			if (index < 0)
+			{
+				return;
+			}
+
+			OnEditSelectedRow(new EditRowEventArgs()
+			{
+				RowModel = ViewModel.Model.Attributes[index],
+				TableModel = ViewModel.Model
+			});			
+		}
+
+		private void AddNewRow_OnClick(object sender, RoutedEventArgs e)
+		{
+			OnAddNewRow(ViewModel.Model);
+		}
+
+		protected virtual void OnAddNewRow(TableModel e)
+		{
+			AddNewRow?.Invoke(this, e);
+		}
+
+		protected virtual void OnEditSelectedRow(EditRowEventArgs e)
+		{
+			EditSelectedRow?.Invoke(this, e);
 		}
 	}
 }

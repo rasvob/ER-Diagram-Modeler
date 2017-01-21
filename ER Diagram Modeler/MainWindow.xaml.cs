@@ -134,21 +134,12 @@ namespace ER_Diagram_Modeler
 
 		private void MenuItemTest_OnClick(object sender, RoutedEventArgs e)
 		{
-			Trace.WriteLine("ssss");
+			var flyout = Flyouts.Items[1] as Flyout;
 
-			var idx = MainDocumentPane.SelectedContentIndex;
-
-			if(idx < 0)
+			if(flyout != null)
 			{
-				return;
+				flyout.IsOpen = !flyout.IsOpen;
 			}
-
-			var content = MainDocumentPane.Children[idx].Content;
-
-			var diagram = content as DatabaseModelDesigner;
-
-			Debug.Assert(diagram != null, "diagram != null");
-			var vm = diagram.ViewModel;
 		}
 
 		private void ChangeCanvasSize_OnExecuted(object sender, ExecutedRoutedEventArgs e)
@@ -313,6 +304,16 @@ namespace ER_Diagram_Modeler
 		private void NewDiagram_OnCanExecute(object sender, CanExecuteRoutedEventArgs e)
 		{
 			e.CanExecute = SessionProvider.Instance.ConnectionType != ConnectionType.None;
+		}
+
+		private void ApplyAttributeEdit_OnExecuted(object sender, ExecutedRoutedEventArgs e)
+		{
+			
+		}
+
+		private void ApplyAttributeEdit_OnCanExecute(object sender, CanExecuteRoutedEventArgs e)
+		{
+			e.CanExecute = true;
 		}
 	}
 }

@@ -29,6 +29,7 @@
 			<RoutedUICommand x:Key="Commands.ConnectToOracle" />
 			<RoutedUICommand x:Key="Commands.ShowDatabaseConnectionLayout" />
 			<RoutedUICommand x:Key="Commands.NewDiagram" />
+			<RoutedUICommand x:Key="Commands.ApplyAttributeEdit" />
 		</ResourceDictionary>
 	</Window.Resources>
 	
@@ -48,6 +49,10 @@
 		<CommandBinding Command="{StaticResource Commands.NewDiagram}"
 						Executed="NewDiagram_OnExecuted"
 						CanExecute="NewDiagram_OnCanExecute"></CommandBinding>
+		
+		<CommandBinding Command="{StaticResource Commands.ApplyAttributeEdit}"
+						Executed="ApplyAttributeEdit_OnExecuted"
+						CanExecute="ApplyAttributeEdit_OnCanExecute"></CommandBinding>
 	</Window.CommandBindings>
 	
 	<Window.InputBindings>
@@ -99,7 +104,7 @@
 						 Controls:TextBoxHelper.UseFloatingWatermark="True"
 						 Controls:TextBoxHelper.Watermark="Username">
 						</TextBox>
-						
+
 						<Label Content="Password"></Label>
 						<PasswordBox x:Name="MsSqlPasswordBox"
 							Style="{StaticResource MetroButtonRevealedPasswordBox}"
@@ -109,6 +114,166 @@
 									 />
 					</StackPanel>
 					<Button Content="Connect" Grid.Row="3" Margin="0 10" Command="{StaticResource Commands.ConnectToMsSqlServer}"/>
+				</Grid>
+			</Controls:Flyout>
+
+
+			<Controls:Flyout
+				x:Name="AttributeFlyout"
+				AreAnimationsEnabled="True"
+				Header="Attribute edit"
+				Position="Bottom"
+				CloseButtonIsCancel="False"
+				AnimateOnPositionChange="True"
+				AnimateOpacity="False"
+				Theme="Light"
+				IsModal="True">
+				
+				<Grid Margin="30">
+					<Grid.RowDefinitions>
+						<RowDefinition Height="Auto"></RowDefinition>
+					</Grid.RowDefinitions>
+
+					<Grid Row="0">
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="Auto"></ColumnDefinition>
+							<ColumnDefinition Width="Auto"></ColumnDefinition>
+							<ColumnDefinition Width="Auto"></ColumnDefinition>
+							<ColumnDefinition Width="Auto"></ColumnDefinition>
+							<ColumnDefinition Width="Auto"></ColumnDefinition>
+							<ColumnDefinition Width="Auto"></ColumnDefinition>
+							<ColumnDefinition Width="Auto"></ColumnDefinition>
+						</Grid.ColumnDefinitions>
+						
+						<TextBox Grid.Column="0"
+							Text="{Binding FlyoutRowModel.Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, NotifyOnValidationError=True, ValidatesOnDataErrors=True}"
+							IsReadOnly="False"
+							Controls:TextBoxHelper.ClearTextButton="True"
+							Controls:TextBoxHelper.UseFloatingWatermark="True"
+							Controls:TextBoxHelper.Watermark="Name"
+							Margin="5"
+							>
+							
+						</TextBox>
+						
+						<ComboBox 
+								x:Name="DataTypeComboBox"
+								Grid.Column="1"
+								ItemsSource="{Binding FlyoutRowModel.DatatypesItemSource}"
+								SelectedItem="{Binding FlyoutRowModel.SelectedDatatype, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+								DisplayMemberPath="Name"
+								MaxDropDownHeight="200"
+								Style="{DynamicResource VirtualisedMetroComboBox}"
+								IsEditable="False"
+								Margin="5"
+								>
+						</ComboBox>
+
+						<TextBox Margin="5"
+								x:Name="LengthTextBox"
+								Grid.Column="2"
+								Controls:TextBoxHelper.UseFloatingWatermark="True"
+								Controls:TextBoxHelper.Watermark="Lenght"
+								Text="{Binding FlyoutRowModel.SelectedDatatype.Lenght, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, NotifyOnValidationError=True, ValidatesOnDataErrors=True}">
+							<TextBox.Style>
+								<Style TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}">
+									<Style.Triggers>
+										<DataTrigger
+											Binding="{Binding FlyoutRowModel.SelectedDatatype.HasLenght, 
+											Mode=OneWay, 
+											UpdateSourceTrigger=PropertyChanged}"
+											Value="True">
+											<Setter Property="Visibility" Value="Visible"></Setter>
+										</DataTrigger>
+
+										<DataTrigger
+											Binding="{Binding FlyoutRowModel.SelectedDatatype.HasLenght, 
+											Mode=OneWay, 
+											UpdateSourceTrigger=PropertyChanged}"
+											Value="False">
+											<Setter Property="Visibility" Value="Collapsed"></Setter>
+										</DataTrigger>
+
+										<Trigger Property="Validation.HasError" Value="True">
+											<Setter Property="FocusManager.FocusedElement" Value="{Binding ElementName=LengthTextBox}"></Setter>
+										</Trigger>
+									</Style.Triggers>
+								</Style>
+							</TextBox.Style>
+						</TextBox>
+
+						<TextBox Margin="5"
+							x:Name="PrecisonTextBox"
+							Grid.Column="3"
+							Controls:TextBoxHelper.UseFloatingWatermark="True"
+							Controls:TextBoxHelper.Watermark="Precision"
+							Text="{Binding FlyoutRowModel.SelectedDatatype.Precision, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, NotifyOnValidationError=True, ValidatesOnDataErrors=True}">
+							<TextBox.Style>
+								<Style TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}">
+									<Style.Triggers>
+										<DataTrigger
+											Binding="{Binding FlyoutRowModel.SelectedDatatype.HasPrecision, 
+											Mode=OneWay, 
+											UpdateSourceTrigger=PropertyChanged}"
+											Value="True">
+											<Setter Property="Visibility" Value="Visible"></Setter>
+										</DataTrigger>
+
+										<DataTrigger
+											Binding="{Binding FlyoutRowModel.SelectedDatatype.HasPrecision, 
+											Mode=OneWay, 
+											UpdateSourceTrigger=PropertyChanged}"
+											Value="False">
+											<Setter Property="Visibility" Value="Collapsed"></Setter>
+										</DataTrigger>
+									</Style.Triggers>
+								</Style>
+							</TextBox.Style>
+						</TextBox>
+
+						<TextBox x:Name="ScaleTextBox"
+							Grid.Column="4"
+							Margin="5"
+							Controls:TextBoxHelper.UseFloatingWatermark="True"
+							Controls:TextBoxHelper.Watermark="Scale"
+							Text="{Binding FlyoutRowModel.SelectedDatatype.Scale, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, NotifyOnValidationError=True, ValidatesOnDataErrors=True}">
+							<TextBox.Style>
+								<Style TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}">
+									<Style.Triggers>
+										<DataTrigger
+											Binding="{Binding FlyoutRowModel.SelectedDatatype.HasScale, 
+											Mode=OneWay, 
+											UpdateSourceTrigger=PropertyChanged}"
+											Value="True">
+											<Setter Property="Visibility" Value="Visible"></Setter>
+										</DataTrigger>
+
+										<DataTrigger
+											Binding="{Binding FlyoutRowModel.SelectedDatatype.HasScale, 
+											Mode=OneWay, 
+											UpdateSourceTrigger=PropertyChanged}"
+											Value="False">
+											<Setter Property="Visibility" Value="Collapsed"></Setter>
+										</DataTrigger>
+									</Style.Triggers>
+								</Style>
+							</TextBox.Style>
+						</TextBox>
+
+						<CheckBox Grid.Column="5"
+								  IsThreeState="False"
+								  Margin="5"
+								  Content="Allow null"
+								  IsChecked="{Binding FlyoutRowModel.AllowNull, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+								  >
+						</CheckBox>
+						
+						<Button Grid.Column="6" 
+								Command="{StaticResource Commands.ApplyAttributeEdit}"
+								Content="Apply">
+								
+						</Button>
+					</Grid>
 				</Grid>
 			</Controls:Flyout>
 		</Controls:FlyoutsControl>
