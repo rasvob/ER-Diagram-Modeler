@@ -307,9 +307,9 @@ namespace ER_Diagram_Modeler.Models.Designer
 						break;
 
 					case "Lenght":
-						if(Lenght < 0 || Lenght > MaxLenght)
+						if(Lenght < -1 || Lenght > MaxLenght)
 						{
-							return $"Lenght value has to be between {0} and {MaxLenght}";
+							return $"Lenght value has to be between {-1} and {MaxLenght}";
 						}
 						break;
 					default:

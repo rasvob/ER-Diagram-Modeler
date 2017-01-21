@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using ER_Diagram_Modeler.Models.Designer;
 using ER_Diagram_Modeler.ViewModels.Enums;
 
@@ -34,5 +35,10 @@ namespace ER_Diagram_Modeler.DiagramConstruction.Strategy
 		{
 			return _strategy.ReadTableDetails(id, name);
 		}
+
+		public IEnumerable<RelationshipModel> ListRelationshipsForTable(string name, IEnumerable<TableModel> tables)
+		{
+			return _strategy.ReadRelationshipModels(name, tables);
+		} 
 	}
 }

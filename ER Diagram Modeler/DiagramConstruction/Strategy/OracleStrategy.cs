@@ -1,4 +1,5 @@
-﻿using ER_Diagram_Modeler.DatabaseConnection;
+﻿using System.Collections.Generic;
+using ER_Diagram_Modeler.DatabaseConnection;
 using ER_Diagram_Modeler.DatabaseConnection.Oracle;
 using ER_Diagram_Modeler.Models.Designer;
 
@@ -12,6 +13,11 @@ namespace ER_Diagram_Modeler.DiagramConstruction.Strategy
 			{
 				return mapper.SelectTableDetails(id, name);
 			}
+		}
+
+		public IEnumerable<RelationshipModel> ReadRelationshipModels(string table, IEnumerable<TableModel> tables)
+		{
+			throw new System.NotImplementedException();
 		}
 	}
 }

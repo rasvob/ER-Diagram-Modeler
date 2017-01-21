@@ -25,15 +25,58 @@ namespace ER_Diagram_Modeler.DiagramConstruction
 			ViewModel = designer.ViewModel;
 		}
 
-		public void AddTable(TableModel source)
+		public bool AddTable(TableModel source)
+		{
+			int x, y;
+			FindFreePosition(out x, out y);
+			return AddTable(source, x, y);
+		}
+
+		public void RefreshTableModel(TableViewModel vm)
+		{
+			var ctx = new DatabaseContext(SessionProvider.Instance.ConnectionType);
+			var model = ctx.ReadTableDetails(vm.Model.Id, vm.Model.Title);
+
+			vm.Model.Attributes.Clear();
+			vm.Model.Attributes.AddRange(model.Attributes);
+		}
+
+		public bool AddTable(TableModel source, int x, int y)
 		{
 			var ctx = new DatabaseContext(SessionProvider.Instance.ConnectionType);
 
-			if (ViewModel.TableViewModels.Any(t => t.Model.Title.Equals(source.Title)))
+			if(ViewModel.TableViewModels.Any(t => t.Model.Title.Equals(source.Title)))
 			{
-				return;
+				return false;
 			}
 
+			TableViewModel vm = CreateTableViewModel(source, ctx);
+			AddTableViewModel(vm, x, y);
+			return true;
+		}
+
+		public void AddRelationShipsForTable(TableModel model, DesignerCanvas canvas)
+		{
+			var ctx = new DatabaseContext(SessionProvider.Instance.ConnectionType);
+
+			var relationships = ctx.ListRelationshipsForTable(model.Title, ViewModel.TableViewModels.Select(t => t.Model));
+
+
+			foreach (RelationshipModel relationship in relationships)
+			{
+				ConnectionInfoViewModel vm = new ConnectionInfoViewModel();
+				vm.DesignerCanvas = canvas;
+				vm.RelationshipModel = relationship;
+				vm.SourceViewModel = ViewModel.TableViewModels.FirstOrDefault(t => t.Model.Equals(relationship.Source));
+				vm.DestinationViewModel = ViewModel.TableViewModels.FirstOrDefault(t => t.Model.Equals(relationship.Destination));
+
+				vm.BuildConnection();
+				ViewModel.ConnectionInfoViewModels.Add(vm);
+			}
+		}
+
+		private TableViewModel CreateTableViewModel(TableModel source, DatabaseContext ctx)
+		{
 			TableModel model = ctx.ReadTableDetails(source.Id, source.Title);
 			model.Title = source.Title;
 			model.Id = source.Id;
@@ -41,8 +84,11 @@ namespace ER_Diagram_Modeler.DiagramConstruction
 			{
 				Model = model
 			};
-			int x, y;
-			FindFreePosition(out x, out y);
+			return vm;
+		}
+
+		private void AddTableViewModel(TableViewModel vm, int x, int y)
+		{
 			vm.Left = x;
 			vm.Top = y;
 			ViewModel.TableViewModels.Add(vm);

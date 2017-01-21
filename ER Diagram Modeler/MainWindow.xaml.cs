@@ -51,13 +51,22 @@ namespace ER_Diagram_Modeler
 			DatabaseConnectionSidebar.AddTable += DatabaseConnectionSidebarOnAddTable;
 		}
 
-		private void DatabaseConnectionSidebarOnAddTable(object sender, TableModel model)
+		private async void DatabaseConnectionSidebarOnAddTable(object sender, TableModel model)
 		{
 			var idx = MainDocumentPane.SelectedContentIndex;
 
 			if (idx < 0)
 			{
-				return;
+				var title = await ShowNewDiagramDialog();
+
+				if (title == null)
+				{
+					return;
+				}
+
+				AddNewDiagramDocument(title);
+
+				idx = MainDocumentPane.SelectedContentIndex;
 			}
 
 			var content = MainDocumentPane.Children[idx].Content;
@@ -69,7 +78,12 @@ namespace ER_Diagram_Modeler
 			}
 
 			var facade = new DiagramFacade(diagram.ViewModel);
-			facade.AddTable(model);
+			bool addTable = facade.AddTable(model);
+			if (addTable)
+			{
+				await Task.Delay(100);
+				facade.AddRelationShipsForTable(model, diagram.ModelDesignerCanvas);
+			}
 		}
 
 		private void AddNewDiagramDocument(string title)
@@ -118,37 +132,6 @@ namespace ER_Diagram_Modeler
 			}
 		}
 
-		public static TableViewModel SeedDataTable()
-		{
-			var attrs = new List<TableRowModel>();
-
-			var row1 = new TableRowModel("Id", DatatypeProvider.Instance.FindDatatype("int"));
-			var row2 = new TableRowModel("FirstName", DatatypeProvider.Instance.FindDatatype("varchar"));
-			var row3 = new TableRowModel("LastName", DatatypeProvider.Instance.FindDatatype("varchar"));
-			var row4 = new TableRowModel("Salary", DatatypeProvider.Instance.FindDatatype("numeric"));
-
-			row2.Datatype.Lenght = 100;
-			row3.Datatype.Lenght = 200;
-			row4.Datatype.Scale = 20;
-			row4.Datatype.Precision = 15;
-
-			row1.PrimaryKey = true;
-
-			attrs.Add(row1);
-			attrs.Add(row2);
-			attrs.Add(row3);
-			attrs.Add(row4);
-
-			var model = new TableModel();
-			model.Title = "Employee";
-			model.Attributes = attrs;
-			var vm = new TableViewModel(model);
-			vm.Left = 100;
-			vm.Top = 100;
-
-			return vm;
-		}
-
 		private void MenuItemTest_OnClick(object sender, RoutedEventArgs e)
 		{
 			Trace.WriteLine("ssss");
@@ -171,23 +154,28 @@ namespace ER_Diagram_Modeler
 		private void ChangeCanvasSize_OnExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
 			var activeDiagramModeler = MainDocumentPane.SelectedContent.Content as DatabaseModelDesigner;
-			var dialog = new CanvasDimensionDialog();
-			dialog.Owner = this;
-			dialog.CanvasWidth = activeDiagramModeler.ViewModel.CanvasWidth;
-			dialog.CanvasHeight = activeDiagramModeler.ViewModel.CanvasWidth;
-			dialog.ShowDialog();
-
-			if (dialog.DialogResult.HasValue && dialog.DialogResult.Value)
+			if (activeDiagramModeler != null)
 			{
-				activeDiagramModeler.ViewModel.CanvasWidth = dialog.CanvasWidth;
-				activeDiagramModeler.ViewModel.CanvasHeight = dialog.CanvasHeight;
-				activeDiagramModeler.CanvasDimensionsChanged();
+				var dialog = new CanvasDimensionDialog
+				{
+					Owner = this,
+					CanvasWidth = activeDiagramModeler.ViewModel.CanvasWidth,
+					CanvasHeight = activeDiagramModeler.ViewModel.CanvasWidth
+				};
+				dialog.ShowDialog();
+
+				if (dialog.DialogResult.HasValue && dialog.DialogResult.Value)
+				{
+					activeDiagramModeler.ViewModel.CanvasWidth = dialog.CanvasWidth;
+					activeDiagramModeler.ViewModel.CanvasHeight = dialog.CanvasHeight;
+					activeDiagramModeler.CanvasDimensionsChanged();
+				}
 			}
 		}
 
 		private void ChangeCanvasSize_OnCanExecute(object sender, CanExecuteRoutedEventArgs e)
 		{
-			var activeDiagramModeler = MainDocumentPane.SelectedContent.Content as DatabaseModelDesigner;
+			var activeDiagramModeler = MainDocumentPane.SelectedContent?.Content as DatabaseModelDesigner;
 
 			if (activeDiagramModeler != null)
 			{
@@ -302,10 +290,7 @@ namespace ER_Diagram_Modeler
 
 		private async void NewDiagram_OnExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
-			var result = await this.ShowInputAsync("Diagram title", "Enter diagram title", new MetroDialogSettings()
-			{
-				DefaultText = $"Diagram_{Guid.NewGuid()}"
-			});
+			var result = await ShowNewDiagramDialog();
 
 			if (result == null)
 			{
@@ -313,6 +298,16 @@ namespace ER_Diagram_Modeler
 			}
 
 			AddNewDiagramDocument(result);
+		}
+
+		private async Task<string> ShowNewDiagramDialog()
+		{
+			var result = await this.ShowInputAsync("Diagram title", "Enter diagram title", new MetroDialogSettings()
+			{
+				DefaultText = $"Diagram_{Guid.NewGuid()}"
+			});
+
+			return result;
 		}
 
 		private void NewDiagram_OnCanExecute(object sender, CanExecuteRoutedEventArgs e)

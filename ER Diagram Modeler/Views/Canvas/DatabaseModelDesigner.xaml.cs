@@ -411,136 +411,14 @@ namespace ER_Diagram_Modeler.Views.Canvas
 		//Test command F4
 		private void TestCommand_OnExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
-			var sourceTable = MainWindow.SeedDataTable();
-			var destTable = MainWindow.SeedDataTable();
-
-			sourceTable.Left = 50;
-			sourceTable.Top = 350;
-			destTable.Left = 700;
-			destTable.Top = 350;
-
-			ViewModel.TableViewModels.Add(sourceTable);
-			ViewModel.TableViewModels.Add(destTable);
-
-			sourceTable.Model.Title = "Source";
-			destTable.Model.Title = "Destination";
+			
 
 		}
 
 		//Test command F5
 		private void CommandBinding_OnExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
-			var info = new ConnectionInfoViewModel();
-			info.SourceViewModel = ViewModel.TableViewModels.FirstOrDefault();
-			info.DestinationViewModel = ViewModel.TableViewModels.LastOrDefault();
 
-			//Right
-			//var point1 =
-			//	new ConnectionPoint(info.SourceViewModel.Left + info.SourceViewModel.Width + Connector.ConnectorLenght, 450);
-			//var point2 =
-			//	new ConnectionPoint(info.DestinationViewModel.Left - Connector.ConnectorLenght
-			//		, 450);
-			//info.Points.Add(point2);
-			//info.Points.Add(point1);
-			//info.SourceConnector.Orientation = ConnectorOrientation.Right;
-			//info.DestinationConnector.Orientation = ConnectorOrientation.Left;
-			//info.SourceConnector.EndPoint = point1;
-			//info.DestinationConnector.EndPoint = point2;
-
-			//Up
-			//var point1 =
-			//	new ConnectionPoint(info.SourceViewModel.Left + 30, info.SourceViewModel.Top - Connector.ConnectorLenght);
-			//var point2 =
-			//	new ConnectionPoint(info.SourceViewModel.Left + 30, info.SourceViewModel.Top - Connector.ConnectorLenght - 30);
-			//var point3 = new ConnectionPoint(info.SourceViewModel.Left + +info.SourceViewModel.Width + 50, info.SourceViewModel.Top - Connector.ConnectorLenght - 30);
-			//var point4 = new ConnectionPoint(info.SourceViewModel.Left + +info.SourceViewModel.Width + 50, info.DestinationViewModel.Top + 50);
-			//var point5 = new ConnectionPoint(info.DestinationViewModel.Left - Connector.ConnectorLenght, info.DestinationViewModel.Top + 50);
-			//info.Points.Add(point1);
-			//info.Points.Add(point2);
-			//info.Points.Add(point3);
-			//info.Points.Add(point4);
-			//info.Points.Add(point5);
-			//info.SourceConnector.Orientation = ConnectorOrientation.Up;
-			//info.DestinationConnector.Orientation = ConnectorOrientation.Left;
-			//info.SourceConnector.EndPoint = point1;
-			//info.DestinationConnector.EndPoint = point5;
-
-			//Down
-			//var point1 =
-			//	new ConnectionPoint(info.SourceViewModel.Left + 30, info.SourceViewModel.Top + info.SourceViewModel.Height + Connector.ConnectorLenght);
-			//var point2 =
-			//	new ConnectionPoint(info.SourceViewModel.Left + 30, info.SourceViewModel.Top + info.SourceViewModel.Height + Connector.ConnectorLenght + 30);
-			//var point3 = new ConnectionPoint(info.SourceViewModel.Left + +info.SourceViewModel.Width + 50, info.SourceViewModel.Top + info.SourceViewModel.Height + Connector.ConnectorLenght + 30);
-			//var point4 = new ConnectionPoint(info.SourceViewModel.Left + +info.SourceViewModel.Width + 50, info.DestinationViewModel.Top + 50);
-			//var point5 = new ConnectionPoint(info.DestinationViewModel.Left - Connector.ConnectorLenght, info.DestinationViewModel.Top + 50);
-			//info.Points.Add(point1);
-			//info.Points.Add(point2);
-			//info.Points.Add(point3);
-			//info.Points.Add(point4);
-			//info.Points.Add(point5);
-			//info.SourceConnector.Orientation = ConnectorOrientation.Down;
-			//info.DestinationConnector.Orientation = ConnectorOrientation.Left;
-			//info.SourceConnector.EndPoint = point1;
-			//info.DestinationConnector.EndPoint = point5;
-
-			//Left
-			//var point1 =
-			//new ConnectionPoint(info.SourceViewModel.Left - Connector.ConnectorLenght, info.SourceViewModel.Top + 30);
-			//var point2 =
-			//	new ConnectionPoint(info.SourceViewModel.Left - Connector.ConnectorLenght - 3, info.SourceViewModel.Top + 30);
-			//var point3 = new ConnectionPoint(info.SourceViewModel.Left - Connector.ConnectorLenght - 3, info.SourceViewModel.Top - 50);
-			//var point4 = new ConnectionPoint(info.SourceViewModel.Left + +info.SourceViewModel.Width + 50, info.SourceViewModel.Top - 50);
-			//var point5 = new ConnectionPoint(info.SourceViewModel.Left + +info.SourceViewModel.Width + 50, info.DestinationViewModel.Top + 50);
-			//var point6 = new ConnectionPoint(info.DestinationViewModel.Left - Connector.ConnectorLenght, info.DestinationViewModel.Top + 50);
-			//info.Points.Add(point1);
-			//info.Points.Add(point2);
-			//info.Points.Add(point3);
-			//info.Points.Add(point4);
-			//info.Points.Add(point5);
-			//info.Points.Add(point6);
-			//info.SourceConnector.Orientation = ConnectorOrientation.Left;
-			//info.DestinationConnector.Orientation = ConnectorOrientation.Left;
-			//info.SourceConnector.EndPoint = point1;
-			//info.DestinationConnector.EndPoint = point6;
-
-			//Self
-			//info.SourceViewModel = null;
-			//info.SourceViewModel = info.DestinationViewModel;
-			//var point1 =
-			//	new ConnectionPoint(info.DestinationViewModel.Left - Connector.ConnectorLenght, info.DestinationViewModel.Top + 30);
-			//var point2 =
-			//	new ConnectionPoint(info.DestinationViewModel.Left - Connector.ConnectorLenght - 3, info.DestinationViewModel.Top + 30);
-			//var point3 = new ConnectionPoint(info.SourceViewModel.Left - Connector.ConnectorLenght - 3, info.DestinationViewModel.Top - 50);
-			//var point4 = new ConnectionPoint(info.SourceViewModel.Left + 50, info.DestinationViewModel.Top - 50);
-			//var point5 = new ConnectionPoint(info.SourceViewModel.Left + 50, info.DestinationViewModel.Top - Connector.ConnectorLenght);
-			//info.Points.Add(point1);
-			//info.Points.Add(point2);
-			//info.Points.Add(point3);
-			//info.Points.Add(point4);
-			//info.Points.Add(point5);
-			//info.SourceConnector.Orientation = ConnectorOrientation.Left;
-			//info.DestinationConnector.Orientation = ConnectorOrientation.Up;
-			//info.SourceConnector.EndPoint = point1;
-			//info.DestinationConnector.EndPoint = point5;
-
-
-			//info.SourceConnector.Cardinality = Cardinality.One;
-			//info.SourceConnector.Optionality = Optionality.Mandatory;
-			//info.DestinationConnector.Cardinality = Cardinality.Many;
-			//info.DestinationConnector.Optionality = Optionality.Mandatory;
-
-			//info.BuildLinesFromPoints();
-
-			info.RelationshipModel = new RelationshipModel();
-			info.RelationshipModel.Name = "Testovaci FK";
-			info.RelationshipModel.Optionality = Optionality.Optional;
-			info.RelationshipModel.Source = info.SourceViewModel.Model;
-			info.RelationshipModel.Destination = info.DestinationViewModel.Model;
-			info.RelationshipModel.Attributes.Add(new RowModelPair() {Destination = new TableRowModel("aaa", DatatypeProvider.Instance.SqlServerDatatypes.FirstOrDefault()), Source = new TableRowModel("bbb", DatatypeProvider.Instance.SqlServerDatatypes.Skip(2).FirstOrDefault())});
-			info.DesignerCanvas = ModelDesignerCanvas;
-			info.BuildConnection();
-
-			ViewModel.ConnectionInfoViewModels.Add(info);
 		}
 
 		//Test command F6

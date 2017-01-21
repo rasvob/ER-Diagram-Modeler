@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using ER_Diagram_Modeler.DatabaseConnection.Dto;
 using ER_Diagram_Modeler.Models.Database;
 
 namespace ER_Diagram_Modeler.DatabaseConnection.SqlServer
@@ -6,5 +7,6 @@ namespace ER_Diagram_Modeler.DatabaseConnection.SqlServer
 	public interface IMsSqlMapper: IMapper
 	{
 		IEnumerable<MsSqlDatabaseInfo> ListDatabases();
+		IEnumerable<MsSqlForeignKeyDto> ListForeignKeys(string tableName);
 	}
 }

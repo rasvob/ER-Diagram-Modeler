@@ -63,7 +63,7 @@
 			        Visibility="{Binding ViewMode, Converter={StaticResource TableViewModeToVisibilityConverter}}">
 			<DataGrid x:Name="TableDataGrid"
 				          ItemsSource="{Binding Model.Attributes}"
-				          SelectionMode="Extended"
+				          SelectionMode="Single"
 				          SelectionUnit="FullRow"
 				          CanUserAddRows="True"
 				          CanUserReorderColumns="True"

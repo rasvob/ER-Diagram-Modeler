@@ -312,6 +312,11 @@ namespace ER_Diagram_Modeler.ViewModels
 				return;
 			}
 
+			if (DestinationConnector.EndPoint == null)
+			{
+				return;
+			}
+
 			switch(DestinationConnector.Orientation)
 			{
 				case ConnectorOrientation.Up:

@@ -21,6 +21,18 @@ namespace ER_Diagram_Modeler.Models.Designer
 		private IEnumerable<Datatype> _datatypesItemSource = DatatypeProvider.Instance.SessionBasedDatatypes;
 		private Datatype _selectedDatatype;
 		private string _id;
+		private string _primaryKeyConstraintName;
+
+		public string PrimaryKeyConstraintName
+		{
+			get { return _primaryKeyConstraintName; }
+			set
+			{
+				if (value == _primaryKeyConstraintName) return;
+				_primaryKeyConstraintName = value;
+				OnPropertyChanged();
+			}
+		}
 
 		public string Id
 		{
