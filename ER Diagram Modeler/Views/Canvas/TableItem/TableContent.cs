@@ -4,6 +4,8 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using ER_Diagram_Modeler.EventArgs;
+using ER_Diagram_Modeler.Models.Designer;
 using ER_Diagram_Modeler.ViewModels;
 using ER_Diagram_Modeler.ViewModels.Enums;
 
@@ -12,6 +14,9 @@ namespace ER_Diagram_Modeler.Views.Canvas.TableItem
 	public class TableContent: ContentControl
 	{
 		public TableViewModel TableViewModel { get; set; }
+
+		public event EventHandler<TableModel> AddNewRow;
+		public event EventHandler<EditRowEventArgs> EditSelectedRow;
 
 		public static readonly int ZIndexSelectedValue = DesignerCanvas.TableSelectedZIndex;
 		public static readonly int ZIndexUnSelectedValue = DesignerCanvas.TableUnselectedZIndex;
@@ -68,7 +73,21 @@ namespace ER_Diagram_Modeler.Views.Canvas.TableItem
 			TableViewModel = tableViewModel;
 			TableViewModel.PropertyChanged += TableViewModelOnPropertyChanged;
 			Style = Application.Current.FindResource("TableItemStyle") as Style;
-			Content = new TableViewControl(TableViewModel);
+			var control = new TableViewControl(TableViewModel);
+			control.AddNewRow += ControlOnAddNewRow;
+			control.EditSelectedRow += ControlOnEditSelectedRow;
+			Content = control;
+
+		}
+
+		private void ControlOnEditSelectedRow(object sender, EditRowEventArgs editRowEventArgs)
+		{
+			OnEditSelectedRow(editRowEventArgs);
+		}
+
+		private void ControlOnAddNewRow(object sender, TableModel tableModel)
+		{
+			OnAddNewRow(tableModel);
 		}
 
 		private void TableViewModelOnPropertyChanged(object sender, PropertyChangedEventArgs args)
@@ -119,6 +138,16 @@ namespace ER_Diagram_Modeler.Views.Canvas.TableItem
 				}
 			}
 			e.Handled = false;
+		}
+
+		protected virtual void OnAddNewRow(TableModel e)
+		{
+			AddNewRow?.Invoke(this, e);
+		}
+
+		protected virtual void OnEditSelectedRow(EditRowEventArgs e)
+		{
+			EditSelectedRow?.Invoke(this, e);
 		}
 	}
 }

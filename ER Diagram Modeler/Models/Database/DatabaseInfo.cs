@@ -6,7 +6,7 @@ using ER_Diagram_Modeler.Models.Designer;
 
 namespace ER_Diagram_Modeler.Models.Database
 {
-	public class MsSqlDatabaseInfo: INotifyPropertyChanged
+	public class DatabaseInfo: INotifyPropertyChanged
 	{
 		private string _name;
 		private int _id;
@@ -57,7 +57,7 @@ namespace ER_Diagram_Modeler.Models.Database
 			}
 		}
 
-		public MsSqlDatabaseInfo()
+		public DatabaseInfo()
 		{
 			Diagrams = new ObservableCollection<DiagramModel>();
 			Tables = new ObservableCollection<TableModel>();

@@ -38,7 +38,11 @@ namespace ER_Diagram_Modeler.DiagramConstruction
 			var model = ctx.ReadTableDetails(vm.Model.Id, vm.Model.Title);
 
 			vm.Model.Attributes.Clear();
-			vm.Model.Attributes.AddRange(model.Attributes);
+
+			foreach (TableRowModel attribute in model.Attributes)
+			{
+				vm.Model.Attributes.Add(attribute);
+			}
 		}
 
 		public bool AddTable(TableModel source, int x, int y)

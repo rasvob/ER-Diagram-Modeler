@@ -13,6 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using ER_Diagram_Modeler.Configuration.Providers;
+using ER_Diagram_Modeler.ConnectionPanelLoaders;
 using ER_Diagram_Modeler.Controls.Buttons;
 using ER_Diagram_Modeler.DatabaseConnection.SqlServer;
 using ER_Diagram_Modeler.Models.Database;
@@ -31,7 +32,7 @@ namespace ER_Diagram_Modeler.Views.Panels
 	{
 		public event EventHandler<ConnectionType> ConnectionClick;
 		public event EventHandler<TableModel> AddTable; 
-		public List<MsSqlDatabaseInfo> MsSqlDatabaseInfos { get; set; }
+		public List<DatabaseInfo> DatabaseInfos { get; set; }
 
 		public DatabaseConnectionPanel()
 		{
@@ -75,12 +76,12 @@ namespace ER_Diagram_Modeler.Views.Panels
 		{
 			using (MsSqlMapper mapper = new MsSqlMapper())
 			{
-				MsSqlDatabaseInfos = mapper.ListDatabases().ToList();
+				DatabaseInfos = mapper.ListDatabases().ToList();
 			}
 
-			if (MsSqlDatabaseInfos.Any())
+			if (DatabaseInfos.Any())
 			{
-				MsSqlDatabaseComboBox.ItemsSource = MsSqlDatabaseInfos;
+				MsSqlDatabaseComboBox.ItemsSource = DatabaseInfos;
 				MsSqlDatabaseComboBox.DisplayMemberPath = "Name";
 				MsSqlDatabaseComboBox.SelectedIndex = 0;
 			}
@@ -101,7 +102,7 @@ namespace ER_Diagram_Modeler.Views.Panels
 
 		private void MsSqlDatabaseComboBox_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
-			var cb = (sender as ComboBox)?.SelectedItem as MsSqlDatabaseInfo;
+			var cb = (sender as ComboBox)?.SelectedItem as DatabaseInfo;
 
 			if (cb == null)
 			{
@@ -115,51 +116,11 @@ namespace ER_Diagram_Modeler.Views.Panels
 
 		private void LoadMsSqlTreeViewData()
 		{
-			//TODO: Load diagrams
+			
+			TreeViewBuilder builder = new MsSqlTreeViewBuilder(OnAddTable, DatabaseInfos);
+			List<TreeViewItem> item = builder.BuildTreeView();
 			MsSqlTreeView.Items.Clear();
-			string origdb = SessionProvider.Instance.Database;
-			foreach (MsSqlDatabaseInfo databaseInfo in MsSqlDatabaseInfos)
-			{
-				SessionProvider.Instance.Database = databaseInfo.Name;
-				using(MsSqlMapper mapper = new MsSqlMapper())
-				{
-					TreeViewItem root = new TreeViewItem();
-					root.Header = databaseInfo.Name;
-
-					databaseInfo.Tables.Clear();
-
-					TreeViewItem tables = new TreeViewItem();
-					tables.Header = "Tables";
-
-					foreach(TableModel model in mapper.ListTables())
-					{
-						databaseInfo.Tables.Add(model);
-
-						TreeViewItem item = new TreeViewItem
-						{
-							Header = model.Title,
-							IsEnabled = databaseInfo.Name.Equals(origdb)
-						};
-
-						SetupTreeViewItemContextMenu(item, model);
-						tables.Items.Add(item);
-					}
-
-					root.Items.Add(tables);
-					MsSqlTreeView.Items.Add(root);
-				}
-			}
-
-			SessionProvider.Instance.Database = origdb;
-		}
-
-		private void SetupTreeViewItemContextMenu(TreeViewItem item, TableModel model)
-		{
-			ContextMenu menu = new ContextMenu();
-			MenuItem addTableToDiagramItem = new MenuItem {Header = $"Add {model.Title} to diagram"};
-			addTableToDiagramItem.Click += (sender, args) => OnAddTable(model);
-			menu.Items.Add(addTableToDiagramItem);
-			item.ContextMenu = menu;
+			item.ForEach(t => MsSqlTreeView.Items.Add(t));
 		}
 
 		protected virtual void OnAddTable(TableModel e)

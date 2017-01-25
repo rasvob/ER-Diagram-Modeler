@@ -23,6 +23,7 @@ using ER_Diagram_Modeler.DatabaseConnection;
 using ER_Diagram_Modeler.DatabaseConnection.SqlServer;
 using ER_Diagram_Modeler.DiagramConstruction;
 using ER_Diagram_Modeler.Dialogs;
+using ER_Diagram_Modeler.EventArgs;
 using ER_Diagram_Modeler.Models.Designer;
 using ER_Diagram_Modeler.ViewModels;
 using ER_Diagram_Modeler.ViewModels.Enums;
@@ -40,6 +41,8 @@ namespace ER_Diagram_Modeler
 	public partial class MainWindow : MetroWindow
 	{
 		public MainWindowViewModel MainWindowViewModel { get; set; }
+		private TableModel _flyoutTableModel;
+		private EditRowEventArgs _flyoutRowEventArgs = null;
 
 		public MainWindow()
 		{
@@ -308,12 +311,78 @@ namespace ER_Diagram_Modeler
 
 		private void ApplyAttributeEdit_OnExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
-			
+			if (_flyoutRowEventArgs == null)
+			{
+				_flyoutTableModel.Attributes.Add(MainWindowViewModel.FlyoutRowModel);
+			}
+			else
+			{
+				int indexOf = _flyoutRowEventArgs.TableModel.Attributes.IndexOf(_flyoutRowEventArgs.RowModel);
+				_flyoutRowEventArgs.TableModel.Attributes[indexOf] = MainWindowViewModel.FlyoutRowModel;
+				_flyoutRowEventArgs = null;
+			}
+
+			var flyout = Flyouts.Items[1] as Flyout;
+
+			if(flyout != null)
+			{
+				flyout.IsOpen = !flyout.IsOpen;
+			}
 		}
 
 		private void ApplyAttributeEdit_OnCanExecute(object sender, CanExecuteRoutedEventArgs e)
 		{
+			var row = MainWindowViewModel.FlyoutRowModel;
+
+			if (row == null)
+			{
+				e.CanExecute = false;
+				return;
+			}
+
+			if (!row["Name"].Equals(string.Empty))
+			{
+				e.CanExecute = false;
+				return;
+			}
+
+			var props = new string[] { "Scale", "Precision", "Lenght" };
+			foreach (string prop in props)
+			{
+				if (!row.Datatype[prop].Equals(string.Empty))
+				{
+					e.CanExecute = false;
+					return;
+				}
+			}
+
 			e.CanExecute = true;
+		}
+
+		public void AddNewRowHandler(object sender, TableModel args)
+		{
+			var flyout = Flyouts.Items[1] as Flyout;
+
+			if(flyout != null)
+			{
+				flyout.IsOpen = !flyout.IsOpen;
+			}
+
+			MainWindowViewModel.FlyoutRowModel = new TableRowModel();
+			_flyoutTableModel = args;
+		}
+
+		public void EditRowHandler(object sender, EditRowEventArgs args)
+		{
+			var flyout = Flyouts.Items[1] as Flyout;
+
+			if(flyout != null)
+			{
+				flyout.IsOpen = !flyout.IsOpen;
+			}
+
+			MainWindowViewModel.FlyoutRowModel = new TableRowModel(args.RowModel.Name, args.RowModel.Datatype);
+			_flyoutRowEventArgs = args;
 		}
 	}
 }

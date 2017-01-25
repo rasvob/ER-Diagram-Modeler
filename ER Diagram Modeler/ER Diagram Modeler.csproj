@@ -126,6 +126,9 @@
     </ApplicationDefinition>
     <Compile Include="Configuration\Providers\DatatypeProvider.cs" />
     <Compile Include="Configuration\Providers\SessionProvider.cs" />
+    <Compile Include="ConnectionPanelLoaders\MsSqlTreeViewBuilder.cs" />
+    <Compile Include="ConnectionPanelLoaders\OracleTreeViewBuilder.cs" />
+    <Compile Include="ConnectionPanelLoaders\TreeViewBuilder.cs" />
     <Compile Include="Controls\Buttons\DesignerToolBarButton.cs" />
     <Compile Include="DatabaseConnection\DatabaseProxy.cs" />
     <Compile Include="DatabaseConnection\Dto\MsSqlForeignKeyDto.cs" />
@@ -159,7 +162,7 @@
     <Compile Include="EventArgs\ScaleEventArgs.cs" />
     <Compile Include="EventArgs\TablePositionAndMeasureEventArgs.cs" />
     <Compile Include="Models\Database\DiagramModel.cs" />
-    <Compile Include="Models\Database\MsSqlDatabaseInfo.cs" />
+    <Compile Include="Models\Database\DatabaseInfo.cs" />
     <Compile Include="Models\Designer\Datatype.cs" />
     <Compile Include="Models\Designer\RelationshipModel.cs" />
     <Compile Include="Models\Designer\TableModel.cs" />

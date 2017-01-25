@@ -6,7 +6,8 @@ namespace ER_Diagram_Modeler.DatabaseConnection.SqlServer
 {
 	public interface IMsSqlMapper: IMapper
 	{
-		IEnumerable<MsSqlDatabaseInfo> ListDatabases();
+		IEnumerable<DatabaseInfo> ListDatabases();
 		IEnumerable<MsSqlForeignKeyDto> ListForeignKeys(string tableName);
+		void CreateDatabase(string name);
 	}
 }

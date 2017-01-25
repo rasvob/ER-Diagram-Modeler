@@ -103,7 +103,7 @@
 										<ColumnDefinition Width="80"></ColumnDefinition>
 									</Grid.ColumnDefinitions>
 
-									<ComboBox x:Name="DataTypeComboBox"
+									<!--<ComboBox x:Name="DataTypeComboBox"
 										          Grid.Column="0"
 										          ItemsSource="{Binding DatatypesItemSource}"
 										          SelectedItem="{Binding SelectedDatatype, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
@@ -111,10 +111,21 @@
 										          MaxDropDownHeight="200"
 										          Style="{DynamicResource VirtualisedMetroComboBox}"
 										          IsEditable="False">
-									</ComboBox>
+									</ComboBox>-->
+
+									<TextBox x:Name="DataTypeTextBox"
+											 Grid.Column="0"
+											 IsReadOnly="True"
+											 controls:TextBoxHelper.UseFloatingWatermark="True"
+										     controls:TextBoxHelper.Watermark="Datatype"
+											 Text="{Binding SelectedDatatype.Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+											 >
+										
+									</TextBox>
 
 									<TextBox x:Name="LengthTextBox"
 										         Grid.Column="1"
+												 IsReadOnly="True"
 										         controls:TextBoxHelper.UseFloatingWatermark="True"
 										         controls:TextBoxHelper.Watermark="Lenght"
 										         Text="{Binding SelectedDatatype.Lenght, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, NotifyOnValidationError=True, ValidatesOnDataErrors=True}">
@@ -147,6 +158,7 @@
 
 									<TextBox x:Name="PrecisonTextBox"
 										         Grid.Column="1"
+												 IsReadOnly="True"
 										         controls:TextBoxHelper.UseFloatingWatermark="True"
 										         controls:TextBoxHelper.Watermark="Precision"
 										         Text="{Binding SelectedDatatype.Precision, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, NotifyOnValidationError=True, ValidatesOnDataErrors=True}">
@@ -175,6 +187,7 @@
 
 									<TextBox x:Name="ScaleTextBox"
 										         Grid.Column="2"
+												 IsReadOnly="True"
 										         controls:TextBoxHelper.UseFloatingWatermark="True"
 										         controls:TextBoxHelper.Watermark="Scale"
 										         Text="{Binding SelectedDatatype.Scale, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, NotifyOnValidationError=True, ValidatesOnDataErrors=True}">

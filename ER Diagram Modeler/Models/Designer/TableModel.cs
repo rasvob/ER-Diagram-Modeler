@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -13,7 +14,7 @@ namespace ER_Diagram_Modeler.Models.Designer
 	{
 		public string Id { get; set; } = Guid.NewGuid().ToString();
 		private string _title = "Table";
-		private List<TableRowModel> _attributes = new List<TableRowModel>();
+		private ObservableCollection<TableRowModel> _attributes = new ObservableCollection<TableRowModel>();
 
 		public string Title
 		{
@@ -26,7 +27,7 @@ namespace ER_Diagram_Modeler.Models.Designer
 			}
 		}
 
-		public List<TableRowModel> Attributes
+		public ObservableCollection<TableRowModel> Attributes
 		{
 			get { return _attributes; }
 			set

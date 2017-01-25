@@ -143,6 +143,7 @@ namespace ER_Diagram_Modeler.Models.Designer
 		public TableRowModel()
 		{
 			SelectedDatatype = DatatypesItemSource.FirstOrDefault();
+			Name = string.Empty;
 		}
 
 		public TableRowModel(string name, Datatype datatype)
@@ -159,17 +160,17 @@ namespace ER_Diagram_Modeler.Models.Designer
 
 			if (Datatype.HasLenght)
 			{
-				SelectedDatatype.Lenght = Datatype.Lenght;
+				SelectedDatatype.Lenght = datatype.Lenght;
 			}
 
 			if (Datatype.HasScale)
 			{
-				SelectedDatatype.Scale = Datatype.Scale;
+				SelectedDatatype.Scale = datatype.Scale;
 			}
 
 			if (Datatype.HasPrecision)
 			{
-				SelectedDatatype.Precision = Datatype.Precision;
+				SelectedDatatype.Precision = datatype.Precision;
 			}
 		}
 

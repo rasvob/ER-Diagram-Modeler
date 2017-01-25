@@ -46,7 +46,7 @@ namespace ER_Diagram_Modeler.DatabaseConnection.SqlServer
 			return 0;
 		}
 
-		public IEnumerable<MsSqlDatabaseInfo> ListDatabases()
+		public IEnumerable<DatabaseInfo> ListDatabases()
 		{
 			SqlCommand command = Database.CreateCommand(SqlListDatabases);
 			SqlDataReader reader = command.ExecuteReader();
@@ -77,6 +77,11 @@ namespace ER_Diagram_Modeler.DatabaseConnection.SqlServer
 			msSqlForeignKeyDtos.AddRange(list2);
 
 			return msSqlForeignKeyDtos;
+		}
+
+		public void CreateDatabase(string name)
+		{
+			throw new NotImplementedException();
 		}
 
 		public IEnumerable<TableModel> ListTables()
@@ -191,14 +196,14 @@ namespace ER_Diagram_Modeler.DatabaseConnection.SqlServer
 			return res;
 		}
 
-		public IEnumerable<MsSqlDatabaseInfo> ReadListDatabases(SqlDataReader reader)
+		public IEnumerable<DatabaseInfo> ReadListDatabases(SqlDataReader reader)
 		{
-			List<MsSqlDatabaseInfo> res = new List<MsSqlDatabaseInfo>();
+			List<DatabaseInfo> res = new List<DatabaseInfo>();
 
 			while (reader.Read())
 			{
 				int i = 0;
-				var info = new MsSqlDatabaseInfo();
+				var info = new DatabaseInfo();
 				info.Id = reader.GetInt32(i++);
 				info.Name = reader.GetString(i++);
 				res.Add(info);

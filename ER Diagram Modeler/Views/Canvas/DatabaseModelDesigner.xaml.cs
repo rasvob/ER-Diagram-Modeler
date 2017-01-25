@@ -267,6 +267,9 @@ namespace ER_Diagram_Modeler.Views.Canvas
 		private void AddTableElement(TableViewModel viewModel)
 		{
 			var content = new TableContent(viewModel);
+			var owner = Window.GetWindow(this) as MainWindow;
+			content.AddNewRow += owner.AddNewRowHandler;
+			content.EditSelectedRow += owner.EditRowHandler;
 			ModelDesignerCanvas.Children.Add(content);
 			content.Loaded += (sender, args) =>
 			{
@@ -284,6 +287,9 @@ namespace ER_Diagram_Modeler.Views.Canvas
 		private void RemoveTableElement(TableViewModel viewModel)
 		{
 			var table = ModelDesignerCanvas.Children.OfType<TableContent>().FirstOrDefault(t => t.TableViewModel.Equals(viewModel));
+			var owner = Window.GetWindow(this) as MainWindow;
+			table.AddNewRow -= owner.AddNewRowHandler;
+			table.EditSelectedRow -= owner.EditRowHandler;
 			ModelDesignerCanvas.Children.Remove(table);
 		}
 

@@ -121,7 +121,7 @@
 			<Controls:Flyout
 				x:Name="AttributeFlyout"
 				AreAnimationsEnabled="True"
-				Header="Attribute edit"
+				Header="Column edit"
 				Position="Bottom"
 				CloseButtonIsCancel="False"
 				AnimateOnPositionChange="True"
@@ -142,6 +142,7 @@
 							<ColumnDefinition Width="Auto"></ColumnDefinition>
 							<ColumnDefinition Width="Auto"></ColumnDefinition>
 							<ColumnDefinition Width="Auto"></ColumnDefinition>
+							<ColumnDefinition Width="*"></ColumnDefinition>
 							<ColumnDefinition Width="Auto"></ColumnDefinition>
 						</Grid.ColumnDefinitions>
 						
@@ -267,11 +268,10 @@
 								  IsChecked="{Binding FlyoutRowModel.AllowNull, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
 								  >
 						</CheckBox>
-						
-						<Button Grid.Column="6" 
+
+						<Button Grid.Column="7" 
 								Command="{StaticResource Commands.ApplyAttributeEdit}"
 								Content="Apply">
-								
 						</Button>
 					</Grid>
 				</Grid>
