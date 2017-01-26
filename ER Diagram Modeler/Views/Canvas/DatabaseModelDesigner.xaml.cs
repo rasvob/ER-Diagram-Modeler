@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Data.SqlClient;
 using System.Diagnostics;
 using System.Linq;
 using System.Net;
@@ -14,6 +15,8 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
 using ER_Diagram_Modeler.Configuration.Providers;
+using ER_Diagram_Modeler.DiagramConstruction;
+using ER_Diagram_Modeler.DiagramConstruction.Strategy;
 using ER_Diagram_Modeler.Dialogs;
 using ER_Diagram_Modeler.EventArgs;
 using ER_Diagram_Modeler.Models.Designer;
@@ -224,7 +227,7 @@ namespace ER_Diagram_Modeler.Views.Canvas
 			}
 		}
 
-		private void ModelDesignerCanvasOnMouseDown(object sender, MouseButtonEventArgs e)
+		private async void ModelDesignerCanvasOnMouseDown(object sender, MouseButtonEventArgs e)
 		{
 			switch (ViewModel.MouseMode)
 			{
@@ -249,9 +252,23 @@ namespace ER_Diagram_Modeler.Views.Canvas
 					{
 						if (res.Value)
 						{
-							table.Left = origin.X;
-							table.Top = origin.Y;
-							ViewModel.TableViewModels.Add(table);
+							MainWindow window = null;
+							try
+							{
+								window = Window.GetWindow(this) as MainWindow;
+								var facade = new DiagramFacade(ViewModel);
+
+								bool addRes = facade.AddTable(table.Model.Title, (int) origin.X, (int) origin.Y);
+
+								if (!addRes)
+								{
+									await window.ShowMessageAsync("Add new table", $"Table {table.Model.Title} already exists");
+								}
+							}
+							catch (SqlException exception)
+							{
+								await window.ShowMessageAsync("Add new table", exception.Message);
+							}
 						}
 					}
 					ViewModel.MouseMode = MouseMode.Select;
@@ -571,8 +588,6 @@ namespace ER_Diagram_Modeler.Views.Canvas
 			DeleteSelectedTables();
 			DeleteSelectedConnections();
 		}
-
-		
 
 		private void DeleteTablesCommand_OnCanExecute(object sender, CanExecuteRoutedEventArgs e)
 		{

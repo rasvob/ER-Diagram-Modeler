@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Sockets;
+using ER_Diagram_Modeler.Configuration.Providers;
 using ER_Diagram_Modeler.DatabaseConnection;
 using ER_Diagram_Modeler.DatabaseConnection.Dto;
 using ER_Diagram_Modeler.DatabaseConnection.SqlServer;
@@ -18,6 +19,22 @@ namespace ER_Diagram_Modeler.DiagramConstruction.Strategy
 			using (IMapper mapper = new MsSqlMapper())
 			{
 				return mapper.SelectTableDetails(id, name);
+			}
+		}
+
+		public void CreateTable(string name)
+		{
+			using(IMapper mapper = new MsSqlMapper())
+			{
+				mapper.CreateTable(name);
+			}
+		}
+
+		public IEnumerable<TableModel> ListTables()
+		{
+			using(IMapper mapper = new MsSqlMapper())
+			{
+				return mapper.ListTables();
 			}
 		}
 
@@ -75,6 +92,11 @@ namespace ER_Diagram_Modeler.DiagramConstruction.Strategy
 				}
 				return res;
 			}
+		}
+
+		public TableRowModel PlaceholderRowModel()
+		{
+			return new TableRowModel {Name = "Id", Datatype = DatatypeProvider.Instance.FindDatatype("int", ConnectionType.SqlServer)};
 		}
 	}
 }

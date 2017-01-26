@@ -22,7 +22,7 @@ namespace ER_Diagram_Modeler.DatabaseConnection.Oracle
 			}
 		}
 
-		public int CreateTable(string name)
+		public void CreateTable(string name)
 		{
 			throw new System.NotImplementedException();
 		}

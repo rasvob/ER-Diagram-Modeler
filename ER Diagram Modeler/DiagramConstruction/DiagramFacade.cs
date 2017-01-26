@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
@@ -43,6 +44,27 @@ namespace ER_Diagram_Modeler.DiagramConstruction
 			{
 				vm.Model.Attributes.Add(attribute);
 			}
+		}
+
+		public bool AddTable(string name, int x, int y)
+		{
+			var ctx = new DatabaseContext(SessionProvider.Instance.ConnectionType);
+
+			if(ViewModel.TableViewModels.Any(t => t.Model.Title.Equals(name)))
+			{
+				return false;
+			}
+
+			ctx.CreateTable(name);
+
+			TableModel model = ctx.ListTables().FirstOrDefault(t => t.Title.Equals(name));
+
+			if (model == null)
+			{
+				return false;
+			}
+
+			return AddTable(model, x, y);
 		}
 
 		public bool AddTable(TableModel source, int x, int y)

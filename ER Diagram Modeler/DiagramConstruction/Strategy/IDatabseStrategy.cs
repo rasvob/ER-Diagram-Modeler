@@ -8,5 +8,8 @@ namespace ER_Diagram_Modeler.DiagramConstruction.Strategy
 	{
 		TableModel ReadTableDetails(string id, string name);
 		IEnumerable<RelationshipModel> ReadRelationshipModels(string table, IEnumerable<TableModel> tables);
+		TableRowModel PlaceholderRowModel();
+		void CreateTable(string name);
+		IEnumerable<TableModel> ListTables();
 	}
 }

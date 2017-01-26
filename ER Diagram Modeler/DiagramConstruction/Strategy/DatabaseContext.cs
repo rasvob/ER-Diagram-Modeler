@@ -39,6 +39,21 @@ namespace ER_Diagram_Modeler.DiagramConstruction.Strategy
 		public IEnumerable<RelationshipModel> ListRelationshipsForTable(string name, IEnumerable<TableModel> tables)
 		{
 			return _strategy.ReadRelationshipModels(name, tables);
-		} 
+		}
+
+		public TableRowModel GetPlaceholderRowModel()
+		{
+			return _strategy.PlaceholderRowModel();
+		}
+
+		public void CreateTable(string name)
+		{
+			_strategy.CreateTable(name);
+		}
+
+		public IEnumerable<TableModel> ListTables()
+		{
+			return _strategy.ListTables();
+		}
 	}
 }

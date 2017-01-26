@@ -20,6 +20,7 @@ namespace ER_Diagram_Modeler.DatabaseConnection.SqlServer
 		private static string SqlForeignKeys = @"sp_fkeys";
 		private static string SqlCreateDatabase = @"CREATE DATABASE";
 		private static string SqlDropDatabase = @"DROP DATABASE";
+		private static string SqlCreateTable = @"CREATE TABLE {0} (Id{0} INT PRIMARY KEY);";
 
 		public MsSqlDatabase Database { get; set; }
 
@@ -43,9 +44,10 @@ namespace ER_Diagram_Modeler.DatabaseConnection.SqlServer
 			}
 		}
 
-		public int CreateTable(string name)
+		public void CreateTable(string name)
 		{
-			throw new NotImplementedException();
+			SqlCommand command = Database.CreateCommand(string.Format(SqlCreateTable, name));
+			command.ExecuteNonQuery();
 		}
 
 		public IEnumerable<DatabaseInfo> ListDatabases()
