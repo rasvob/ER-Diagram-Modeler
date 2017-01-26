@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -20,6 +21,7 @@ using ER_Diagram_Modeler.Models.Database;
 using ER_Diagram_Modeler.Models.Designer;
 using ER_Diagram_Modeler.ViewModels;
 using ER_Diagram_Modeler.ViewModels.Enums;
+using MahApps.Metro.Controls.Dialogs;
 using Xceed.Wpf.AvalonDock.Controls;
 using Xceed.Wpf.AvalonDock.Layout;
 
@@ -31,7 +33,9 @@ namespace ER_Diagram_Modeler.Views.Panels
 	public partial class DatabaseConnectionPanel : UserControl
 	{
 		public event EventHandler<ConnectionType> ConnectionClick;
-		public event EventHandler<TableModel> AddTable; 
+		public event EventHandler<TableModel> AddTable;
+		public event EventHandler CreateMsSqlDatabase;
+		public event EventHandler<string> DropMsSqlDatabase;
 		public List<DatabaseInfo> DatabaseInfos { get; set; }
 
 		public DatabaseConnectionPanel()
@@ -116,16 +120,40 @@ namespace ER_Diagram_Modeler.Views.Panels
 
 		private void LoadMsSqlTreeViewData()
 		{
-			
-			TreeViewBuilder builder = new MsSqlTreeViewBuilder(OnAddTable, DatabaseInfos);
+			TreeViewBuilder builder = new MsSqlTreeViewBuilder(OnAddTable, DropDatabaseAction, DatabaseInfos);
 			List<TreeViewItem> item = builder.BuildTreeView();
 			MsSqlTreeView.Items.Clear();
 			item.ForEach(t => MsSqlTreeView.Items.Add(t));
 		}
 
+		private void DropDatabaseAction(string dbName)
+		{
+			OnDropMsSqlDatabase(dbName);
+		}
+
 		protected virtual void OnAddTable(TableModel e)
 		{
 			AddTable?.Invoke(this, e);
+		}
+
+		private void CreateNewMsSqlDatabase_OnExecuted(object sender, ExecutedRoutedEventArgs e)
+		{
+			OnCreateMsSqlDatabase();
+		}
+
+		private void CreateNewMsSqlDatabase_OnCanExecute(object sender, CanExecuteRoutedEventArgs e)
+		{
+			e.CanExecute = SessionProvider.Instance.ConnectionType == ConnectionType.SqlServer;
+		}
+
+		protected virtual void OnCreateMsSqlDatabase()
+		{
+			CreateMsSqlDatabase?.Invoke(this, System.EventArgs.Empty);
+		}
+
+		protected virtual void OnDropMsSqlDatabase(string e)
+		{
+			DropMsSqlDatabase?.Invoke(this, e);
 		}
 	}
 }

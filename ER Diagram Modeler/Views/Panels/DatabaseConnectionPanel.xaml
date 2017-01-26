@@ -17,6 +17,7 @@
 				<ResourceDictionary Source="../../Controls/Buttons/DesignerToolBarButton.xaml"></ResourceDictionary>
 			</ResourceDictionary.MergedDictionaries>
 			<RoutedCommand x:Key="DisconnectFromServerCommand"></RoutedCommand>
+			<RoutedCommand x:Key="CreateMsSqlDatabaseCommand"></RoutedCommand>
 		</ResourceDictionary>
 	</UserControl.Resources>
 
@@ -25,6 +26,11 @@
 				Executed="Disconnect_OnExecuted"
 				CanExecute="Disconnect_OnCanExecute">
 			
+		</CommandBinding>
+
+		<CommandBinding Command="{StaticResource CreateMsSqlDatabaseCommand}" 
+				Executed="CreateNewMsSqlDatabase_OnExecuted"
+				CanExecute="CreateNewMsSqlDatabase_OnCanExecute">
 		</CommandBinding>
 	</UserControl.CommandBindings>
 	
@@ -55,6 +61,13 @@
 										   IsChecked="False"
 										   Command="{StaticResource DisconnectFromServerCommand}"
 										   Icon="{StaticResource DisconnectFromServerIcon}">
+			</buttons:DesignerToolBarButton>
+
+			<buttons:DesignerToolBarButton x:Name="CreateMsSqlDatabaseButton"
+										   ToolTip="Create new database"
+										   IsChecked="False"
+										   Command="{StaticResource CreateMsSqlDatabaseCommand}"
+										   Icon="{StaticResource AddNewRowIcon}">
 			</buttons:DesignerToolBarButton>
 		</StackPanel>
 

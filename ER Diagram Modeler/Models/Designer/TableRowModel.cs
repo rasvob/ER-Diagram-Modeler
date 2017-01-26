@@ -203,5 +203,24 @@ namespace ER_Diagram_Modeler.Models.Designer
 		}
 
 		public string Error => string.Empty;
+
+		public bool IsValid()
+		{
+			if(!this["Name"].Equals(string.Empty))
+			{
+				return false;
+			}
+
+			var props = new string[] { "Scale", "Precision", "Lenght" };
+			foreach(string prop in props)
+			{
+				if(!Datatype[prop].Equals(string.Empty))
+				{
+					return false;
+				}
+			}
+
+			return true;
+		}
 	}
 }

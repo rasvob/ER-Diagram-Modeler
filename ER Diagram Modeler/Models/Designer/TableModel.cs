@@ -7,6 +7,8 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using ER_Diagram_Modeler.Annotations;
+using ER_Diagram_Modeler.EventArgs;
+using ER_Diagram_Modeler.ViewModels;
 
 namespace ER_Diagram_Modeler.Models.Designer
 {
@@ -74,5 +76,11 @@ namespace ER_Diagram_Modeler.Models.Designer
 		}
 
 		public string Error => string.Empty;
+
+		public void UpdateAttributes(TableRowModel old, TableRowModel row)
+		{
+			int indexOf = Attributes.IndexOf(old);
+			Attributes[indexOf] = row;
+		}
 	}
 }

@@ -10,6 +10,8 @@ namespace ER_Diagram_Modeler.ConnectionPanelLoaders
 {
 	public class MsSqlTreeViewBuilder: TreeViewBuilder
 	{
+		private Action<string> _dropDatabaseAction; 
+
 		public override List<TreeViewItem> BuildTreeView()
 		{
 			//TODO: Load diagrams
@@ -22,7 +24,7 @@ namespace ER_Diagram_Modeler.ConnectionPanelLoaders
 				{
 					TreeViewItem root = new TreeViewItem();
 					root.Header = databaseInfo.Name;
-
+					SetupDatabaseItemContextMenu(root);
 					databaseInfo.Tables.Clear();
 
 					TreeViewItem tables = new TreeViewItem();
@@ -52,8 +54,18 @@ namespace ER_Diagram_Modeler.ConnectionPanelLoaders
 			return res;
 		}
 
-		public MsSqlTreeViewBuilder(Action<TableModel> addTableAction, IEnumerable<DatabaseInfo> infos) : base(addTableAction, infos)
+		private void SetupDatabaseItemContextMenu(TreeViewItem item)
 		{
+			ContextMenu menu = new ContextMenu();
+			MenuItem dropDatabaseItem = new MenuItem { Header = $"Drop {item.Header}" };
+			dropDatabaseItem.Click += (sender, args) => _dropDatabaseAction(item.Header as string);
+			menu.Items.Add(dropDatabaseItem);
+			item.ContextMenu = menu;
+		}
+
+		public MsSqlTreeViewBuilder(Action<TableModel> addTableAction, Action<string> dropDatabaseAction,IEnumerable<DatabaseInfo> infos) : base(addTableAction, infos)
+		{
+			_dropDatabaseAction = dropDatabaseAction;
 		}
 	}
 }

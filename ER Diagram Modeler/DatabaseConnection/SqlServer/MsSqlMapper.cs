@@ -18,6 +18,8 @@ namespace ER_Diagram_Modeler.DatabaseConnection.SqlServer
 		private static string SqlTableDetails = @"SELECT s.column_id, s.name, s.is_nullable, t.name, s.max_length, s.precision, s.scale FROM sys.columns s JOIN sys.types t ON s.system_type_id = t.system_type_id WHERE s.object_id = @Id;";
 		private static string SqlPrimaryKeys = @"sp_pkeys";
 		private static string SqlForeignKeys = @"sp_fkeys";
+		private static string SqlCreateDatabase = @"CREATE DATABASE";
+		private static string SqlDropDatabase = @"DROP DATABASE";
 
 		public MsSqlDatabase Database { get; set; }
 
@@ -43,7 +45,7 @@ namespace ER_Diagram_Modeler.DatabaseConnection.SqlServer
 
 		public int CreateTable(string name)
 		{
-			return 0;
+			throw new NotImplementedException();
 		}
 
 		public IEnumerable<DatabaseInfo> ListDatabases()
@@ -81,7 +83,17 @@ namespace ER_Diagram_Modeler.DatabaseConnection.SqlServer
 
 		public void CreateDatabase(string name)
 		{
-			throw new NotImplementedException();
+			SqlCommand command = Database.CreateCommand($"{SqlCreateDatabase} [{name}]");
+			command.ExecuteNonQuery();
+		}
+
+		public void DropDatabase(string name)
+		{
+			SqlCommand commandAlter = Database.CreateCommand($"alter database [{name}] set single_user with rollback immediate");
+			commandAlter.ExecuteNonQuery();
+
+			SqlCommand command = Database.CreateCommand($"{SqlDropDatabase} [{name}]");
+			command.ExecuteNonQuery();
 		}
 
 		public IEnumerable<TableModel> ListTables()

@@ -9,5 +9,6 @@ namespace ER_Diagram_Modeler.DatabaseConnection.SqlServer
 		IEnumerable<DatabaseInfo> ListDatabases();
 		IEnumerable<MsSqlForeignKeyDto> ListForeignKeys(string tableName);
 		void CreateDatabase(string name);
+		void DropDatabase(string name);
 	}
 }

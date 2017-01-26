@@ -23,6 +23,7 @@ namespace ER_Diagram_Modeler.ConnectionPanelLoaders
 			MenuItem addTableToDiagramItem = new MenuItem { Header = $"Add {model.Title} to diagram" };
 			addTableToDiagramItem.Click += (sender, args) => _addTableAction(model);
 			menu.Items.Add(addTableToDiagramItem);
+			item.MouseDoubleClick += (sender, args) => _addTableAction(model);
 			item.ContextMenu = menu;
 		}
 

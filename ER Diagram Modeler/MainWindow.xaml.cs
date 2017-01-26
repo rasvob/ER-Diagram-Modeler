@@ -52,6 +52,53 @@ namespace ER_Diagram_Modeler
 			DataContext = MainWindowViewModel;
 			DatabaseConnectionSidebar.ConnectionClick += DatabaseConnectionSidebarOnConnectionClick;
 			DatabaseConnectionSidebar.AddTable += DatabaseConnectionSidebarOnAddTable;
+			DatabaseConnectionSidebar.CreateMsSqlDatabase += DatabaseConnectionSidebarOnCreateMsSqlDatabase;
+			DatabaseConnectionSidebar.DropMsSqlDatabase += DatabaseConnectionSidebarOnDropMsSqlDatabase;
+		}
+
+		private async void DatabaseConnectionSidebarOnDropMsSqlDatabase(object sender, string dbName)
+		{
+			var progress = await this.ShowProgressAsync($"Drop database {dbName}", "Please wait...");
+			progress.SetIndeterminate();
+
+			try
+			{
+				using(IMsSqlMapper mapper = new MsSqlMapper())
+				{
+					await Task.Factory.StartNew(() => mapper.DropDatabase(dbName));
+					DatabaseConnectionSidebar.LoadMsSqlData();
+					await progress.CloseAsync();
+					await this.ShowMessageAsync("Drop database", $"Database {dbName} dropped successfully");
+				}
+			}
+			catch(SqlException ex)
+			{
+				await progress.CloseAsync();
+				await this.ShowMessageAsync("Drop database", ex.Message);
+			}
+		}
+
+		private async void DatabaseConnectionSidebarOnCreateMsSqlDatabase(object sender, System.EventArgs eventArgs)
+		{
+			string name = await this.ShowInputAsync("Create database", "Database name");
+
+			if (name == null || name.Equals(string.Empty))
+			{
+				return;
+			}
+
+			try
+			{
+				using (IMsSqlMapper mapper = new MsSqlMapper())
+				{
+					mapper.CreateDatabase(name);
+					DatabaseConnectionSidebar.LoadMsSqlData();
+				}
+			}
+			catch (SqlException exc)
+			{
+				await this.ShowMessageAsync("Create database", exc.Message);
+			}
 		}
 
 		private async void DatabaseConnectionSidebarOnAddTable(object sender, TableModel model)
@@ -84,6 +131,7 @@ namespace ER_Diagram_Modeler
 			bool addTable = facade.AddTable(model);
 			if (addTable)
 			{
+				//Glitch-free access
 				await Task.Delay(100);
 				facade.AddRelationShipsForTable(model, diagram.ModelDesignerCanvas);
 			}
@@ -137,12 +185,7 @@ namespace ER_Diagram_Modeler
 
 		private void MenuItemTest_OnClick(object sender, RoutedEventArgs e)
 		{
-			var flyout = Flyouts.Items[1] as Flyout;
-
-			if(flyout != null)
-			{
-				flyout.IsOpen = !flyout.IsOpen;
-			}
+			ToggleRowFlyout();
 		}
 
 		private void ChangeCanvasSize_OnExecuted(object sender, ExecutedRoutedEventArgs e)
@@ -170,15 +213,7 @@ namespace ER_Diagram_Modeler
 		private void ChangeCanvasSize_OnCanExecute(object sender, CanExecuteRoutedEventArgs e)
 		{
 			var activeDiagramModeler = MainDocumentPane.SelectedContent?.Content as DatabaseModelDesigner;
-
-			if (activeDiagramModeler != null)
-			{
-				e.CanExecute = true;
-			}
-			else
-			{
-				e.CanExecute = false;
-			}
+			e.CanExecute = activeDiagramModeler != null;
 		}
 
 		private async void ConnectToMsSql_OnExecuted(object sender, ExecutedRoutedEventArgs e)
@@ -206,34 +241,22 @@ namespace ER_Diagram_Modeler
 				progressDialogController.SetIndeterminate();
 
 				MsSqlDatabase db = new MsSqlDatabase();
-				SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder();
-				builder.DataSource = MsSqlServerNameTextBox.Text;
-				if (WinAuthSwitch.IsChecked != null) builder.IntegratedSecurity = !WinAuthSwitch.IsChecked.Value;
+				string name = null, pass = null;
+				bool integratedSecurity = true;
 
-				if (!builder.IntegratedSecurity)
+				var server = MsSqlServerNameTextBox.Text;
+				if(WinAuthSwitch.IsChecked != null) integratedSecurity = !WinAuthSwitch.IsChecked.Value;
+
+				if(!integratedSecurity)
 				{
-					builder.UserID = MsSqlUsernameTextBox.Text;
-					builder.Password = MsSqlPasswordBox.Password;
+					name = MsSqlUsernameTextBox.Text;
+					pass = MsSqlPasswordBox.Password;
 				}
 
-				string str = builder.ConnectionString;
-				
-				SqlConnection connection = new SqlConnection(str);
-				await connection.OpenAsync();
-				connection.Close();
+				await db.BuildSession(server, integratedSecurity, name, pass);
 
-				SessionProvider.Instance.ServerName = builder.DataSource;
-				SessionProvider.Instance.UseWinAuth = builder.IntegratedSecurity;
-
-				if (SessionProvider.Instance.UseWinAuth)
-				{
-					SessionProvider.Instance.Username = builder.UserID;
-					SessionProvider.Instance.Password = builder.Password;
-				}
 				await closeProgress(progressDialogController);
 				await this.ShowMessageAsync("Connected", $"Successfuly connected to {SessionProvider.Instance.ServerName}");
-
-				SessionProvider.Instance.ConnectionType = ConnectionType.SqlServer;
 
 				var flyout = Flyouts.Items[0] as Flyout;
 
@@ -317,17 +340,11 @@ namespace ER_Diagram_Modeler
 			}
 			else
 			{
-				int indexOf = _flyoutRowEventArgs.TableModel.Attributes.IndexOf(_flyoutRowEventArgs.RowModel);
-				_flyoutRowEventArgs.TableModel.Attributes[indexOf] = MainWindowViewModel.FlyoutRowModel;
+				_flyoutRowEventArgs.TableModel.UpdateAttributes(_flyoutRowEventArgs.RowModel, MainWindowViewModel.FlyoutRowModel);
 				_flyoutRowEventArgs = null;
 			}
 
-			var flyout = Flyouts.Items[1] as Flyout;
-
-			if(flyout != null)
-			{
-				flyout.IsOpen = !flyout.IsOpen;
-			}
+			ToggleRowFlyout();
 		}
 
 		private void ApplyAttributeEdit_OnCanExecute(object sender, CanExecuteRoutedEventArgs e)
@@ -340,34 +357,12 @@ namespace ER_Diagram_Modeler
 				return;
 			}
 
-			if (!row["Name"].Equals(string.Empty))
-			{
-				e.CanExecute = false;
-				return;
-			}
-
-			var props = new string[] { "Scale", "Precision", "Lenght" };
-			foreach (string prop in props)
-			{
-				if (!row.Datatype[prop].Equals(string.Empty))
-				{
-					e.CanExecute = false;
-					return;
-				}
-			}
-
-			e.CanExecute = true;
+			e.CanExecute = row.IsValid();
 		}
 
 		public void AddNewRowHandler(object sender, TableModel args)
 		{
-			var flyout = Flyouts.Items[1] as Flyout;
-
-			if(flyout != null)
-			{
-				flyout.IsOpen = !flyout.IsOpen;
-			}
-
+			ToggleRowFlyout();
 			MainWindowViewModel.FlyoutRowModel = new TableRowModel();
 			_flyoutTableModel = args;
 		}
@@ -383,6 +378,16 @@ namespace ER_Diagram_Modeler
 
 			MainWindowViewModel.FlyoutRowModel = new TableRowModel(args.RowModel.Name, args.RowModel.Datatype);
 			_flyoutRowEventArgs = args;
+		}
+
+		private void ToggleRowFlyout()
+		{
+			var flyout = Flyouts.Items[1] as Flyout;
+
+			if(flyout != null)
+			{
+				flyout.IsOpen = !flyout.IsOpen;
+			}
 		}
 	}
 }
