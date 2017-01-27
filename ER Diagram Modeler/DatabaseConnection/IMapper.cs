@@ -11,5 +11,10 @@ namespace ER_Diagram_Modeler.DatabaseConnection
 		void CreateTable(string name);
 		IEnumerable<TableModel> ListTables();
 		TableModel SelectTableDetails(string id, string name);
+		void RenameTable(string oldName, string newName);
+		void AddNewColumn(string table, TableRowModel model);
+		void AlterColumn(string table, TableRowModel model);
+		void RenameColumn(string table, string oldName, string newName);
+		void DropColumn(string table, string column);
 	}
 }

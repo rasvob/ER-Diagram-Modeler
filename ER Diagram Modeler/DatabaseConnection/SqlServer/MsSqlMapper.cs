@@ -21,6 +21,10 @@ namespace ER_Diagram_Modeler.DatabaseConnection.SqlServer
 		private static string SqlCreateDatabase = @"CREATE DATABASE";
 		private static string SqlDropDatabase = @"DROP DATABASE";
 		private static string SqlCreateTable = @"CREATE TABLE {0} (Id{0} INT PRIMARY KEY);";
+		private static string SqlRenameTable = @"sp_rename";
+		private static string SqlAddColumn = @"ALTER TABLE [{0}] ADD {1}";
+		private static string SqlAlterColumn = @"ALTER TABLE [{0}] ALTER COLUMN {1}";
+		private static string SqlDropColumn = @"ALTER TABLE [{0}] DROP COLUMN {1}";
 
 		public MsSqlDatabase Database { get; set; }
 
@@ -122,7 +126,47 @@ namespace ER_Diagram_Modeler.DatabaseConnection.SqlServer
 			ReadPrimaryKeys(pkReader, res);
 			pkReader.Close();
 
+			res.Id = id;
+			res.Title = name;
+
 			return res;
+		}
+
+		public void RenameTable(string oldName, string newName)
+		{
+			SqlCommand command = Database.CreateCommand(SqlRenameTable);
+			command.CommandType = CommandType.StoredProcedure;
+			command.Parameters.AddWithValue("objname", oldName);
+			command.Parameters.AddWithValue("newname", newName);
+			command.ExecuteNonQuery();
+		}
+
+		public void AddNewColumn(string table, TableRowModel model)
+		{
+			SqlCommand command = Database.CreateCommand(string.Format(SqlAddColumn, table, model));
+			command.ExecuteNonQuery();
+		}
+
+		public void AlterColumn(string table, TableRowModel model)
+		{
+			SqlCommand command = Database.CreateCommand(string.Format(SqlAlterColumn, table, model));
+			command.ExecuteNonQuery();
+		}
+
+		public void RenameColumn(string table, string oldName, string newName)
+		{
+			SqlCommand command = Database.CreateCommand(SqlRenameTable);
+			command.CommandType = CommandType.StoredProcedure;
+			command.Parameters.AddWithValue("objname", $"{table}.{oldName}");
+			command.Parameters.AddWithValue("newname", newName);
+			command.Parameters.AddWithValue("objtype", "COLUMN");
+			command.ExecuteNonQuery();
+		}
+
+		public void DropColumn(string table, string column)
+		{
+			SqlCommand command = Database.CreateCommand(string.Format(SqlDropColumn, table, column));
+			command.ExecuteNonQuery();
 		}
 
 		private IEnumerable<TableModel> ReadListTables(SqlDataReader reader)

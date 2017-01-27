@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Threading;
 using ER_Diagram_Modeler.Annotations;
 using ER_Diagram_Modeler.Configuration.Providers;
 using ER_Diagram_Modeler.EventArgs;
@@ -54,6 +56,7 @@ namespace ER_Diagram_Modeler.Models.Designer
 		}
 
 		public event PropertyChangedEventHandler PropertyChanged;
+		public event EventHandler<EditRowEventArgs> ColumnDropped; 
 
 		[NotifyPropertyChangedInvocator]
 		protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
@@ -100,6 +103,24 @@ namespace ER_Diagram_Modeler.Models.Designer
 					Attributes.Add(oraclerow);
 					break;
 			}
+		}
+
+		public void RefreshModel(TableModel fresh)
+		{
+			Id = fresh.Id;
+			Title = fresh.Title;
+
+			Attributes.Clear();
+
+			foreach(TableRowModel model in fresh.Attributes)
+			{
+				Attributes.Add(model);
+			}
+		}
+
+		protected virtual void OnColumnDropped(EditRowEventArgs e)
+		{
+			ColumnDropped?.Invoke(this, e);
 		}
 	}
 }

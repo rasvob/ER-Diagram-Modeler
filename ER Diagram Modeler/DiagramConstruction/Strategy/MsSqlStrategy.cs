@@ -38,6 +38,46 @@ namespace ER_Diagram_Modeler.DiagramConstruction.Strategy
 			}
 		}
 
+		public void RenameTable(string oldName, string newName)
+		{
+			using(IMapper mapper = new MsSqlMapper())
+			{
+				mapper.RenameTable(oldName, newName);
+			}
+		}
+
+		public void RenameColumn(string table, string oldName, string newName)
+		{
+			using(IMapper mapper = new MsSqlMapper())
+			{
+				mapper.RenameColumn(table, oldName, newName);
+			}
+		}
+
+		public void AddColumn(string table, TableRowModel model)
+		{
+			using(IMapper mapper = new MsSqlMapper())
+			{
+				mapper.AddNewColumn(table, model);
+			}
+		}
+
+		public void UpdateColumn(string table, TableRowModel model)
+		{
+			using(IMapper mapper = new MsSqlMapper())
+			{
+				mapper.AlterColumn(table, model);
+			}
+		}
+
+		public void RemoveColumn(string table, string column)
+		{
+			using(IMapper mapper = new MsSqlMapper())
+			{
+				mapper.DropColumn(table, column);
+			}
+		}
+
 		public IEnumerable<RelationshipModel> ReadRelationshipModels(string table, IEnumerable<TableModel> tables)
 		{
 			using (MsSqlMapper mapper = new MsSqlMapper())

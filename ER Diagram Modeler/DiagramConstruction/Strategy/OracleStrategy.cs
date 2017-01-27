@@ -36,5 +36,30 @@ namespace ER_Diagram_Modeler.DiagramConstruction.Strategy
 		{
 			throw new System.NotImplementedException();
 		}
+
+		public void RenameTable(string oldName, string newName)
+		{
+			throw new System.NotImplementedException();
+		}
+
+		public void RenameColumn(string table, string oldName, string newName)
+		{
+			throw new System.NotImplementedException();
+		}
+
+		public void AddColumn(string table, TableRowModel model)
+		{
+			throw new System.NotImplementedException();
+		}
+
+		public void UpdateColumn(string table, TableRowModel model)
+		{
+			throw new System.NotImplementedException();
+		}
+
+		public void RemoveColumn(string table, string column)
+		{
+			throw new System.NotImplementedException();
+		}
 	}
 }

@@ -4,7 +4,8 @@ Export to PNG
 ---DB_Part
 Save to XML/DB
 Create script
-Automatic DB update
+***Automatic DB update
+	-Primary keys
 Oracle support
 Connection to DB - Only Oracle missing
 

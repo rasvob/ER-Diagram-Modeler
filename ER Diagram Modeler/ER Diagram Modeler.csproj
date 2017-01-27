@@ -139,6 +139,7 @@
     <Compile Include="DatabaseConnection\SqlServer\IMsSqlMapper.cs" />
     <Compile Include="DatabaseConnection\SqlServer\MsSqlDatabase.cs" />
     <Compile Include="DatabaseConnection\SqlServer\MsSqlMapper.cs" />
+    <Compile Include="DiagramConstruction\DatabaseUpdater.cs" />
     <Compile Include="DiagramConstruction\DiagramFacade.cs" />
     <Compile Include="DiagramConstruction\Strategy\DatabaseContext.cs" />
     <Compile Include="DiagramConstruction\Strategy\IDatabseStrategy.cs" />

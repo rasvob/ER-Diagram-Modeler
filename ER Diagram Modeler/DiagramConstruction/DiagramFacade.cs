@@ -9,6 +9,7 @@ using ER_Diagram_Modeler.DiagramConstruction.Strategy;
 using ER_Diagram_Modeler.Models.Designer;
 using ER_Diagram_Modeler.ViewModels;
 using ER_Diagram_Modeler.Views.Canvas;
+using Xceed.Wpf.AvalonDock.Layout;
 
 namespace ER_Diagram_Modeler.DiagramConstruction
 {
@@ -120,6 +121,7 @@ namespace ER_Diagram_Modeler.DiagramConstruction
 			ViewModel.TableViewModels.Add(vm);
 		}
 
+#region HELPERS
 		private void FindFreePosition(out int x, out int y)
 		{
 			x = 50;
@@ -160,5 +162,35 @@ namespace ER_Diagram_Modeler.DiagramConstruction
 				}
 			}
 		}
+
+		public static void CreateNewDiagram(MainWindow window, string title)
+		{
+			LayoutAnchorable anchorable = new LayoutAnchorable()
+			{
+				CanClose = true,
+				CanHide = false,
+				CanFloat = true,
+				CanAutoHide = false,
+				Title = title,
+				ContentId = $"{title}_ID"
+			};
+
+			DatabaseModelDesignerViewModel designerViewModel = new DatabaseModelDesignerViewModel()
+			{
+				DiagramTitle = title
+			};
+
+			window.MainWindowViewModel.DatabaseModelDesignerViewModels.Add(designerViewModel);
+
+			anchorable.Content = new DatabaseModelDesigner()
+			{
+				ViewModel = designerViewModel
+			};
+			window.MainDocumentPane.Children.Add(anchorable);
+			int indexOf = window.MainDocumentPane.Children.IndexOf(anchorable);
+			window.MainDocumentPane.SelectedContentIndex = indexOf;
+		}
+
+#endregion
 	}
 }

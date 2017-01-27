@@ -11,5 +11,10 @@ namespace ER_Diagram_Modeler.DiagramConstruction.Strategy
 		TableRowModel PlaceholderRowModel();
 		void CreateTable(string name);
 		IEnumerable<TableModel> ListTables();
+		void RenameTable(string oldName, string newName);
+		void RenameColumn(string table, string oldName, string newName);
+		void AddColumn(string table, TableRowModel model);
+		void UpdateColumn(string table, TableRowModel model);
+		void RemoveColumn(string table, string column);
 	}
 }

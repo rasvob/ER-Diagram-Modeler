@@ -30,6 +30,7 @@
 			<RoutedUICommand x:Key="Commands.ShowDatabaseConnectionLayout" />
 			<RoutedUICommand x:Key="Commands.NewDiagram" />
 			<RoutedUICommand x:Key="Commands.ApplyAttributeEdit" />
+			<RoutedUICommand x:Key="Commands.RemoveColumn" />
 		</ResourceDictionary>
 	</Window.Resources>
 	
@@ -53,6 +54,10 @@
 		<CommandBinding Command="{StaticResource Commands.ApplyAttributeEdit}"
 						Executed="ApplyAttributeEdit_OnExecuted"
 						CanExecute="ApplyAttributeEdit_OnCanExecute"></CommandBinding>
+
+		<CommandBinding Command="{StaticResource Commands.RemoveColumn}"
+						Executed="RemoveColumn_OnExecuted"
+						></CommandBinding>
 	</Window.CommandBindings>
 	
 	<Window.InputBindings>
@@ -143,6 +148,7 @@
 							<ColumnDefinition Width="Auto"></ColumnDefinition>
 							<ColumnDefinition Width="Auto"></ColumnDefinition>
 							<ColumnDefinition Width="*"></ColumnDefinition>
+							<ColumnDefinition Width="Auto"></ColumnDefinition>
 							<ColumnDefinition Width="Auto"></ColumnDefinition>
 						</Grid.ColumnDefinitions>
 						
@@ -270,6 +276,12 @@
 						</CheckBox>
 
 						<Button Grid.Column="7" 
+								Command="{StaticResource Commands.RemoveColumn}"
+								Margin="5 0"
+								Content="Remove column">
+						</Button>
+
+						<Button Grid.Column="8" 
 								Command="{StaticResource Commands.ApplyAttributeEdit}"
 								Content="Apply">
 						</Button>

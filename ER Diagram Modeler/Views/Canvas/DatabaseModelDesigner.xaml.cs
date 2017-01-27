@@ -195,6 +195,11 @@ namespace ER_Diagram_Modeler.Views.Canvas
 			}
 		}
 
+		/// <summary>
+		/// Only for testing
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="args"></param>
 		private void PointsOnCollectionChanged(object sender, NotifyCollectionChangedEventArgs args)
 		{
 			switch (args.Action)
@@ -287,6 +292,7 @@ namespace ER_Diagram_Modeler.Views.Canvas
 			var owner = Window.GetWindow(this) as MainWindow;
 			content.AddNewRow += owner.AddNewRowHandler;
 			content.EditSelectedRow += owner.EditRowHandler;
+			content.RenameTable += owner.RenameTableHandler;
 			ModelDesignerCanvas.Children.Add(content);
 			content.Loaded += (sender, args) =>
 			{
@@ -307,6 +313,7 @@ namespace ER_Diagram_Modeler.Views.Canvas
 			var owner = Window.GetWindow(this) as MainWindow;
 			table.AddNewRow -= owner.AddNewRowHandler;
 			table.EditSelectedRow -= owner.EditRowHandler;
+			table.RenameTable -= owner.RenameTableHandler;
 			ModelDesignerCanvas.Children.Remove(table);
 		}
 

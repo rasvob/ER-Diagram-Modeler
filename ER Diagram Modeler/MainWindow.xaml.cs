@@ -22,6 +22,7 @@ using ER_Diagram_Modeler.Configuration.Providers;
 using ER_Diagram_Modeler.DatabaseConnection;
 using ER_Diagram_Modeler.DatabaseConnection.SqlServer;
 using ER_Diagram_Modeler.DiagramConstruction;
+using ER_Diagram_Modeler.DiagramConstruction.Strategy;
 using ER_Diagram_Modeler.Dialogs;
 using ER_Diagram_Modeler.EventArgs;
 using ER_Diagram_Modeler.Models.Designer;
@@ -43,11 +44,13 @@ namespace ER_Diagram_Modeler
 		public MainWindowViewModel MainWindowViewModel { get; set; }
 		private TableModel _flyoutTableModel;
 		private EditRowEventArgs _flyoutRowEventArgs = null;
+		private readonly DatabaseUpdater _updater;
 
 		public MainWindow()
 		{
 			SessionProvider.Instance.ConnectionType = ConnectionType.None;
 			InitializeComponent();
+			_updater = new DatabaseUpdater();
 			MainWindowViewModel = new MainWindowViewModel();
 			DataContext = MainWindowViewModel;
 			DatabaseConnectionSidebar.ConnectionClick += DatabaseConnectionSidebarOnConnectionClick;
@@ -114,7 +117,7 @@ namespace ER_Diagram_Modeler
 					return;
 				}
 
-				AddNewDiagramDocument(title);
+				DiagramFacade.CreateNewDiagram(this, title);
 
 				idx = MainDocumentPane.SelectedContentIndex;
 			}
@@ -135,34 +138,6 @@ namespace ER_Diagram_Modeler
 				await Task.Delay(100);
 				facade.AddRelationShipsForTable(model, diagram.ModelDesignerCanvas);
 			}
-		}
-
-		private void AddNewDiagramDocument(string title)
-		{
-			LayoutAnchorable anchorable = new LayoutAnchorable()
-			{
-				CanClose = true,
-				CanHide = false,
-				CanFloat = true,
-				CanAutoHide = false,
-				Title = title,
-				ContentId = $"{title}_ID"
-			};
-
-			DatabaseModelDesignerViewModel designerViewModel = new DatabaseModelDesignerViewModel()
-			{
-				DiagramTitle = title
-			};
-
-			MainWindowViewModel.DatabaseModelDesignerViewModels.Add(designerViewModel);
-
-			anchorable.Content = new DatabaseModelDesigner()
-			{
-				ViewModel = designerViewModel
-			};
-			MainDocumentPane.Children.Add(anchorable);
-			int indexOf = MainDocumentPane.Children.IndexOf(anchorable);
-			MainDocumentPane.SelectedContentIndex = indexOf;
 		}
 
 		private void DatabaseConnectionSidebarOnConnectionClick(object sender, ConnectionType connectionType)
@@ -314,7 +289,7 @@ namespace ER_Diagram_Modeler
 				return;
 			}
 
-			AddNewDiagramDocument(result);
+			DiagramFacade.CreateNewDiagram(this, result);
 		}
 
 		private async Task<string> ShowNewDiagramDialog()
@@ -332,18 +307,20 @@ namespace ER_Diagram_Modeler
 			e.CanExecute = SessionProvider.Instance.ConnectionType != ConnectionType.None;
 		}
 
-		private void ApplyAttributeEdit_OnExecuted(object sender, ExecutedRoutedEventArgs e)
+		private async void ApplyAttributeEdit_OnExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
-			if (_flyoutRowEventArgs == null)
+			TableModel refreshed;
+			var res = _updater.AddOrUpdateCollumn(_flyoutTableModel, MainWindowViewModel.FlyoutRowModel, out refreshed, ref _flyoutRowEventArgs);
+
+			if (res != null)
 			{
-				_flyoutTableModel.Attributes.Add(MainWindowViewModel.FlyoutRowModel);
+				await this.ShowMessageAsync("Column error", res);
 			}
 			else
 			{
-				_flyoutRowEventArgs.TableModel.UpdateAttributes(_flyoutRowEventArgs.RowModel, MainWindowViewModel.FlyoutRowModel);
-				_flyoutRowEventArgs = null;
+				_flyoutTableModel.RefreshModel(refreshed);
 			}
-
+			
 			ToggleRowFlyout();
 		}
 
@@ -365,19 +342,15 @@ namespace ER_Diagram_Modeler
 			ToggleRowFlyout();
 			MainWindowViewModel.FlyoutRowModel = new TableRowModel();
 			_flyoutTableModel = args;
+			_flyoutRowEventArgs = null;
 		}
 
 		public void EditRowHandler(object sender, EditRowEventArgs args)
 		{
-			var flyout = Flyouts.Items[1] as Flyout;
-
-			if(flyout != null)
-			{
-				flyout.IsOpen = !flyout.IsOpen;
-			}
-
+			ToggleRowFlyout();
 			MainWindowViewModel.FlyoutRowModel = new TableRowModel(args.RowModel.Name, args.RowModel.Datatype);
 			_flyoutRowEventArgs = args;
+			_flyoutTableModel = args.TableModel;
 		}
 
 		private void ToggleRowFlyout()
@@ -388,6 +361,36 @@ namespace ER_Diagram_Modeler
 			{
 				flyout.IsOpen = !flyout.IsOpen;
 			}
+		}
+
+		public async void RenameTableHandler(object sender, TableModel e)
+		{
+			var originalName = e.Title;
+			var dialog = new TableNameDialog()
+			{
+				Model = e,
+				Owner = this
+			};
+			dialog.ShowDialog();
+
+			string res = _updater.RenameTable(originalName, e);
+
+			if (res != null)
+			{
+				await this.ShowMessageAsync("Rename table", res);
+			}
+		}
+
+		private async void RemoveColumn_OnExecuted(object sender, ExecutedRoutedEventArgs e)
+		{
+			var res = _updater.RemoveColumn(_flyoutTableModel, ref _flyoutRowEventArgs);
+
+			if(res != null)
+			{
+				await this.ShowMessageAsync("Drop column", res);
+			}
+
+			ToggleRowFlyout();
 		}
 	}
 }

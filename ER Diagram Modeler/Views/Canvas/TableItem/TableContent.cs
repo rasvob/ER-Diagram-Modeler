@@ -17,6 +17,7 @@ namespace ER_Diagram_Modeler.Views.Canvas.TableItem
 
 		public event EventHandler<TableModel> AddNewRow;
 		public event EventHandler<EditRowEventArgs> EditSelectedRow;
+		public event EventHandler<TableModel> RenameTable;
 
 		public static readonly int ZIndexSelectedValue = DesignerCanvas.TableSelectedZIndex;
 		public static readonly int ZIndexUnSelectedValue = DesignerCanvas.TableUnselectedZIndex;
@@ -76,8 +77,14 @@ namespace ER_Diagram_Modeler.Views.Canvas.TableItem
 			var control = new TableViewControl(TableViewModel);
 			control.AddNewRow += ControlOnAddNewRow;
 			control.EditSelectedRow += ControlOnEditSelectedRow;
+			control.RenameTable += ControlOnRenameTable;
 			Content = control;
 
+		}
+
+		private void ControlOnRenameTable(object sender, TableModel tableModel)
+		{
+			OnRenameTable(tableModel);
 		}
 
 		private void ControlOnEditSelectedRow(object sender, EditRowEventArgs editRowEventArgs)
@@ -148,6 +155,11 @@ namespace ER_Diagram_Modeler.Views.Canvas.TableItem
 		protected virtual void OnEditSelectedRow(EditRowEventArgs e)
 		{
 			EditSelectedRow?.Invoke(this, e);
+		}
+
+		protected virtual void OnRenameTable(TableModel e)
+		{
+			RenameTable?.Invoke(this, e);
 		}
 	}
 }

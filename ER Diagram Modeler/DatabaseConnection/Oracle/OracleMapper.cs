@@ -36,5 +36,30 @@ namespace ER_Diagram_Modeler.DatabaseConnection.Oracle
 		{
 			throw new System.NotImplementedException();
 		}
+
+		public void RenameTable(string oldName, string newName)
+		{
+			throw new System.NotImplementedException();
+		}
+
+		public void AddNewColumn(string table, TableRowModel model)
+		{
+			throw new System.NotImplementedException();
+		}
+
+		public void AlterColumn(string table, TableRowModel model)
+		{
+			throw new System.NotImplementedException();
+		}
+
+		public void RenameColumn(string table, string oldName, string newName)
+		{
+			throw new System.NotImplementedException();
+		}
+
+		public void DropColumn(string table, string column)
+		{
+			throw new System.NotImplementedException();
+		}
 	}
 }

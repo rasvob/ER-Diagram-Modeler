@@ -81,7 +81,7 @@
 				          CanUserReorderColumns="True"
 				          CanUserResizeColumns="True"
 				          CanUserSortColumns="False"
-				          CanUserDeleteRows="True"
+				          CanUserDeleteRows="False"
 				          GridLinesVisibility="All"
 				          AutoGenerateColumns="False">
 				<DataGrid.Columns>
@@ -220,6 +220,7 @@
 
 					<DataGridCheckBoxColumn Binding="{Binding AllowNull, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
 						                        Header="Allow Null"
+												IsReadOnly="True"
 						                        ElementStyle="{DynamicResource MetroDataGridCheckBox}">
 						<DataGridCheckBoxColumn.CellStyle>
 							<Style TargetType="DataGridCell" BasedOn="{StaticResource MetroDataGridCell}">

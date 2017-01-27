@@ -55,5 +55,30 @@ namespace ER_Diagram_Modeler.DiagramConstruction.Strategy
 		{
 			return _strategy.ListTables();
 		}
+
+		public void RenameTable(string oldName, string newName)
+		{
+			_strategy.RenameTable(oldName, newName);
+		}
+
+		public void AddColumn(string table, TableRowModel model)
+		{
+			_strategy.AddColumn(table, model);
+		}
+
+		public void UpdateColumn(string table, TableRowModel model)
+		{
+			_strategy.UpdateColumn(table, model);
+		}
+
+		public void RenameColumn(string table, string oldName, string newName)
+		{
+			_strategy.RenameColumn(table, oldName, newName);
+		}
+
+		public void RemoveColumn(string table, string column)
+		{
+			_strategy.RemoveColumn(table, column);
+		}
 	}
 }

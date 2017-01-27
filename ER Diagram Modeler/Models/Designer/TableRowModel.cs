@@ -133,10 +133,6 @@ namespace ER_Diagram_Modeler.Models.Designer
 			var sb = new StringBuilder();
 			sb.Append(Name).Append(' ').Append(Datatype);
 			sb.Append(AllowNull ? " NULL " : " NOT NULL ");
-			if (PrimaryKey)
-			{
-				sb.Append("PRIMARY KEY");
-			}
 			return sb.ToString();
 		}
 
