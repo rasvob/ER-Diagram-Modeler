@@ -140,6 +140,27 @@ namespace ER_Diagram_Modeler
 			}
 		}
 
+		private bool TryGetSelectedDesigner(out DatabaseModelDesigner designer)
+		{
+			var idx = MainDocumentPane.SelectedContentIndex;
+			designer = null;
+
+			if (idx < 0)
+			{
+				return false;
+			}
+
+			var content = MainDocumentPane.Children[idx].Content;
+			designer = content as DatabaseModelDesigner;
+
+			if (designer == null)
+			{
+				return false;
+			}
+
+			return true;
+		}
+
 		private void DatabaseConnectionSidebarOnConnectionClick(object sender, ConnectionType connectionType)
 		{
 			switch (connectionType)
@@ -391,6 +412,57 @@ namespace ER_Diagram_Modeler
 			}
 
 			ToggleRowFlyout();
+		}
+
+		public async void RemoveRowHandler(object sender, EditRowEventArgs e)
+		{
+			_flyoutTableModel = e.TableModel;
+			_flyoutRowEventArgs = e;
+			var res = _updater.RemoveColumn(_flyoutTableModel, ref _flyoutRowEventArgs);
+
+			if(res != null)
+			{
+				await this.ShowMessageAsync("Drop column", res);
+			}
+		}
+
+		private void RemoveColumn_OnCanExecute(object sender, CanExecuteRoutedEventArgs e)
+		{
+			e.CanExecute = _flyoutRowEventArgs != null;
+		}
+
+		public async void DropTableHandler(object sender, TableModel e)
+		{
+			var dialog = await this.ShowMessageAsync("Drop table", $"Do you really want to drop {e.Title} ? Changes can't be undone!",
+				MessageDialogStyle.AffirmativeAndNegative);
+
+			if (dialog == MessageDialogResult.Affirmative)
+			{
+				var res = _updater.DropTable(e);
+
+				if (res != null)
+				{
+					await this.ShowMessageAsync("Drop column", res);
+					return;
+				}
+
+				DatabaseModelDesigner designer;
+				if (TryGetSelectedDesigner(out designer))
+				{
+					var facade = new DiagramFacade(designer);
+					facade.RemoveTable(e);
+				}
+			}
+		}
+
+		public async void UpdatePrimaryKeyConstraintHandler(object sender, TableModel e)
+		{
+			var res = _updater.UpdatePrimaryKeyConstraint(e);
+
+			if(res != null)
+			{
+				await this.ShowMessageAsync("Primary key constraint", res);
+			}
 		}
 	}
 }

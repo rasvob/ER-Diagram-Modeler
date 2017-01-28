@@ -57,6 +57,7 @@
 
 		<CommandBinding Command="{StaticResource Commands.RemoveColumn}"
 						Executed="RemoveColumn_OnExecuted"
+						CanExecute="RemoveColumn_OnCanExecute"
 						></CommandBinding>
 	</Window.CommandBindings>
 	

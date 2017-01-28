@@ -80,5 +80,15 @@ namespace ER_Diagram_Modeler.DiagramConstruction.Strategy
 		{
 			_strategy.RemoveColumn(table, column);
 		}
+
+		public void RemoveTable(TableModel table)
+		{
+			_strategy.RemoveTable(table);
+		}
+
+		public void UpdatePrimaryKeyConstraint(TableModel table)
+		{
+			_strategy.UpdatePrimaryKeyConstraint(table);
+		}
 	}
 }

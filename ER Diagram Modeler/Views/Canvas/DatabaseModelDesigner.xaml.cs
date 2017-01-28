@@ -293,6 +293,9 @@ namespace ER_Diagram_Modeler.Views.Canvas
 			content.AddNewRow += owner.AddNewRowHandler;
 			content.EditSelectedRow += owner.EditRowHandler;
 			content.RenameTable += owner.RenameTableHandler;
+			content.RemoveSelectedRow += owner.RemoveRowHandler;
+			content.DropTable += owner.DropTableHandler;
+			content.UpdatePrimaryKeyConstraint += owner.UpdatePrimaryKeyConstraintHandler;
 			ModelDesignerCanvas.Children.Add(content);
 			content.Loaded += (sender, args) =>
 			{
@@ -314,6 +317,9 @@ namespace ER_Diagram_Modeler.Views.Canvas
 			table.AddNewRow -= owner.AddNewRowHandler;
 			table.EditSelectedRow -= owner.EditRowHandler;
 			table.RenameTable -= owner.RenameTableHandler;
+			table.RemoveSelectedRow -= owner.RemoveRowHandler;
+			table.DropTable -= owner.DropTableHandler;
+			table.UpdatePrimaryKeyConstraint -= owner.UpdatePrimaryKeyConstraintHandler;
 			ModelDesignerCanvas.Children.Remove(table);
 		}
 

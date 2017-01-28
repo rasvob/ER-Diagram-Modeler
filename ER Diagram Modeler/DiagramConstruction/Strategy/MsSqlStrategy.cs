@@ -78,6 +78,23 @@ namespace ER_Diagram_Modeler.DiagramConstruction.Strategy
 			}
 		}
 
+		public void RemoveTable(TableModel table)
+		{
+			using(IMapper mapper = new MsSqlMapper())
+			{
+				mapper.DropTable(table.Title);
+			}
+		}
+
+		public void UpdatePrimaryKeyConstraint(TableModel table)
+		{
+			using(IMapper mapper = new MsSqlMapper())
+			{
+				mapper.DropPrimaryKey(table.Title, table.Attributes.FirstOrDefault(t => t.PrimaryKeyConstraintName != null)?.PrimaryKeyConstraintName);
+				mapper.CreatePrimaryKey(table.Title, table.Attributes.Where(t => t.PrimaryKey).Select(s => s.Name).ToArray());
+			}
+		}
+
 		public IEnumerable<RelationshipModel> ReadRelationshipModels(string table, IEnumerable<TableModel> tables)
 		{
 			using (MsSqlMapper mapper = new MsSqlMapper())

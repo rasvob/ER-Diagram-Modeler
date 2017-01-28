@@ -61,5 +61,15 @@ namespace ER_Diagram_Modeler.DiagramConstruction.Strategy
 		{
 			throw new System.NotImplementedException();
 		}
+
+		public void RemoveTable(TableModel table)
+		{
+			throw new System.NotImplementedException();
+		}
+
+		public void UpdatePrimaryKeyConstraint(TableModel table)
+		{
+			throw new System.NotImplementedException();
+		}
 	}
 }

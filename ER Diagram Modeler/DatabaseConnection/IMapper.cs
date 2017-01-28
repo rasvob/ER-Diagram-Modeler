@@ -16,5 +16,8 @@ namespace ER_Diagram_Modeler.DatabaseConnection
 		void AlterColumn(string table, TableRowModel model);
 		void RenameColumn(string table, string oldName, string newName);
 		void DropColumn(string table, string column);
+		void DropTable(string table);
+		void DropPrimaryKey(string table ,string primaryKeyConstraintName);
+		void CreatePrimaryKey(string table, string[] columns);
 	}
 }

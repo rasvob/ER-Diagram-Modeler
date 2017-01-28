@@ -154,6 +154,9 @@
     <Compile Include="Dialogs\ForeignKeysDialog.xaml.cs">
       <DependentUpon>ForeignKeysDialog.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Dialogs\PrimaryKeyDialog.xaml.cs">
+      <DependentUpon>PrimaryKeyDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Dialogs\TableNameDialog.xaml.cs">
       <DependentUpon>TableNameDialog.xaml</DependentUpon>
     </Compile>
@@ -186,6 +189,7 @@
     <Compile Include="ViewModels\Enums\RelativeTablePosition.cs" />
     <Compile Include="ViewModels\Enums\TableViewMode.cs" />
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
+    <Compile Include="ViewModels\PrimaryKeyDialogViewModel.cs" />
     <Compile Include="ViewModels\SimpleCommand.cs" />
     <Compile Include="ViewModels\TableViewModel.cs" />
     <Compile Include="ViewModels\ConnectionInfoViewModel.cs" />
@@ -225,6 +229,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Dialogs\ForeignKeysDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Dialogs\PrimaryKeyDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -56,7 +56,6 @@ namespace ER_Diagram_Modeler.Models.Designer
 		}
 
 		public event PropertyChangedEventHandler PropertyChanged;
-		public event EventHandler<EditRowEventArgs> ColumnDropped; 
 
 		[NotifyPropertyChangedInvocator]
 		protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
@@ -111,16 +110,10 @@ namespace ER_Diagram_Modeler.Models.Designer
 			Title = fresh.Title;
 
 			Attributes.Clear();
-
-			foreach(TableRowModel model in fresh.Attributes)
+			foreach (TableRowModel model in fresh.Attributes)
 			{
 				Attributes.Add(model);
 			}
-		}
-
-		protected virtual void OnColumnDropped(EditRowEventArgs e)
-		{
-			ColumnDropped?.Invoke(this, e);
 		}
 	}
 }

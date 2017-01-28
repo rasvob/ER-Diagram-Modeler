@@ -102,6 +102,16 @@ namespace ER_Diagram_Modeler.DiagramConstruction
 			}
 		}
 
+		public void RemoveTable(TableModel model)
+		{
+			var table = ViewModel.TableViewModels.FirstOrDefault(t => t.Model.Equals(model));
+
+			if (table != null)
+			{
+				ViewModel.TableViewModels.Remove(table);
+			}
+		}
+
 		private TableViewModel CreateTableViewModel(TableModel source, DatabaseContext ctx)
 		{
 			TableModel model = ctx.ReadTableDetails(source.Id, source.Title);

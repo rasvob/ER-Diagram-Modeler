@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -22,6 +23,7 @@ using ER_Diagram_Modeler.Models.Designer;
 using ER_Diagram_Modeler.ViewModels;
 using ER_Diagram_Modeler.ViewModels.Enums;
 using MahApps.Metro.Controls.Dialogs;
+using KeyEventArgs = System.Windows.Input.KeyEventArgs;
 using MenuItem = System.Windows.Controls.MenuItem;
 using UserControl = System.Windows.Controls.UserControl;
 
@@ -35,7 +37,11 @@ namespace ER_Diagram_Modeler.Views.Canvas.TableItem
 		public TableViewModel ViewModel { get; set; }
 		public event EventHandler<TableModel> AddNewRow;
 		public event EventHandler<EditRowEventArgs> EditSelectedRow;
+		public event EventHandler<EditRowEventArgs> RemoveSelectedRow;
 		public event EventHandler<TableModel> RenameTable; 
+		public event EventHandler<TableModel> DropTable;
+		public event EventHandler<TableModel> UpdatePrimaryKeyConstraint;
+		public event EventHandler<TableModel> RefreshTableData;
 
 		public TableViewControl()
 		{
@@ -98,18 +104,11 @@ namespace ER_Diagram_Modeler.Views.Canvas.TableItem
 
 		private void TableDataGrid_OnMouseDoubleClick(object sender, MouseButtonEventArgs e)
 		{
-			int index = TableDataGrid.SelectedIndex;
-
-			if (index < 0)
+			EditRowEventArgs args;
+			if(TryGetSelectedRow(out args))
 			{
-				return;
+				OnEditSelectedRow(args);
 			}
-
-			OnEditSelectedRow(new EditRowEventArgs()
-			{
-				RowModel = ViewModel.Model.Attributes[index],
-				TableModel = ViewModel.Model
-			});			
 		}
 
 		private void AddNewRow_OnClick(object sender, RoutedEventArgs e)
@@ -130,6 +129,83 @@ namespace ER_Diagram_Modeler.Views.Canvas.TableItem
 		protected virtual void OnRenameTable(TableModel e)
 		{
 			RenameTable?.Invoke(this, e);
+		}
+
+		private void TableDataGrid_OnPreviewKeyUp(object sender, KeyEventArgs e)
+		{
+			if (e.Key != Key.Delete) return;
+
+			EditRowEventArgs args;
+
+			if (TryGetSelectedRow(out args))
+			{
+				OnRemoveSelectedRow(args);
+				Trace.WriteLine(args.RowModel);
+				e.Handled = true;
+			}
+		}
+
+		private bool TryGetSelectedRow(out EditRowEventArgs args)
+		{
+			int index = TableDataGrid.SelectedIndex;
+
+			if(index < 0)
+			{
+				args = null;
+				return false;
+			}
+
+			args = new EditRowEventArgs()
+			{
+				RowModel = ViewModel.Model.Attributes[index],
+				TableModel = ViewModel.Model
+			};
+
+			return true;
+		}
+
+		protected virtual void OnRemoveSelectedRow(EditRowEventArgs e)
+		{
+			RemoveSelectedRow?.Invoke(this, e);
+		}
+
+		private void DropTableItem_OnClick(object sender, RoutedEventArgs e)
+		{
+			OnDropTable(ViewModel.Model);
+		}
+
+		protected virtual void OnDropTable(TableModel e)
+		{
+			DropTable?.Invoke(this, e);
+		}
+
+		private void ModPrimaryKeyItem_OnClick(object sender, RoutedEventArgs e)
+		{
+			var dialog = new PrimaryKeyDialog
+			{
+				Owner = Window.GetWindow(this),
+				TableModel = ViewModel.Model
+			};
+
+			bool? res = dialog.ShowDialog();
+
+			if (res.HasValue)
+			{
+				if (res.Value)
+				{
+					OnUpdatePrimaryKeyConstraint(ViewModel.Model);
+				}
+			}
+		}
+
+		protected virtual void OnUpdatePrimaryKeyConstraint(TableModel e)
+		{
+			UpdatePrimaryKeyConstraint?.Invoke(this, e);
+		}
+
+		protected virtual void OnRefreshTableData(TableModel e)
+		{
+			RefreshTableData?.Invoke(this, e);
 		}
 	}
 }

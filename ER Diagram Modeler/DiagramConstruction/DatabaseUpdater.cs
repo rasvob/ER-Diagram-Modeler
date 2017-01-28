@@ -110,5 +110,39 @@ namespace ER_Diagram_Modeler.DiagramConstruction
 			var ctx = new DatabaseContext(SessionProvider.Instance.ConnectionType);
 			return ctx.ReadTableDetails(model.Id, model.Title);
 		}
+
+		public string DropTable(TableModel table)
+		{
+			try
+			{
+				var ctx = new DatabaseContext(SessionProvider.Instance.ConnectionType);
+				ctx.RemoveTable(table);
+				return null;
+			}
+			catch(SqlException exception)
+			{
+				return exception.Message;
+			}
+		}
+
+		public string UpdatePrimaryKeyConstraint(TableModel model)
+		{
+			var ctx = new DatabaseContext(SessionProvider.Instance.ConnectionType);
+
+			try
+			{
+				ctx.UpdatePrimaryKeyConstraint(model);
+				return null;
+			}
+			catch (SqlException exception)
+			{
+				return exception.Message;
+			}
+			finally
+			{
+				TableModel fresh = ctx.ReadTableDetails(model.Id, model.Title);
+				model.RefreshModel(fresh);
+			}
+		}
 	}
 }

@@ -16,5 +16,7 @@ namespace ER_Diagram_Modeler.DiagramConstruction.Strategy
 		void AddColumn(string table, TableRowModel model);
 		void UpdateColumn(string table, TableRowModel model);
 		void RemoveColumn(string table, string column);
+		void RemoveTable(TableModel table);
+		void UpdatePrimaryKeyConstraint(TableModel table);
 	}
 }

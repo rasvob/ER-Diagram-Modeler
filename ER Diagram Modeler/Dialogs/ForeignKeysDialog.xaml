@@ -101,7 +101,6 @@
 
 		<Grid Grid.Row="0">
 			<Label Content="Relationships"></Label>
-			
 		</Grid>
 
 		<Grid Grid.Row="1" Margin="0 10">

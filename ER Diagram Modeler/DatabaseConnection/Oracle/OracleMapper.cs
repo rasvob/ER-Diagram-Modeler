@@ -22,6 +22,7 @@ namespace ER_Diagram_Modeler.DatabaseConnection.Oracle
 			}
 		}
 
+
 		public void CreateTable(string name)
 		{
 			throw new System.NotImplementedException();
@@ -58,6 +59,21 @@ namespace ER_Diagram_Modeler.DatabaseConnection.Oracle
 		}
 
 		public void DropColumn(string table, string column)
+		{
+			throw new System.NotImplementedException();
+		}
+
+		public void DropTable(string table)
+		{
+			throw new System.NotImplementedException();
+		}
+
+		public void DropPrimaryKey(string table, string primaryKeyConstraintName)
+		{
+			throw new System.NotImplementedException();
+		}
+
+		public void CreatePrimaryKey(string table, string[] columns)
 		{
 			throw new System.NotImplementedException();
 		}

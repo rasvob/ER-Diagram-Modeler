@@ -18,6 +18,9 @@ namespace ER_Diagram_Modeler.Views.Canvas.TableItem
 		public event EventHandler<TableModel> AddNewRow;
 		public event EventHandler<EditRowEventArgs> EditSelectedRow;
 		public event EventHandler<TableModel> RenameTable;
+		public event EventHandler<EditRowEventArgs> RemoveSelectedRow;
+		public event EventHandler<TableModel> DropTable;
+		public event EventHandler<TableModel> UpdatePrimaryKeyConstraint;
 
 		public static readonly int ZIndexSelectedValue = DesignerCanvas.TableSelectedZIndex;
 		public static readonly int ZIndexUnSelectedValue = DesignerCanvas.TableUnselectedZIndex;
@@ -78,8 +81,25 @@ namespace ER_Diagram_Modeler.Views.Canvas.TableItem
 			control.AddNewRow += ControlOnAddNewRow;
 			control.EditSelectedRow += ControlOnEditSelectedRow;
 			control.RenameTable += ControlOnRenameTable;
+			control.RemoveSelectedRow += ControlOnRemoveSelectedRow;
+			control.DropTable += ControlOnDropTable;
+			control.UpdatePrimaryKeyConstraint += ControlOnUpdatePrimaryKeyConstraint;
 			Content = control;
+		}
 
+		private void ControlOnUpdatePrimaryKeyConstraint(object sender, TableModel tableModel)
+		{
+			OnUpdatePrimaryKeyConstraint(tableModel);
+		}
+
+		private void ControlOnDropTable(object sender, TableModel tableModel)
+		{
+			OnDropTable(tableModel);
+		}
+
+		private void ControlOnRemoveSelectedRow(object sender, EditRowEventArgs editRowEventArgs)
+		{
+			OnRemoveSelectedRow(editRowEventArgs);
 		}
 
 		private void ControlOnRenameTable(object sender, TableModel tableModel)
@@ -160,6 +180,21 @@ namespace ER_Diagram_Modeler.Views.Canvas.TableItem
 		protected virtual void OnRenameTable(TableModel e)
 		{
 			RenameTable?.Invoke(this, e);
+		}
+
+		protected virtual void OnRemoveSelectedRow(EditRowEventArgs e)
+		{
+			RemoveSelectedRow?.Invoke(this, e);
+		}
+
+		protected virtual void OnDropTable(TableModel e)
+		{
+			DropTable?.Invoke(this, e);
+		}
+
+		protected virtual void OnUpdatePrimaryKeyConstraint(TableModel e)
+		{
+			UpdatePrimaryKeyConstraint?.Invoke(this, e);
 		}
 	}
 }

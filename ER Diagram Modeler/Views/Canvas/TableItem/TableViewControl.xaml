@@ -14,7 +14,6 @@
 	<UserControl.Resources>
 		<ResourceDictionary>
 			<valueConverters:TableViewModeToVisibilityConverter x:Key="TableViewModeToVisibilityConverter" />
-
 			<ResourceDictionary.MergedDictionaries>
 				<ResourceDictionary Source="../../../Themes/TableSettingsDropdownButton.xaml"></ResourceDictionary>
 				<ResourceDictionary Source="../../../Themes/TableAddRowButton.xaml"></ResourceDictionary>
@@ -44,13 +43,12 @@
 					IsHitTestVisible="False"
 					VerticalContentAlignment="Center">
 			</Label>
-			
+
 			<Button 
-				Content="AddNewRow"
+				Content="Drop Table"
 				Grid.Column="1"
 				Click="AddNewRow_OnClick"
 				Style="{StaticResource TableAddRowButtonStyle}">
-				
 			</Button>
 			
 			<Button Content="Menu"
@@ -64,6 +62,8 @@
 							<MenuItem Header="Name only" Name="MenuItemNameOnly" Click="MenuItem_NameOnly_OnClick"></MenuItem>
 						</MenuItem>
 						<MenuItem Header="Show datatype" Name="MenuItemShowDatatype" Click="MenuItemShowDatatype_OnClick" IsChecked="True"></MenuItem>
+						<MenuItem Header="Modify Primary Key" Name="ModPrimaryKeyItem" Click="ModPrimaryKeyItem_OnClick"></MenuItem>
+						<MenuItem Header="Drop table" Name="DropTableItem" Click="DropTableItem_OnClick"></MenuItem>
 					</ContextMenu>
 				</Button.ContextMenu>
 			</Button>
@@ -75,6 +75,7 @@
 			<DataGrid x:Name="TableDataGrid"
 				          ItemsSource="{Binding Model.Attributes}"
 						  MouseDoubleClick="TableDataGrid_OnMouseDoubleClick"
+						  PreviewKeyUp="TableDataGrid_OnPreviewKeyUp"
 				          SelectionMode="Single"
 				          SelectionUnit="FullRow"
 				          CanUserAddRows="False"
@@ -87,6 +88,7 @@
 				<DataGrid.Columns>
 					<DataGridCheckBoxColumn Binding="{Binding PrimaryKey, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
 						                        Header="PK"
+												IsReadOnly="True"
 						                        ElementStyle="{DynamicResource MetroDataGridCheckBox}">
 					</DataGridCheckBoxColumn>
 
@@ -224,7 +226,7 @@
 						                        ElementStyle="{DynamicResource MetroDataGridCheckBox}">
 						<DataGridCheckBoxColumn.CellStyle>
 							<Style TargetType="DataGridCell" BasedOn="{StaticResource MetroDataGridCell}">
-								<Style.Triggers>
+								<!--<Style.Triggers>
 									<DataTrigger Binding="{Binding PrimaryKey}" Value="True">
 										<Setter Property="IsEnabled" Value="False"></Setter>
 									</DataTrigger>
@@ -232,7 +234,7 @@
 									<DataTrigger Binding="{Binding PrimaryKey}" Value="False">
 										<Setter Property="IsEnabled" Value="True"></Setter>
 									</DataTrigger>
-								</Style.Triggers>
+								</Style.Triggers>-->
 							</Style>
 						</DataGridCheckBoxColumn.CellStyle>
 					</DataGridCheckBoxColumn>

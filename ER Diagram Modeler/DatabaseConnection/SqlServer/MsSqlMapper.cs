@@ -25,6 +25,9 @@ namespace ER_Diagram_Modeler.DatabaseConnection.SqlServer
 		private static string SqlAddColumn = @"ALTER TABLE [{0}] ADD {1}";
 		private static string SqlAlterColumn = @"ALTER TABLE [{0}] ALTER COLUMN {1}";
 		private static string SqlDropColumn = @"ALTER TABLE [{0}] DROP COLUMN {1}";
+		private static string SqlDropTable = @"DROP TABLE [{0}]";
+		private static string SqlDropConstraint = @"ALTER TABLE [{0}] DROP CONSTRAINT {1}";
+		private static string SqlAddPrimaryKeyConstraint = @"ALTER TABLE [{0}] ADD CONSTRAINT {1} PRIMARY KEY CLUSTERED ({2})";
 
 		public MsSqlDatabase Database { get; set; }
 
@@ -166,6 +169,28 @@ namespace ER_Diagram_Modeler.DatabaseConnection.SqlServer
 		public void DropColumn(string table, string column)
 		{
 			SqlCommand command = Database.CreateCommand(string.Format(SqlDropColumn, table, column));
+			command.ExecuteNonQuery();
+		}
+
+		public void DropTable(string table)
+		{
+			SqlCommand command = Database.CreateCommand(string.Format(SqlDropTable, table));
+			command.ExecuteNonQuery();
+		}
+
+		public void DropPrimaryKey(string table, string primaryKeyConstraintName)
+		{
+			SqlCommand command = Database.CreateCommand(string.Format(SqlDropConstraint, table, primaryKeyConstraintName));
+			command.ExecuteNonQuery();
+		}
+
+		public void CreatePrimaryKey(string table, string[] columns)
+		{
+			if (columns.Length == 0)
+			{
+				return;
+			}
+			SqlCommand command = Database.CreateCommand(string.Format(SqlAddPrimaryKeyConstraint, table, $"PK_{table}_{columns[0]}", string.Join(",", columns)));
 			command.ExecuteNonQuery();
 		}
 
