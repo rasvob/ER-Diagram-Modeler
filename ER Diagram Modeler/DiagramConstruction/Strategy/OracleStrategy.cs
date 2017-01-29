@@ -71,5 +71,15 @@ namespace ER_Diagram_Modeler.DiagramConstruction.Strategy
 		{
 			throw new System.NotImplementedException();
 		}
+
+		public void RemoveRelationship(RelationshipModel model)
+		{
+			throw new System.NotImplementedException();
+		}
+
+		public void AddRelationship(RelationshipModel model)
+		{
+			throw new System.NotImplementedException();
+		}
 	}
 }

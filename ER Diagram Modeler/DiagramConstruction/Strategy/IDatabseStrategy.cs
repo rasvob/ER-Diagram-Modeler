@@ -18,5 +18,7 @@ namespace ER_Diagram_Modeler.DiagramConstruction.Strategy
 		void RemoveColumn(string table, string column);
 		void RemoveTable(TableModel table);
 		void UpdatePrimaryKeyConstraint(TableModel table);
+		void RemoveRelationship(RelationshipModel model);
+		void AddRelationship(RelationshipModel model);
 	}
 }

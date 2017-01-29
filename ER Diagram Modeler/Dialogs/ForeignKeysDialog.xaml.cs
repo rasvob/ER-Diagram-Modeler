@@ -16,11 +16,13 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using ER_Diagram_Modeler.Annotations;
+using ER_Diagram_Modeler.DiagramConstruction;
 using ER_Diagram_Modeler.Models.Designer;
 using ER_Diagram_Modeler.Models.Helpers;
 using ER_Diagram_Modeler.ViewModels;
 using ER_Diagram_Modeler.Views.Canvas;
 using MahApps.Metro.Controls;
+using MahApps.Metro.Controls.Dialogs;
 
 namespace ER_Diagram_Modeler.Dialogs
 {
@@ -41,10 +43,10 @@ namespace ER_Diagram_Modeler.Dialogs
 		}
 
 		public DatabaseModelDesignerViewModel DatabaseModelDesignerViewModel { get; set; }
-		private List<RowModelPair> _gridData = new List<RowModelPair>();
+		private ObservableCollection<RowModelPair> _gridData = new ObservableCollection<RowModelPair>();
 		private ConnectionInfoViewModel _infoViewModel;
 
-		public List<RowModelPair> GridData
+		public ObservableCollection<RowModelPair> GridData
 		{
 			get { return _gridData; }
 			set
@@ -57,19 +59,29 @@ namespace ER_Diagram_Modeler.Dialogs
 
 		public DesignerCanvas Canvas { get; set; }
 
-		public ForeignKeysDialog(DatabaseModelDesignerViewModel viewModel)
+		public ForeignKeysDialog(DatabaseModelDesignerViewModel viewModel, ConnectionInfoViewModel selected = null)
 		{
 			InitializeComponent();
 			DatabaseModelDesignerViewModel = viewModel;
 
+			int index = 0;
 
+			if (selected != null)
+			{
+				index = DatabaseModelDesignerViewModel.ConnectionInfoViewModels.IndexOf(selected);
+			}
+
+			SetupListBoxData(index);
+			SetupFlyout();
+		}
+
+		private void SetupListBoxData(int index)
+		{
 			RelationshipsListBox.ItemsSource =
 				DatabaseModelDesignerViewModel.ConnectionInfoViewModels;
 			RelationshipsListBox.DisplayMemberPath = "RelationshipModel.Name";
 			RelationshipsListBox.SelectionChanged += RelationshipsListBoxOnSelectionChanged;
-			RelationshipsListBox.SelectedIndex = 0;
-
-			SetupFlyout();
+			RelationshipsListBox.SelectedIndex = index;
 		}
 
 		private void SetupFlyout()
@@ -85,21 +97,21 @@ namespace ER_Diagram_Modeler.Dialogs
 
 		private void RelationshipsListBoxOnSelectionChanged(object sender, SelectionChangedEventArgs selectionChangedEventArgs)
 		{
-			if (selectionChangedEventArgs.AddedItems.Count == 0) return;
+			if (selectionChangedEventArgs.AddedItems.Count == 0)
+			{
+				GridData.Clear();
+				return;
+			}
+
 			InfoViewModel = selectionChangedEventArgs.AddedItems[0] as ConnectionInfoViewModel;
 
 			if (InfoViewModel?.RelationshipModel != null)
 			{
-				GridData = new List<RowModelPair>();
-
+				GridData.Clear();
 				foreach (RowModelPair pair in InfoViewModel.RelationshipModel.Attributes)
 				{
 					GridData.Add(pair);
 				}
-
-				OnPropertyChanged(nameof(GridData));
-
-				ForeignKeysGrid.ItemsSource = GridData;
 			}
 		}
 
@@ -113,12 +125,19 @@ namespace ER_Diagram_Modeler.Dialogs
 			}
 		}
 
-		private void Remove_OnExecuted(object sender, ExecutedRoutedEventArgs e)
+		private async void Remove_OnExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
+			var updater = new DatabaseUpdater();
+			var res = updater.RemoveRelationship(InfoViewModel.RelationshipModel);
+
+			if (res != null)
+			{
+				await this.ShowMessageAsync("Drop foreign key", res);
+				return;
+			}
+
 			DatabaseModelDesignerViewModel.ConnectionInfoViewModels.Remove(InfoViewModel);
 			InfoViewModel = null;
-			GridData = new List<RowModelPair>();
-			OnPropertyChanged(nameof(GridData));
 			RelationshipsListBox.SelectedIndex = 0;
 		}
 
@@ -183,7 +202,7 @@ namespace ER_Diagram_Modeler.Dialogs
 
 			if (text.Length == 0)
 			{
-				NewRelationshipTextBox.Text = $"{source.Model.Title}_{dest.Model.Title}_FK";
+				NewRelationshipTextBox.Text = $"FK_{source.Model.Title}_{dest.Model.Title}";
 				e.CanExecute = true;
 				return;
 			}

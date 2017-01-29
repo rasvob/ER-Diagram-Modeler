@@ -126,11 +126,10 @@
 				</Grid.RowDefinitions>
 
 				<TextBox x:Name="NameTextBox"
-				 Grid.Row="0"
-				 IsReadOnly="True"
-				 Text="{Binding ElementName=DialogWindow, Path=InfoViewModel.RelationshipModel.Name, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                 controls:TextBoxHelper.Watermark="Relationship name">
-				</TextBox>
+						 Grid.Row="0"
+						 IsReadOnly="True"
+						 Text="{Binding ElementName=DialogWindow, Path=InfoViewModel.RelationshipModel.Name, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+						 controls:TextBoxHelper.Watermark="Relationship name" />
 				
 				<Grid Grid.Row="1" Margin="0 10 0 0">
 					<Grid.ColumnDefinitions>
@@ -172,14 +171,14 @@
 					>
 					<DataGrid.Columns>
 						<DataGridTextColumn x:Name="PrimaryAttributes"
-											Header="Attribute (primary)"
+											Header="Column (primary)"
 											IsReadOnly="True"
 											Binding="{Binding Source.Name}"
 											>
 						</DataGridTextColumn>
 
 						<DataGridTextColumn x:Name="ForeignAttributes"
-											Header="Attribute (foreign)"
+											Header="Column (foreign)"
 											IsReadOnly="True"
 											Binding="{Binding Destination.Name}"
 											>

@@ -14,5 +14,16 @@ namespace ER_Diagram_Modeler.Models.Designer
 		public TableModel Destination { get; set; }
 		public Optionality Optionality { get; set; } = Optionality.Optional;
 		public List<RowModelPair> Attributes { get; set; } = new List<RowModelPair>();
+
+		public void RefreshModel(RelationshipModel fresh)
+		{
+			Id = fresh.Id;
+			Name = fresh.Name;
+			Source = fresh.Source;
+			Destination = fresh.Destination;
+			Optionality = fresh.Optionality;
+			Attributes.Clear();
+			Attributes.AddRange(fresh.Attributes);
+		}
 	}
 }

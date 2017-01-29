@@ -8,6 +8,7 @@ using ER_Diagram_Modeler.Configuration.Providers;
 using ER_Diagram_Modeler.DatabaseConnection.Dto;
 using ER_Diagram_Modeler.Models.Database;
 using ER_Diagram_Modeler.Models.Designer;
+using ER_Diagram_Modeler.Models.Helpers;
 
 namespace ER_Diagram_Modeler.DatabaseConnection.SqlServer
 {
@@ -28,6 +29,7 @@ namespace ER_Diagram_Modeler.DatabaseConnection.SqlServer
 		private static string SqlDropTable = @"DROP TABLE [{0}]";
 		private static string SqlDropConstraint = @"ALTER TABLE [{0}] DROP CONSTRAINT {1}";
 		private static string SqlAddPrimaryKeyConstraint = @"ALTER TABLE [{0}] ADD CONSTRAINT {1} PRIMARY KEY CLUSTERED ({2})";
+		private static string SqlAddForeignKeyConstraint = @"ALTER TABLE [{0}] ADD CONSTRAINT {1} FOREIGN KEY ({2}) REFERENCES [{3}] ({4})";
 
 		public MsSqlDatabase Database { get; set; }
 
@@ -186,11 +188,23 @@ namespace ER_Diagram_Modeler.DatabaseConnection.SqlServer
 
 		public void CreatePrimaryKey(string table, string[] columns)
 		{
-			if (columns.Length == 0)
-			{
-				return;
-			}
 			SqlCommand command = Database.CreateCommand(string.Format(SqlAddPrimaryKeyConstraint, table, $"PK_{table}_{columns[0]}", string.Join(",", columns)));
+			command.ExecuteNonQuery();
+		}
+
+		public void CreateForeignKey(string table, string referencedTable, IEnumerable<RowModelPair> collumns, string fkName = null)
+		{
+			string name = fkName ?? $"{table}_{referencedTable}_FK";
+			string tableColumns = string.Join(",", collumns.Select(t => t.Destination.Name));
+			string referencedColumns = string.Join(",", collumns.Select(t => t.Source.Name));
+
+			SqlCommand command = Database.CreateCommand(string.Format(SqlAddForeignKeyConstraint, table, name, tableColumns, referencedTable, referencedColumns));
+			command.ExecuteNonQuery();
+		}
+
+		public void DropForeignKey(string table, string name)
+		{
+			SqlCommand command = Database.CreateCommand(string.Format(SqlDropConstraint, table, name));
 			command.ExecuteNonQuery();
 		}
 

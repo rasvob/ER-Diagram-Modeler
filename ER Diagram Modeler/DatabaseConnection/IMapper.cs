@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using ER_Diagram_Modeler.Models.Database;
 using ER_Diagram_Modeler.Models.Designer;
+using ER_Diagram_Modeler.Models.Helpers;
 
 namespace ER_Diagram_Modeler.DatabaseConnection
 {
@@ -19,5 +20,8 @@ namespace ER_Diagram_Modeler.DatabaseConnection
 		void DropTable(string table);
 		void DropPrimaryKey(string table ,string primaryKeyConstraintName);
 		void CreatePrimaryKey(string table, string[] columns);
+		void CreateForeignKey(string table, string referencedTable, IEnumerable<RowModelPair> collumns, string fkName = null);
+		void DropForeignKey(string table ,string name);
+		
 	}
 }

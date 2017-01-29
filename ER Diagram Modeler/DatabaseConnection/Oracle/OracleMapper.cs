@@ -2,6 +2,7 @@
 using System.Data;
 using ER_Diagram_Modeler.Models.Database;
 using ER_Diagram_Modeler.Models.Designer;
+using ER_Diagram_Modeler.Models.Helpers;
 
 namespace ER_Diagram_Modeler.DatabaseConnection.Oracle
 {
@@ -74,6 +75,16 @@ namespace ER_Diagram_Modeler.DatabaseConnection.Oracle
 		}
 
 		public void CreatePrimaryKey(string table, string[] columns)
+		{
+			throw new System.NotImplementedException();
+		}
+
+		public void CreateForeignKey(string table, string referencedTable, IEnumerable<RowModelPair> collumns, string fkName = null)
+		{
+			throw new System.NotImplementedException();
+		}
+
+		public void DropForeignKey(string table, string name)
 		{
 			throw new System.NotImplementedException();
 		}

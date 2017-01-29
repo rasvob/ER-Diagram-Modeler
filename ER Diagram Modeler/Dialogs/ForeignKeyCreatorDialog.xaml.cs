@@ -17,6 +17,9 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using ER_Diagram_Modeler.Annotations;
+using ER_Diagram_Modeler.Configuration.Providers;
+using ER_Diagram_Modeler.DiagramConstruction;
+using ER_Diagram_Modeler.DiagramConstruction.Strategy;
 using ER_Diagram_Modeler.Models.Designer;
 using ER_Diagram_Modeler.Models.Helpers;
 using ER_Diagram_Modeler.ViewModels;
@@ -117,6 +120,7 @@ namespace ER_Diagram_Modeler.Dialogs
 
 			if (isOk)
 			{
+
 				ConnectionInfoViewModel model = new ConnectionInfoViewModel()
 				{
 					DestinationViewModel = DestinationTableVm,
@@ -131,6 +135,15 @@ namespace ER_Diagram_Modeler.Dialogs
 				model.RelationshipModel.Optionality = model.RelationshipModel.Attributes.All(t => t.Destination.AllowNull)
 					? Optionality.Optional
 					: Optionality.Mandatory;
+
+				var updater = new DatabaseUpdater();
+				string res = updater.AddRelationship(model.RelationshipModel);
+
+				if (res != null)
+				{
+					await this.ShowMessageAsync("Add foreign key", res);
+					return;
+				}
 
 				model.BuildConnection();
 

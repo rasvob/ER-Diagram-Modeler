@@ -599,7 +599,7 @@ namespace ER_Diagram_Modeler.Views.Canvas
 		private void DeleteTablesCommand_OnExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
 			DeleteSelectedTables();
-			DeleteSelectedConnections();
+			//DeleteSelectedConnections();
 		}
 
 		private void DeleteTablesCommand_OnCanExecute(object sender, CanExecuteRoutedEventArgs e)
@@ -625,7 +625,7 @@ namespace ER_Diagram_Modeler.Views.Canvas
 				return;
 			}
 
-			ForeignKeysDialog dialog = new ForeignKeysDialog(ViewModel);
+			ForeignKeysDialog dialog = new ForeignKeysDialog(ViewModel, ViewModel.ConnectionInfoViewModels.FirstOrDefault(t => t.IsSelected));
 			dialog.Owner = Application.Current.MainWindow;
 			dialog.Canvas = ModelDesignerCanvas;
 			dialog.ShowDialog();

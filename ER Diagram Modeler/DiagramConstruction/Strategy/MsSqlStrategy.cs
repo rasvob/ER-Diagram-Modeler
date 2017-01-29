@@ -90,8 +90,34 @@ namespace ER_Diagram_Modeler.DiagramConstruction.Strategy
 		{
 			using(IMapper mapper = new MsSqlMapper())
 			{
-				mapper.DropPrimaryKey(table.Title, table.Attributes.FirstOrDefault(t => t.PrimaryKeyConstraintName != null)?.PrimaryKeyConstraintName);
-				mapper.CreatePrimaryKey(table.Title, table.Attributes.Where(t => t.PrimaryKey).Select(s => s.Name).ToArray());
+				string constraintName = table.Attributes.FirstOrDefault(t => t.PrimaryKeyConstraintName != null)?.PrimaryKeyConstraintName;
+				string[] columns = table.Attributes.Where(t => t.PrimaryKey).Select(s => s.Name).ToArray();
+
+				if (constraintName != null)
+				{
+					mapper.DropPrimaryKey(table.Title, constraintName);
+				}
+
+				if (columns.Length != 0)
+				{
+					mapper.CreatePrimaryKey(table.Title, columns);
+				}
+			}
+		}
+
+		public void RemoveRelationship(RelationshipModel model)
+		{
+			using (IMapper mapper = new MsSqlMapper())
+			{
+				mapper.DropForeignKey(model.Destination.Title, model.Name);
+			}
+		}
+
+		public void AddRelationship(RelationshipModel model)
+		{
+			using(IMapper mapper = new MsSqlMapper())
+			{
+				mapper.CreateForeignKey(model.Destination.Title, model.Source.Title, model.Attributes, model.Name);
 			}
 		}
 

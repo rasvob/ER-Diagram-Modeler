@@ -90,5 +90,15 @@ namespace ER_Diagram_Modeler.DiagramConstruction.Strategy
 		{
 			_strategy.UpdatePrimaryKeyConstraint(table);
 		}
+
+		public void RemoveRelationship(RelationshipModel model)
+		{
+			_strategy.RemoveRelationship(model);
+		}
+
+		public void AddRelationship(RelationshipModel model)
+		{
+			_strategy.AddRelationship(model);
+		}
 	}
 }

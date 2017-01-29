@@ -144,5 +144,35 @@ namespace ER_Diagram_Modeler.DiagramConstruction
 				model.RefreshModel(fresh);
 			}
 		}
+
+		public string RemoveRelationship(RelationshipModel model)
+		{
+			var ctx = new DatabaseContext(SessionProvider.Instance.ConnectionType);
+
+			try
+			{
+				ctx.RemoveRelationship(model);
+				return null;
+			}
+			catch(SqlException exception)
+			{
+				return exception.Message;
+			}
+		}
+
+		public string AddRelationship(RelationshipModel model)
+		{
+			var ctx = new DatabaseContext(SessionProvider.Instance.ConnectionType);
+
+			try
+			{
+				ctx.AddRelationship(model);
+				return null;
+			}
+			catch(SqlException exception)
+			{
+				return exception.Message;
+			}
+		}
 	}
 }
