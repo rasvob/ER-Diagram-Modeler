@@ -1,38 +1,22 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Data.SqlClient;
-using System.Diagnostics;
-using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using System.Xml.Linq;
 using ER_Diagram_Modeler.Configuration.Providers;
-using ER_Diagram_Modeler.DatabaseConnection;
+using ER_Diagram_Modeler.DatabaseConnection.Oracle;
 using ER_Diagram_Modeler.DatabaseConnection.SqlServer;
 using ER_Diagram_Modeler.DiagramConstruction;
-using ER_Diagram_Modeler.DiagramConstruction.Strategy;
 using ER_Diagram_Modeler.Dialogs;
 using ER_Diagram_Modeler.EventArgs;
 using ER_Diagram_Modeler.Models.Designer;
 using ER_Diagram_Modeler.ViewModels;
 using ER_Diagram_Modeler.ViewModels.Enums;
 using ER_Diagram_Modeler.Views.Canvas;
-using ER_Diagram_Modeler.Views.Panels;
 using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
-using Xceed.Wpf.AvalonDock.Layout;
+using Oracle.ManagedDataAccess.Client;
 
 namespace ER_Diagram_Modeler
 {
@@ -166,22 +150,27 @@ namespace ER_Diagram_Modeler
 			switch (connectionType)
 			{
 				case ConnectionType.SqlServer:
-					var flyout = Flyouts.Items[0] as Flyout;
+					var flyoutMsSql = Flyouts.Items[0] as Flyout;
 
-					if(flyout != null)
+					if(flyoutMsSql != null)
 					{
-						flyout.IsOpen = !flyout.IsOpen;
+						flyoutMsSql.IsOpen = !flyoutMsSql.IsOpen;
 					}
 					break;
 				case ConnectionType.Oracle:
-					//TODO: Flyout add 
+					var flyoutOracle = Flyouts.Items[2] as Flyout;
+
+					if(flyoutOracle != null)
+					{
+						flyoutOracle.IsOpen = !flyoutOracle.IsOpen;
+					}
 					break;
 			}
 		}
 
 		private void MenuItemTest_OnClick(object sender, RoutedEventArgs e)
 		{
-			ToggleRowFlyout();
+			
 		}
 
 		private void ChangeCanvasSize_OnExecuted(object sender, ExecutedRoutedEventArgs e)
@@ -463,6 +452,64 @@ namespace ER_Diagram_Modeler
 			{
 				await this.ShowMessageAsync("Primary key constraint", res);
 			}
+		}
+
+		private async void ConnectToOracle_OnExecuted(object sender, ExecutedRoutedEventArgs e)
+		{
+			//TODO: REMOVE LOGIN CREDS
+			ProgressDialogController progressDialogController = null;
+
+			Func<ProgressDialogController, Task> closeProgress = async t =>
+			{
+				if(t != null)
+				{
+					if(t.IsOpen)
+					{
+						await t.CloseAsync();
+					}
+				}
+			};
+
+			try
+			{
+				progressDialogController = await this.ShowProgressAsync("Please wait", "Connecting to server...", false, new MetroDialogSettings()
+				{
+					AnimateShow = false,
+					AnimateHide = false
+				});
+				progressDialogController.SetIndeterminate();
+
+				var db = new OracleDatabase();
+				await db.BuildSession(OracleServerNameTextBox.Text, OraclePortTextBox.Text, OracleSidTextBox.Text,
+					OracleUsernameTextBox.Text, OraclePasswordBox.Password);
+
+				await closeProgress(progressDialogController);
+				await this.ShowMessageAsync("Connected", $"Successfuly connected to {SessionProvider.Instance.ServerName}");
+
+				var flyout = Flyouts.Items[2] as Flyout;
+
+				if(flyout != null)
+				{
+					flyout.IsOpen = !flyout.IsOpen;
+				}
+
+				DatabaseConnectionSidebar.LoadOracleData();
+			}
+			catch (OracleException exception)
+			{
+				await closeProgress(progressDialogController);
+				await this.ShowMessageAsync("Connection error", exception.Message);
+				SessionProvider.Instance.ConnectionType = ConnectionType.None;
+			}
+		}
+
+		private void ConnectToOracle_OnCanExecute(object sender, CanExecuteRoutedEventArgs e)
+		{
+			string[] inputBoxes = {
+				OracleServerNameTextBox.Text, OraclePortTextBox.Text, OracleSidTextBox.Text, OracleUsernameTextBox.Text, OraclePasswordBox.Password
+			};
+
+			e.CanExecute = inputBoxes.All(t => t.Length > 0) && OraclePortTextBox.Text.All(char.IsDigit);
 		}
 	}
 }

@@ -63,7 +63,7 @@ namespace ER_Diagram_Modeler.ConnectionPanelLoaders
 			item.ContextMenu = menu;
 		}
 
-		public MsSqlTreeViewBuilder(Action<TableModel> addTableAction, Action<string> dropDatabaseAction,IEnumerable<DatabaseInfo> infos) : base(addTableAction, infos)
+		public MsSqlTreeViewBuilder(Action<TableModel> addTableAction, Action<string> dropDatabaseAction, IEnumerable<DatabaseInfo> infos) : base(addTableAction, infos)
 		{
 			_dropDatabaseAction = dropDatabaseAction;
 		}

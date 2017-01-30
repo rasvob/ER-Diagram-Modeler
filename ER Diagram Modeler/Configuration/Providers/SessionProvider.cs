@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Data.SqlClient;
 using ER_Diagram_Modeler.ViewModels.Enums;
+using Oracle.ManagedDataAccess.Client;
 
 namespace ER_Diagram_Modeler.Configuration.Providers
 {
@@ -48,8 +49,13 @@ namespace ER_Diagram_Modeler.Configuration.Providers
 
 						return builder.ConnectionString;
 					case ConnectionType.Oracle:
-						//TODO: Add oracle conn string builder
-						break;
+						OracleConnectionStringBuilder oracleConnectionStringBuilder = new OracleConnectionStringBuilder
+						{
+							DataSource = ServerName,
+							UserID = Username,
+							Password = Password
+						};
+						return oracleConnectionStringBuilder.ConnectionString;
 				}
 
 				return string.Empty;

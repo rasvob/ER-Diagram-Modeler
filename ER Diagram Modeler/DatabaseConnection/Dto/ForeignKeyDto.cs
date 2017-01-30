@@ -1,6 +1,6 @@
 ﻿namespace ER_Diagram_Modeler.DatabaseConnection.Dto
 {
-	public class MsSqlForeignKeyDto
+	public class ForeignKeyDto
 	{
 		public string PrimaryKeyTable { get; set; }
 		public string PrimaryKeyCollumn { get; set; }

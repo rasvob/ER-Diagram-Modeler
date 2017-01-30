@@ -130,8 +130,8 @@
     <Compile Include="ConnectionPanelLoaders\OracleTreeViewBuilder.cs" />
     <Compile Include="ConnectionPanelLoaders\TreeViewBuilder.cs" />
     <Compile Include="Controls\Buttons\DesignerToolBarButton.cs" />
-    <Compile Include="DatabaseConnection\DatabaseProxy.cs" />
-    <Compile Include="DatabaseConnection\Dto\MsSqlForeignKeyDto.cs" />
+    <Compile Include="DatabaseConnection\IDatabase.cs" />
+    <Compile Include="DatabaseConnection\Dto\ForeignKeyDto.cs" />
     <Compile Include="DatabaseConnection\IMapper.cs" />
     <Compile Include="DatabaseConnection\Oracle\IOracleMapper.cs" />
     <Compile Include="DatabaseConnection\Oracle\OracleDatabase.cs" />

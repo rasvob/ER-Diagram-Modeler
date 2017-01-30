@@ -1,40 +1,74 @@
-﻿using Oracle.ManagedDataAccess.Client;
+﻿using System.Data;
+using System.Data.SqlClient;
+using System.Threading.Tasks;
+using ER_Diagram_Modeler.Configuration.Providers;
+using ER_Diagram_Modeler.ViewModels.Enums;
+using Oracle.ManagedDataAccess.Client;
 
 namespace ER_Diagram_Modeler.DatabaseConnection.Oracle
 {
-	public class OracleDatabase: DatabaseProxy<OracleCommand, OracleDataReader>
+	public class OracleDatabase: IDatabase<OracleCommand>
 	{
 		public OracleConnection Connection { get; set; }
-		public override string ConnectionString { get; set; }
+		public string ConnectionString { get; set; }
 
-		public override bool Connect()
+		public OracleDatabase()
 		{
-			return true;
+			Connection = new OracleConnection();
 		}
 
-		public override bool Connect(string conString)
+		public  bool Connect()
 		{
-			return true;
+			return Connect(ConnectionString);
 		}
 
-		public override void Close()
+		public bool Connect(string conString)
 		{
-			
+			if(Connection.State != ConnectionState.Open)
+			{
+				Connection.ConnectionString = conString;
+				ConnectionString = conString;
+				Connection.Open();
+				return true;
+			}
+			return false;
 		}
 
-		public override int ExecuteNonQuery(OracleCommand command)
+		public void Close()
 		{
-			throw new System.NotImplementedException();
+			Connection.Close();
 		}
 
-		public override OracleCommand CreateCommand(string sql)
+		public OracleCommand CreateCommand(string sql)
 		{
-			throw new System.NotImplementedException();
+			return new OracleCommand(sql, Connection)
+			{
+				BindByName = true
+			};
 		}
 
-		public override OracleDataReader Select(OracleCommand command)
+		private async Task TryToConnectToServer(string connStreing)
 		{
-			throw new System.NotImplementedException();
+			OracleConnection connection = new OracleConnection(connStreing);
+			await connection.OpenAsync();
+			connection.Close();
+		}
+
+		public async Task BuildSession(string server, string port, string sid,string username = null, string password = null)
+		{
+			OracleConnectionStringBuilder builder = new OracleConnectionStringBuilder
+			{
+				DataSource = $"(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST={server})(PORT={port})))(CONNECT_DATA=(SERVER=DEDICATED)(SERVICE_NAME={sid})))",
+				UserID = username,
+				Password = password
+			};
+
+			await TryToConnectToServer(builder.ConnectionString);
+
+			SessionProvider.Instance.ServerName = builder.DataSource;
+			SessionProvider.Instance.Username = builder.UserID;
+			SessionProvider.Instance.Password = builder.Password;
+			SessionProvider.Instance.ConnectionType = ConnectionType.Oracle;
 		}
 	}
 }

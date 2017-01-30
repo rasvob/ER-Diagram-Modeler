@@ -88,7 +88,6 @@ namespace ER_Diagram_Modeler.DiagramConstruction
 
 			var relationships = ctx.ListRelationshipsForTable(model.Title, ViewModel.TableViewModels.Select(t => t.Model));
 
-
 			foreach (RelationshipModel relationship in relationships)
 			{
 				ConnectionInfoViewModel vm = new ConnectionInfoViewModel();

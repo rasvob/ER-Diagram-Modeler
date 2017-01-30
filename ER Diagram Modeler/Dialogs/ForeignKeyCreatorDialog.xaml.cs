@@ -107,7 +107,7 @@ namespace ER_Diagram_Modeler.Dialogs
 			DesignerViewModel = designerViewModel;
 			Canvas = canvas;
 
-			PrimaryAttributes.ItemsSource = SourceTableVm.Model.Attributes;
+			PrimaryAttributes.ItemsSource = SourceTableVm.Model.Attributes.Where(t => t.PrimaryKey);
 			PrimaryAttributes.DisplayMemberPath = "Name";
 
 			ForeignAttributes.ItemsSource = DestinationTableVm.Model.Attributes;
@@ -120,38 +120,41 @@ namespace ER_Diagram_Modeler.Dialogs
 
 			if (isOk)
 			{
-
-				ConnectionInfoViewModel model = new ConnectionInfoViewModel()
+				var relModel = new RelationshipModel
 				{
-					DestinationViewModel = DestinationTableVm,
-					SourceViewModel = SourceTableVm,
-					DesignerCanvas = Canvas
+					Name = RelationshipName,
+					Source = SourceTableVm.Model,
+					Destination = DestinationTableVm.Model
 				};
-
-				model.RelationshipModel.Name = RelationshipName;
-				model.RelationshipModel.Source = SourceTableVm.Model;
-				model.RelationshipModel.Destination = DestinationTableVm.Model;
-				model.RelationshipModel.Attributes.AddRange(GridData);
-				model.RelationshipModel.Optionality = model.RelationshipModel.Attributes.All(t => t.Destination.AllowNull)
-					? Optionality.Optional
-					: Optionality.Mandatory;
+				relModel.Attributes.AddRange(GridData);
+				relModel.Optionality = relModel.Attributes.All(t => t.Destination.AllowNull)
+				? Optionality.Optional
+				: Optionality.Mandatory;
 
 				var updater = new DatabaseUpdater();
-				string res = updater.AddRelationship(model.RelationshipModel);
+				string res = updater.AddRelationship(relModel);
 
 				if (res != null)
 				{
 					await this.ShowMessageAsync("Add foreign key", res);
-					return;
 				}
+				else
+				{
+					ConnectionInfoViewModel model = new ConnectionInfoViewModel()
+					{
+						DestinationViewModel = DestinationTableVm,
+						SourceViewModel = SourceTableVm,
+						DesignerCanvas = Canvas
+					};
+					model.RelationshipModel.RefreshModel(relModel);
+					model.BuildConnection();
 
-				model.BuildConnection();
+					await Task.Delay(100);
 
-				await Task.Delay(100);
-
-				DesignerViewModel.ConnectionInfoViewModels.Add(model);
-				DialogResult = true;
-				Close();
+					DesignerViewModel.ConnectionInfoViewModels.Add(model);
+					DialogResult = true;
+					Close();
+				}
 			}
 		}
 

@@ -17,6 +17,8 @@ namespace ER_Diagram_Modeler.DiagramConstruction
 			{
 				var ctx = new DatabaseContext(SessionProvider.Instance.ConnectionType);
 				ctx.RenameTable(oldName, model.Title);
+				TableModel fresh = RefreshModel(model);
+				model.Title = fresh.Title;
 				return null;
 			}
 			catch(SqlException exception)

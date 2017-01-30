@@ -68,7 +68,7 @@ namespace ER_Diagram_Modeler.DatabaseConnection.SqlServer
 			return res;
 		}
 
-		public IEnumerable<MsSqlForeignKeyDto> ListForeignKeys(string tableName)
+		public IEnumerable<ForeignKeyDto> ListForeignKeys(string tableName)
 		{
 			SqlCommand commandPrimaryKeys = Database.CreateCommand(SqlForeignKeys);
 			commandPrimaryKeys.CommandType = CommandType.StoredProcedure;
@@ -224,13 +224,13 @@ namespace ER_Diagram_Modeler.DatabaseConnection.SqlServer
 			return res;
 		}
 
-		private IEnumerable<MsSqlForeignKeyDto> ReadForeignKeys(SqlDataReader reader)
+		private IEnumerable<ForeignKeyDto> ReadForeignKeys(SqlDataReader reader)
 		{
-			var res = new List<MsSqlForeignKeyDto>();
+			var res = new List<ForeignKeyDto>();
 
 			while (reader.Read())
 			{
-				var dto = new MsSqlForeignKeyDto();
+				var dto = new ForeignKeyDto();
 
 				dto.PrimaryKeyTable = reader.GetString(2);
 				dto.PrimaryKeyCollumn = reader.GetString(3);

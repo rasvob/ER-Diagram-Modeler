@@ -85,7 +85,9 @@
 		</Grid>
 
 		<Grid Grid.Row="1" x:Name="OracleStackPanel"  Visibility="Collapsed">
-
+			<TreeView Grid.Row="1" x:Name="OracleTreeView" 
+				  Style="{StaticResource VirtualisedMetroTreeView}">
+			</TreeView>
 		</Grid>
 	</Grid>
 </UserControl>

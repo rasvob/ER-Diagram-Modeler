@@ -7,22 +7,22 @@ using ER_Diagram_Modeler.ViewModels.Enums;
 
 namespace ER_Diagram_Modeler.DatabaseConnection.SqlServer
 {
-	public class MsSqlDatabase: DatabaseProxy<SqlCommand, SqlDataReader>
+	public class MsSqlDatabase: IDatabase<SqlCommand>
 	{
 		public SqlConnection Connection { get; set; }
-		public override string ConnectionString { get; set; }
+		public string ConnectionString { get; set; }
 
 		public MsSqlDatabase()
 		{
 			Connection = new SqlConnection();
 		}
 
-		public override bool Connect()
+		public bool Connect()
 		{
 			return Connect(ConnectionString);
 		}
 
-		public override bool Connect(string conString)
+		public bool Connect(string conString)
 		{
 			if (Connection.State != ConnectionState.Open)
 			{
@@ -34,12 +34,12 @@ namespace ER_Diagram_Modeler.DatabaseConnection.SqlServer
 			return false;
 		}
 
-		public override void Close()
+		public void Close()
 		{
 			Connection.Close();
 		}
 
-		public override int ExecuteNonQuery(SqlCommand command)
+		public int ExecuteNonQuery(SqlCommand command)
 		{
 			int rowNumber = 0;
 			try
@@ -53,12 +53,12 @@ namespace ER_Diagram_Modeler.DatabaseConnection.SqlServer
 			return rowNumber;
 		}
 
-		public override SqlCommand CreateCommand(string sql)
+		public SqlCommand CreateCommand(string sql)
 		{
 			return new SqlCommand(sql, Connection);
 		}
 
-		public override SqlDataReader Select(SqlCommand command)
+		public SqlDataReader Select(SqlCommand command)
 		{
 			return command.ExecuteReader();
 		}

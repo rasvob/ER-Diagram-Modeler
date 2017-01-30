@@ -4,7 +4,8 @@
 	<t Name="nchar" MaxLenght="2000" Precision="0" Scale="0" IsNullable="1" HasLenght="1" HasPrecision="0" HasScale="0" DefaultLenght="8" DefaultPrecision="0" DefaultScale="0" />
 	<t Name="nvarchar2" MaxLenght="4000" Precision="0" Scale="0" IsNullable="1" HasLenght="1" HasPrecision="0" HasScale="0" DefaultLenght="50" DefaultPrecision="0" DefaultScale="0" />
 	<t Name="varchar2" MaxLenght="4000" Precision="0" Scale="0" IsNullable="1" HasLenght="1" HasPrecision="0" HasScale="0" DefaultLenght="50" DefaultPrecision="0" DefaultScale="0" />
-	<t Name="raw" MaxLenght="0" Precision="0" Scale="0" IsNullable="1" HasLenght="0" HasPrecision="0" HasScale="0" DefaultLenght="0" DefaultPrecision="0" DefaultScale="0" />
+	<t Name="raw" MaxLenght="4000" Precision="0" Scale="0" IsNullable="1" HasLenght="1" HasPrecision="0" HasScale="0" DefaultLenght="1" DefaultPrecision="0" DefaultScale="0" />
+	<t Name="long" MaxLenght="0" Precision="0" Scale="0" IsNullable="1" HasLenght="0" HasPrecision="0" HasScale="0" DefaultLenght="0" DefaultPrecision="0" DefaultScale="0" />
 	<t Name="number" MaxLenght="0" Precision="38" Scale="127" IsNullable="1" HasLenght="0" HasPrecision="1" HasScale="1" DefaultLenght="0" DefaultPrecision="7" DefaultScale="2" />
 	<t Name="numeric" MaxLenght="0" Precision="38" Scale="127" IsNullable="1" HasLenght="0" HasPrecision="1" HasScale="1" DefaultLenght="0" DefaultPrecision="7" DefaultScale="2" />
 	<t Name="float" MaxLenght="0" Precision="0" Scale="0" IsNullable="1" HasLenght="0" HasPrecision="0" HasScale="0" DefaultLenght="0" DefaultPrecision="0" DefaultScale="0" />
@@ -20,4 +21,7 @@
 	<t Name="clob" MaxLenght="0" Precision="0" Scale="0" IsNullable="1" HasLenght="0" HasPrecision="0" HasScale="0" DefaultLenght="0" DefaultPrecision="0" DefaultScale="0" />
 	<t Name="nclob" MaxLenght="0" Precision="0" Scale="0" IsNullable="1" HasLenght="0" HasPrecision="0" HasScale="0" DefaultLenght="0" DefaultPrecision="0" DefaultScale="0" />
 	<t Name="bfile" MaxLenght="0" Precision="0" Scale="0" IsNullable="1" HasLenght="0" HasPrecision="0" HasScale="0" DefaultLenght="0" DefaultPrecision="0" DefaultScale="0" />
+	<t Name="rowid" MaxLenght="0" Precision="0" Scale="0" IsNullable="1" HasLenght="0" HasPrecision="0" HasScale="0" DefaultLenght="0" DefaultPrecision="0" DefaultScale="0" />
+	<t Name="binary_float" MaxLenght="0" Precision="0" Scale="0" IsNullable="1" HasLenght="0" HasPrecision="0" HasScale="0" DefaultLenght="0" DefaultPrecision="0" DefaultScale="0" />
+	<t Name="binary_double" MaxLenght="0" Precision="0" Scale="0" IsNullable="1" HasLenght="0" HasPrecision="0" HasScale="0" DefaultLenght="0" DefaultPrecision="0" DefaultScale="0" />
 </DataTypes>

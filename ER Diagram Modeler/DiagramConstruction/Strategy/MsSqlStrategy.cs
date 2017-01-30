@@ -125,7 +125,7 @@ namespace ER_Diagram_Modeler.DiagramConstruction.Strategy
 		{
 			using (MsSqlMapper mapper = new MsSqlMapper())
 			{
-				IEnumerable<MsSqlForeignKeyDto> keyDtos = mapper.ListForeignKeys(table);
+				IEnumerable<ForeignKeyDto> keyDtos = mapper.ListForeignKeys(table);
 
 				var grouped = keyDtos.Where(t =>
 				{
@@ -150,7 +150,7 @@ namespace ER_Diagram_Modeler.DiagramConstruction.Strategy
 
 				var res = new List<RelationshipModel>();
 
-				foreach (IGrouping<string, MsSqlForeignKeyDto> dtos in grouped)
+				foreach (IGrouping<string, ForeignKeyDto> dtos in grouped)
 				{
 					var model = new RelationshipModel();
 					model.Name = dtos.Key;
@@ -160,7 +160,7 @@ namespace ER_Diagram_Modeler.DiagramConstruction.Strategy
 					model.Source = tables.FirstOrDefault(t => t.Title.Equals(first.PrimaryKeyTable));
 					model.Destination = tables.FirstOrDefault(t => t.Title.Equals(first.ForeignKeyTable));
 
-					foreach (MsSqlForeignKeyDto keyDto in dtos)
+					foreach (ForeignKeyDto keyDto in dtos)
 					{
 						RowModelPair pair = new RowModelPair();
 

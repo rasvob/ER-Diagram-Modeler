@@ -16,6 +16,7 @@ using System.Windows.Shapes;
 using ER_Diagram_Modeler.Configuration.Providers;
 using ER_Diagram_Modeler.ConnectionPanelLoaders;
 using ER_Diagram_Modeler.Controls.Buttons;
+using ER_Diagram_Modeler.DatabaseConnection.Oracle;
 using ER_Diagram_Modeler.DatabaseConnection.SqlServer;
 using ER_Diagram_Modeler.Models.Database;
 using ER_Diagram_Modeler.Models.Designer;
@@ -95,7 +96,25 @@ namespace ER_Diagram_Modeler.Views.Panels
 
 		public void LoadOracleData()
 		{
-			//TODO: Oracle data load
+			using(IOracleMapper mapper = new OracleMapper())
+			{
+				DatabaseInfos = new List<DatabaseInfo>();
+				DatabaseInfo info = new DatabaseInfo()
+				{
+					Name = "Tables"
+				};
+
+				IEnumerable<TableModel> tables = mapper.ListTables();
+
+				foreach (TableModel model in tables)
+				{
+					info.Tables.Add(model);
+				}
+
+				DatabaseInfos.Add(info);
+			}
+			LoadOracleTreeData();
+			OracleStackPanel.Visibility = Visibility.Visible;
 		}
 
 		public void HideDatabaseStackPanels()
@@ -124,6 +143,14 @@ namespace ER_Diagram_Modeler.Views.Panels
 			List<TreeViewItem> item = builder.BuildTreeView();
 			MsSqlTreeView.Items.Clear();
 			item.ForEach(t => MsSqlTreeView.Items.Add(t));
+		}
+
+		private void LoadOracleTreeData()
+		{
+			TreeViewBuilder builder = new OracleTreeViewBuilder(OnAddTable, DatabaseInfos);
+			List<TreeViewItem> item = builder.BuildTreeView();
+			OracleTreeView.Items.Clear();
+			item.ForEach(t => OracleTreeView.Items.Add(t));
 		}
 
 		private void DropDatabaseAction(string dbName)
