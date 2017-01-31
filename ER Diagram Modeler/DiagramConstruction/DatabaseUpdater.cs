@@ -6,6 +6,7 @@ using ER_Diagram_Modeler.DiagramConstruction.Strategy;
 using ER_Diagram_Modeler.EventArgs;
 using ER_Diagram_Modeler.Models.Designer;
 using MahApps.Metro.Controls.Dialogs;
+using Oracle.ManagedDataAccess.Client;
 
 namespace ER_Diagram_Modeler.DiagramConstruction
 {
@@ -21,7 +22,7 @@ namespace ER_Diagram_Modeler.DiagramConstruction
 				model.Title = fresh.Title;
 				return null;
 			}
-			catch(SqlException exception)
+			catch(Exception exception) when(exception is SqlException || exception is OracleException)
 			{
 				model.Title = oldName;
 				return exception.Message;
@@ -36,7 +37,7 @@ namespace ER_Diagram_Modeler.DiagramConstruction
 				ctx.AddColumn(table, column);
 				return null;
 			}
-			catch(SqlException exception)
+			catch(Exception exception) when(exception is SqlException || exception is OracleException)
 			{
 				return exception.Message;
 			}
@@ -67,7 +68,7 @@ namespace ER_Diagram_Modeler.DiagramConstruction
 				ctx.RemoveColumn(table.Title, args.RowModel.Name);
 				return null;
 			}
-			catch (SqlException exception)
+			catch(Exception exception) when(exception is SqlException || exception is OracleException || exception is ApplicationException)
 			{
 				return exception.Message;
 			}
@@ -87,7 +88,7 @@ namespace ER_Diagram_Modeler.DiagramConstruction
 				ctx.UpdateColumn(table, column);
 				return null;
 			}
-			catch(SqlException exception)
+			catch(Exception exception) when(exception is SqlException || exception is OracleException)
 			{
 				return exception.Message;
 			}
@@ -101,7 +102,7 @@ namespace ER_Diagram_Modeler.DiagramConstruction
 				ctx.RenameColumn(table, oldName, newName);
 				return null;
 			}
-			catch(SqlException exception)
+			catch(Exception exception) when(exception is SqlException || exception is OracleException)
 			{
 				return exception.Message;
 			}
@@ -121,7 +122,7 @@ namespace ER_Diagram_Modeler.DiagramConstruction
 				ctx.RemoveTable(table);
 				return null;
 			}
-			catch(SqlException exception)
+			catch(Exception exception) when(exception is SqlException || exception is OracleException || exception is ApplicationException)
 			{
 				return exception.Message;
 			}
@@ -136,7 +137,7 @@ namespace ER_Diagram_Modeler.DiagramConstruction
 				ctx.UpdatePrimaryKeyConstraint(model);
 				return null;
 			}
-			catch (SqlException exception)
+			catch(Exception exception) when(exception is SqlException || exception is OracleException)
 			{
 				return exception.Message;
 			}
@@ -156,7 +157,7 @@ namespace ER_Diagram_Modeler.DiagramConstruction
 				ctx.RemoveRelationship(model);
 				return null;
 			}
-			catch(SqlException exception)
+			catch(Exception exception) when(exception is SqlException || exception is OracleException)
 			{
 				return exception.Message;
 			}
@@ -171,7 +172,7 @@ namespace ER_Diagram_Modeler.DiagramConstruction
 				ctx.AddRelationship(model);
 				return null;
 			}
-			catch(SqlException exception)
+			catch(Exception exception) when(exception is SqlException || exception is OracleException)
 			{
 				return exception.Message;
 			}

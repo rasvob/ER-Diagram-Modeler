@@ -202,7 +202,7 @@ namespace ER_Diagram_Modeler.Dialogs
 
 			if (text.Length == 0)
 			{
-				NewRelationshipTextBox.Text = $"FK_{source.Model.Title}_{dest.Model.Title}";
+				NewRelationshipTextBox.Text = $"{source.Model.Title}_{dest.Model.Title}_FK";
 				e.CanExecute = true;
 				return;
 			}

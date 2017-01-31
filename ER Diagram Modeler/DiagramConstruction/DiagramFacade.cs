@@ -51,14 +51,14 @@ namespace ER_Diagram_Modeler.DiagramConstruction
 		{
 			var ctx = new DatabaseContext(SessionProvider.Instance.ConnectionType);
 
-			if(ViewModel.TableViewModels.Any(t => t.Model.Title.Equals(name)))
+			if(ViewModel.TableViewModels.Any(t => t.Model.Title.Equals(name, StringComparison.InvariantCultureIgnoreCase)))
 			{
 				return false;
 			}
 
 			ctx.CreateTable(name);
 
-			TableModel model = ctx.ListTables().FirstOrDefault(t => t.Title.Equals(name));
+			TableModel model = ctx.ListTables().FirstOrDefault(t => t.Title.Equals(name, StringComparison.InvariantCultureIgnoreCase));
 
 			if (model == null)
 			{

@@ -359,6 +359,7 @@ namespace ER_Diagram_Modeler
 		{
 			ToggleRowFlyout();
 			MainWindowViewModel.FlyoutRowModel = new TableRowModel(args.RowModel.Name, args.RowModel.Datatype);
+			MainWindowViewModel.FlyoutRowModel.AllowNull = args.RowModel.AllowNull;
 			_flyoutRowEventArgs = args;
 			_flyoutTableModel = args.TableModel;
 		}
@@ -431,7 +432,7 @@ namespace ER_Diagram_Modeler
 
 				if (res != null)
 				{
-					await this.ShowMessageAsync("Drop column", res);
+					await this.ShowMessageAsync("Drop table", res);
 					return;
 				}
 
@@ -482,6 +483,20 @@ namespace ER_Diagram_Modeler
 				var db = new OracleDatabase();
 				await db.BuildSession(OracleServerNameTextBox.Text, OraclePortTextBox.Text, OracleSidTextBox.Text,
 					OracleUsernameTextBox.Text, OraclePasswordBox.Password);
+				using(IOracleMapper mapper = new OracleMapper())
+				{
+					TableModel model = mapper.ListTables().FirstOrDefault();
+					if(model != null)
+					{
+						mapper.ListForeignKeys(model.Title);
+					}
+				}
+
+				//Init work
+				await Task.Factory.StartNew(() =>
+				{
+					
+				});
 
 				await closeProgress(progressDialogController);
 				await this.ShowMessageAsync("Connected", $"Successfuly connected to {SessionProvider.Instance.ServerName}");

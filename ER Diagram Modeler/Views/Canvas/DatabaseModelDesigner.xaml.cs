@@ -27,6 +27,7 @@ using ER_Diagram_Modeler.Views.Canvas.Connection;
 using ER_Diagram_Modeler.Views.Canvas.TableItem;
 using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
+using Oracle.ManagedDataAccess.Client;
 using Xceed.Wpf.Toolkit.Core.Utilities;
 
 namespace ER_Diagram_Modeler.Views.Canvas
@@ -270,7 +271,7 @@ namespace ER_Diagram_Modeler.Views.Canvas
 									await window.ShowMessageAsync("Add new table", $"Table {table.Model.Title} already exists");
 								}
 							}
-							catch (SqlException exception)
+							catch(Exception exception) when (exception is SqlException || exception is OracleException)
 							{
 								await window.ShowMessageAsync("Add new table", exception.Message);
 							}

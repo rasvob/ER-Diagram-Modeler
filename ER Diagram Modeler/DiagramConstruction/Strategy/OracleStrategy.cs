@@ -8,6 +8,7 @@ using ER_Diagram_Modeler.DatabaseConnection.Oracle;
 using ER_Diagram_Modeler.Models.Designer;
 using ER_Diagram_Modeler.Models.Helpers;
 using ER_Diagram_Modeler.ViewModels.Enums;
+using Oracle.ManagedDataAccess.Client;
 
 namespace ER_Diagram_Modeler.DiagramConstruction.Strategy
 {
@@ -84,7 +85,10 @@ namespace ER_Diagram_Modeler.DiagramConstruction.Strategy
 
 		public void CreateTable(string name)
 		{
-			throw new System.NotImplementedException();
+			using(IMapper mapper = new OracleMapper())
+			{
+				mapper.CreateTable(name);
+			}
 		}
 
 		public IEnumerable<TableModel> ListTables()
@@ -97,47 +101,111 @@ namespace ER_Diagram_Modeler.DiagramConstruction.Strategy
 
 		public void RenameTable(string oldName, string newName)
 		{
-			throw new System.NotImplementedException();
+			using(IMapper mapper = new OracleMapper())
+			{
+				mapper.RenameTable(oldName, newName);
+			}
 		}
 
 		public void RenameColumn(string table, string oldName, string newName)
 		{
-			throw new System.NotImplementedException();
+			using(IMapper mapper = new OracleMapper())
+			{
+				mapper.RenameColumn(table, oldName, newName);
+			}
 		}
 
 		public void AddColumn(string table, TableRowModel model)
 		{
-			throw new System.NotImplementedException();
+			using(IMapper mapper = new OracleMapper())
+			{
+				mapper.AddNewColumn(table, model);
+			}
 		}
 
 		public void UpdateColumn(string table, TableRowModel model)
 		{
-			throw new System.NotImplementedException();
+			using(IOracleMapper mapper = new OracleMapper())
+			{
+				TableModel details = mapper.SelectTableDetails(string.Empty, table);
+				TableRowModel row = details.Attributes.FirstOrDefault(t => t.Name.Equals(model.Name));
+				bool modifyNull = true;
+
+				if (row != null)
+				{
+					modifyNull = row.AllowNull != model.AllowNull;
+				}
+
+				mapper.AlterColumn(table, model, modifyNull);
+			}
 		}
 
 		public void RemoveColumn(string table, string column)
 		{
-			throw new System.NotImplementedException();
+			using(IMapper mapper = new OracleMapper())
+			{
+				IEnumerable<ForeignKeyDto> keyDtos = mapper.ListForeignKeys(table).Where(t => t.ForeignKeyTable.Equals(table));
+				IEnumerable<ForeignKeyDto> dtos = keyDtos as IList<ForeignKeyDto> ?? keyDtos.ToList();
+				bool fkExists = dtos.Any(s => s.ForeignKeyCollumn.Equals(column));
+
+				if (fkExists)
+				{
+					throw new ApplicationException($"{column} is referenced by foreign key constraint ({dtos.FirstOrDefault(t => t.ForeignKeyTable.Equals(table))?.Name})");
+				}
+				mapper.DropColumn(table, column);
+			}
 		}
 
 		public void RemoveTable(TableModel table)
 		{
-			throw new System.NotImplementedException();
+			using(IMapper mapper = new OracleMapper())
+			{
+				IEnumerable<ForeignKeyDto> dtos = mapper.ListForeignKeys(table.Title);
+				var keyDtos = dtos as IList<ForeignKeyDto> ?? dtos.ToList();
+				bool fkExists = keyDtos.Any(t => t.ForeignKeyTable.Equals(table.Title));
+
+				if(fkExists)
+				{
+					throw new ApplicationException($"{table.Title} can't be dropped due to the foreign key constraint ({keyDtos.FirstOrDefault(t => t.ForeignKeyTable.Equals(table.Title))?.Name})");
+				}
+
+				mapper.DropTable(table.Title);
+			}
 		}
 
 		public void UpdatePrimaryKeyConstraint(TableModel table)
 		{
-			throw new System.NotImplementedException();
+			using(IMapper mapper = new OracleMapper())
+			{
+				string constraintName = table.Attributes.FirstOrDefault(t => t.PrimaryKeyConstraintName != null)?.PrimaryKeyConstraintName;
+				string[] columns = table.Attributes.Where(t => t.PrimaryKey).Select(s => s.Name).ToArray();
+
+				if(constraintName != null)
+				{
+					mapper.DropPrimaryKey(table.Title, constraintName);
+				}
+
+				if(columns.Length != 0)
+				{
+					mapper.CreatePrimaryKey(table.Title, columns);
+				}
+			}
 		}
 
 		public void RemoveRelationship(RelationshipModel model)
 		{
-			throw new System.NotImplementedException();
+			using(IMapper mapper = new OracleMapper())
+			{
+				mapper.DropForeignKey(model.Destination.Title, model.Name);
+			}
 		}
 
 		public void AddRelationship(RelationshipModel model)
 		{
-			throw new System.NotImplementedException();
+			using(IMapper mapper = new OracleMapper())
+			{
+				mapper.CreateForeignKey(model.Destination.Title, model.Source.Title, model.Attributes, model.Name);
+			}
 		}
 	}
 }

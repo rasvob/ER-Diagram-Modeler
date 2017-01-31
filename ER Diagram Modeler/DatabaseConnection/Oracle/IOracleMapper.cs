@@ -5,6 +5,6 @@ namespace ER_Diagram_Modeler.DatabaseConnection.Oracle
 {
 	public interface IOracleMapper: IMapper
 	{
-		
+		void AlterColumn(string table, TableRowModel model, bool modifyNull = false);
 	}
 }

@@ -16,20 +16,33 @@ namespace ER_Diagram_Modeler.DatabaseConnection.Oracle
 {
 	public class OracleMapper: IOracleMapper
 	{
-		private static string SqlListTables = @"SELECT OBJECT_NAME, OBJECT_ID FROM ALL_OBJECTS WHERE OBJECT_TYPE = 'TABLE' AND OWNER = :Owner AND OBJECT_NAME <> '__ERDiagramModelerData'";
-		private static string SqlTableDetails = @"SELECT COLUMN_NAME, COLUMN_ID, DATA_TYPE, DATA_LENGTH, DATA_PRECISION, DATA_SCALE, NULLABLE FROM ALL_TAB_COLUMNS WHERE TABLE_NAME = :TableName";
-		private static string SqlPrimaryKey = @"SELECT CONSTRAINT_NAME FROM ALL_CONSTRAINTS WHERE CONSTRAINT_TYPE = 'P' AND Owner = :Owner AND TABLE_NAME = :TableName";
-		private static string SqlConsColumns = @"SELECT COLUMN_NAME FROM ALL_CONS_COLUMNS WHERE CONSTRAINT_NAME = :Cons";
-		private static string SqlForeignKeys = @"SELECT a.CONSTRAINT_NAME, c1.TABLE_NAME, c1.COLUMN_NAME, c2.TABLE_NAME, c2.COLUMN_NAME, c1.POSITION, c2.POSITION 
-FROM ALL_CONSTRAINTS a
-  JOIN ALL_CONS_COLUMNS c1 ON a.CONSTRAINT_NAME = c1.CONSTRAINT_NAME
-  JOIN ALL_CONS_COLUMNS c2 ON a.R_CONSTRAINT_NAME = c2.CONSTRAINT_NAME
+		private static string SqlListTables = @"SELECT OBJECT_NAME, OBJECT_ID FROM SYS.ALL_OBJECTS WHERE OBJECT_TYPE = 'TABLE' AND OWNER = :Owner AND OBJECT_NAME <> '__ERDiagramModelerData'";
+		private static string SqlTableDetails = @"SELECT COLUMN_NAME, COLUMN_ID, DATA_TYPE, DATA_LENGTH, DATA_PRECISION, DATA_SCALE, NULLABLE FROM SYS.ALL_TAB_COLUMNS WHERE TABLE_NAME = :TableName";
+		private static string SqlPrimaryKey = @"SELECT CONSTRAINT_NAME FROM SYS.ALL_CONSTRAINTS WHERE CONSTRAINT_TYPE = 'P' AND Owner = :Owner AND TABLE_NAME = :TableName";
+		private static string SqlConsColumns = @"SELECT COLUMN_NAME FROM SYS.ALL_CONS_COLUMNS WHERE CONSTRAINT_NAME = :Cons";
+		private static string SqlForeignKeys = @"SELECT a.CONSTRAINT_NAME, c1.TABLE_NAME, c1.COLUMN_NAME, c2.TABLE_NAME, c2.COLUMN_NAME 
+FROM SYS.ALL_CONSTRAINTS a
+  JOIN SYS.ALL_CONS_COLUMNS c1 ON a.CONSTRAINT_NAME = c1.CONSTRAINT_NAME
+  JOIN SYS.ALL_CONS_COLUMNS c2 ON a.R_CONSTRAINT_NAME = c2.CONSTRAINT_NAME
 WHERE a.CONSTRAINT_TYPE = 'R'
   AND a.Owner = :Owner
   AND (c1.TABLE_NAME = :TableName1 OR c2.TABLE_NAME = :TableName2)
   AND c1.POSITION = c2.POSITION";
 
+		private static string SqlCreateTable = "CREATE TABLE {0} (Id{1} NUMBER PRIMARY KEY)";
+		private static string SqlRenameTable = "RENAME \"{0}\" TO \"{1}\"";
+		private static string SqlDropTable = "DROP TABLE {0}";
+
+		private static string SqlAddColumn = "ALTER TABLE {0} ADD {1}";
+		private static string SqlModifyColumn = "ALTER TABLE {0} MODIFY {1}";
+		private static string SqlDropColumn = "ALTER TABLE {0} DROP COLUMN {1}";
+		private static string SqlRenameColumn = "ALTER TABLE {0} RENAME COLUMN {1} TO {2}";
+
+		private static string SqlDropConstraint = "ALTER TABLE {0} DROP CONSTRAINT {1}";
+		private static string SqlAddPrimaryKeyConstraint = "ALTER TABLE {0} ADD CONSTRAINT {1} PRIMARY KEY ({2})";
+		private static string SqlAddForeignKeyConstraint = "ALTER TABLE {0} ADD CONSTRAINT {1} FOREIGN KEY ({2}) REFERENCES {3} ({4})";
 		
+
 
 		public OracleDatabase Database { get; set; }
 		public string Owner { get; set; }
@@ -87,10 +100,6 @@ WHERE a.CONSTRAINT_TYPE = 'R'
 				dto.ForeignKeyCollumn = reader.GetString(i++);
 				dto.PrimaryKeyTable = reader.GetString(i++);
 				dto.PrimaryKeyCollumn = reader.GetString(i++);
-
-				var pos1 = reader.GetInt32(i++);
-				var pos2 = reader.GetInt32(i++);
-
 				res.Add(dto);
 			}
 
@@ -99,7 +108,8 @@ WHERE a.CONSTRAINT_TYPE = 'R'
 
 		public void CreateTable(string name)
 		{
-			throw new System.NotImplementedException();
+			OracleCommand command = Database.CreateCommand(string.Format(SqlCreateTable, TableNameWithOwnerCaseSensitve(name), name));
+			command.ExecuteNonQuery();
 		}
 
 		public TableModel SelectTableDetails(string id, string name)
@@ -114,15 +124,20 @@ WHERE a.CONSTRAINT_TYPE = 'R'
 			commandPk.Parameters.Add("Owner", OracleDbType.Varchar2, Owner, ParameterDirection.Input);
 			commandPk.Parameters.Add("TableName", OracleDbType.Varchar2, name, ParameterDirection.Input);
 			OracleDataReader readerPk = commandPk.ExecuteReader(CommandBehavior.SingleRow);
-			readerPk.Read();
-			string pkConstraint = readerPk.GetString(0);
-			readerPk.Close();
+			bool read = readerPk.Read();
 
-			OracleCommand commandPkCols = Database.CreateCommand(SqlConsColumns);
-			commandPkCols.Parameters.Add("Cons", OracleDbType.Varchar2, pkConstraint, ParameterDirection.Input);
-			OracleDataReader readerPkCons = commandPkCols.ExecuteReader();
-			ReadTablePrimaryKey(readerPkCons, res, pkConstraint);
-			readerPkCons.Close();
+			if (read)
+			{
+				string pkConstraint = readerPk.GetString(0);
+				OracleCommand commandPkCols = Database.CreateCommand(SqlConsColumns);
+				commandPkCols.Parameters.Add("Cons", OracleDbType.Varchar2, pkConstraint, ParameterDirection.Input);
+				OracleDataReader readerPkCons = commandPkCols.ExecuteReader();
+				ReadTablePrimaryKey(readerPkCons, res, pkConstraint);
+				readerPkCons.Close();
+			}
+			readerPk.Close();
+			res.Id = id;
+			res.Title = name;
 			return res;
 		}
 
@@ -181,52 +196,78 @@ WHERE a.CONSTRAINT_TYPE = 'R'
 
 		public void RenameTable(string oldName, string newName)
 		{
-			throw new System.NotImplementedException();
+			OracleCommand command = Database.CreateCommand(string.Format(SqlRenameTable, oldName, newName));
+			command.ExecuteNonQuery();
 		}
 
 		public void AddNewColumn(string table, TableRowModel model)
 		{
-			throw new System.NotImplementedException();
+			OracleCommand command = Database.CreateCommand(string.Format(SqlAddColumn, TableNameWithOwnerCaseSensitve(table), model));
+			command.ExecuteNonQuery();
 		}
 
 		public void AlterColumn(string table, TableRowModel model)
 		{
-			throw new System.NotImplementedException();
+			OracleCommand command = Database.CreateCommand(string.Format(SqlModifyColumn, TableNameWithOwnerCaseSensitve(table), model));
+			command.ExecuteNonQuery();
 		}
 
 		public void RenameColumn(string table, string oldName, string newName)
 		{
-			throw new System.NotImplementedException();
+			OracleCommand command = Database.CreateCommand(string.Format(SqlRenameColumn, TableNameWithOwnerCaseSensitve(table), oldName, newName));
+			command.ExecuteNonQuery();
 		}
 
 		public void DropColumn(string table, string column)
 		{
-			throw new System.NotImplementedException();
+			OracleCommand command = Database.CreateCommand(string.Format(SqlDropColumn, TableNameWithOwnerCaseSensitve(table), column));
+			command.ExecuteNonQuery();
 		}
 
 		public void DropTable(string table)
 		{
-			throw new System.NotImplementedException();
+			OracleCommand command = Database.CreateCommand(string.Format(SqlDropTable, TableNameWithOwnerCaseSensitve(table)));
+			command.ExecuteNonQuery();
 		}
 
 		public void DropPrimaryKey(string table, string primaryKeyConstraintName)
 		{
-			throw new System.NotImplementedException();
+			OracleCommand command = Database.CreateCommand(string.Format(SqlDropConstraint, TableNameWithOwnerCaseSensitve(table), primaryKeyConstraintName));
+			command.ExecuteNonQuery();
 		}
 
 		public void CreatePrimaryKey(string table, string[] columns)
 		{
-			throw new System.NotImplementedException();
+			string cols = string.Join(",", columns);
+			OracleCommand command = Database.CreateCommand(string.Format(SqlAddPrimaryKeyConstraint, TableNameWithOwnerCaseSensitve(table), $"PK_{table}", cols));
+			command.ExecuteNonQuery();
 		}
 
 		public void CreateForeignKey(string table, string referencedTable, IEnumerable<RowModelPair> collumns, string fkName = null)
 		{
-			throw new System.NotImplementedException();
+			string name = fkName ?? $"{table}_{referencedTable}_FK";
+			string tableColumns = string.Join(",", collumns.Select(t => t.Destination.Name));
+			string referencedColumns = string.Join(",", collumns.Select(t => t.Source.Name));
+
+			OracleCommand command = Database.CreateCommand(string.Format(SqlAddForeignKeyConstraint, TableNameWithOwnerCaseSensitve(table), name, tableColumns, TableNameWithOwnerCaseSensitve(referencedTable), referencedColumns));
+			command.ExecuteNonQuery();
 		}
 
 		public void DropForeignKey(string table, string name)
 		{
-			throw new System.NotImplementedException();
+			OracleCommand command = Database.CreateCommand(string.Format(SqlDropConstraint, TableNameWithOwnerCaseSensitve(table), name));
+			command.ExecuteNonQuery();
+		}
+
+		public void AlterColumn(string table, TableRowModel model, bool modifyNull = true)
+		{
+			if (!modifyNull)
+			{
+				OracleCommand command = Database.CreateCommand(string.Format(SqlModifyColumn, TableNameWithOwnerCaseSensitve(table), $"{model.Name} {model.Datatype}"));
+				command.ExecuteNonQuery();
+				return;
+			}
+			AlterColumn(table, model);
 		}
 
 		public IEnumerable<TableModel> ListTables()
@@ -254,5 +295,8 @@ WHERE a.CONSTRAINT_TYPE = 'R'
 
 			return res;
 		}
+
+		private string TableNameWithOwner(string table) => $"{Owner}.{table}";
+		private string TableNameWithOwnerCaseSensitve(string table) => $"{Owner}.\"{table}\"";
 	}
 }
