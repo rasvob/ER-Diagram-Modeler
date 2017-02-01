@@ -369,6 +369,12 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Pathfinding\Pathfinding.csproj">
+      <Project>{78438841-45cb-45a8-9e67-0157a4dd29f1}</Project>
+      <Name>Pathfinding</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

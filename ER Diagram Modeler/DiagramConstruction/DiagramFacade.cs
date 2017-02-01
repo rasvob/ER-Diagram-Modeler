@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
 using ER_Diagram_Modeler.Annotations;
@@ -82,7 +83,7 @@ namespace ER_Diagram_Modeler.DiagramConstruction
 			return true;
 		}
 
-		public void AddRelationShipsForTable(TableModel model, DesignerCanvas canvas)
+		public async Task AddRelationShipsForTable(TableModel model, DesignerCanvas canvas)
 		{
 			var ctx = new DatabaseContext(SessionProvider.Instance.ConnectionType);
 
@@ -96,7 +97,7 @@ namespace ER_Diagram_Modeler.DiagramConstruction
 				vm.SourceViewModel = ViewModel.TableViewModels.FirstOrDefault(t => t.Model.Equals(relationship.Source));
 				vm.DestinationViewModel = ViewModel.TableViewModels.FirstOrDefault(t => t.Model.Equals(relationship.Destination));
 
-				vm.BuildConnection();
+				await vm.BuildConnection2(ViewModel);
 				ViewModel.ConnectionInfoViewModels.Add(vm);
 			}
 		}

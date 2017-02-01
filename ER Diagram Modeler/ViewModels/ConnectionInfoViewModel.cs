@@ -5,13 +5,17 @@ using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Documents;
 using System.Windows.Media;
 using ER_Diagram_Modeler.EventArgs;
 using ER_Diagram_Modeler.Models.Designer;
 using ER_Diagram_Modeler.ViewModels.Enums;
 using ER_Diagram_Modeler.Views.Canvas;
 using ER_Diagram_Modeler.Views.Canvas.Connection;
+using Pathfinding;
+using Pathfinding.Structure;
 using Xceed.Wpf.Toolkit.Core.Utilities;
 using Point = System.Drawing.Point;
 
@@ -1348,7 +1352,6 @@ namespace ER_Diagram_Modeler.ViewModels
 			AdjustBendPointMarks();
 		}
 
-
 		private void AdjustBendPointMarks()
 		{
 			Marks.RemoveAt(0);
@@ -1584,6 +1587,253 @@ namespace ER_Diagram_Modeler.ViewModels
 			BuildConnectionBetweenViewModels();
 		}
 
+		public async Task BuildConnection2(DatabaseModelDesignerViewModel designer)
+		{
+			if(SourceViewModel == null)
+			{
+				throw new ApplicationException("SourceViewModel is null");
+			}
+
+			if(DestinationViewModel == null)
+			{
+				throw new ApplicationException("DestinationViewModel is null");
+			}
+
+			await BuildConnectionBetweenViewModelsUsingPathFinding(designer);
+		}
+
+		private async Task BuildConnectionBetweenViewModelsUsingPathFinding(DatabaseModelDesignerViewModel designer)
+		{
+			Point start = new Point((int)SourceViewModel.Left + 20, (int)(SourceViewModel.Top + SourceViewModel.Height) + (int)Connector.ConnectorLenght);
+			Point end = new Point((int)DestinationViewModel.Left + 20, (int)(DestinationViewModel.Top + DestinationViewModel.Height) + (int)Connector.ConnectorLenght);
+
+			int off = (int)Connector.ConnectorLenght;
+
+			int sl = (int)SourceViewModel.Left;
+			int sr = (int)(SourceViewModel.Left + SourceViewModel.Width);
+			int st = (int)SourceViewModel.Top;
+			int sb = (int)(SourceViewModel.Top + SourceViewModel.Height);
+			int sw = (int)SourceViewModel.Width;
+			int sw2 = sw / 2;
+			int sh = (int)SourceViewModel.Height;
+			int sh2 = sh / 2;
+
+			int dl = (int)DestinationViewModel.Left;
+			int dr = (int)(DestinationViewModel.Left + DestinationViewModel.Width);
+			int dt = (int)DestinationViewModel.Top;
+			int db = (int)(DestinationViewModel.Top + DestinationViewModel.Height);
+			int dw = (int)DestinationViewModel.Width;
+			int dw2 = dw / 2;
+			int dh = (int)DestinationViewModel.Height;
+			int dh2 = sh / 2;
+
+			if (IsSelfConnection())
+			{
+				start = new Point(sl + sw2, sb + off);
+				end = new Point(sr + off, st + sh2);
+				SourceConnector.Orientation = ConnectorOrientation.Down;
+				DestinationConnector.Orientation = ConnectorOrientation.Right;
+			}
+			else if (AreTablesOverlaping())
+			{
+				BuildOverlapConnection();
+				return;
+			}
+			else
+			{
+				var position = GetRelativePositionOfDestinationTable();
+				switch(position)
+				{
+					case RelativeTablePosition.LeftTop:
+						start = new Point(sl - off, st + sh2);
+						end = new Point(dl + dw2, dt + dh + off);
+						SourceConnector.Orientation = ConnectorOrientation.Left;
+						DestinationConnector.Orientation = ConnectorOrientation.Down;
+						break;
+					case RelativeTablePosition.Top:
+						start = new Point(st + sw2, st - off);
+						end = new Point(dl + dw2, db + off);
+						SourceConnector.Orientation = ConnectorOrientation.Up;
+						DestinationConnector.Orientation = ConnectorOrientation.Down;
+						break;
+					case RelativeTablePosition.RightTop:
+						start = new Point(sr + off, st + sh2);
+						end = new Point(dl + dw2, db + off);
+						SourceConnector.Orientation = ConnectorOrientation.Right;
+						DestinationConnector.Orientation = ConnectorOrientation.Down;
+						break;
+					case RelativeTablePosition.Right:
+						start = new Point(sr + off, st + sh2);
+						end = new Point(dl - off, dt + dh2);
+						SourceConnector.Orientation = ConnectorOrientation.Right;
+						DestinationConnector.Orientation = ConnectorOrientation.Left;
+						break;
+					case RelativeTablePosition.RightBottom:
+						start = new Point(sr + off, st + sh2);
+						end = new Point(dl + dw2, dt - off);
+						SourceConnector.Orientation = ConnectorOrientation.Right;
+						DestinationConnector.Orientation = ConnectorOrientation.Up;
+						break;
+					case RelativeTablePosition.Bottom:
+						start = new Point(sl + sw2, sb + off);
+						end = new Point(dl + dw2, dt - off);
+						SourceConnector.Orientation = ConnectorOrientation.Down;
+						DestinationConnector.Orientation = ConnectorOrientation.Up;
+						break;
+					case RelativeTablePosition.LeftBottom:
+						start = new Point(sl - off, st + sh2);
+						end = new Point(dl + dw2, dt - off);
+						SourceConnector.Orientation = ConnectorOrientation.Left;
+						DestinationConnector.Orientation = ConnectorOrientation.Up;
+						break;
+					case RelativeTablePosition.Left:
+						start = new Point(sl - off, st + sh2);
+						end = new Point(dr + off, dt + dh2);
+						SourceConnector.Orientation = ConnectorOrientation.Left;
+						DestinationConnector.Orientation = ConnectorOrientation.Right;
+						break;
+					case RelativeTablePosition.TopR:
+						start = new Point(sl + sw2, st - off);
+						end = new Point(dl + dw2, db + off);
+						SourceConnector.Orientation = ConnectorOrientation.Up;
+						DestinationConnector.Orientation = ConnectorOrientation.Down;
+						break;
+					case RelativeTablePosition.LeftB:
+						start = new Point(sl - off, st + sh2);
+						end = new Point(dr + off, dt + dh2);
+						SourceConnector.Orientation = ConnectorOrientation.Left;
+						DestinationConnector.Orientation = ConnectorOrientation.Right;
+						break;
+					case RelativeTablePosition.BottomR:
+						start = new Point(sl + sw2, sb + off);
+						end = new Point(dl + dw2, dt - off);
+						SourceConnector.Orientation = ConnectorOrientation.Down;
+						DestinationConnector.Orientation = ConnectorOrientation.Up;
+						break;
+					case RelativeTablePosition.RightB:
+						start = new Point(sr + off, st + sh2);
+						end = new Point(dl - off, dt + dh2);
+						SourceConnector.Orientation = ConnectorOrientation.Right;
+						DestinationConnector.Orientation = ConnectorOrientation.Left;
+						break;
+				}
+			}
+			
+			SourceConnector.Cardinality = Cardinality.One;
+			DestinationConnector.Cardinality = Cardinality.Many;
+			DestinationConnector.Optionality = RelationshipModel.Optionality;
+
+			int offset = 10;
+			Point startFind = new Point();
+			switch(SourceConnector.Orientation)
+			{
+				case ConnectorOrientation.Up:
+					startFind = new Point(start.X, start.Y - offset);
+					break;
+				case ConnectorOrientation.Down:
+					startFind = new Point(start.X, start.Y + offset);
+					break;
+				case ConnectorOrientation.Left:
+					startFind = new Point(start.X - offset, start.Y);
+					break;
+				case ConnectorOrientation.Right:
+					startFind = new Point(start.X + offset, start.Y);
+					break;
+			}
+
+			Point endFind = new Point();
+			switch(DestinationConnector.Orientation)
+			{
+				case ConnectorOrientation.Up:
+					endFind = new Point(end.X, end.Y - offset);
+					break;
+				case ConnectorOrientation.Down:
+					endFind = new Point(end.X, end.Y + offset);
+					break;
+				case ConnectorOrientation.Left:
+					endFind = new Point(end.X - offset, end.Y);
+					break;
+				case ConnectorOrientation.Right:
+					endFind = new Point(end.X + offset, end.Y);
+					break;
+			}
+
+			
+			Grid grid = await Task.Factory.StartNew(() => CreateGridForPathFinding(designer));
+			AbstractPathFinder pathFinder = new BfsPathFinder(grid);
+			Point[] points = await Task.Factory.StartNew(() => pathFinder.FindPathBendingPointsOnly(startFind, endFind));
+
+			if (points == null)
+			{
+				BuildOverlapConnection();
+				return;
+			}
+
+			var reverse = points.Reverse();
+			List<ConnectionPoint> all = new List<ConnectionPoint>();
+
+			all.Add(new ConnectionPoint(start.X, start.Y));
+			all.AddRange(reverse.Select(p => new ConnectionPoint(p.X, p.Y)));
+			all.Add(new ConnectionPoint(end.X, end.Y));
+
+			Points.Add(new ConnectionPoint(start.X, start.Y));
+			if (all.Count > 3)
+			{
+				for (var i = 1; i < all.Count - 1; i++)
+				{
+					var prev = all[i - 1];
+					var curr = all[i];
+					var next = all[i + 1];
+
+					if(curr.Y == prev.Y && curr.Y == next.Y)
+					{
+						continue;
+					}
+
+					if(curr.X == prev.X && curr.X == next.X)
+					{
+						continue;
+					}
+
+					Points.Add(curr);
+				}
+			}
+			Points.Add(new ConnectionPoint(end.X, end.Y));
+
+			SourceConnector.EndPoint = Points.FirstOrDefault();
+			DestinationConnector.EndPoint = Points.LastOrDefault();
+
+			IsSourceConnectorAtStartPoint = true;
+
+			BuildLinesFromPoints();
+		}
+
+		private Grid CreateGridForPathFinding(DatabaseModelDesignerViewModel designer)
+		{
+			var obs = new List<Rectangle>();
+
+			IEnumerable<TableViewModel> models = designer.TableViewModels.Where(t => !(t.Equals(SourceViewModel) || t.Equals(DestinationViewModel)));
+
+			foreach (TableViewModel model in models)
+			{
+				int l, t, w, h;
+
+				l = (int) (model.Left - 2*Connector.ConnectorLenght);
+				t = (int) (model.Top - 2*Connector.ConnectorLenght);
+				w = (int) (model.Width + 2*Connector.ConnectorLenght);
+				h = (int) (model.Height + 2*Connector.ConnectorLenght);
+
+				var rect = new Rectangle(l < 0 ? 0 : l, t < 0 ? 0 : t, (int) (w > designer.CanvasWidth ? designer.CanvasWidth : w), (int) (h > designer.CanvasHeight ? designer.CanvasHeight : h));
+				obs.Add(rect);
+			}
+
+			obs.Add(new Rectangle((int) SourceViewModel.Left, (int)SourceViewModel.Top, (int) SourceViewModel.Width, (int) SourceViewModel.Height));
+			obs.Add(new Rectangle((int) DestinationViewModel.Left, (int)DestinationViewModel.Top, (int)DestinationViewModel.Width, (int)DestinationViewModel.Height));
+
+			Grid grid = PathFinderHelper.CreateGrid((int) designer.CanvasWidth, (int) designer.CanvasHeight, obs);
+			return grid;
+		}
+
 		private void BuildConnectionBetweenViewModels()
 		{
 			if (AreTablesOverlaping())
@@ -1611,7 +1861,7 @@ namespace ER_Diagram_Modeler.ViewModels
 					BuildRightTopConnection();
 					break;
 				case RelativeTablePosition.Right:
-					if(!IsSufficientDistance(position))
+					if (!IsSufficientDistance(position))
 					{
 						BuildHorizontalConnection();
 						break;
@@ -1622,7 +1872,7 @@ namespace ER_Diagram_Modeler.ViewModels
 					BuildRightBottomConnection();
 					break;
 				case RelativeTablePosition.Bottom:
-					if(!IsSufficientDistance(position))
+					if (!IsSufficientDistance(position))
 					{
 						BuildVerticalConnection();
 						break;
@@ -1633,7 +1883,7 @@ namespace ER_Diagram_Modeler.ViewModels
 					BuildLeftBottomConnection();
 					break;
 				case RelativeTablePosition.Left:
-					if(!IsSufficientDistance(position))
+					if (!IsSufficientDistance(position))
 					{
 						BuildHorizontalConnection();
 						break;
@@ -1641,7 +1891,7 @@ namespace ER_Diagram_Modeler.ViewModels
 					BuildLeftConnection(false);
 					break;
 				case RelativeTablePosition.TopR:
-					if(!IsSufficientDistance(position))
+					if (!IsSufficientDistance(position))
 					{
 						BuildVerticalConnection();
 						break;
@@ -1649,7 +1899,7 @@ namespace ER_Diagram_Modeler.ViewModels
 					BuildTopConnection(false);
 					break;
 				case RelativeTablePosition.LeftB:
-					if(!IsSufficientDistance(position))
+					if (!IsSufficientDistance(position))
 					{
 						BuildHorizontalConnection();
 						break;
@@ -1657,7 +1907,7 @@ namespace ER_Diagram_Modeler.ViewModels
 					BuildLeftConnection(true);
 					break;
 				case RelativeTablePosition.BottomR:
-					if(!IsSufficientDistance(position))
+					if (!IsSufficientDistance(position))
 					{
 						BuildVerticalConnection();
 						break;
@@ -1665,7 +1915,7 @@ namespace ER_Diagram_Modeler.ViewModels
 					BuildBottomConnection(false);
 					break;
 				case RelativeTablePosition.RightB:
-					if(!IsSufficientDistance(position))
+					if (!IsSufficientDistance(position))
 					{
 						BuildHorizontalConnection();
 						break;
@@ -1714,18 +1964,18 @@ namespace ER_Diagram_Modeler.ViewModels
 
 		private bool IsSufficientDistance(RelativeTablePosition position)
 		{
-			return GetTableDistance(position) > Connector.ConnectorLenght;
+			//Less tolerace
+			return GetTableDistance(position) > Connector.ConnectorLenght + 3;
 		}
 
 		private void BuildHorizontalConnection()
 		{
-			var y = SourceViewModel.Top > DestinationViewModel.Top
-				? SourceViewModel.Top + SourceViewModel.Height + Connector.ConnectorLenght*2 : DestinationViewModel.Top + DestinationViewModel.Height + Connector.ConnectorLenght * 2;
+			var y = SourceViewModel.Top > DestinationViewModel.Top ? SourceViewModel.Top + SourceViewModel.Height + Connector.ConnectorLenght*2 : DestinationViewModel.Top + DestinationViewModel.Height + Connector.ConnectorLenght*2;
 
-			var point1 = new ConnectionPoint(SourceViewModel.Left + SourceViewModel.Width / 2, SourceViewModel.Top + SourceViewModel.Height + Connector.ConnectorLenght);
-			var point2 = new ConnectionPoint(SourceViewModel.Left + SourceViewModel.Width / 2, y);
-			var point3 = new ConnectionPoint(DestinationViewModel.Left + DestinationViewModel.Width / 2, y);
-			var point4 = new ConnectionPoint(DestinationViewModel.Left + DestinationViewModel.Width / 2, (int)(DestinationViewModel.Top + DestinationViewModel.Height + Connector.ConnectorLenght));
+			var point1 = new ConnectionPoint(SourceViewModel.Left + SourceViewModel.Width/2, SourceViewModel.Top + SourceViewModel.Height + Connector.ConnectorLenght);
+			var point2 = new ConnectionPoint(SourceViewModel.Left + SourceViewModel.Width/2, y);
+			var point3 = new ConnectionPoint(DestinationViewModel.Left + DestinationViewModel.Width/2, y);
+			var point4 = new ConnectionPoint(DestinationViewModel.Left + DestinationViewModel.Width/2, (int) (DestinationViewModel.Top + DestinationViewModel.Height + Connector.ConnectorLenght));
 
 			Points.Add(point1);
 			Points.Add(point2);
@@ -1738,13 +1988,12 @@ namespace ER_Diagram_Modeler.ViewModels
 
 		private void BuildVerticalConnection()
 		{
-			var x = SourceViewModel.Left > DestinationViewModel.Left
-				? SourceViewModel.Left + SourceViewModel.Width + Connector.ConnectorLenght * 2 : DestinationViewModel.Left + DestinationViewModel.Width + Connector.ConnectorLenght * 2;
+			var x = SourceViewModel.Left > DestinationViewModel.Left ? SourceViewModel.Left + SourceViewModel.Width + Connector.ConnectorLenght*2 : DestinationViewModel.Left + DestinationViewModel.Width + Connector.ConnectorLenght*2;
 
-			var point1 = new ConnectionPoint(SourceViewModel.Left + SourceViewModel.Width + Connector.ConnectorLenght, SourceViewModel.Top + SourceViewModel.Height /2);
-			var point2 = new ConnectionPoint(x, SourceViewModel.Top + SourceViewModel.Height / 2);
-			var point3 = new ConnectionPoint(x, DestinationViewModel.Top + DestinationViewModel.Height / 2);
-			var point4 = new ConnectionPoint(DestinationViewModel.Left + DestinationViewModel.Width + Connector.ConnectorLenght, DestinationViewModel.Top + DestinationViewModel.Height / 2);
+			var point1 = new ConnectionPoint(SourceViewModel.Left + SourceViewModel.Width + Connector.ConnectorLenght, SourceViewModel.Top + SourceViewModel.Height/2);
+			var point2 = new ConnectionPoint(x, SourceViewModel.Top + SourceViewModel.Height/2);
+			var point3 = new ConnectionPoint(x, DestinationViewModel.Top + DestinationViewModel.Height/2);
+			var point4 = new ConnectionPoint(DestinationViewModel.Left + DestinationViewModel.Width + Connector.ConnectorLenght, DestinationViewModel.Top + DestinationViewModel.Height/2);
 
 			Points.Add(point1);
 			Points.Add(point2);
@@ -1986,11 +2235,32 @@ namespace ER_Diagram_Modeler.ViewModels
 
 		private void BuildOverlapConnection()
 		{
-			var point1 = new ConnectionPoint(SourceViewModel.Left + (SourceViewModel.Width/2), SourceViewModel.Top - Connector.ConnectorLenght);
-			var point2 = new ConnectionPoint(SourceViewModel.Left + (SourceViewModel.Width/2), SourceViewModel.Top - Connector.ConnectorLenght - DefaultConnectionLineLength);
-			var point3 = new ConnectionPoint(DestinationViewModel.Left + DestinationViewModel.Width + DefaultConnectionLineLength + Connector.ConnectorLenght, SourceViewModel.Top - Connector.ConnectorLenght - DefaultConnectionLineLength);
-			var point4 = new ConnectionPoint(DestinationViewModel.Left + DestinationViewModel.Width + DefaultConnectionLineLength + Connector.ConnectorLenght, DestinationViewModel.Top + (DestinationViewModel.Height/2));
-			var point5 = new ConnectionPoint(DestinationViewModel.Left + DestinationViewModel.Width + Connector.ConnectorLenght, DestinationViewModel.Top + (DestinationViewModel.Height/2));
+			int off = (int)Connector.ConnectorLenght;
+
+			int sl = (int)SourceViewModel.Left;
+			int sr = (int)(SourceViewModel.Left + SourceViewModel.Width);
+			int st = (int)SourceViewModel.Top;
+			int sb = (int)(SourceViewModel.Top + SourceViewModel.Height);
+			int sw = (int)SourceViewModel.Width;
+			int sw2 = sw / 2;
+			int sh = (int)SourceViewModel.Height;
+			int sh2 = sh / 2;
+
+			int dl = (int)DestinationViewModel.Left;
+			int dr = (int)(DestinationViewModel.Left + DestinationViewModel.Width);
+			int dt = (int)DestinationViewModel.Top;
+			int db = (int)(DestinationViewModel.Top + DestinationViewModel.Height);
+			int dw = (int)DestinationViewModel.Width;
+			int dw2 = dw / 2;
+			int dh = (int)DestinationViewModel.Height;
+			int dh2 = sh / 2;
+
+			//From bottom
+			var point1 = new ConnectionPoint(sl + sw2, sb + off);
+			var point2 = new ConnectionPoint(sl + sw2, sb + off + DefaultConnectionLineLength);
+			var point3 = new ConnectionPoint(dr + off + DefaultConnectionLineLength, sb + off + DefaultConnectionLineLength);
+			var point4 = new ConnectionPoint(dr + off + DefaultConnectionLineLength, dt + dh2);
+			var point5 = new ConnectionPoint(dr + off, dt + dh2);
 
 			Points.Add(point1);
 			Points.Add(point2);
@@ -1998,7 +2268,7 @@ namespace ER_Diagram_Modeler.ViewModels
 			Points.Add(point4);
 			Points.Add(point5);
 
-			SourceConnector.Orientation = ConnectorOrientation.Up;
+			SourceConnector.Orientation = ConnectorOrientation.Down;
 			DestinationConnector.Orientation = ConnectorOrientation.Right;
 
 			SourceConnector.Cardinality = Cardinality.One;
