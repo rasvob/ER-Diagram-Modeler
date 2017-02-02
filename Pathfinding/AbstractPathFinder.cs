@@ -19,12 +19,12 @@ namespace Pathfinding
 		{
 			var res = new List<Point>();
 			var n = start;
-			res.Add(n.Location);
+			res.Add(new Point(n.X, n.Y));
 
-			while(n.Parent.HasValue)
+			while(n.ParentX != -1)
 			{
-				n = Grid[n.Parent.Value.X, n.Parent.Value.Y];
-				res.Add(n.Location);
+				n = Grid[n.ParentX, n.ParentY];
+				res.Add(new Point(n.X, n.Y));
 			}
 
 			return res.ToArray();
@@ -64,55 +64,21 @@ namespace Pathfinding
 			return res.ToArray();
 		}
 
-		public string[] CreateDebugGrid(Point[] path)
+		protected bool EndpointReached(Node current, Point endPoint) => current.X == endPoint.X && current.Y == endPoint.Y;
+
+		protected short Manhattan(Node point1, Point point2)
 		{
-			var res = new List<string>();
-
-			if(path != null)
-			{
-				foreach(Point p in path)
-				{
-					Grid[p.X, p.Y].InitState = NodeState.Open;
-				}
-			}
-
-			for(int i = 0; i < Grid.Height; i++)
-			{
-				var str = new StringBuilder();
-				for(int j = 0; j < Grid.Width; j++)
-				{
-					switch(Grid[j, i].InitState)
-					{
-						case NodeState.Free:
-							str.Append("-");
-							break;
-						case NodeState.Obstacle:
-							str.Append("X");
-							break;
-						case NodeState.Open:
-							str.Append("O");
-							break;
-					}
-				}
-				res.Add(str.ToString());
-			}
-
-			return res.ToArray();
-		}
-
-		protected int Manhattan(Point point1, Point point2)
-		{
-			return (Math.Abs(point1.X - point2.X) + Math.Abs(point1.Y - point2.Y));
+			return (short) (Math.Abs(point1.X - point2.X) + Math.Abs(point1.Y - point2.Y));
 		}
 
 		protected Node[] GetNeighbors(Node node)
 		{
 			var res = new Node[4];
 
-			res[0] = Grid[node.Location.X - 1, node.Location.Y];
-			res[1] = Grid[node.Location.X + 1, node.Location.Y];
-			res[2] = Grid[node.Location.X, node.Location.Y - 1];
-			res[3] = Grid[node.Location.X, node.Location.Y + 1];
+			res[0] = Grid[(short) (node.X - 1), node.Y];
+			res[1] = Grid[(short) (node.X + 1), node.Y];
+			res[2] = Grid[node.X, (short) (node.Y - 1)];
+			res[3] = Grid[node.X, (short) (node.Y + 1)];
 
 			return res;
 		}

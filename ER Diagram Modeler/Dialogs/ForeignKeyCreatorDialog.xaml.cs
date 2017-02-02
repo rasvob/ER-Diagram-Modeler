@@ -25,8 +25,10 @@ using ER_Diagram_Modeler.Models.Helpers;
 using ER_Diagram_Modeler.ViewModels;
 using ER_Diagram_Modeler.ViewModels.Enums;
 using ER_Diagram_Modeler.Views.Canvas;
+using ER_Diagram_Modeler.Views.Canvas.Connection;
 using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
+using Rectangle = System.Drawing.Rectangle;
 
 namespace ER_Diagram_Modeler.Dialogs
 {

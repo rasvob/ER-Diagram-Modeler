@@ -1,8 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Drawing;
-using System.Runtime.CompilerServices;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
+﻿using System.Threading.Tasks;
 
 namespace Pathfinding.Structure
 {
@@ -14,9 +10,14 @@ namespace Pathfinding.Structure
 
 		public Grid(int width, int height)
 		{
-			InnerGrid = new Node[width*height];
+			InnerGrid = new Node[width * height];
 			Width = width;
 			Height = height;
+
+			Parallel.For(0, InnerGrid.Length, i =>
+			{
+				InnerGrid[i] = new Node();
+			});
 		}
 
 		public Node this[int x, int y]
@@ -25,16 +26,18 @@ namespace Pathfinding.Structure
 
 			get
 			{
-				if (x < 0 || y < 0 || x >= Width || y >= Height)
+				if(x < 0 || y < 0 || x >= Width || y >= Height)
 				{
 					return new Node()
 					{
 						State = NodeState.Obstacle
 					};
 				}
-				InnerGrid[x + y * Width].Location = new Point(x, y);
+				InnerGrid[x + y * Width].X = (short) x;
+				InnerGrid[x + y * Width].Y = (short) y;
 				return InnerGrid[x + y * Width];
 			}
 		}
+
 	}
 }

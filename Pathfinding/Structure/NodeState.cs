@@ -2,6 +2,6 @@
 {
 	public enum NodeState
 	{
-		Open, Close, Free, Obstacle
+		Free, Open, Close, Obstacle
 	}
 }

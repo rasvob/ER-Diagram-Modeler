@@ -7,6 +7,7 @@ namespace Pathfinding.DataStructures
 		void Enqueue(T item);
 		T Dequeue();
 		T Peek();
+		void Update(T item);
 		int Count { get; }
 	}
 }

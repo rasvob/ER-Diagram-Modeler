@@ -7,13 +7,14 @@ namespace Pathfinding.Structure
 {
 	public class Node : IComparable<Node>
 	{
-		public Point? Parent { get; set; } = null;
-		public NodeState State { get; set; } = NodeState.Free;
-		public NodeState InitState { get; set; } = NodeState.Free;
-		public Point Location { get; set; }
-		public int F { get; set; }
-		public int G { get; set; }
-		public int H { get; set; }
+		public NodeState State { get; set; }
+		public short ParentX { get; set; }
+		public short ParentY { get; set; }
+		public short X { get; set; }
+		public short Y { get; set; }
+		public short F { get; set; }
+		public short G { get; set; }
+		public short H { get; set; }
 
 		public int CompareTo(Node other)
 		{
@@ -22,6 +23,11 @@ namespace Pathfinding.Structure
 			if(F < other.F)
 				return -1;
 			return 0;
+		}
+
+		public static implicit operator Lazy<object>(Node v)
+		{
+			throw new NotImplementedException();
 		}
 	}
 }

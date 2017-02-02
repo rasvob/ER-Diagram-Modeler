@@ -1587,7 +1587,7 @@ namespace ER_Diagram_Modeler.ViewModels
 			BuildConnectionBetweenViewModels();
 		}
 
-		public async Task BuildConnection2(DatabaseModelDesignerViewModel designer)
+		public async Task BuildConnection2(DatabaseModelDesignerViewModel designer, Grid grid = null)
 		{
 			if(SourceViewModel == null)
 			{
@@ -1599,10 +1599,10 @@ namespace ER_Diagram_Modeler.ViewModels
 				throw new ApplicationException("DestinationViewModel is null");
 			}
 
-			await BuildConnectionBetweenViewModelsUsingPathFinding(designer);
+			await BuildConnectionBetweenViewModelsUsingPathFinding(designer, grid);
 		}
 
-		private async Task BuildConnectionBetweenViewModelsUsingPathFinding(DatabaseModelDesignerViewModel designer)
+		private async Task BuildConnectionBetweenViewModelsUsingPathFinding(DatabaseModelDesignerViewModel designer, Grid grid = null)
 		{
 			Point start = new Point((int)SourceViewModel.Left + 20, (int)(SourceViewModel.Top + SourceViewModel.Height) + (int)Connector.ConnectorLenght);
 			Point end = new Point((int)DestinationViewModel.Left + 20, (int)(DestinationViewModel.Top + DestinationViewModel.Height) + (int)Connector.ConnectorLenght);
@@ -1651,7 +1651,7 @@ namespace ER_Diagram_Modeler.ViewModels
 						DestinationConnector.Orientation = ConnectorOrientation.Down;
 						break;
 					case RelativeTablePosition.Top:
-						start = new Point(st + sw2, st - off);
+						start = new Point(sl + sw2, st - off);
 						end = new Point(dl + dw2, db + off);
 						SourceConnector.Orientation = ConnectorOrientation.Up;
 						DestinationConnector.Orientation = ConnectorOrientation.Down;
@@ -1758,12 +1758,15 @@ namespace ER_Diagram_Modeler.ViewModels
 					break;
 			}
 
-			
-			Grid grid = await Task.Factory.StartNew(() => CreateGridForPathFinding(designer));
-			AbstractPathFinder pathFinder = new BfsPathFinder(grid);
+			if (grid == null)
+			{
+				grid = await Task.Factory.StartNew(() => CreateGridForPathFinding(designer));
+			}
+
+			AbstractPathFinder pathFinder = new AStarPathFinder(grid);
 			Point[] points = await Task.Factory.StartNew(() => pathFinder.FindPathBendingPointsOnly(startFind, endFind));
 
-			if (points == null)
+			if(points == null)
 			{
 				BuildOverlapConnection();
 				return;
