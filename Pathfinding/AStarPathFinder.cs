@@ -28,8 +28,6 @@ namespace Pathfinding
 
 			q.Enqueue(Grid[x, y]);
 
-			short ng;
-
 			while (q.Count > 0)
 			{
 				var node = q.Dequeue();
@@ -49,7 +47,7 @@ namespace Pathfinding
 						continue;
 					}
 
-					ng = (short) (node.G + 1);
+					var ng = (short) (node.G + 1);
 
 					if (buffered.State == NodeState.Free || ng < buffered.G)
 					{

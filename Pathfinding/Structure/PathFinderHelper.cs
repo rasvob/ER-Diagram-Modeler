@@ -12,9 +12,9 @@ namespace Pathfinding.Structure
 
 		public static Grid CreateNewGrid(int width, int height)
 		{
-			int newWidth = RoundToNearestPowerOfTwo(width);
-			int newHeight = RoundToNearestPowerOfTwo(height);
-			Grid grid = new Grid(newWidth, newHeight);
+			//int newWidth = RoundToNearestPowerOfTwo(width);
+			//int newHeight = RoundToNearestPowerOfTwo(height);
+			Grid grid = new Grid(width, width);
 			return grid;
 		}
 
@@ -59,7 +59,12 @@ namespace Pathfinding.Structure
 			for(int i = 0; i < grid.Width; i++)
 			{
 				grid[i, height].State = NodeState.Obstacle;
+			}
+
+			for(int i = 0; i < grid.Height; i++)
+			{
 				grid[width, i].State = NodeState.Obstacle;
+
 			}
 
 			foreach(Rectangle rect in obstacles)

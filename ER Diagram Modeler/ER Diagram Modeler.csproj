@@ -165,6 +165,7 @@
     <Compile Include="EventArgs\EditRowEventArgs.cs" />
     <Compile Include="EventArgs\ScaleEventArgs.cs" />
     <Compile Include="EventArgs\TablePositionAndMeasureEventArgs.cs" />
+    <Compile Include="Extintions\ExtintionsHelpers.cs" />
     <Compile Include="Models\Database\DiagramModel.cs" />
     <Compile Include="Models\Database\DatabaseInfo.cs" />
     <Compile Include="Models\Designer\Datatype.cs" />

@@ -70,6 +70,20 @@ namespace PathfindingTestConsoleApp
 			//Console.WriteLine(queue.Dequeue().F);
 			//Console.WriteLine(queue.Dequeue().F);
 			//Console.WriteLine(queue.Dequeue().F);
+
+			int n = 5000;
+			var sw = new Stopwatch();
+			sw.Start();
+
+			var arr = new Node[n];
+			for (var i = 0; i < arr.Length; i++)
+			{
+				arr[i] = new Node();
+			}
+			sw.Stop();
+			Console.WriteLine(sw.ElapsedMilliseconds/1000.0);
+
+			Console.ReadLine();
 		}
 	}
 }

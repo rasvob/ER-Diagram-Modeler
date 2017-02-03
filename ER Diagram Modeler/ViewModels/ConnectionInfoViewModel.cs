@@ -10,6 +10,7 @@ using System.Windows;
 using System.Windows.Documents;
 using System.Windows.Media;
 using ER_Diagram_Modeler.EventArgs;
+using ER_Diagram_Modeler.Extintions;
 using ER_Diagram_Modeler.Models.Designer;
 using ER_Diagram_Modeler.ViewModels.Enums;
 using ER_Diagram_Modeler.Views.Canvas;
@@ -1600,6 +1601,176 @@ namespace ER_Diagram_Modeler.ViewModels
 			}
 
 			await BuildConnectionBetweenViewModelsUsingPathFinding(designer, grid);
+		}
+
+		public async Task BuildConnection3(DatabaseModelDesignerViewModel designer)
+		{
+			if(SourceViewModel == null)
+			{
+				throw new ApplicationException("SourceViewModel is null");
+			}
+
+			if(DestinationViewModel == null)
+			{
+				throw new ApplicationException("DestinationViewModel is null");
+			}
+
+			await BuildConnectionBetweenViewModelsUsingReducedGraphPathFinding(designer);
+		}
+
+		private async Task BuildConnectionBetweenViewModelsUsingReducedGraphPathFinding(DatabaseModelDesignerViewModel designer)
+		{
+			int step = 50;
+			if(IsSelfConnection())
+			{
+				BuildSelfConnection();
+				return;
+			}
+
+			if(AreTablesOverlaping())
+			{
+				BuildOverlapConnection();
+				return;
+			}
+
+			var source = SetupConnector(SourceViewModel, SourceConnector, designer,step);
+			var destination = SetupConnector(DestinationViewModel, DestinationConnector, designer,step);
+
+			if (source == null || destination == null)
+			{
+				BuildOverlapConnection();
+				return;
+			}
+
+			var grid = await Task.Factory.StartNew(() => CreateGridForPathFinding(designer));
+			AbstractPathFinder pathFinder = new AStarPathFinder(grid);
+			Point[] points = await Task.Factory.StartNew(() => pathFinder.FindPathBendingPointsOnly(source[1], destination[1]));
+			//TODO Continue with filling points array
+
+			SourceConnector.Cardinality = Cardinality.One;
+			DestinationConnector.Cardinality = Cardinality.Many;
+			DestinationConnector.Optionality = RelationshipModel.Optionality;
+			SourceConnector.EndPoint = Points.FirstOrDefault();
+			DestinationConnector.EndPoint = Points.LastOrDefault();
+			IsSourceConnectorAtStartPoint = true;
+			BuildLinesFromPoints();
+		}
+
+		private Point[] SetupConnector(TableViewModel vm, Connector connector, DatabaseModelDesignerViewModel designer,int step)
+		{
+			var horizontalLines = new List<int>();
+			var verticalLines = new List<int>();
+
+			int off = (int)Connector.ConnectorLenght;
+			int l = (int)vm.Left;
+			int r = (int)(vm.Left + vm.Width);
+			int t = (int)vm.Top;
+			int b = (int)(vm.Top + vm.Height);
+
+			int limit1 = (l / step) + 1;
+			int limit2 = (r / step);
+
+			for (int i = limit1; i <= limit2; i++)
+			{
+				verticalLines.Add(i*step);
+			}
+
+			if (vm.ViewMode != TableViewMode.NameOnly)
+			{
+				limit1 = (t / step) + 1;
+				limit2 = b / step;
+
+				for(int i = limit1; i <= limit2; i++)
+				{
+					horizontalLines.Add(i * step);
+				}
+			}
+
+			var rnd = new Random();
+			var rects = GetTableRectangles(designer.TableViewModels, step);
+			var canvas = new Rectangle(0,0, (int) designer.CanvasWidth, (int) designer.CanvasHeight);
+			bool vertical = !horizontalLines.Any() || (rnd.Next(1) == 0);
+
+			if (vertical)
+			{
+				var offsetPointsTop = verticalLines.Select(s => new Point[] { new Point(s, t - off), new Point(s, (t-off)/step * step) });
+				var offsetPointsBot = verticalLines.Select(s => new Point[] { new Point(s, b + off), new Point(s, ((b+off)/step+1) * step) });
+
+				IEnumerable<Point[]> validTop = offsetPointsTop.Where(s => rects.All(m => !DoesPointIndersectWithRectangle(m, s[1]))).Where(n => DoesPointIndersectWithRectangle(canvas,n[1]));
+				IEnumerable<Point[]> validBot = offsetPointsBot.Where(s => rects.All(m => !DoesPointIndersectWithRectangle(m, s[1]))).Where(n => DoesPointIndersectWithRectangle(canvas, n[1]));
+
+				var top = validTop as Point[][] ?? validTop.ToArray();
+				bool bottom = !top.Any() || rnd.Next(1) == 0;
+				IEnumerable<Point[]> bot = validBot as IList<Point[]> ?? validBot.ToList();
+
+				if (bot.Any() && bottom)
+				{
+					IEnumerable<Point[]> shuffle = bot.Shuffle(rnd);
+					connector.Orientation = ConnectorOrientation.Down;
+					return shuffle.FirstOrDefault();
+				}
+				if (top.Any())
+				{
+					IEnumerable<Point[]> shuffle = top.Shuffle(rnd);
+					connector.Orientation = ConnectorOrientation.Up;
+					return shuffle.FirstOrDefault();
+				}
+			}
+			else
+			{
+				var offsetPointsLeft = horizontalLines.Select(s => new Point[] { new Point(l - off, s), new Point((l - off)/step * step) });
+				var offsetPointsRight = horizontalLines.Select(s => new Point[] { new Point(r + off, s), new Point(((r + off) / step + 1) * step) });
+
+				IEnumerable<Point[]> validLeft = offsetPointsLeft.Where(s => rects.All(m => !DoesPointIndersectWithRectangle(m, s[1]))).Where(n => DoesPointIndersectWithRectangle(canvas, n[1]));
+				IEnumerable<Point[]> validRight = offsetPointsRight.Where(s => rects.All(m => !DoesPointIndersectWithRectangle(m, s[1]))).Where(n => DoesPointIndersectWithRectangle(canvas, n[1]));
+
+				var left = validLeft as Point[][] ?? validLeft.ToArray();
+				bool right = !left.Any() || rnd.Next(1) == 0;
+				IEnumerable<Point[]> rig = validRight as IList<Point[]> ?? validRight.ToList();
+
+				if(rig.Any() && right)
+				{
+					IEnumerable<Point[]> shuffle = rig.Shuffle(rnd);
+					connector.Orientation = ConnectorOrientation.Right;
+					return shuffle.FirstOrDefault();
+				}
+
+				IEnumerable<Point[]> shuffle1 = left.Shuffle(rnd);
+				connector.Orientation = ConnectorOrientation.Left;
+				return shuffle1.FirstOrDefault();
+			}
+
+			return null;
+		}
+
+		private bool DoesPointIndersectWithRectangle(Rectangle area, Point point)
+		{
+			return point.X >= area.Left && point.X <= area.Right && point.Y >= area.Top && point.Y <= area.Bottom;
+		}
+
+		private IEnumerable<Rectangle> GetTableRectangles(IEnumerable<TableViewModel> tables, int step = 1)
+		{
+			return tables.Select(t =>
+			{
+				int top = (int) t.Top;
+				int left = (int) t.Left;
+				int width = (int) t.Width;
+				int height = (int) t.Height;
+
+				int right = left + width;
+				int bottom = top + height;
+
+				top = top / step * step;
+				left = left / step * step;
+
+				if (step > 1)
+				{
+					right = (right / step + 1) * step;
+					bottom = (bottom / step + 1) * step;
+				}
+				
+				return new Rectangle(left, top, right - left, bottom - top);
+			});
 		}
 
 		private async Task BuildConnectionBetweenViewModelsUsingPathFinding(DatabaseModelDesignerViewModel designer, Grid grid = null)
