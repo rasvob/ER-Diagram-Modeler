@@ -24,10 +24,5 @@ namespace Pathfinding.Structure
 				return -1;
 			return 0;
 		}
-
-		public static implicit operator Lazy<object>(Node v)
-		{
-			throw new NotImplementedException();
-		}
 	}
 }

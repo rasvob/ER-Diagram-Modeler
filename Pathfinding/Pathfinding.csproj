@@ -43,6 +43,7 @@
   <ItemGroup>
     <Compile Include="AbstractPathFinder.cs" />
     <Compile Include="AStarPathFinder.cs" />
+    <Compile Include="AStarStructPathFinder.cs" />
     <Compile Include="BFSPathFinder.cs" />
     <Compile Include="DataStructures\IPriorityQueue.cs" />
     <Compile Include="DataStructures\PriorityQueue.cs" />
@@ -51,6 +52,7 @@
     <Compile Include="Structure\Grid.cs" />
     <Compile Include="Structure\Node.cs" />
     <Compile Include="Structure\NodeState.cs" />
+    <Compile Include="Structure\NodeStruct.cs" />
     <Compile Include="Structure\PathFinderHelper.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

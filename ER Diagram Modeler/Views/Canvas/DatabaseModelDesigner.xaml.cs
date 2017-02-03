@@ -605,8 +605,8 @@ namespace ER_Diagram_Modeler.Views.Canvas
 
 		private void DeleteTablesCommand_OnCanExecute(object sender, CanExecuteRoutedEventArgs e)
 		{
-			if(ViewModel != null)
-				e.CanExecute = ViewModel.TableViewModels.Any(t => t.IsSelected) || ViewModel.ConnectionInfoViewModels.Any(s => s.IsSelected);
+			if (ViewModel != null)
+				e.CanExecute = ViewModel.TableViewModels.Any(t => t.IsSelected);
 		}
 
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -39,36 +40,36 @@ namespace PathfindingTestConsoleApp
 			//	}
 			//}
 
-			var queue = new PriorityQueue<Node>();
-			var node1 = new Node() {F = 10};
-			var node2 = new Node() {F = 5};
-			var node3 = new Node() {F = 3};
-			var node4 = new Node() {F = 20};
-			var node5 = new Node() {F = 15};
+			//var queue = new PriorityQueue<Node>();
+			//var node1 = new Node() {F = 10};
+			//var node2 = new Node() {F = 5};
+			//var node3 = new Node() {F = 3};
+			//var node4 = new Node() {F = 20};
+			//var node5 = new Node() {F = 15};
 
-			queue.Enqueue(node1);
-			queue.Enqueue(node2);
-			queue.Enqueue(node3);
-			queue.Enqueue(node4);
-			queue.Enqueue(node5);
+			//queue.Enqueue(node1);
+			//queue.Enqueue(node2);
+			//queue.Enqueue(node3);
+			//queue.Enqueue(node4);
+			//queue.Enqueue(node5);
 
-			node1.F = 1;
-			queue.Update(node1);
+			//node1.F = 1;
+			//queue.Update(node1);
 
-			node2.F = 1;
-			queue.Update(node2);
+			//node2.F = 1;
+			//queue.Update(node2);
 
-			node3.F = 17;
-			queue.Update(node3);
+			//node3.F = 17;
+			//queue.Update(node3);
 
-			node4.F = 0;
-			queue.Update(node4);
+			//node4.F = 0;
+			//queue.Update(node4);
 
-			Console.WriteLine(queue.Dequeue().F);
-			Console.WriteLine(queue.Dequeue().F);
-			Console.WriteLine(queue.Dequeue().F);
-			Console.WriteLine(queue.Dequeue().F);
-			Console.WriteLine(queue.Dequeue().F);
+			//Console.WriteLine(queue.Dequeue().F);
+			//Console.WriteLine(queue.Dequeue().F);
+			//Console.WriteLine(queue.Dequeue().F);
+			//Console.WriteLine(queue.Dequeue().F);
+			//Console.WriteLine(queue.Dequeue().F);
 		}
 	}
 }

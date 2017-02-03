@@ -66,19 +66,16 @@ namespace Pathfinding
 
 		protected bool EndpointReached(Node current, Point endPoint) => current.X == endPoint.X && current.Y == endPoint.Y;
 
-		protected short Manhattan(Node point1, Point point2)
-		{
-			return (short) (Math.Abs(point1.X - point2.X) + Math.Abs(point1.Y - point2.Y));
-		}
+		protected short Manhattan(Node point1, Point point2) => (short) (Math.Abs(point1.X - point2.X) + Math.Abs(point1.Y - point2.Y));
 
 		protected Node[] GetNeighbors(Node node)
 		{
 			var res = new Node[4];
 
-			res[0] = Grid[(short) (node.X - 1), node.Y];
-			res[1] = Grid[(short) (node.X + 1), node.Y];
-			res[2] = Grid[node.X, (short) (node.Y - 1)];
-			res[3] = Grid[node.X, (short) (node.Y + 1)];
+			res[0] = Grid[(short)(node.X - 1), node.Y];
+			res[1] = Grid[(short)(node.X + 1), node.Y];
+			res[2] = Grid[node.X, (short)(node.Y - 1)];
+			res[3] = Grid[node.X, (short)(node.Y + 1)];
 
 			return res;
 		}

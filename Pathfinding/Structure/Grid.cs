@@ -13,7 +13,6 @@ namespace Pathfinding.Structure
 			InnerGrid = new Node[width * height];
 			Width = width;
 			Height = height;
-
 			Parallel.For(0, InnerGrid.Length, i =>
 			{
 				InnerGrid[i] = new Node();
@@ -33,11 +32,10 @@ namespace Pathfinding.Structure
 						State = NodeState.Obstacle
 					};
 				}
-				InnerGrid[x + y * Width].X = (short) x;
-				InnerGrid[x + y * Width].Y = (short) y;
+				InnerGrid[x + y * Width].X = (short)x;
+				InnerGrid[x + y * Width].Y = (short)y;
 				return InnerGrid[x + y * Width];
 			}
 		}
-
 	}
 }

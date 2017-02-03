@@ -4,10 +4,10 @@ Export to PNG
 ---DB_Part
 Save to XML/DB
 Create script
-Oracle support
 Update tree view after rename/create/drop
 
 ---Other
 Add comments
 
 --Bugs
+Limit canvas size to 4000*4000 => Create Grid for pathfinding in Desiger window => Recreate when resize

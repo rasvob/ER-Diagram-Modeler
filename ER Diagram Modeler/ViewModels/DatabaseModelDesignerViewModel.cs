@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using ER_Diagram_Modeler.Annotations;
@@ -13,6 +14,7 @@ using ER_Diagram_Modeler.EventArgs;
 using ER_Diagram_Modeler.Models.Designer;
 using ER_Diagram_Modeler.Properties;
 using ER_Diagram_Modeler.ViewModels.Enums;
+using Pathfinding.Structure;
 
 namespace ER_Diagram_Modeler.ViewModels
 {
@@ -35,6 +37,7 @@ namespace ER_Diagram_Modeler.ViewModels
 		private ObservableCollection<ConnectionInfoViewModel> _connectionInfoViewModels;
 		private bool _areGuideLinesVisible = true;
 		private string _diagramTitle;
+		private Grid _grid = null;
 
 		public string DiagramTitle
 		{
@@ -353,6 +356,16 @@ namespace ER_Diagram_Modeler.ViewModels
 		protected virtual void OnCanvasDimensionsChanged()
 		{
 			CanvasDimensionsChanged?.Invoke(this, System.EventArgs.Empty);
+		}
+
+		public async Task<Grid> GetGrid()
+		{
+			return _grid ?? (_grid = await Task.Factory.StartNew(() => PathFinderHelper.CreateNewGrid((int) CanvasWidth, (int) CanvasHeight)));
+		}
+
+		public async Task RecreateGrid()
+		{
+			_grid = await Task.Factory.StartNew(() => PathFinderHelper.CreateNewGrid((int) CanvasWidth, (int) CanvasHeight));
 		}
 	}
 }

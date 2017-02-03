@@ -1646,7 +1646,7 @@ namespace ER_Diagram_Modeler.ViewModels
 				{
 					case RelativeTablePosition.LeftTop:
 						start = new Point(sl - off, st + sh2);
-						end = new Point(dl + dw2, dt + dh + off);
+						end = new Point(dl + dw2, db + off);
 						SourceConnector.Orientation = ConnectorOrientation.Left;
 						DestinationConnector.Orientation = ConnectorOrientation.Down;
 						break;
@@ -1758,13 +1758,22 @@ namespace ER_Diagram_Modeler.ViewModels
 					break;
 			}
 
-			if (grid == null)
+			//OOP A*
+			if(grid == null)
 			{
 				grid = await Task.Factory.StartNew(() => CreateGridForPathFinding(designer));
+				//grid = await designer.GetGrid();
+				//await Task.Factory.StartNew(() => PathFinderHelper.UpdateGrid((int)designer.CanvasWidth, (int)designer.CanvasHeight, GetRectangleAreas(designer), grid));
 			}
 
 			AbstractPathFinder pathFinder = new AStarPathFinder(grid);
 			Point[] points = await Task.Factory.StartNew(() => pathFinder.FindPathBendingPointsOnly(startFind, endFind));
+
+
+			//var byteGrid = await Task.Factory.StartNew(() => PathFinderHelper.CreateGridStruct((int)designer.CanvasWidth, (int)designer.CanvasHeight, GetRectangleAreas(designer)));
+
+			//AStarStructPathFinder pathFinder = new AStarStructPathFinder(byteGrid, (int)designer.CanvasWidth, (int)designer.CanvasHeight);
+			//Point[] points = await Task.Factory.StartNew(() => pathFinder.FindPathBendingPointsOnly(startFind, endFind));
 
 			if(points == null)
 			{
@@ -1813,28 +1822,44 @@ namespace ER_Diagram_Modeler.ViewModels
 
 		private Grid CreateGridForPathFinding(DatabaseModelDesignerViewModel designer)
 		{
+			var obs = GetRectangleAreas(designer);
+			Grid grid = PathFinderHelper.CreateGrid((int) designer.CanvasWidth, (int) designer.CanvasHeight, obs);
+			return grid;
+		}
+
+		private IEnumerable<Rectangle> GetRectangleAreas(DatabaseModelDesignerViewModel designer)
+		{
 			var obs = new List<Rectangle>();
 
 			IEnumerable<TableViewModel> models = designer.TableViewModels.Where(t => !(t.Equals(SourceViewModel) || t.Equals(DestinationViewModel)));
 
-			foreach (TableViewModel model in models)
+			foreach(TableViewModel model in models)
 			{
 				int l, t, w, h;
 
-				l = (int) (model.Left - 2*Connector.ConnectorLenght);
-				t = (int) (model.Top - 2*Connector.ConnectorLenght);
-				w = (int) (model.Width + 2*Connector.ConnectorLenght);
-				h = (int) (model.Height + 2*Connector.ConnectorLenght);
+				l = (int)(model.Left - 4 * Connector.ConnectorLenght);
+				t = (int)(model.Top - 4 * Connector.ConnectorLenght);
+				w = (int)(model.Width + 4 * Connector.ConnectorLenght);
+				h = (int)(model.Height + 4 * Connector.ConnectorLenght);
 
-				var rect = new Rectangle(l < 0 ? 0 : l, t < 0 ? 0 : t, (int) (w > designer.CanvasWidth ? designer.CanvasWidth : w), (int) (h > designer.CanvasHeight ? designer.CanvasHeight : h));
+				var rect = new Rectangle(l < 0 ? 0 : l, t < 0 ? 0 : t, (int)(w), (int)(h));
 				obs.Add(rect);
 			}
 
-			obs.Add(new Rectangle((int) SourceViewModel.Left, (int)SourceViewModel.Top, (int) SourceViewModel.Width, (int) SourceViewModel.Height));
-			obs.Add(new Rectangle((int) DestinationViewModel.Left, (int)DestinationViewModel.Top, (int)DestinationViewModel.Width, (int)DestinationViewModel.Height));
+			foreach (TableViewModel model in designer.TableViewModels.Where(t => t.Equals(SourceViewModel) || t.Equals(DestinationViewModel)))
+			{
+				int l, t, w, h;
 
-			Grid grid = PathFinderHelper.CreateGrid((int) designer.CanvasWidth, (int) designer.CanvasHeight, obs);
-			return grid;
+				l = (int)(model.Left);
+				t = (int)(model.Top);
+				w = (int)(model.Width);
+				h = (int)(model.Height);
+
+				var rect = new Rectangle(l < 0 ? 0 : l, t < 0 ? 0 : t, w, h);
+				obs.Add(rect);
+			}
+
+			return obs;
 		}
 
 		private void BuildConnectionBetweenViewModels()

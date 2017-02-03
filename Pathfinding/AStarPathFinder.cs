@@ -17,6 +17,7 @@ namespace Pathfinding
 		{
 			var q = new PriorityQueue<Node>();
 			short x = (short) startPoint.X, y = (short) startPoint.Y;
+
 			Grid[x, y].ParentX = -1;
 			Grid[x, y].ParentY = -1;
 			Grid[x, y].State = NodeState.Open;
@@ -24,6 +25,7 @@ namespace Pathfinding
 			Grid[x, y].Y = y;
 			Grid[x, y].G = 0;
 			Grid[x, y].H = 0;
+
 			q.Enqueue(Grid[x, y]);
 
 			short ng;
@@ -67,9 +69,7 @@ namespace Pathfinding
 						q.Update(buffered);
 					}
 				}
-
 			}
-
 			return null;
 		}
 	}

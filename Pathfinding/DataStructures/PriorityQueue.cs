@@ -116,7 +116,7 @@ namespace Pathfinding.DataStructures
 					current = leftChild;
 				}
 
-				if(_items.Count > leftChild && _items[parent].CompareTo(_items[rightChild]) <= 0)
+				if(_items.Count > rightChild && _items[parent].CompareTo(_items[rightChild]) <= 0)
 				{
 					current = rightChild;
 				}
@@ -128,7 +128,6 @@ namespace Pathfinding.DataStructures
 
 				Swap(parent, current);
 			}
-
 		}
 
 		public int Count => _items.Count;
