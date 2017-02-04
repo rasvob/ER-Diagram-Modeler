@@ -97,8 +97,7 @@ namespace ER_Diagram_Modeler.DiagramConstruction
 				vm.SourceViewModel = ViewModel.TableViewModels.FirstOrDefault(t => t.Model.Equals(relationship.Source));
 				vm.DestinationViewModel = ViewModel.TableViewModels.FirstOrDefault(t => t.Model.Equals(relationship.Destination));
 
-				//await vm.BuildConnection2(ViewModel);
-				vm.BuildConnection();
+				await vm.BuildConnection3(ViewModel);
 				ViewModel.ConnectionInfoViewModels.Add(vm);
 			}
 		}

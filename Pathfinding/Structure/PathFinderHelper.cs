@@ -12,8 +12,6 @@ namespace Pathfinding.Structure
 
 		public static Grid CreateNewGrid(int width, int height)
 		{
-			//int newWidth = RoundToNearestPowerOfTwo(width);
-			//int newHeight = RoundToNearestPowerOfTwo(height);
 			Grid grid = new Grid(width, width);
 			return grid;
 		}

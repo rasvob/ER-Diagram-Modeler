@@ -37,7 +37,6 @@ namespace ER_Diagram_Modeler.ViewModels
 		private ObservableCollection<ConnectionInfoViewModel> _connectionInfoViewModels;
 		private bool _areGuideLinesVisible = true;
 		private string _diagramTitle;
-		private Grid _grid = null;
 
 		public string DiagramTitle
 		{
@@ -356,16 +355,6 @@ namespace ER_Diagram_Modeler.ViewModels
 		protected virtual void OnCanvasDimensionsChanged()
 		{
 			CanvasDimensionsChanged?.Invoke(this, System.EventArgs.Empty);
-		}
-
-		public async Task<Grid> GetGrid()
-		{
-			return _grid ?? (_grid = await Task.Factory.StartNew(() => PathFinderHelper.CreateNewGrid((int) CanvasWidth, (int) CanvasHeight)));
-		}
-
-		public async Task RecreateGrid()
-		{
-			_grid = await Task.Factory.StartNew(() => PathFinderHelper.CreateNewGrid((int) CanvasWidth, (int) CanvasHeight));
 		}
 	}
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 
 namespace ER_Diagram_Modeler.Extintions
@@ -16,6 +17,16 @@ namespace ER_Diagram_Modeler.Extintions
 				yield return arr[swapIndex];
 				arr[swapIndex] = arr[i];
 			}
+		}
+
+		public static Point ToMinified(this Point point, int step)
+		{
+			return new Point(point.X/step, point.Y/step);
+		}
+
+		public static Point FromMinified(this Point point, int step)
+		{
+			return new Point(point.X * step, point.Y * step);
 		}
 	}
 }

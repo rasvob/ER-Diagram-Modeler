@@ -119,11 +119,8 @@ namespace ER_Diagram_Modeler
 			if (addTable)
 			{
 				//Glitch-free access
-				var progress = await this.ShowProgressAsync("Please wait", "Pathfinding in progress...");
-				progress.SetIndeterminate();
 				await Task.Delay(100);
 				await facade.AddRelationShipsForTable(model, diagram.ModelDesignerCanvas);
-				await progress.CloseAsync();
 			}
 		}
 

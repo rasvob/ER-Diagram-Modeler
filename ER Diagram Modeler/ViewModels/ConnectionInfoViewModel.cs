@@ -1642,10 +1642,40 @@ namespace ER_Diagram_Modeler.ViewModels
 				return;
 			}
 
-			var grid = await Task.Factory.StartNew(() => CreateGridForPathFinding(designer));
+			var grid = await CreateMinifiedGridForPathFinding(designer, step);
 			AbstractPathFinder pathFinder = new AStarPathFinder(grid);
-			Point[] points = await Task.Factory.StartNew(() => pathFinder.FindPathBendingPointsOnly(source[1], destination[1]));
-			//TODO Continue with filling points array
+			Point[] points = await Task.Factory.StartNew(() => pathFinder.FindPathBendingPointsOnly(source[1].ToMinified(step), destination[1].ToMinified(step)));
+
+			var allPoints = new List<Point>();
+			allPoints.Add(source[0]);
+			allPoints.AddRange(points.Select(s => s.FromMinified(step)).Reverse());
+			allPoints.Add(destination[0]);
+
+			var tempCollection = new List<ConnectionPoint> {new ConnectionPoint(source[0].X, source[0].Y)};
+			if (allPoints.Count > 3)
+			{
+				for (int i = 1; i < allPoints.Count-1; i++)
+				{
+					var prev = allPoints[i - 1];
+					var curr = allPoints[i];
+					var next = allPoints[i + 1];
+
+					if(curr.Y == prev.Y && curr.Y == next.Y)
+					{
+						continue;
+					}
+
+					if(curr.X == prev.X && curr.X == next.X)
+					{
+						continue;
+					}
+
+					tempCollection.Add(new ConnectionPoint(curr.X, curr.Y));
+				}
+			}
+			tempCollection.Add(new ConnectionPoint(destination[0].X, destination[0].Y));
+
+			tempCollection.ForEach(s => Points.Add(s));
 
 			SourceConnector.Cardinality = Cardinality.One;
 			DestinationConnector.Cardinality = Cardinality.Many;
@@ -1689,18 +1719,18 @@ namespace ER_Diagram_Modeler.ViewModels
 			var rnd = new Random();
 			var rects = GetTableRectangles(designer.TableViewModels, step);
 			var canvas = new Rectangle(0,0, (int) designer.CanvasWidth, (int) designer.CanvasHeight);
-			bool vertical = !horizontalLines.Any() || (rnd.Next(1) == 0);
+			bool vertical = !horizontalLines.Any() || (rnd.Next(2) == 0);
 
 			if (vertical)
 			{
 				var offsetPointsTop = verticalLines.Select(s => new Point[] { new Point(s, t - off), new Point(s, (t-off)/step * step) });
-				var offsetPointsBot = verticalLines.Select(s => new Point[] { new Point(s, b + off), new Point(s, ((b+off)/step+1) * step) });
+				var offsetPointsBot = verticalLines.Select(s => new Point[] { new Point(s, b + off), new Point(s, ((b+off)/step+2) * step) });
 
 				IEnumerable<Point[]> validTop = offsetPointsTop.Where(s => rects.All(m => !DoesPointIndersectWithRectangle(m, s[1]))).Where(n => DoesPointIndersectWithRectangle(canvas,n[1]));
 				IEnumerable<Point[]> validBot = offsetPointsBot.Where(s => rects.All(m => !DoesPointIndersectWithRectangle(m, s[1]))).Where(n => DoesPointIndersectWithRectangle(canvas, n[1]));
 
-				var top = validTop as Point[][] ?? validTop.ToArray();
-				bool bottom = !top.Any() || rnd.Next(1) == 0;
+				var top = validTop as IList<Point[]> ?? validTop.ToList();
+				bool bottom = !top.Any() || rnd.Next(2) == 0;
 				IEnumerable<Point[]> bot = validBot as IList<Point[]> ?? validBot.ToList();
 
 				if (bot.Any() && bottom)
@@ -1718,14 +1748,14 @@ namespace ER_Diagram_Modeler.ViewModels
 			}
 			else
 			{
-				var offsetPointsLeft = horizontalLines.Select(s => new Point[] { new Point(l - off, s), new Point((l - off)/step * step) });
-				var offsetPointsRight = horizontalLines.Select(s => new Point[] { new Point(r + off, s), new Point(((r + off) / step + 1) * step) });
+				var offsetPointsLeft = horizontalLines.Select(s => new Point[] { new Point(l - off, s), new Point((l - off)/step * step, s) });
+				var offsetPointsRight = horizontalLines.Select(s => new Point[] { new Point(r + off, s), new Point(((r + off) / step + 1) * step, s) });
 
 				IEnumerable<Point[]> validLeft = offsetPointsLeft.Where(s => rects.All(m => !DoesPointIndersectWithRectangle(m, s[1]))).Where(n => DoesPointIndersectWithRectangle(canvas, n[1]));
 				IEnumerable<Point[]> validRight = offsetPointsRight.Where(s => rects.All(m => !DoesPointIndersectWithRectangle(m, s[1]))).Where(n => DoesPointIndersectWithRectangle(canvas, n[1]));
 
 				var left = validLeft as Point[][] ?? validLeft.ToArray();
-				bool right = !left.Any() || rnd.Next(1) == 0;
+				bool right = !left.Any() || rnd.Next(2) == 0;
 				IEnumerable<Point[]> rig = validRight as IList<Point[]> ?? validRight.ToList();
 
 				if(rig.Any() && right)
@@ -1735,9 +1765,12 @@ namespace ER_Diagram_Modeler.ViewModels
 					return shuffle.FirstOrDefault();
 				}
 
-				IEnumerable<Point[]> shuffle1 = left.Shuffle(rnd);
-				connector.Orientation = ConnectorOrientation.Left;
-				return shuffle1.FirstOrDefault();
+				if (left.Any())
+				{
+					IEnumerable<Point[]> shuffle1 = left.Shuffle(rnd);
+					connector.Orientation = ConnectorOrientation.Left;
+					return shuffle1.FirstOrDefault();
+				}
 			}
 
 			return null;
@@ -1771,6 +1804,20 @@ namespace ER_Diagram_Modeler.ViewModels
 				
 				return new Rectangle(left, top, right - left, bottom - top);
 			});
+		}
+
+		private async Task<Grid> CreateMinifiedGridForPathFinding(DatabaseModelDesignerViewModel designer, int step)
+		{
+			var rects = GetTableRectangles(designer.TableViewModels, step).Select(s =>
+			{
+				var t = s.Y / step;
+				var l = s.X / step;
+				var r = s.Right / step;
+				var b = s.Bottom / step;
+				return new Rectangle(l, t, r - l, b - t);
+			});
+			var res = await Task.Factory.StartNew(() => PathFinderHelper.CreateGrid((int)(designer.CanvasWidth / step), (int)designer.CanvasHeight / step, rects));
+			return res;
 		}
 
 		private async Task BuildConnectionBetweenViewModelsUsingPathFinding(DatabaseModelDesignerViewModel designer, Grid grid = null)

@@ -149,12 +149,7 @@ namespace ER_Diagram_Modeler.Dialogs
 						DesignerCanvas = Canvas
 					};
 					model.RelationshipModel.RefreshModel(relModel);
-					//TODO: BFS
-					var progress = await this.ShowProgressAsync("Please wait", "Pathfinding in progress...");
-					progress.SetIndeterminate();
-					await model.BuildConnection2(DesignerViewModel);
-					await progress.CloseAsync();
-
+					await model.BuildConnection3(DesignerViewModel);
 					await Task.Delay(100);
 					DesignerViewModel.ConnectionInfoViewModels.Add(model);
 					DialogResult = true;
