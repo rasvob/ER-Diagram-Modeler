@@ -1,13 +1,16 @@
 ﻿---Designer_part
 Export to PNG
+Redraw selected lines
+Disable limit on table with lines
 
 ---DB_Part
 Save to XML/DB
 Create script
 Update tree view after rename/create/drop
+CASCADE delete and update
 
 ---Other
 Add comments
 
 --Bugs
-Limit canvas size to 4000*4000 => Create Grid for pathfinding in Desiger window => Recreate when resize
+

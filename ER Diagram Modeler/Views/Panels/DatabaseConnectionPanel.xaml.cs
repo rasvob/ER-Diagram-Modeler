@@ -123,6 +123,11 @@ namespace ER_Diagram_Modeler.Views.Panels
 			OracleStackPanel.Visibility = Visibility.Collapsed;
 		}
 
+		public void RefreshTreeData()
+		{
+			throw new NotImplementedException();
+		}
+
 		private void MsSqlDatabaseComboBox_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
 			var cb = (sender as ComboBox)?.SelectedItem as DatabaseInfo;

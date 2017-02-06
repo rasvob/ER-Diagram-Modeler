@@ -6,7 +6,7 @@ namespace Pathfinding
 {
 	public class AStarPathFinder: AbstractPathFinder
 	{
-		public static int Weight = 10;
+		public static int Weight = 100;
 
 		public AStarPathFinder(Grid grid) : base(grid)
 		{

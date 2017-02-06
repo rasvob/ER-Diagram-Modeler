@@ -47,6 +47,7 @@
     <Compile Include="BFSPathFinder.cs" />
     <Compile Include="DataStructures\IPriorityQueue.cs" />
     <Compile Include="DataStructures\PriorityQueue.cs" />
+    <Compile Include="FreeRectangleFinder.cs" />
     <Compile Include="IPathFinder.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Structure\Grid.cs" />

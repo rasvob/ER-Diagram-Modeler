@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Documents;
 using System.Windows.Media;
+using ER_Diagram_Modeler.DiagramConstruction;
 using ER_Diagram_Modeler.EventArgs;
 using ER_Diagram_Modeler.Extintions;
 using ER_Diagram_Modeler.Models.Designer;
@@ -55,6 +56,7 @@ namespace ER_Diagram_Modeler.ViewModels
 
 		public static readonly double PointsDistaceTolerance = 8.0;
 		public static readonly double DefaultConnectionLineLength = 80;
+		public static readonly int GraphTransformStep = 60;
 
 		public TableViewModel SourceViewModel
 		{
@@ -1620,7 +1622,7 @@ namespace ER_Diagram_Modeler.ViewModels
 
 		private async Task BuildConnectionBetweenViewModelsUsingReducedGraphPathFinding(DatabaseModelDesignerViewModel designer)
 		{
-			int step = 50;
+			int step = GraphTransformStep;
 			if(IsSelfConnection())
 			{
 				BuildSelfConnection();
@@ -1642,9 +1644,15 @@ namespace ER_Diagram_Modeler.ViewModels
 				return;
 			}
 
-			var grid = await CreateMinifiedGridForPathFinding(designer, step);
+			var grid = await DiagramFacade.CreateMinifiedGridForPathFinding(designer, step);
 			AbstractPathFinder pathFinder = new AStarPathFinder(grid);
 			Point[] points = await Task.Factory.StartNew(() => pathFinder.FindPathBendingPointsOnly(source[1].ToMinified(step), destination[1].ToMinified(step)));
+
+			if (points == null)
+			{
+				BuildOverlapConnection();
+				return;
+			}
 
 			var allPoints = new List<Point>();
 			allPoints.Add(source[0]);
@@ -1717,7 +1725,7 @@ namespace ER_Diagram_Modeler.ViewModels
 			}
 
 			var rnd = new Random();
-			var rects = GetTableRectangles(designer.TableViewModels, step);
+			var rects = DiagramFacade.GetTableRectangles(designer.TableViewModels, step);
 			var canvas = new Rectangle(0,0, (int) designer.CanvasWidth, (int) designer.CanvasHeight);
 			bool vertical = !horizontalLines.Any() || (rnd.Next(2) == 0);
 
@@ -1726,8 +1734,8 @@ namespace ER_Diagram_Modeler.ViewModels
 				var offsetPointsTop = verticalLines.Select(s => new Point[] { new Point(s, t - off), new Point(s, (t-off)/step * step) });
 				var offsetPointsBot = verticalLines.Select(s => new Point[] { new Point(s, b + off), new Point(s, ((b+off)/step+2) * step) });
 
-				IEnumerable<Point[]> validTop = offsetPointsTop.Where(s => rects.All(m => !DoesPointIndersectWithRectangle(m, s[1]))).Where(n => DoesPointIndersectWithRectangle(canvas,n[1]));
-				IEnumerable<Point[]> validBot = offsetPointsBot.Where(s => rects.All(m => !DoesPointIndersectWithRectangle(m, s[1]))).Where(n => DoesPointIndersectWithRectangle(canvas, n[1]));
+				IEnumerable<Point[]> validTop = offsetPointsTop.Where(s => rects.All(m => !DiagramFacade.DoesPointIntersectWithRectangle(m, s[1]))).Where(n => DiagramFacade.DoesPointIntersectWithRectangle(canvas,n[1]));
+				IEnumerable<Point[]> validBot = offsetPointsBot.Where(s => rects.All(m => !DiagramFacade.DoesPointIntersectWithRectangle(m, s[1]))).Where(n => DiagramFacade.DoesPointIntersectWithRectangle(canvas, n[1]));
 
 				var top = validTop as IList<Point[]> ?? validTop.ToList();
 				bool bottom = !top.Any() || rnd.Next(2) == 0;
@@ -1749,10 +1757,10 @@ namespace ER_Diagram_Modeler.ViewModels
 			else
 			{
 				var offsetPointsLeft = horizontalLines.Select(s => new Point[] { new Point(l - off, s), new Point((l - off)/step * step, s) });
-				var offsetPointsRight = horizontalLines.Select(s => new Point[] { new Point(r + off, s), new Point(((r + off) / step + 1) * step, s) });
+				var offsetPointsRight = horizontalLines.Select(s => new Point[] { new Point(r + off, s), new Point(((r + off) / step + 2) * step, s) });
 
-				IEnumerable<Point[]> validLeft = offsetPointsLeft.Where(s => rects.All(m => !DoesPointIndersectWithRectangle(m, s[1]))).Where(n => DoesPointIndersectWithRectangle(canvas, n[1]));
-				IEnumerable<Point[]> validRight = offsetPointsRight.Where(s => rects.All(m => !DoesPointIndersectWithRectangle(m, s[1]))).Where(n => DoesPointIndersectWithRectangle(canvas, n[1]));
+				IEnumerable<Point[]> validLeft = offsetPointsLeft.Where(s => rects.All(m => !DiagramFacade.DoesPointIntersectWithRectangle(m, s[1]))).Where(n => DiagramFacade.DoesPointIntersectWithRectangle(canvas, n[1]));
+				IEnumerable<Point[]> validRight = offsetPointsRight.Where(s => rects.All(m => !DiagramFacade.DoesPointIntersectWithRectangle(m, s[1]))).Where(n => DiagramFacade.DoesPointIntersectWithRectangle(canvas, n[1]));
 
 				var left = validLeft as Point[][] ?? validLeft.ToArray();
 				bool right = !left.Any() || rnd.Next(2) == 0;
@@ -1774,50 +1782,6 @@ namespace ER_Diagram_Modeler.ViewModels
 			}
 
 			return null;
-		}
-
-		private bool DoesPointIndersectWithRectangle(Rectangle area, Point point)
-		{
-			return point.X >= area.Left && point.X <= area.Right && point.Y >= area.Top && point.Y <= area.Bottom;
-		}
-
-		private IEnumerable<Rectangle> GetTableRectangles(IEnumerable<TableViewModel> tables, int step = 1)
-		{
-			return tables.Select(t =>
-			{
-				int top = (int) t.Top;
-				int left = (int) t.Left;
-				int width = (int) t.Width;
-				int height = (int) t.Height;
-
-				int right = left + width;
-				int bottom = top + height;
-
-				top = top / step * step;
-				left = left / step * step;
-
-				if (step > 1)
-				{
-					right = (right / step + 1) * step;
-					bottom = (bottom / step + 1) * step;
-				}
-				
-				return new Rectangle(left, top, right - left, bottom - top);
-			});
-		}
-
-		private async Task<Grid> CreateMinifiedGridForPathFinding(DatabaseModelDesignerViewModel designer, int step)
-		{
-			var rects = GetTableRectangles(designer.TableViewModels, step).Select(s =>
-			{
-				var t = s.Y / step;
-				var l = s.X / step;
-				var r = s.Right / step;
-				var b = s.Bottom / step;
-				return new Rectangle(l, t, r - l, b - t);
-			});
-			var res = await Task.Factory.StartNew(() => PathFinderHelper.CreateGrid((int)(designer.CanvasWidth / step), (int)designer.CanvasHeight / step, rects));
-			return res;
 		}
 
 		private async Task BuildConnectionBetweenViewModelsUsingPathFinding(DatabaseModelDesignerViewModel designer, Grid grid = null)

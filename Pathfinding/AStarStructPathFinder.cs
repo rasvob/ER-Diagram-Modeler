@@ -29,8 +29,6 @@ namespace Pathfinding
 				_grid[GetPosition(i, _width)].State = NodeState.Obstacle;
 				_grid[GetPosition(_width, i)].State = NodeState.Obstacle;
 			}
-
-
 		}
 
 		private int GetPosition(int x, int y) => x + y * _width;

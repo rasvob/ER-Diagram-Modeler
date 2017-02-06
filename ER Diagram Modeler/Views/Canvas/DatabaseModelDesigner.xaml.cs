@@ -45,6 +45,8 @@ namespace ER_Diagram_Modeler.Views.Canvas
 		private TableViewModel _sourceModel;
 		private TableViewModel _destinationModel;
 
+		public event EventHandler TableCreated;
+
 		public DatabaseModelDesignerViewModel ViewModel
 		{
 			get { return _viewModel; }
@@ -270,6 +272,10 @@ namespace ER_Diagram_Modeler.Views.Canvas
 								{
 									await window.ShowMessageAsync("Add new table", $"Table {table.Model.Title} already exists");
 								}
+								else
+								{
+									OnTableCreated();
+								}
 							}
 							catch(Exception exception) when (exception is SqlException || exception is OracleException)
 							{
@@ -308,6 +314,7 @@ namespace ER_Diagram_Modeler.Views.Canvas
 				content.Width = content.ActualWidth + 30;
 				viewModel.Height = content.Height;
 				viewModel.Width = content.Width;
+				viewModel.OnTableLoaded(content);
 			};
 		}
 
@@ -410,40 +417,6 @@ namespace ER_Diagram_Modeler.Views.Canvas
 		}
 
 		#region TestRegion
-
-		private ConnectionInfoViewModel TestNewConnectionCreate()
-		{
-			var info = new ConnectionInfoViewModel();
-
-			//info.Points.Add(new ConnectionPoint()
-			//{
-			//	X = 100, Y = 75
-			//});
-
-			//info.Points.Add(new ConnectionPoint()
-			//{
-			//	X = 100, Y = 80
-			//});
-
-			//info.Points.Add(new ConnectionPoint()
-			//{
-			//	X = 210, Y = 80
-			//});
-
-			info.Points.Add(new ConnectionPoint()
-			{
-				X = 400, Y = 300
-			});
-
-			info.Points.Add(new ConnectionPoint()
-			{
-				X = 210, Y = 300
-			});
-
-			info.BuildLinesFromPoints();
-
-			return info;
-		}
 
 		//Test command F4
 		private void TestCommand_OnExecuted(object sender, ExecutedRoutedEventArgs e)
@@ -664,6 +637,11 @@ namespace ER_Diagram_Modeler.Views.Canvas
 
 			var geometry = await Task.Run(() => DesignerCanvas.CreateGridWithStreamGeometry(h, w, cellWidth));
 			ModelDesignerCanvas.RefreshGuideLines(geometry);
+		}
+
+		protected virtual void OnTableCreated()
+		{
+			TableCreated?.Invoke(this, System.EventArgs.Empty);
 		}
 	}
 }

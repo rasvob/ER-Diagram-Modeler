@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -7,9 +9,13 @@ using System.Windows.Forms.VisualStyles;
 using ER_Diagram_Modeler.Annotations;
 using ER_Diagram_Modeler.Configuration.Providers;
 using ER_Diagram_Modeler.DiagramConstruction.Strategy;
+using ER_Diagram_Modeler.Extintions;
 using ER_Diagram_Modeler.Models.Designer;
 using ER_Diagram_Modeler.ViewModels;
 using ER_Diagram_Modeler.Views.Canvas;
+using ER_Diagram_Modeler.Views.Canvas.TableItem;
+using Pathfinding;
+using Pathfinding.Structure;
 using Xceed.Wpf.AvalonDock.Layout;
 
 namespace ER_Diagram_Modeler.DiagramConstruction
@@ -17,6 +23,7 @@ namespace ER_Diagram_Modeler.DiagramConstruction
 	public class DiagramFacade
 	{
 		public DatabaseModelDesignerViewModel ViewModel { get; set; }
+		public Action<TableModel> AddTableCallbackAction { get; set; }
 
 		public DiagramFacade(DatabaseModelDesignerViewModel viewModel)
 		{
@@ -30,22 +37,7 @@ namespace ER_Diagram_Modeler.DiagramConstruction
 
 		public bool AddTable(TableModel source)
 		{
-			int x, y;
-			FindFreePosition(out x, out y);
-			return AddTable(source, x, y);
-		}
-
-		public void RefreshTableModel(TableViewModel vm)
-		{
-			var ctx = new DatabaseContext(SessionProvider.Instance.ConnectionType);
-			var model = ctx.ReadTableDetails(vm.Model.Id, vm.Model.Title);
-
-			vm.Model.Attributes.Clear();
-
-			foreach (TableRowModel attribute in model.Attributes)
-			{
-				vm.Model.Attributes.Add(attribute);
-			}
+			return AddTable(source, -1, -1);
 		}
 
 		public bool AddTable(string name, int x, int y)
@@ -126,50 +118,48 @@ namespace ER_Diagram_Modeler.DiagramConstruction
 
 		private void AddTableViewModel(TableViewModel vm, int x, int y)
 		{
-			vm.Left = x;
-			vm.Top = y;
+			vm.Left = x > -1 ? x : 0;
+			vm.Top = y > -1 ? y : 0;
+
+			vm.TableLoaded += (sender, content) =>
+			{
+				if (x < 0 || y < 0)
+				{
+					UpdateTablePosition(content);
+				}
+				AddTableCallbackAction?.Invoke(vm.Model);
+			};
+
 			ViewModel.TableViewModels.Add(vm);
 		}
 
 #region HELPERS
-		private void FindFreePosition(out int x, out int y)
+
+		private void UpdateTablePosition(TableContent table)
 		{
-			x = 50;
-			y = 50;
+			int step = 100;
+			var grid = CreateMinifiedGridForPathFindingSync(ViewModel, step);
+			var finder = new FreeRectangleFinder(grid);
 
-			bool isFree = false;
-			var rnd = new Random();
-
-			int xMin = (int)(ViewModel.HorizontalScrollOffset/ViewModel.Scale);
-			int yMin = (int)(ViewModel.VeticalScrollOffset/ViewModel.Scale);
-
-			int xMax = xMin + (int)(ViewModel.ViewportWidth / ViewModel.Scale);
-			int yMax = yMin + (int)(ViewModel.ViewportHeight / ViewModel.Scale);
-
-			if (xMax > ViewModel.CanvasWidth)
+			var rect = GetTableRectangles(new[] {table.TableViewModel}, step).Select(s =>
 			{
-				xMax = (int)ViewModel.CanvasWidth;
-			}
+				var t = s.Y / step;
+				var l = s.X / step;
+				var r = s.Right / step;
+				var b = s.Bottom / step;
+				return new Rectangle(l, t, r - l, b - t);
+			}).FirstOrDefault();
 
-			if(yMax > ViewModel.CanvasHeight)
+			var res = finder.FindFreeRectangle(rect);
+
+			if (res.HasValue)
 			{
-				yMax = (int)ViewModel.CanvasHeight;
-			}
+				var realPoint = res.Value.FromMinified(step);
+				table.TableViewModel.Top = realPoint.Y;
+				table.TableViewModel.Left = realPoint.X;
 
-			while (!isFree)
-			{
-				x = rnd.Next(xMin, xMax);
-				y = rnd.Next(yMin, yMax);
-
-				isFree = true;
-				foreach (TableViewModel viewModel in ViewModel.TableViewModels)
-				{
-					if (x >= viewModel.Left && x <= viewModel.Left+viewModel.Width && y >= viewModel.Top && y <= viewModel.Top+viewModel.Height)
-					{
-						isFree = false;
-						break;
-					}
-				}
+				DesignerCanvas.SetTop(table, realPoint.Y);
+				DesignerCanvas.SetLeft(table, realPoint.X);
 			}
 		}
 
@@ -192,15 +182,77 @@ namespace ER_Diagram_Modeler.DiagramConstruction
 
 			window.MainWindowViewModel.DatabaseModelDesignerViewModels.Add(designerViewModel);
 
-			anchorable.Content = new DatabaseModelDesigner()
+			DatabaseModelDesigner designer = new DatabaseModelDesigner()
 			{
-				ViewModel = designerViewModel
+				ViewModel = designerViewModel,
 			};
+
+			designer.TableCreated += window.CreateTableHandler;
+
+			anchorable.Content = designer;
 			window.MainDocumentPane.Children.Add(anchorable);
 			int indexOf = window.MainDocumentPane.Children.IndexOf(anchorable);
 			window.MainDocumentPane.SelectedContentIndex = indexOf;
 		}
 
-#endregion
+		public static IEnumerable<Rectangle> GetTableRectangles(IEnumerable<TableViewModel> tables, int step = 1)
+		{
+			return tables.Select(t =>
+			{
+				int top = (int)t.Top;
+				int left = (int)t.Left;
+				int width = (int)t.Width;
+				int height = (int)t.Height;
+
+				int right = left + width;
+				int bottom = top + height;
+
+				top = top / step * step;
+				left = left / step * step;
+
+				if(step > 1)
+				{
+					right = (right / step + 1) * step;
+					bottom = (bottom / step + 1) * step;
+				}
+
+				return new Rectangle(left, top, right - left, bottom - top);
+			});
+		}
+
+		public static async Task<Grid> CreateMinifiedGridForPathFinding(DatabaseModelDesignerViewModel designer, int step)
+		{
+			var rects = GetTableRectangles(designer.TableViewModels, step).Select(s =>
+			{
+				var t = s.Y / step;
+				var l = s.X / step;
+				var r = s.Right / step;
+				var b = s.Bottom / step;
+				return new Rectangle(l, t, r - l, b - t);
+			});
+			var res = await Task.Factory.StartNew(() => PathFinderHelper.CreateGrid((int)(designer.CanvasWidth / step), (int)designer.CanvasHeight / step, rects));
+			return res;
+		}
+
+		public static Grid CreateMinifiedGridForPathFindingSync(DatabaseModelDesignerViewModel designer, int step)
+		{
+			var rects = GetTableRectangles(designer.TableViewModels, step).Select(s =>
+			{
+				var t = s.Y / step;
+				var l = s.X / step;
+				var r = s.Right / step;
+				var b = s.Bottom / step;
+				return new Rectangle(l, t, r - l, b - t);
+			});
+
+			return PathFinderHelper.CreateGrid((int) (designer.CanvasWidth / step), (int) designer.CanvasHeight / step, rects);
+		}
+
+		public static bool DoesPointIntersectWithRectangle(Rectangle area, Point point)
+		{
+			return point.X >= area.Left && point.X <= area.Right && point.Y >= area.Top && point.Y <= area.Bottom;
+		}
+
+		#endregion
 	}
 }

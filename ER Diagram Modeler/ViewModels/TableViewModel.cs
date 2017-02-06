@@ -7,6 +7,7 @@ using ER_Diagram_Modeler.Configuration.Providers;
 using ER_Diagram_Modeler.EventArgs;
 using ER_Diagram_Modeler.Models.Designer;
 using ER_Diagram_Modeler.ViewModels.Enums;
+using ER_Diagram_Modeler.Views.Canvas.TableItem;
 
 namespace ER_Diagram_Modeler.ViewModels
 {
@@ -143,7 +144,8 @@ namespace ER_Diagram_Modeler.ViewModels
 		public event EventHandler<TablePositionAndMeasureEventArgs> PositionAndMeasureChanged;
 		public event EventHandler PositionAndMeasureChangesCompleted;
 		public event EventHandler PositionAndMeasureChangesStarted;
-		public event EventHandler TableViewModeChanged; 
+		public event EventHandler TableViewModeChanged;
+		public event EventHandler<TableContent> TableLoaded; 
 
 		[NotifyPropertyChangedInvocator]
 		protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
@@ -169,6 +171,11 @@ namespace ER_Diagram_Modeler.ViewModels
 		public void OnTableViewModeChanged()
 		{
 			TableViewModeChanged?.Invoke(this, System.EventArgs.Empty);
+		}
+
+		public void OnTableLoaded(TableContent e)
+		{
+			TableLoaded?.Invoke(this, e);
 		}
 	}
 }

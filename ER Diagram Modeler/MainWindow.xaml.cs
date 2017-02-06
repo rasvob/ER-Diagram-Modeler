@@ -115,13 +115,11 @@ namespace ER_Diagram_Modeler
 			}
 
 			var facade = new DiagramFacade(diagram.ViewModel);
-			bool addTable = facade.AddTable(model);
-			if (addTable)
+			facade.AddTableCallbackAction += async tableModel =>
 			{
-				//Glitch-free access
-				await Task.Delay(100);
 				await facade.AddRelationShipsForTable(model, diagram.ModelDesignerCanvas);
-			}
+			};
+			facade.AddTable(model);
 		}
 
 		private bool TryGetSelectedDesigner(out DatabaseModelDesigner designer)
@@ -389,7 +387,10 @@ namespace ER_Diagram_Modeler
 			if (res != null)
 			{
 				await this.ShowMessageAsync("Rename table", res);
+				return;
 			}
+
+			DatabaseConnectionSidebar.RefreshTreeData();
 		}
 
 		private async void RemoveColumn_OnExecuted(object sender, ExecutedRoutedEventArgs e)
@@ -442,6 +443,7 @@ namespace ER_Diagram_Modeler
 					var facade = new DiagramFacade(designer);
 					facade.RemoveTable(e);
 				}
+				DatabaseConnectionSidebar.RefreshTreeData();
 			}
 		}
 
@@ -525,6 +527,11 @@ namespace ER_Diagram_Modeler
 			};
 
 			e.CanExecute = inputBoxes.All(t => t.Length > 0) && OraclePortTextBox.Text.All(char.IsDigit);
+		}
+
+		public void CreateTableHandler(object sender, System.EventArgs e)
+		{
+			DatabaseConnectionSidebar.RefreshTreeData();
 		}
 	}
 }

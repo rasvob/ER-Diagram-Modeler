@@ -56,13 +56,14 @@ namespace Pathfinding.Structure
 
 			for(int i = 0; i < grid.Width; i++)
 			{
-				grid[i, height].State = NodeState.Obstacle;
+				grid[i, height-1].State = NodeState.Obstacle;
+				grid[i, 0].State = NodeState.Obstacle;
 			}
 
 			for(int i = 0; i < grid.Height; i++)
 			{
-				grid[width, i].State = NodeState.Obstacle;
-
+				grid[width-1, i].State = NodeState.Obstacle;
+				grid[0, i].State = NodeState.Obstacle;
 			}
 
 			foreach(Rectangle rect in obstacles)
