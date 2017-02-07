@@ -47,6 +47,8 @@ namespace ER_Diagram_Modeler.Views.Panels
 		private void Disconnect_OnExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
 			SessionProvider.Instance.ConnectionType = ConnectionType.None;
+			SessionProvider.Instance.Database = null;
+			SessionProvider.Instance.ServerName = null;
 			HideDatabaseStackPanels();
 		}
 
@@ -77,18 +79,35 @@ namespace ER_Diagram_Modeler.Views.Panels
 			ConnectionClick?.Invoke(this, e);
 		}
 
-		public void LoadMsSqlData()
+		public void LoadMsSqlData(bool loadPrev = false)
 		{
+			int selected = 0;
+			string name = string.Empty;
+			if (loadPrev)
+			{
+				DatabaseInfo info = DatabaseInfos.FirstOrDefault(t => t.Name.Equals(SessionProvider.Instance.Database));
+				if (info != null)
+				{
+					name = info.Name;
+				}
+			}
+
 			using (MsSqlMapper mapper = new MsSqlMapper())
 			{
 				DatabaseInfos = mapper.ListDatabases().ToList();
 			}
 
-			if (DatabaseInfos.Any())
+			if (loadPrev)
+			{
+				int indexOf = DatabaseInfos.IndexOf(DatabaseInfos.FirstOrDefault(t => t.Name.Equals(name)));
+				selected = indexOf > 0 ? indexOf : 0;
+			}
+
+			if(DatabaseInfos.Any())
 			{
 				MsSqlDatabaseComboBox.ItemsSource = DatabaseInfos;
 				MsSqlDatabaseComboBox.DisplayMemberPath = "Name";
-				MsSqlDatabaseComboBox.SelectedIndex = 0;
+				MsSqlDatabaseComboBox.SelectedIndex = selected;
 			}
 
 			MsSqlServerGrid.Visibility = Visibility.Visible;
@@ -130,7 +149,12 @@ namespace ER_Diagram_Modeler.Views.Panels
 				case ConnectionType.None:
 					break;
 				case ConnectionType.SqlServer:
-					throw new NotImplementedException();
+					using(MsSqlMapper mapper = new MsSqlMapper())
+					{
+						DatabaseInfos = mapper.ListDatabases().ToList();
+					}
+					LoadMsSqlTreeViewData();
+					ExpandMsSqlTreeItem();
 					break;
 				case ConnectionType.Oracle:
 					LoadOracleData();
@@ -138,6 +162,23 @@ namespace ER_Diagram_Modeler.Views.Panels
 					if (item != null)
 						item.IsExpanded = true;
 					break;
+			}
+		}
+
+		private void ExpandMsSqlTreeItem()
+		{
+			TreeViewItem itemMsSql = MsSqlTreeView.Items.Cast<TreeViewItem>().FirstOrDefault(t =>
+			{
+				string s = t.Header as string;
+				return s != null && s.Equals(SessionProvider.Instance.Database);
+			});
+
+			if(itemMsSql != null)
+			{
+				itemMsSql.IsExpanded = true;
+				TreeViewItem firstOrDefault = itemMsSql.Items.Cast<TreeViewItem>().FirstOrDefault();
+				if(firstOrDefault != null)
+					firstOrDefault.IsExpanded = true;
 			}
 		}
 
@@ -150,6 +191,7 @@ namespace ER_Diagram_Modeler.Views.Panels
 				return;
 			}
 
+			//Is the same ?
 			SessionProvider.Instance.Database = cb.Name;
 
 			LoadMsSqlTreeViewData();

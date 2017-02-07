@@ -53,7 +53,7 @@ namespace ER_Diagram_Modeler
 				using(IMsSqlMapper mapper = new MsSqlMapper())
 				{
 					await Task.Factory.StartNew(() => mapper.DropDatabase(dbName));
-					DatabaseConnectionSidebar.LoadMsSqlData();
+					DatabaseConnectionSidebar.LoadMsSqlData(true);
 					await progress.CloseAsync();
 					await this.ShowMessageAsync("Drop database", $"Database {dbName} dropped successfully");
 				}
@@ -79,7 +79,7 @@ namespace ER_Diagram_Modeler
 				using (IMsSqlMapper mapper = new MsSqlMapper())
 				{
 					mapper.CreateDatabase(name);
-					DatabaseConnectionSidebar.LoadMsSqlData();
+					DatabaseConnectionSidebar.LoadMsSqlData(true);
 				}
 			}
 			catch (SqlException exc)
