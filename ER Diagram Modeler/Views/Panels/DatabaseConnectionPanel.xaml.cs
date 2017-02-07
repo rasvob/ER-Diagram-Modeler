@@ -125,7 +125,20 @@ namespace ER_Diagram_Modeler.Views.Panels
 
 		public void RefreshTreeData()
 		{
-			throw new NotImplementedException();
+			switch (SessionProvider.Instance.ConnectionType)
+			{
+				case ConnectionType.None:
+					break;
+				case ConnectionType.SqlServer:
+					throw new NotImplementedException();
+					break;
+				case ConnectionType.Oracle:
+					LoadOracleData();
+					TreeViewItem item = OracleTreeView.Items.Cast<TreeViewItem>().FirstOrDefault();
+					if (item != null)
+						item.IsExpanded = true;
+					break;
+			}
 		}
 
 		private void MsSqlDatabaseComboBox_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
