@@ -42,6 +42,30 @@ namespace ER_Diagram_Modeler.Dialogs
 		private TableViewModel _sourceTableVm;
 		private DatabaseModelDesignerViewModel _designerViewModel;
 		private TableViewModel _destinationTableVm;
+		private Visibility _onUpdateVisibility = Visibility.Visible;
+		private string[] _referentialAction;
+
+		public string[] ReferentialAction
+		{
+			get { return _referentialAction; }
+			set
+			{
+				if (Equals(value, _referentialAction)) return;
+				_referentialAction = value;
+				OnPropertyChanged();
+			}
+		}
+
+		public Visibility OnUpdateVisibility
+		{
+			get { return _onUpdateVisibility; }
+			set
+			{
+				if (value == _onUpdateVisibility) return;
+				_onUpdateVisibility = value;
+				OnPropertyChanged();
+			}
+		}
 
 		public DatabaseModelDesignerViewModel DesignerViewModel
 		{
@@ -114,6 +138,19 @@ namespace ER_Diagram_Modeler.Dialogs
 
 			ForeignAttributes.ItemsSource = DestinationTableVm.Model.Attributes;
 			ForeignAttributes.DisplayMemberPath = "Name";
+
+			switch (SessionProvider.Instance.ConnectionType)
+			{
+				case ConnectionType.None:
+					break;
+				case ConnectionType.SqlServer:
+					ReferentialAction = new string[] { "NO ACTION", "CASCADE", "SET NULL", "SET DEFAULT" };
+					break;
+				case ConnectionType.Oracle:
+					OnUpdateVisibility = Visibility.Collapsed;
+					ReferentialAction = new string[] { "NO ACTION", "CASCADE", "SET NULL" };
+					break;
+			}
 		}
 
 		private async void Confirm_OnExecuted(object sender, ExecutedRoutedEventArgs e)
@@ -132,6 +169,8 @@ namespace ER_Diagram_Modeler.Dialogs
 				relModel.Optionality = relModel.Attributes.All(t => t.Destination.AllowNull)
 				? Optionality.Optional
 				: Optionality.Mandatory;
+				relModel.DeleteAction = OnDeleteComboBox.SelectedValue as string;
+				relModel.UpdateAction = OnUpdateComboBox.SelectedValue as string;
 
 				var updater = new DatabaseUpdater();
 				string res = updater.AddRelationship(relModel);
@@ -150,7 +189,6 @@ namespace ER_Diagram_Modeler.Dialogs
 					};
 					model.RelationshipModel.RefreshModel(relModel);
 					await model.BuildConnection3(DesignerViewModel);
-					await Task.Delay(100);
 					DesignerViewModel.ConnectionInfoViewModels.Add(model);
 					DialogResult = true;
 					Close();

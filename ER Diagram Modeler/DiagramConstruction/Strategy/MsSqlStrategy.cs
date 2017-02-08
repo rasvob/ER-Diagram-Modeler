@@ -115,9 +115,9 @@ namespace ER_Diagram_Modeler.DiagramConstruction.Strategy
 
 		public void AddRelationship(RelationshipModel model)
 		{
-			using(IMapper mapper = new MsSqlMapper())
+			using(IMsSqlMapper mapper = new MsSqlMapper())
 			{
-				mapper.CreateForeignKey(model.Destination.Title, model.Source.Title, model.Attributes, model.Name);
+				mapper.CreateForeignKey(model.Destination.Title, model.Source.Title, model.Attributes, model.Name, model.UpdateAction, model.DeleteAction);
 			}
 		}
 
@@ -171,6 +171,8 @@ namespace ER_Diagram_Modeler.DiagramConstruction.Strategy
 					}
 
 					model.Optionality = model.Attributes.All(t => t.Destination.AllowNull) ? Optionality.Optional : Optionality.Mandatory;
+					model.DeleteAction = first.DeleteAction;
+					model.UpdateAction = first.UpdateAction;
 					res.Add(model);
 				}
 				return res;

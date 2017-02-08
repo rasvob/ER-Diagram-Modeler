@@ -6,7 +6,6 @@ Disable limit on table with lines
 ---DB_Part
 Save to XML/DB
 Create script
-CASCADE delete and update
 
 ---Other
 Add comments

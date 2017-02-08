@@ -7,5 +7,7 @@
 		public string ForeignKeyTable { get; set; }
 		public string ForeignKeyCollumn { get; set; }
 		public string Name { get; set; }
+		public string UpdateAction { get; set; } = "NO ACTION";
+		public string DeleteAction { get; set; } = "NO ACTION";
 	}
 }

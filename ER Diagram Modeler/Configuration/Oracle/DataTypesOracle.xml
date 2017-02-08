@@ -16,7 +16,7 @@
 	<t Name="smallint" MaxLenght="0" Precision="0" Scale="0" IsNullable="1" HasLenght="0" HasPrecision="0" HasScale="0" DefaultLenght="0" DefaultPrecision="0" DefaultScale="0" />
 	<t Name="real" MaxLenght="0" Precision="0" Scale="0" IsNullable="1" HasLenght="0" HasPrecision="0" HasScale="0" DefaultLenght="0" DefaultPrecision="0" DefaultScale="0" />
 	<t Name="date" MaxLenght="0" Precision="0" Scale="0" IsNullable="1" HasLenght="0" HasPrecision="0" HasScale="0" DefaultLenght="0" DefaultPrecision="0" DefaultScale="0" />
-	<t Name="timestamp" MaxLenght="0" Precision="0" Scale="0" IsNullable="1" HasLenght="0" HasPrecision="0" HasScale="0" DefaultLenght="0" DefaultPrecision="0" DefaultScale="0" />
+	<t Name="timestamp(6)" MaxLenght="0" Precision="0" Scale="0" IsNullable="1" HasLenght="0" HasPrecision="0" HasScale="0" DefaultLenght="0" DefaultPrecision="0" DefaultScale="0" />
 	<t Name="blob" MaxLenght="0" Precision="0" Scale="0" IsNullable="1" HasLenght="0" HasPrecision="0" HasScale="0" DefaultLenght="0" DefaultPrecision="0" DefaultScale="0" />
 	<t Name="clob" MaxLenght="0" Precision="0" Scale="0" IsNullable="1" HasLenght="0" HasPrecision="0" HasScale="0" DefaultLenght="0" DefaultPrecision="0" DefaultScale="0" />
 	<t Name="nclob" MaxLenght="0" Precision="0" Scale="0" IsNullable="1" HasLenght="0" HasPrecision="0" HasScale="0" DefaultLenght="0" DefaultPrecision="0" DefaultScale="0" />

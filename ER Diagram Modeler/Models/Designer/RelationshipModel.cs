@@ -13,6 +13,8 @@ namespace ER_Diagram_Modeler.Models.Designer
 		public TableModel Source { get; set; }
 		public TableModel Destination { get; set; }
 		public Optionality Optionality { get; set; } = Optionality.Optional;
+		public string UpdateAction { get; set; }
+		public string DeleteAction { get; set; }
 		public List<RowModelPair> Attributes { get; set; } = new List<RowModelPair>();
 
 		public void RefreshModel(RelationshipModel fresh)
@@ -22,6 +24,8 @@ namespace ER_Diagram_Modeler.Models.Designer
 			Source = fresh.Source;
 			Destination = fresh.Destination;
 			Optionality = fresh.Optionality;
+			UpdateAction = fresh.UpdateAction;
+			DeleteAction = fresh.DeleteAction;
 			Attributes.Clear();
 			Attributes.AddRange(fresh.Attributes);
 		}

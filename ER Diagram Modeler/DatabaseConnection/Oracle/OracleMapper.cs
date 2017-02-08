@@ -20,7 +20,7 @@ namespace ER_Diagram_Modeler.DatabaseConnection.Oracle
 		private static string SqlTableDetails = @"SELECT COLUMN_NAME, COLUMN_ID, DATA_TYPE, DATA_LENGTH, DATA_PRECISION, DATA_SCALE, NULLABLE FROM SYS.ALL_TAB_COLUMNS WHERE TABLE_NAME = :TableName";
 		private static string SqlPrimaryKey = @"SELECT CONSTRAINT_NAME FROM SYS.ALL_CONSTRAINTS WHERE CONSTRAINT_TYPE = 'P' AND Owner = :Owner AND TABLE_NAME = :TableName";
 		private static string SqlConsColumns = @"SELECT COLUMN_NAME FROM SYS.ALL_CONS_COLUMNS WHERE CONSTRAINT_NAME = :Cons";
-		private static string SqlForeignKeys = @"SELECT a.CONSTRAINT_NAME, c1.TABLE_NAME, c1.COLUMN_NAME, c2.TABLE_NAME, c2.COLUMN_NAME 
+		private static string SqlForeignKeys = @"SELECT a.CONSTRAINT_NAME, c1.TABLE_NAME, c1.COLUMN_NAME, c2.TABLE_NAME, c2.COLUMN_NAME, a.DELETE_RULE 
 FROM SYS.ALL_CONSTRAINTS a
   JOIN SYS.ALL_CONS_COLUMNS c1 ON a.CONSTRAINT_NAME = c1.CONSTRAINT_NAME
   JOIN SYS.ALL_CONS_COLUMNS c2 ON a.R_CONSTRAINT_NAME = c2.CONSTRAINT_NAME
@@ -41,7 +41,8 @@ WHERE a.CONSTRAINT_TYPE = 'R'
 		private static string SqlDropConstraint = "ALTER TABLE {0} DROP CONSTRAINT {1}";
 		private static string SqlAddPrimaryKeyConstraint = "ALTER TABLE {0} ADD CONSTRAINT {1} PRIMARY KEY ({2})";
 		private static string SqlAddForeignKeyConstraint = "ALTER TABLE {0} ADD CONSTRAINT {1} FOREIGN KEY ({2}) REFERENCES {3} ({4})";
-		
+		private static string SqlAddForeignKeyConstraint2 = "ALTER TABLE {0} ADD CONSTRAINT {1} FOREIGN KEY ({2}) REFERENCES {3} ({4}) {5}";
+
 
 
 		public OracleDatabase Database { get; set; }
@@ -100,6 +101,8 @@ WHERE a.CONSTRAINT_TYPE = 'R'
 				dto.ForeignKeyCollumn = reader.GetString(i++);
 				dto.PrimaryKeyTable = reader.GetString(i++);
 				dto.PrimaryKeyCollumn = reader.GetString(i++);
+				dto.DeleteAction = reader.GetString(i++);
+				dto.UpdateAction = dto.DeleteAction;
 				res.Add(dto);
 			}
 
@@ -180,6 +183,11 @@ WHERE a.CONSTRAINT_TYPE = 'R'
 
 				var type =
 					row.DatatypesItemSource.FirstOrDefault(t => t.Name.Equals(typeName, StringComparison.InvariantCultureIgnoreCase));
+
+				if (type == null)
+				{
+					continue;
+				}
 
 				type.Lenght = type.HasLenght ? (int)len : type.Lenght;
 				type.Precision = type.HasPrecision ? (int)precision : type.Precision;
@@ -298,5 +306,27 @@ WHERE a.CONSTRAINT_TYPE = 'R'
 
 		private string TableNameWithOwner(string table) => $"{Owner}.{table}";
 		private string TableNameWithOwnerCaseSensitve(string table) => $"{Owner}.\"{table}\"";
+
+		public void CreateForeignKey(string table, string referencedTable, IEnumerable<RowModelPair> collumns, string fkName = null, string onDelete = "NO ACTION")
+		{
+			string name = fkName ?? $"{table}_{referencedTable}_FK";
+			string tableColumns = string.Join(",", collumns.Select(t => t.Destination.Name));
+			string referencedColumns = string.Join(",", collumns.Select(t => t.Source.Name));
+			string commandStr;
+
+			if (onDelete.ToUpper().Equals("NO ACTION"))
+			{
+				commandStr = string.Format(SqlAddForeignKeyConstraint, TableNameWithOwnerCaseSensitve(table), name,
+				tableColumns, TableNameWithOwnerCaseSensitve(referencedTable), referencedColumns);
+			}
+			else
+			{
+				commandStr = string.Format(SqlAddForeignKeyConstraint2, TableNameWithOwnerCaseSensitve(table), name,
+				tableColumns, TableNameWithOwnerCaseSensitve(referencedTable), referencedColumns, $"ON DELETE {onDelete}");
+			}
+			
+			OracleCommand command = Database.CreateCommand(commandStr);
+			command.ExecuteNonQuery();
+		}
 	}
 }

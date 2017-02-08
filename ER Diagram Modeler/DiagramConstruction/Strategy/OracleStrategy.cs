@@ -70,7 +70,8 @@ namespace ER_Diagram_Modeler.DiagramConstruction.Strategy
 
 						model.Attributes.Add(pair);
 					}
-
+					model.DeleteAction = first.DeleteAction;
+					model.UpdateAction = first.UpdateAction;
 					model.Optionality = model.Attributes.All(t => t.Destination.AllowNull) ? Optionality.Optional : Optionality.Mandatory;
 					res.Add(model);
 				}
@@ -202,9 +203,9 @@ namespace ER_Diagram_Modeler.DiagramConstruction.Strategy
 
 		public void AddRelationship(RelationshipModel model)
 		{
-			using(IMapper mapper = new OracleMapper())
+			using(IOracleMapper mapper = new OracleMapper())
 			{
-				mapper.CreateForeignKey(model.Destination.Title, model.Source.Title, model.Attributes, model.Name);
+				mapper.CreateForeignKey(model.Destination.Title, model.Source.Title, model.Attributes, model.Name, model.DeleteAction);
 			}
 		}
 	}

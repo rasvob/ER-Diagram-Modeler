@@ -19,6 +19,7 @@ namespace ER_Diagram_Modeler.DatabaseConnection.SqlServer
 		private static string SqlTableDetails = @"SELECT s.column_id, s.name, s.is_nullable, t.name, s.max_length, s.precision, s.scale FROM sys.columns s JOIN sys.types t ON s.system_type_id = t.system_type_id WHERE s.object_id = @Id;";
 		private static string SqlPrimaryKeys = @"sp_pkeys";
 		private static string SqlForeignKeys = @"sp_fkeys";
+		private static string SqlForeignKeysReferentialAction = @"SELECT f.name, f.delete_referential_action_desc, f.update_referential_action_desc FROM sys.foreign_keys f";
 		private static string SqlCreateDatabase = @"CREATE DATABASE";
 		private static string SqlDropDatabase = @"DROP DATABASE";
 		private static string SqlCreateTable = @"CREATE TABLE {0} (Id{0} INT PRIMARY KEY);";
@@ -30,6 +31,7 @@ namespace ER_Diagram_Modeler.DatabaseConnection.SqlServer
 		private static string SqlDropConstraint = @"ALTER TABLE [{0}] DROP CONSTRAINT {1}";
 		private static string SqlAddPrimaryKeyConstraint = @"ALTER TABLE [{0}] ADD CONSTRAINT {1} PRIMARY KEY CLUSTERED ({2})";
 		private static string SqlAddForeignKeyConstraint = @"ALTER TABLE [{0}] ADD CONSTRAINT {1} FOREIGN KEY ({2}) REFERENCES [{3}] ({4})";
+		private static string SqlAddForeignKeyConstraint2 = @"ALTER TABLE [{0}] ADD CONSTRAINT {1} FOREIGN KEY ({2}) REFERENCES [{3}] ({4}) ON DELETE {5} ON UPDATE {6}";
 
 		public MsSqlDatabase Database { get; set; }
 
@@ -89,7 +91,30 @@ namespace ER_Diagram_Modeler.DatabaseConnection.SqlServer
 			var msSqlForeignKeyDtos = list1.ToList();
 			msSqlForeignKeyDtos.AddRange(list2);
 
+			SqlCommand commandReferentialActions = Database.CreateCommand(SqlForeignKeysReferentialAction);
+			SqlDataReader refReader = commandReferentialActions.ExecuteReader();
+			ReadReferentialActions(refReader, msSqlForeignKeyDtos);
+
 			return msSqlForeignKeyDtos;
+		}
+
+		public void ReadReferentialActions(SqlDataReader reader, IEnumerable<ForeignKeyDto> dtos)
+		{
+			while (reader.Read())
+			{
+				int i = 0;
+				string name = reader.GetString(i++);
+				string delete = reader.GetString(i++);
+				string update = reader.GetString(i++);
+
+				var dto = dtos.Where(t => t.Name.Equals(name));
+
+				foreach (ForeignKeyDto keyDto in dto)
+				{
+					keyDto.DeleteAction = delete;
+					keyDto.UpdateAction = update;
+				}
+			}
 		}
 
 		public void CreateDatabase(string name)
@@ -307,6 +332,17 @@ namespace ER_Diagram_Modeler.DatabaseConnection.SqlServer
 			}
 
 			return res;
+		}
+
+		public void CreateForeignKey(string table, string referencedTable, IEnumerable<RowModelPair> collumns, string fkName = null,
+			string onUpdate = "NO ACTION", string onDelete = "NO ACTION")
+		{
+			string name = fkName ?? $"{table}_{referencedTable}_FK";
+			string tableColumns = string.Join(",", collumns.Select(t => t.Destination.Name));
+			string referencedColumns = string.Join(",", collumns.Select(t => t.Source.Name));
+
+			SqlCommand command = Database.CreateCommand(string.Format(SqlAddForeignKeyConstraint, table, name, tableColumns, referencedTable, referencedColumns, onDelete, onUpdate));
+			command.ExecuteNonQuery();
 		}
 	}
 }

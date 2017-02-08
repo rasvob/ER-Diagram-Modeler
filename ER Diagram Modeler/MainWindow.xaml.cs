@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Data.SqlClient;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
@@ -168,7 +169,25 @@ namespace ER_Diagram_Modeler
 
 		private void MenuItemTest_OnClick(object sender, RoutedEventArgs e)
 		{
-			
+			using (IOracleMapper mapper = new OracleMapper())
+			{
+				var dataTypes = DatatypeProvider.Instance.OracleDatatypes.ToArray();
+				string name = "ColumnXY";
+
+				for (var i = 0; i < dataTypes.Length; i++)
+				{
+					var dt = dataTypes[i];
+					var row = new TableRowModel($"{name}_{i}", dt);
+					try
+					{
+						mapper.AddNewColumn("TABLE2", row);
+					}
+					catch (OracleException oracleException)
+					{
+						Trace.WriteLine(oracleException);
+					}
+				}
+			}
 		}
 
 		private void ChangeCanvasSize_OnExecuted(object sender, ExecutedRoutedEventArgs e)
