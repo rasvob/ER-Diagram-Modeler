@@ -29,6 +29,7 @@ WHERE a.CONSTRAINT_TYPE = 'R'
   AND (c1.TABLE_NAME = :TableName1 OR c2.TABLE_NAME = :TableName2)
   AND c1.POSITION = c2.POSITION";
 
+		private static string SqlAllForeignKeys = @"SELECT a.CONSTRAINT_NAME FROM SYS.ALL_CONSTRAINTS a WHERE a.CONSTRAINT_TYPE = 'R' AND a.Owner = :Owner";
 		private static string SqlCreateTable = "CREATE TABLE {0} (Id{1} NUMBER PRIMARY KEY)";
 		private static string SqlRenameTable = "RENAME \"{0}\" TO \"{1}\"";
 		private static string SqlDropTable = "DROP TABLE {0}";
@@ -85,6 +86,28 @@ WHERE a.CONSTRAINT_TYPE = 'R'
 			OracleDataReader reader = command.ExecuteReader();
 			var res = ReadForeignKeys(reader);
 			reader.Close();
+			return res;
+		}
+
+		public IEnumerable<string> ListAllForeignKeys()
+		{
+			OracleCommand command = Database.CreateCommand(SqlAllForeignKeys);
+			command.Parameters.Add("Owner", OracleDbType.Varchar2, Owner, ParameterDirection.Input);
+			OracleDataReader reader = command.ExecuteReader();
+			var res = ReadForeignKeyNames(reader);
+			reader.Close();
+			return res;
+		}
+
+		private IEnumerable<string> ReadForeignKeyNames(OracleDataReader reader)
+		{
+			var res = new List<string>();
+
+			while (reader.Read())
+			{
+				res.Add(reader.GetString(0));
+			}
+
 			return res;
 		}
 

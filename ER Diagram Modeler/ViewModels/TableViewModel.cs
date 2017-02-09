@@ -21,6 +21,18 @@ namespace ER_Diagram_Modeler.ViewModels
 		private double _width;
 		private double _height;
 		private bool _isMoving;
+		private bool _areLimitsEnabled = true;
+
+		public bool AreLimitsEnabled
+		{
+			get { return _areLimitsEnabled; }
+			set
+			{
+				if (value == _areLimitsEnabled) return;
+				_areLimitsEnabled = value;
+				OnPropertyChanged();
+			}
+		}
 
 		public bool IsMoving
 		{

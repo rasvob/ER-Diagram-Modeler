@@ -133,6 +133,7 @@
     <Compile Include="DatabaseConnection\IDatabase.cs" />
     <Compile Include="DatabaseConnection\Dto\ForeignKeyDto.cs" />
     <Compile Include="DatabaseConnection\IMapper.cs" />
+    <Compile Include="DatabaseConnection\MapperFactory.cs" />
     <Compile Include="DatabaseConnection\Oracle\IOracleMapper.cs" />
     <Compile Include="DatabaseConnection\Oracle\OracleDatabase.cs" />
     <Compile Include="DatabaseConnection\Oracle\OracleMapper.cs" />

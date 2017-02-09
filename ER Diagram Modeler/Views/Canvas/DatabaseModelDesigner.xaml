@@ -29,6 +29,9 @@
 			<RoutedUICommand x:Key="Commands.DeleteItems"></RoutedUICommand>
 			<RoutedUICommand x:Key="Commands.ShowGuideLines"></RoutedUICommand>
 			<RoutedUICommand x:Key="Commands.NewForeignKey"></RoutedUICommand>
+			<RoutedUICommand x:Key="Commands.EnableTableLimits"></RoutedUICommand>
+			<RoutedUICommand x:Key="Commands.RefeshLines"></RoutedUICommand>
+			<RoutedUICommand x:Key="Commands.RefreshOneLine"></RoutedUICommand>
 			<RoutedUICommand x:Key="Commands.SelectionMode"></RoutedUICommand>
 
 			<RoutedCommand x:Key="TestCommand"></RoutedCommand>
@@ -75,6 +78,14 @@
 					Modifiers="Control"
 					Key="T" />
 
+		<KeyBinding Command="{StaticResource Commands.EnableTableLimits}"
+					Modifiers="Control"
+					Key="L" />
+
+		<KeyBinding Command="{StaticResource Commands.RefreshOneLine}"
+					Modifiers="Control"
+					Key="R" />
+
 		<KeyBinding Command="{StaticResource Commands.DeleteItems}"
 					Key="Delete" />
 		
@@ -105,6 +116,16 @@
 
 		<CommandBinding Command="{StaticResource Commands.SelectionMode}"
 						Executed="SelectionModeCommand_OnExecuted"></CommandBinding>
+
+		<CommandBinding Command="{StaticResource Commands.EnableTableLimits}"
+						Executed="EnableTableLimits_OnExecuted"></CommandBinding>
+
+		<CommandBinding Command="{StaticResource Commands.RefreshOneLine}"
+						Executed="RefreshOneLine_OnExecuted"
+						CanExecute="RefreshOneLine_OnCanExecute"></CommandBinding>
+
+		<CommandBinding Command="{StaticResource Commands.RefeshLines}"
+						Executed="RefeshLines_OnExecuted"></CommandBinding>
 	</UserControl.CommandBindings>
 
 	<Grid Background="GhostWhite">
@@ -127,12 +148,12 @@
 										   IsChecked="{Binding MouseMode, Converter={StaticResource MouseModeToButtonCheckedConverter}, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, ConverterParameter='NewTableButon'}"
 										   Command="{StaticResource Commands.NewTable}" 
 										   ToolTip="Add new table (Ctrl + N)" />
-			<buttons:DesignerToolBarButton x:Name="DeleteTableButon" 
+			<buttons:DesignerToolBarButton x:Name="DeleteTableButton" 
 										   Icon="{StaticResource DeleteTableIcon}" 
 										   IsChecked="False" 
 										   Command="{StaticResource Commands.DeleteItems}" 
 										   ToolTip="Delete table (Del)" />
-			<buttons:DesignerToolBarButton x:Name="AddFkButon" 
+			<buttons:DesignerToolBarButton x:Name="AddFkButton" 
 										   Icon="{StaticResource AddNewForeignKeyIcon}" 
 										   IsChecked="False" 
 										   Command="{StaticResource Commands.NewForeignKey}" 
@@ -140,11 +161,27 @@
 			
 			<Separator />
 			
-			<buttons:DesignerToolBarButton x:Name="ShowGuidelinesButon" 
+			<buttons:DesignerToolBarButton x:Name="ShowGuidelinesButton" 
 										   Icon="{StaticResource GuidelinesIcon}" 
 										   IsChecked="{Binding AreGuideLinesVisible, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" 
 										   Command="{StaticResource Commands.ShowGuideLines}" 
 										   ToolTip="Show guidelines (Ctrl + G)" />
+
+			<buttons:DesignerToolBarButton x:Name="DisableTableLimitsButton" 
+										   Icon="{StaticResource DisableTableLimitsIcon}" 
+										   IsChecked="{Binding AreTableLimitsEnabled, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" 
+										   Command="{StaticResource Commands.EnableTableLimits}" 
+										   ToolTip="Enable table limits (Ctrl + L)" />
+
+			<buttons:DesignerToolBarButton x:Name="RefreshOneRelationsipButton" 
+										   Icon="{StaticResource RefreshOneLineIcon}" 
+										   Command="{StaticResource Commands.RefreshOneLine}" 
+										   ToolTip="Refresh selected relationship visualization (Ctrl + R)" />
+
+			<buttons:DesignerToolBarButton x:Name="RefreshRelationsipsButton" 
+										   Icon="{StaticResource RefreshAllLinesIcon}" 
+										   Command="{StaticResource Commands.RefeshLines}" 
+										   ToolTip="Refresh relationships visualization" />
 		</StackPanel>
 		
 		<ScrollViewer Grid.Row="1"

@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
 using ER_Diagram_Modeler.Annotations;
 using ER_Diagram_Modeler.Configuration.Providers;
+using ER_Diagram_Modeler.DatabaseConnection;
 using ER_Diagram_Modeler.DiagramConstruction.Strategy;
 using ER_Diagram_Modeler.Extintions;
 using ER_Diagram_Modeler.Models.Designer;
@@ -79,19 +80,23 @@ namespace ER_Diagram_Modeler.DiagramConstruction
 		{
 			var ctx = new DatabaseContext(SessionProvider.Instance.ConnectionType);
 
-			var relationships = ctx.ListRelationshipsForTable(model.Title, ViewModel.TableViewModels.Select(t => t.Model));
+			var relationships = ctx.ListRelationshipsForTable(model.Title, ViewModel.TableViewModels.Select(t => t.Model)).Where(t => !ViewModel.ConnectionInfoViewModels.Any(s => s.RelationshipModel.Name.Equals(t.Name)));
 
 			foreach (RelationshipModel relationship in relationships)
 			{
-				ConnectionInfoViewModel vm = new ConnectionInfoViewModel();
-				vm.DesignerCanvas = canvas;
-				vm.RelationshipModel = relationship;
-				vm.SourceViewModel = ViewModel.TableViewModels.FirstOrDefault(t => t.Model.Equals(relationship.Source));
-				vm.DestinationViewModel = ViewModel.TableViewModels.FirstOrDefault(t => t.Model.Equals(relationship.Destination));
-
-				await vm.BuildConnection3(ViewModel);
-				ViewModel.ConnectionInfoViewModels.Add(vm);
+				await AddRelationship(relationship, canvas);
 			}
+		}
+
+		public async Task AddRelationship(RelationshipModel relationship, DesignerCanvas canvas)
+		{
+			ConnectionInfoViewModel vm = new ConnectionInfoViewModel();
+			vm.DesignerCanvas = canvas;
+			vm.RelationshipModel = relationship;
+			vm.SourceViewModel = ViewModel.TableViewModels.FirstOrDefault(t => t.Model.Equals(relationship.Source));
+			vm.DestinationViewModel = ViewModel.TableViewModels.FirstOrDefault(t => t.Model.Equals(relationship.Destination));
+			await vm.BuildConnection3(ViewModel);
+			ViewModel.ConnectionInfoViewModels.Add(vm);
 		}
 
 		public void RemoveTable(TableModel model)
@@ -131,6 +136,50 @@ namespace ER_Diagram_Modeler.DiagramConstruction
 			};
 
 			ViewModel.TableViewModels.Add(vm);
+		}
+
+		public async Task RefreshDiagram(DesignerCanvas canvas)
+		{
+			using (IMapper mapper = MapperFactory.GetMapper(SessionProvider.Instance.ConnectionType))
+			{
+				IEnumerable<TableModel> tables = mapper.ListTables();
+				IEnumerable<string> foreignKeys = mapper.ListAllForeignKeys();
+
+				var tablesForDelete = ViewModel.TableViewModels.Where(t => !tables.Any(s => s.Id.Equals(t.Model.Id))).ToList();
+				tablesForDelete.ForEach(t => ViewModel.TableViewModels.Remove(t));
+
+				var relationsForDelete =
+					ViewModel.ConnectionInfoViewModels.Where(t => !foreignKeys.Any(s => s.Equals(t.RelationshipModel.Name))).ToList();
+				relationsForDelete.ForEach(t => ViewModel.ConnectionInfoViewModels.Remove(t));
+
+				foreach (TableModel table in tables)
+				{
+					var ft = ViewModel.TableViewModels.FirstOrDefault(t => t.Model.Id.Equals(table.Id));
+
+					if (ft == null)
+					{
+						continue;
+					}
+
+					ft.Model.Title = table.Title;
+				}
+
+				var ctx = new DatabaseContext(SessionProvider.Instance.ConnectionType);
+
+				foreach(TableViewModel viewModel in ViewModel.TableViewModels)
+				{
+					TableModel model = ctx.ReadTableDetails(viewModel.Model.Id, viewModel.Model.Title);
+					viewModel.Model.RefreshModel(model);
+
+					IEnumerable<RelationshipModel> relationshipModels = ctx.ListRelationshipsForTable(viewModel.Model.Title, ViewModel.TableViewModels.Select(t => t.Model));
+					IEnumerable<RelationshipModel> filtered = relationshipModels.Where(t => !ViewModel.ConnectionInfoViewModels.Any(s => s.RelationshipModel.Name.Equals(t.Name)));
+
+					foreach (RelationshipModel relationshipModel in filtered)
+					{
+						await AddRelationship(relationshipModel, canvas);
+					}
+				}
+			}
 		}
 
 #region HELPERS
@@ -174,7 +223,7 @@ namespace ER_Diagram_Modeler.DiagramConstruction
 				Title = title,
 				ContentId = $"{title}_ID"
 			};
-
+			
 			DatabaseModelDesignerViewModel designerViewModel = new DatabaseModelDesignerViewModel()
 			{
 				DiagramTitle = title
@@ -188,8 +237,8 @@ namespace ER_Diagram_Modeler.DiagramConstruction
 			};
 
 			designer.TableCreated += window.CreateTableHandler;
-
 			anchorable.Content = designer;
+			anchorable.IsActiveChanged += window.AnchorableDesignerActiveChangedHandler;
 			window.MainDocumentPane.Children.Add(anchorable);
 			int indexOf = window.MainDocumentPane.Children.IndexOf(anchorable);
 			window.MainDocumentPane.SelectedContentIndex = indexOf;

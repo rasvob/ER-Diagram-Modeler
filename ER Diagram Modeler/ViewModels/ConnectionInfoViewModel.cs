@@ -177,7 +177,7 @@ namespace ER_Diagram_Modeler.ViewModels
 				return;
 			}
 
-			if (Lines.Count == 1)
+			if (Lines.Count == 1 || Lines.Count == 0)
 			{
 				return;
 			}
@@ -314,7 +314,7 @@ namespace ER_Diagram_Modeler.ViewModels
 				return;
 			}
 
-			if(Lines.Count == 1)
+			if(Lines.Count == 1 || Lines.Count == 0)
 			{
 				return;
 			}
@@ -2530,6 +2530,19 @@ namespace ER_Diagram_Modeler.ViewModels
 			IsSourceConnectorAtStartPoint = true;
 
 			BuildLinesFromPoints();
+		}
+
+		public void ClearAll()
+		{
+			ClearLines();
+			ClearPoints();
+			ClearMarks();
+		}
+
+		public async Task RebuildVisual(DatabaseModelDesignerViewModel vm)
+		{
+			ClearAll();
+			await BuildConnection3(vm);
 		}
 
 		protected virtual void OnSelectionChange(bool e)

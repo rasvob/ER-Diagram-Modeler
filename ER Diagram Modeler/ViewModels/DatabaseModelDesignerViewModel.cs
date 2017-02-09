@@ -37,6 +37,18 @@ namespace ER_Diagram_Modeler.ViewModels
 		private ObservableCollection<ConnectionInfoViewModel> _connectionInfoViewModels;
 		private bool _areGuideLinesVisible = true;
 		private string _diagramTitle;
+		private bool _areTableLimitsEnabled = true;
+
+		public bool AreTableLimitsEnabled
+		{
+			get { return _areTableLimitsEnabled; }
+			set
+			{
+				if (value == _areTableLimitsEnabled) return;
+				_areTableLimitsEnabled = value;
+				OnPropertyChanged();
+			}
+		}
 
 		public string DiagramTitle
 		{

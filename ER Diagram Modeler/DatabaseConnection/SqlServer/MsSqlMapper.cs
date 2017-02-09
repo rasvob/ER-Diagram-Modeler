@@ -55,6 +55,26 @@ namespace ER_Diagram_Modeler.DatabaseConnection.SqlServer
 			}
 		}
 
+		public IEnumerable<string> ListAllForeignKeys()
+		{
+			SqlCommand command = Database.CreateCommand(SqlForeignKeysReferentialAction);
+			SqlDataReader refReader = command.ExecuteReader();
+			var res = ReadForeignKeyNames(refReader);
+			return res;
+		}
+
+		private IEnumerable<string> ReadForeignKeyNames(SqlDataReader refReader)
+		{
+			var res = new List<string>();
+
+			while (refReader.Read())
+			{
+				res.Add(refReader.GetString(0));
+			}
+
+			return res;
+		}
+
 		public void CreateTable(string name)
 		{
 			SqlCommand command = Database.CreateCommand(string.Format(SqlCreateTable, name));
@@ -94,6 +114,7 @@ namespace ER_Diagram_Modeler.DatabaseConnection.SqlServer
 			SqlCommand commandReferentialActions = Database.CreateCommand(SqlForeignKeysReferentialAction);
 			SqlDataReader refReader = commandReferentialActions.ExecuteReader();
 			ReadReferentialActions(refReader, msSqlForeignKeyDtos);
+			refReader.Close();
 
 			return msSqlForeignKeyDtos;
 		}

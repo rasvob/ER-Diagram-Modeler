@@ -13,6 +13,7 @@ namespace ER_Diagram_Modeler.DatabaseConnection
 		TableModel SelectTableDetails(string id, string name);
 		IEnumerable<TableModel> ListTables();
 		IEnumerable<ForeignKeyDto> ListForeignKeys(string tableName);
+		IEnumerable<string> ListAllForeignKeys();
 		void CreateTable(string name);
 		void RenameTable(string oldName, string newName);
 		void AddNewColumn(string table, TableRowModel model);

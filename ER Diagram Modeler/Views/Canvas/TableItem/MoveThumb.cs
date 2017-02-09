@@ -92,46 +92,49 @@ namespace ER_Diagram_Modeler.Views.Canvas.TableItem
 					}
 				}
 
-				if(topConnectionLimit < double.MaxValue)
+				if (_item.TableViewModel.AreLimitsEnabled)
 				{
-					if(deltaVertical < 0 && minTop + deltaVertical <= minTop - topConnectionLimit)
+					if (topConnectionLimit < double.MaxValue)
 					{
-						deltaVertical = 0;
+						if (deltaVertical < 0 && minTop + deltaVertical <= minTop - topConnectionLimit)
+						{
+							deltaVertical = 0;
+						}
 					}
-				}
 
-				if(bottomConnectionLimit < double.MaxValue)
-				{
-					if(deltaVertical > 0 && maxTop + deltaVertical >= maxTop + bottomConnectionLimit)
+					if (bottomConnectionLimit < double.MaxValue)
 					{
-						deltaVertical = 0;
+						if (deltaVertical > 0 && maxTop + deltaVertical >= maxTop + bottomConnectionLimit)
+						{
+							deltaVertical = 0;
+						}
 					}
-				}
 
-				if(leftConnectionLimit < double.MaxValue)
-				{
-					if(deltaHorizontal < 0 && minLeft + deltaHorizontal <= minLeft - leftConnectionLimit)
+					if (leftConnectionLimit < double.MaxValue)
+					{
+						if (deltaHorizontal < 0 && minLeft + deltaHorizontal <= minLeft - leftConnectionLimit)
+						{
+							deltaHorizontal = 0;
+						}
+					}
+
+					if (rightConnectionLimit < double.MaxValue)
+					{
+						if (deltaHorizontal > 0 && maxLeft + deltaHorizontal >= maxLeft + rightConnectionLimit)
+						{
+							deltaHorizontal = 0;
+						}
+					}
+
+					if (maxLeft >= _canvas.ActualWidth && dragDeltaEventArgs.HorizontalChange > 0)
 					{
 						deltaHorizontal = 0;
 					}
-				}
 
-				if(rightConnectionLimit < double.MaxValue)
-				{
-					if(deltaHorizontal > 0 && maxLeft + deltaHorizontal >= maxLeft + rightConnectionLimit)
+					if (maxTop >= _canvas.ActualHeight && dragDeltaEventArgs.VerticalChange > 0)
 					{
-						deltaHorizontal = 0;
+						deltaVertical = 0;
 					}
-				}
-
-				if(maxLeft >= _canvas.ActualWidth && dragDeltaEventArgs.HorizontalChange > 0)
-				{
-					deltaHorizontal = 0;
-				}
-
-				if(maxTop >= _canvas.ActualHeight && dragDeltaEventArgs.VerticalChange > 0)
-				{
-					deltaVertical = 0;
 				}
 
 				var selected = _canvas.SelectedTables.ToArray();

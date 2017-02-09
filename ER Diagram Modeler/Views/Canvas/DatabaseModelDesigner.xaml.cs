@@ -94,6 +94,7 @@ namespace ER_Diagram_Modeler.Views.Canvas
 					{
 						AddTableElement(item);
 						item.PropertyChanged += ItemOnPropertyChanged;
+						item.AreLimitsEnabled = ViewModel.AreTableLimitsEnabled;
 					}
 					break;
 				case NotifyCollectionChangedAction.Remove:
@@ -303,8 +304,9 @@ namespace ER_Diagram_Modeler.Views.Canvas
 			content.RemoveSelectedRow += owner.RemoveRowHandler;
 			content.DropTable += owner.DropTableHandler;
 			content.UpdatePrimaryKeyConstraint += owner.UpdatePrimaryKeyConstraintHandler;
-			ModelDesignerCanvas.Children.Add(content);
-			content.Loaded += (sender, args) =>
+
+			RoutedEventHandler loadedEventHandler = null;
+			loadedEventHandler = (sender, args) =>
 			{
 				MeasureToFit(content);
 				DesignerCanvas.SetZIndex(content, DesignerCanvas.TableUnselectedZIndex);
@@ -315,7 +317,11 @@ namespace ER_Diagram_Modeler.Views.Canvas
 				viewModel.Height = content.Height;
 				viewModel.Width = content.Width;
 				viewModel.OnTableLoaded(content);
+				content.Loaded -= loadedEventHandler;
 			};
+
+			content.Loaded += loadedEventHandler;
+			ModelDesignerCanvas.Children.Add(content);
 		}
 
 		private void RemoveTableElement(TableViewModel viewModel)
@@ -419,10 +425,10 @@ namespace ER_Diagram_Modeler.Views.Canvas
 		#region TestRegion
 
 		//Test command F4
-		private void TestCommand_OnExecuted(object sender, ExecutedRoutedEventArgs e)
+		private async void TestCommand_OnExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
-			
-
+			var facade = new DiagramFacade(ViewModel);
+		 	await facade.RefreshDiagram(ModelDesignerCanvas);
 		}
 
 		//Test command F5
@@ -642,6 +648,44 @@ namespace ER_Diagram_Modeler.Views.Canvas
 		protected virtual void OnTableCreated()
 		{
 			TableCreated?.Invoke(this, System.EventArgs.Empty);
+		}
+
+		private void EnableTableLimits_OnExecuted(object sender, ExecutedRoutedEventArgs e)
+		{
+			ViewModel.AreTableLimitsEnabled = !ViewModel.AreTableLimitsEnabled;
+
+			foreach (TableViewModel viewModel in ViewModel.TableViewModels)
+			{
+				viewModel.AreLimitsEnabled = ViewModel.AreTableLimitsEnabled;
+			}
+		}
+
+		private async void RefreshOneLine_OnExecuted(object sender, ExecutedRoutedEventArgs e)
+		{
+			ConnectionInfoViewModel viewModel = ViewModel.ConnectionInfoViewModels.FirstOrDefault(t => t.IsSelected);
+
+			if (viewModel != null)
+			{
+				await viewModel.RebuildVisual(ViewModel);
+			}
+		}
+
+		private async void RefeshLines_OnExecuted(object sender, ExecutedRoutedEventArgs e)
+		{
+			foreach (ConnectionInfoViewModel vm in ViewModel.ConnectionInfoViewModels)
+			{
+				await vm.RebuildVisual(ViewModel);
+			}
+		}
+
+		private void RefreshOneLine_OnCanExecute(object sender, CanExecuteRoutedEventArgs e)
+		{
+			if (ViewModel == null)
+			{
+				return;
+			}
+
+			e.CanExecute = ViewModel.ConnectionInfoViewModels.Any(t => t.IsSelected);
 		}
 	}
 }

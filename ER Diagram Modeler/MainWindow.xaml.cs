@@ -18,6 +18,7 @@ using ER_Diagram_Modeler.Views.Canvas;
 using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
 using Oracle.ManagedDataAccess.Client;
+using Xceed.Wpf.AvalonDock.Layout;
 
 namespace ER_Diagram_Modeler
 {
@@ -551,6 +552,21 @@ namespace ER_Diagram_Modeler
 		public void CreateTableHandler(object sender, System.EventArgs e)
 		{
 			DatabaseConnectionSidebar.RefreshTreeData();
+		}
+
+		public async void AnchorableDesignerActiveChangedHandler(object sender, System.EventArgs e)
+		{
+			var anchorable = sender as LayoutAnchorable;
+
+			DatabaseModelDesigner designer = anchorable?.Content as DatabaseModelDesigner;
+
+			if (designer == null)
+			{
+				return;
+			}
+
+			var facade = new DiagramFacade(designer.ViewModel);
+			await facade.RefreshDiagram(designer.ModelDesignerCanvas);
 		}
 	}
 }

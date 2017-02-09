@@ -1,7 +1,6 @@
 ﻿---Designer_part
 Export to PNG
-Redraw selected lines
-Disable limit on table with lines
+Refresh diagram
 
 ---DB_Part
 Save to XML/DB
