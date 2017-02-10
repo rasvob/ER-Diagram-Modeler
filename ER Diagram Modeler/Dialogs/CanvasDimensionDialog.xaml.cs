@@ -97,15 +97,15 @@ namespace ER_Diagram_Modeler.Dialogs
 				switch (columnName)
 				{
 					case "CanvasWidth":
-						if (CanvasWidth < 1000 || CanvasWidth > 15000)
+						if (CanvasWidth < 1000 || CanvasWidth > 8000)
 						{
-							return $"Width must be between {1000} and {15000}";
+							return $"Width must be between {1000} and {8000}";
 						}
 						break;
 					case "CanvasHeight":
-						if(CanvasHeight < 1000 || CanvasHeight > 15000)
+						if(CanvasHeight < 1000 || CanvasHeight > 8000)
 						{
-							return $"Height must be between {1000} and {15000}";
+							return $"Height must be between {1000} and {8000}";
 						}
 						break;
 					default:

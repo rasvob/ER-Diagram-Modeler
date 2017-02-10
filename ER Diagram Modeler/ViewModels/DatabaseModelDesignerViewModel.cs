@@ -8,8 +8,10 @@ using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using System.Xml.Linq;
 using ER_Diagram_Modeler.Annotations;
 using ER_Diagram_Modeler.Configuration.Providers;
+using ER_Diagram_Modeler.DiagramConstruction.Serialization;
 using ER_Diagram_Modeler.EventArgs;
 using ER_Diagram_Modeler.Models.Designer;
 using ER_Diagram_Modeler.Properties;
@@ -18,7 +20,7 @@ using Pathfinding.Structure;
 
 namespace ER_Diagram_Modeler.ViewModels
 {
-	public class DatabaseModelDesignerViewModel: INotifyPropertyChanged
+	public class DatabaseModelDesignerViewModel: INotifyPropertyChanged, IDiagramSerializable
 	{
 		private ObservableCollection<TableViewModel> _tableViewModels;
 		private double _scale = 1;
@@ -367,6 +369,30 @@ namespace ER_Diagram_Modeler.ViewModels
 		protected virtual void OnCanvasDimensionsChanged()
 		{
 			CanvasDimensionsChanged?.Invoke(this, System.EventArgs.Empty);
+		}
+
+		public XElement CreateElement()
+		{
+			var elem = new XElement("DatabaseModelDesignerViewModel", 
+				new XAttribute("DiagramTitle", DiagramTitle),
+				new XAttribute("CanvasWidth", CanvasWidth),
+				new XAttribute("CanvasHeight", CanvasHeight));
+
+			var tables = new XElement("TableViewModels");
+			TableViewModels.ToList().ForEach(t => tables.Add(t.CreateElement()));
+
+			var lines = new XElement("ConnectionInfoViewModels");
+			ConnectionInfoViewModels.ToList().ForEach(t => lines.Add(t.CreateElement()));
+			elem.Add(tables);
+			elem.Add(lines);
+			return elem;
+		}
+
+		public void LoadFromElement(XElement element)
+		{
+			DiagramTitle = element.Attribute("DiagramTitle").Value;
+			CanvasWidth = Convert.ToDouble(element.Attribute("CanvasWidth")?.Value);
+			CanvasHeight = Convert.ToDouble(element.Attribute("CanvasHeight")?.Value);
 		}
 	}
 }

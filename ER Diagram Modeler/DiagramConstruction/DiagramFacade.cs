@@ -140,44 +140,41 @@ namespace ER_Diagram_Modeler.DiagramConstruction
 
 		public async Task RefreshDiagram(DesignerCanvas canvas)
 		{
-			using (IMapper mapper = MapperFactory.GetMapper(SessionProvider.Instance.ConnectionType))
+			var ctx = new DatabaseContext(SessionProvider.Instance.ConnectionType);
+			IEnumerable<TableModel> tables = ctx.ListTables();
+			IEnumerable<string> foreignKeys = ctx.ListAllForeignKeys();
+
+			var tablesForDelete = ViewModel.TableViewModels.Where(t => !tables.Any(s => s.Id.Equals(t.Model.Id))).ToList();
+			tablesForDelete.ForEach(t => ViewModel.TableViewModels.Remove(t));
+
+			var relationsForDelete =
+				ViewModel.ConnectionInfoViewModels.Where(t => !foreignKeys.Any(s => s.Equals(t.RelationshipModel.Name))).ToList();
+			relationsForDelete.ForEach(t => ViewModel.ConnectionInfoViewModels.Remove(t));
+
+			foreach (TableModel table in tables)
 			{
-				IEnumerable<TableModel> tables = mapper.ListTables();
-				IEnumerable<string> foreignKeys = mapper.ListAllForeignKeys();
+				var ft = ViewModel.TableViewModels.FirstOrDefault(t => t.Model.Id.Equals(table.Id));
 
-				var tablesForDelete = ViewModel.TableViewModels.Where(t => !tables.Any(s => s.Id.Equals(t.Model.Id))).ToList();
-				tablesForDelete.ForEach(t => ViewModel.TableViewModels.Remove(t));
-
-				var relationsForDelete =
-					ViewModel.ConnectionInfoViewModels.Where(t => !foreignKeys.Any(s => s.Equals(t.RelationshipModel.Name))).ToList();
-				relationsForDelete.ForEach(t => ViewModel.ConnectionInfoViewModels.Remove(t));
-
-				foreach (TableModel table in tables)
+				if (ft == null)
 				{
-					var ft = ViewModel.TableViewModels.FirstOrDefault(t => t.Model.Id.Equals(table.Id));
-
-					if (ft == null)
-					{
-						continue;
-					}
-
-					ft.Model.Title = table.Title;
+					continue;
 				}
 
-				var ctx = new DatabaseContext(SessionProvider.Instance.ConnectionType);
+				ft.Model.Title = table.Title;
+			}
 
-				foreach(TableViewModel viewModel in ViewModel.TableViewModels)
+
+			foreach(TableViewModel viewModel in ViewModel.TableViewModels)
+			{
+				TableModel model = ctx.ReadTableDetails(viewModel.Model.Id, viewModel.Model.Title);
+				viewModel.Model.RefreshModel(model);
+
+				IEnumerable<RelationshipModel> relationshipModels = ctx.ListRelationshipsForTable(viewModel.Model.Title, ViewModel.TableViewModels.Select(t => t.Model));
+				IEnumerable<RelationshipModel> filtered = relationshipModels.Where(t => !ViewModel.ConnectionInfoViewModels.Any(s => s.RelationshipModel.Name.Equals(t.Name)));
+
+				foreach (RelationshipModel relationshipModel in filtered)
 				{
-					TableModel model = ctx.ReadTableDetails(viewModel.Model.Id, viewModel.Model.Title);
-					viewModel.Model.RefreshModel(model);
-
-					IEnumerable<RelationshipModel> relationshipModels = ctx.ListRelationshipsForTable(viewModel.Model.Title, ViewModel.TableViewModels.Select(t => t.Model));
-					IEnumerable<RelationshipModel> filtered = relationshipModels.Where(t => !ViewModel.ConnectionInfoViewModels.Any(s => s.RelationshipModel.Name.Equals(t.Name)));
-
-					foreach (RelationshipModel relationshipModel in filtered)
-					{
-						await AddRelationship(relationshipModel, canvas);
-					}
+					await AddRelationship(relationshipModel, canvas);
 				}
 			}
 		}

@@ -20,7 +20,7 @@ namespace ER_Diagram_Modeler.DatabaseConnection.Oracle
 		private static string SqlTableDetails = @"SELECT COLUMN_NAME, COLUMN_ID, DATA_TYPE, DATA_LENGTH, DATA_PRECISION, DATA_SCALE, NULLABLE FROM SYS.ALL_TAB_COLUMNS WHERE TABLE_NAME = :TableName";
 		private static string SqlPrimaryKey = @"SELECT CONSTRAINT_NAME FROM SYS.ALL_CONSTRAINTS WHERE CONSTRAINT_TYPE = 'P' AND Owner = :Owner AND TABLE_NAME = :TableName";
 		private static string SqlConsColumns = @"SELECT COLUMN_NAME FROM SYS.ALL_CONS_COLUMNS WHERE CONSTRAINT_NAME = :Cons";
-		private static string SqlForeignKeys = @"SELECT a.CONSTRAINT_NAME, c1.TABLE_NAME, c1.COLUMN_NAME, c2.TABLE_NAME, c2.COLUMN_NAME, a.DELETE_RULE 
+		private static string SqlForeignKeys = @"SELECT a.CONSTRAINT_NAME, c1.TABLE_NAME, c1.COLUMN_NAME, c2.TABLE_NAME, c2.COLUMN_NAME, a.DELETE_RULE, a.LAST_CHANGE 
 FROM SYS.ALL_CONSTRAINTS a
   JOIN SYS.ALL_CONS_COLUMNS c1 ON a.CONSTRAINT_NAME = c1.CONSTRAINT_NAME
   JOIN SYS.ALL_CONS_COLUMNS c2 ON a.R_CONSTRAINT_NAME = c2.CONSTRAINT_NAME
@@ -125,6 +125,7 @@ WHERE a.CONSTRAINT_TYPE = 'R'
 				dto.PrimaryKeyTable = reader.GetString(i++);
 				dto.PrimaryKeyCollumn = reader.GetString(i++);
 				dto.DeleteAction = reader.GetString(i++);
+				dto.LastModified = reader.GetDateTime(i++);
 				dto.UpdateAction = dto.DeleteAction;
 				res.Add(dto);
 			}

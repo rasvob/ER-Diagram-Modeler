@@ -1,10 +1,10 @@
 ﻿---Designer_part
 Export to PNG
-Refresh diagram
 
 ---DB_Part
 Save to XML/DB
 Create script
+Output window
 
 ---Other
 Add comments

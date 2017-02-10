@@ -9,7 +9,9 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Documents;
 using System.Windows.Media;
+using System.Xml.Linq;
 using ER_Diagram_Modeler.DiagramConstruction;
+using ER_Diagram_Modeler.DiagramConstruction.Serialization;
 using ER_Diagram_Modeler.EventArgs;
 using ER_Diagram_Modeler.Extintions;
 using ER_Diagram_Modeler.Models.Designer;
@@ -23,7 +25,7 @@ using Point = System.Drawing.Point;
 
 namespace ER_Diagram_Modeler.ViewModels
 {
-	public class ConnectionInfoViewModel
+	public class ConnectionInfoViewModel: IDiagramSerializable
 	{
 		public RelationshipModel RelationshipModel { get; set; } = new RelationshipModel();
 		public ObservableCollection<ConnectionLine> Lines { get; } = new ObservableCollection<ConnectionLine>();
@@ -131,7 +133,6 @@ namespace ER_Diagram_Modeler.ViewModels
 		{
 			IsSelected = true;
 		}
-
 
 		private void ViewModelOnTableViewModeChanged(object sender, System.EventArgs eventArgs)
 		{
@@ -291,6 +292,7 @@ namespace ER_Diagram_Modeler.ViewModels
 				}
 			}
 		}
+
 		private void DestinationViewModelOnPositionAndMeasureChanged(object sender, TablePositionAndMeasureEventArgs e)
 		{
 			var table = DestinationViewModel;
@@ -2553,6 +2555,64 @@ namespace ER_Diagram_Modeler.ViewModels
 		protected virtual void OnConnectorChange(Connector e)
 		{
 			ConnectorChange?.Invoke(this, e);
+		}
+
+		public XElement CreateElement()
+		{
+			XElement element = new XElement("ConnectionInfoViewModel",
+				new XAttribute("SourceConnectorOrientation", SourceConnector.Orientation),
+				new XAttribute("DestinationConnectorOrientation", DestinationConnector.Orientation),
+				RelationshipModel.CreateElement());
+			var points = new XElement("Points");
+
+			foreach (ConnectionPoint point in Points)
+			{
+				points.Add(point.CreateElement());
+			}
+
+			element.Add(points);
+			return element;
+		}
+
+		public void LoadFromElement(XElement element)
+		{
+			RelationshipModel.LoadFromElement(element.Element("RelationshipModel"));
+			SourceConnector.Orientation =
+				(ConnectorOrientation)
+				Enum.Parse(typeof(ConnectorOrientation), element.Attribute("SourceConnectorOrientation")?.Value);
+
+			DestinationConnector.Orientation =
+				(ConnectorOrientation)
+				Enum.Parse(typeof(ConnectorOrientation), element.Attribute("DestinationConnector")?.Value);
+
+			var points =
+				element.Element("Points")?
+					.Elements("ConnectionPoint")
+					.Select(
+						t => new ConnectionPoint(Convert.ToDouble(t.Attribute("X")?.Value), Convert.ToDouble(t.Attribute("Y")?.Value))).ToList();
+
+			points?.ForEach(t => Points.Add(t));
+		}
+
+		public void BuildLoadedConnection()
+		{
+			if(SourceViewModel == null)
+			{
+				throw new ApplicationException("SourceViewModel is null");
+			}
+
+			if(DestinationViewModel == null)
+			{
+				throw new ApplicationException("DestinationViewModel is null");
+			}
+
+			SourceConnector.Cardinality = Cardinality.One;
+			DestinationConnector.Cardinality = Cardinality.Many;
+			DestinationConnector.Optionality = RelationshipModel.Optionality;
+			SourceConnector.EndPoint = Points.FirstOrDefault();
+			DestinationConnector.EndPoint = Points.LastOrDefault();
+			IsSourceConnectorAtStartPoint = true;
+			BuildLinesFromPoints();
 		}
 	}
 }

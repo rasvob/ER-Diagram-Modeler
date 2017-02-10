@@ -1,22 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Collections.Specialized;
 using System.ComponentModel;
-using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Threading;
+using System.Xml.Linq;
 using ER_Diagram_Modeler.Annotations;
 using ER_Diagram_Modeler.Configuration.Providers;
-using ER_Diagram_Modeler.EventArgs;
-using ER_Diagram_Modeler.ViewModels;
+using ER_Diagram_Modeler.DiagramConstruction.Serialization;
 using ER_Diagram_Modeler.ViewModels.Enums;
 
 namespace ER_Diagram_Modeler.Models.Designer
 {
-	public class TableModel: INotifyPropertyChanged, IDataErrorInfo
+	public class TableModel: INotifyPropertyChanged, IDataErrorInfo, IDiagramSerializable
 	{
 		public string Id { get; set; } = Guid.NewGuid().ToString();
 		private string _title = "Table1";
@@ -114,6 +109,17 @@ namespace ER_Diagram_Modeler.Models.Designer
 			{
 				Attributes.Add(model);
 			}
+		}
+
+		public XElement CreateElement()
+		{
+			return new XElement("TableModel", new XAttribute("Title", Title), new XAttribute("Id", Id));
+		}
+
+		public void LoadFromElement(XElement element)
+		{
+			Title = element.Attribute("Title")?.Value;
+			Id = element.Attribute("Id")?.Value;
 		}
 	}
 }

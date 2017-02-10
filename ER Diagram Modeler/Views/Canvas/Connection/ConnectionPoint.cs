@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Windows;
+using System.Xml.Linq;
+using ER_Diagram_Modeler.DiagramConstruction.Serialization;
 using ER_Diagram_Modeler.EventArgs;
 
 namespace ER_Diagram_Modeler.Views.Canvas.Connection
 {
-	public class ConnectionPoint: IEquatable<ConnectionPoint>
+	public class ConnectionPoint: IEquatable<ConnectionPoint>, IDiagramSerializable
 	{
 		private double _x;
 		private double _y;
@@ -79,6 +81,17 @@ namespace ER_Diagram_Modeler.Views.Canvas.Connection
 		protected virtual void OnCoordinatesChanged(ConnectionPointEventArgs e)
 		{
 			CoordinatesChanged?.Invoke(this, e);
+		}
+
+		public XElement CreateElement()
+		{
+			return new XElement("ConnectionPoint", new XAttribute("X", X), new XAttribute("Y", Y));
+		}
+
+		public void LoadFromElement(XElement element)
+		{
+			X = Convert.ToDouble(element.Attribute("X")?.Value);
+			Y = Convert.ToDouble(element.Attribute("Y")?.Value);
 		}
 	}
 }

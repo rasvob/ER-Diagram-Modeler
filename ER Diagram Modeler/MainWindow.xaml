@@ -31,6 +31,8 @@
 			<RoutedUICommand x:Key="Commands.NewDiagram" />
 			<RoutedUICommand x:Key="Commands.ApplyAttributeEdit" />
 			<RoutedUICommand x:Key="Commands.RemoveColumn" />
+			<RoutedUICommand x:Key="Commands.SaveDiagram" />
+			<RoutedUICommand x:Key="Commands.SaveDiagramAs" />
 		</ResourceDictionary>
 	</Window.Resources>
 	
@@ -63,10 +65,21 @@
 						Executed="RemoveColumn_OnExecuted"
 						CanExecute="RemoveColumn_OnCanExecute"
 						></CommandBinding>
+
+		<CommandBinding Command="{StaticResource Commands.SaveDiagram}"
+						Executed="SaveDiagram_OnExecuted"
+						CanExecute="SaveDiagram_OnCanExecute"
+						></CommandBinding>
+
+		<CommandBinding Command="{StaticResource Commands.SaveDiagramAs}"
+						Executed="SaveDiagramAs_OnExecuted"
+						CanExecute="SaveDiagram_OnCanExecute"
+						></CommandBinding>
 	</Window.CommandBindings>
 	
 	<Window.InputBindings>
-		
+		<KeyBinding Command="{StaticResource Commands.SaveDiagram}" Modifiers="Control" Key="S"></KeyBinding>
+		<KeyBinding Command="{StaticResource Commands.SaveDiagramAs}" Modifiers="Control+Shift" Key="S"></KeyBinding>
 	</Window.InputBindings>
 
 	<Controls:MetroWindow.Flyouts>
@@ -381,6 +394,8 @@
 			<MenuItem Header="File">
 				<MenuItem Name="MenuItemTest" Header="Test PK" Click="MenuItemTest_OnClick"/>
 				<MenuItem Name="MenuItemAddDiagram" Header="Add new diagram" Command="{StaticResource Commands.NewDiagram}"/>
+				<MenuItem Name="MenuItemSaveDiagram" Header="Save diagram" Command="{StaticResource Commands.SaveDiagram}"></MenuItem>
+				<MenuItem Name="MenuItemSaveDiagramAs" Header="Save diagram as..." Command="{StaticResource Commands.SaveDiagramAs}"></MenuItem>
 				<MenuItem Header="Exit"/>
 			</MenuItem>
 			<MenuItem Header="Views">

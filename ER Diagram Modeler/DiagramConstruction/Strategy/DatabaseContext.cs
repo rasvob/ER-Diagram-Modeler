@@ -18,8 +18,6 @@ namespace ER_Diagram_Modeler.DiagramConstruction.Strategy
 		{
 			switch(connectionType)
 			{
-				case ConnectionType.None:
-					break;
 				case ConnectionType.SqlServer:
 					_strategy = new MsSqlStrategy();
 					break;
@@ -54,6 +52,11 @@ namespace ER_Diagram_Modeler.DiagramConstruction.Strategy
 		public IEnumerable<TableModel> ListTables()
 		{
 			return _strategy.ListTables();
+		}
+
+		public IEnumerable<string> ListAllForeignKeys()
+		{
+			return _strategy.ListAllForeignKeys();
 		}
 
 		public void RenameTable(string oldName, string newName)
@@ -99,6 +102,11 @@ namespace ER_Diagram_Modeler.DiagramConstruction.Strategy
 		public void AddRelationship(RelationshipModel model)
 		{
 			_strategy.AddRelationship(model);
+		}
+
+		public bool AreRelationshipModelsTheSame(RelationshipModel model1, RelationshipModel model2)
+		{
+			return _strategy.Comparer.Compare(model1, model2) == 1;
 		}
 	}
 }

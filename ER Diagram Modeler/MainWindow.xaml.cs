@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Data.SqlClient;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using System.Xml.Linq;
 using ER_Diagram_Modeler.Configuration.Providers;
 using ER_Diagram_Modeler.DatabaseConnection.Oracle;
 using ER_Diagram_Modeler.DatabaseConnection.SqlServer;
@@ -170,25 +173,7 @@ namespace ER_Diagram_Modeler
 
 		private void MenuItemTest_OnClick(object sender, RoutedEventArgs e)
 		{
-			using (IOracleMapper mapper = new OracleMapper())
-			{
-				var dataTypes = DatatypeProvider.Instance.OracleDatatypes.ToArray();
-				string name = "ColumnXY";
-
-				for (var i = 0; i < dataTypes.Length; i++)
-				{
-					var dt = dataTypes[i];
-					var row = new TableRowModel($"{name}_{i}", dt);
-					try
-					{
-						mapper.AddNewColumn("TABLE2", row);
-					}
-					catch (OracleException oracleException)
-					{
-						Trace.WriteLine(oracleException);
-					}
-				}
-			}
+			
 		}
 
 		private void ChangeCanvasSize_OnExecuted(object sender, ExecutedRoutedEventArgs e)
@@ -567,6 +552,31 @@ namespace ER_Diagram_Modeler
 
 			var facade = new DiagramFacade(designer.ViewModel);
 			await facade.RefreshDiagram(designer.ModelDesignerCanvas);
+		}
+
+		private void SaveDiagram_OnExecuted(object sender, ExecutedRoutedEventArgs e)
+		{
+			DatabaseModelDesigner designer;
+			if(TryGetSelectedDesigner(out designer))
+			{
+				XElement element = designer.ViewModel.CreateElement();
+
+				using(StreamWriter sw = new StreamWriter(File.Create("diagram.xml")))
+				{
+					sw.Write(element);
+				}
+			}
+		}
+
+		private void SaveDiagram_OnCanExecute(object sender, CanExecuteRoutedEventArgs e)
+		{
+			DatabaseModelDesigner designer;
+			e.CanExecute = TryGetSelectedDesigner(out designer);
+		}
+
+		private void SaveDiagramAs_OnExecuted(object sender, ExecutedRoutedEventArgs e)
+		{
+			throw new NotImplementedException();
 		}
 	}
 }

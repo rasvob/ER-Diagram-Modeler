@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Xml.Linq;
 using ER_Diagram_Modeler.Annotations;
 using ER_Diagram_Modeler.Configuration.Providers;
+using ER_Diagram_Modeler.DiagramConstruction.Serialization;
 using ER_Diagram_Modeler.EventArgs;
 using ER_Diagram_Modeler.Models.Designer;
 using ER_Diagram_Modeler.ViewModels.Enums;
@@ -11,7 +13,7 @@ using ER_Diagram_Modeler.Views.Canvas.TableItem;
 
 namespace ER_Diagram_Modeler.ViewModels
 {
-	public class TableViewModel: INotifyPropertyChanged
+	public class TableViewModel: INotifyPropertyChanged, IDiagramSerializable
 	{
 		private TableModel _model;
 		private TableViewMode _viewMode;
@@ -188,6 +190,30 @@ namespace ER_Diagram_Modeler.ViewModels
 		public void OnTableLoaded(TableContent e)
 		{
 			TableLoaded?.Invoke(this, e);
+		}
+
+		public XElement CreateElement()
+		{
+			return new XElement("TableViewModel",
+				Model.CreateElement(),
+				new XAttribute("ViewMode", ViewMode),
+				new XAttribute("Top", Top),
+				new XAttribute("Left", Left),
+				new XAttribute("Width", Width),
+				new XAttribute("Height", Height));
+		}
+
+		public void LoadFromElement(XElement element)
+		{
+			Model = new TableModel();
+			Model.LoadFromElement(element.Element("TableModel"));
+			Top = Convert.ToDouble(element.Attribute("Top")?.Value);
+			Left = Convert.ToDouble(element.Attribute("Left")?.Value);
+			Height = Convert.ToDouble(element.Attribute("Height")?.Value);
+			Width = Convert.ToDouble(element.Attribute("Width")?.Value);
+			string value = element.Attribute("ViewMode")?.Value;
+			if (value != null)
+				ViewMode = (TableViewMode) Enum.Parse(typeof(TableViewMode), value, true);
 		}
 	}
 }

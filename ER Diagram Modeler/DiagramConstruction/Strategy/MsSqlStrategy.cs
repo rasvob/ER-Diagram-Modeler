@@ -121,6 +121,14 @@ namespace ER_Diagram_Modeler.DiagramConstruction.Strategy
 			}
 		}
 
+		public IEnumerable<string> ListAllForeignKeys()
+		{
+			using(IMsSqlMapper mapper = new MsSqlMapper())
+			{
+				return mapper.ListAllForeignKeys();
+			}
+		}
+
 		public IEnumerable<RelationshipModel> ReadRelationshipModels(string table, IEnumerable<TableModel> tables)
 		{
 			using (MsSqlMapper mapper = new MsSqlMapper())
@@ -173,6 +181,8 @@ namespace ER_Diagram_Modeler.DiagramConstruction.Strategy
 					model.Optionality = model.Attributes.All(t => t.Destination.AllowNull) ? Optionality.Optional : Optionality.Mandatory;
 					model.DeleteAction = first.DeleteAction;
 					model.UpdateAction = first.UpdateAction;
+					model.Id = first.Id;
+					model.LastModified = first.LastModified;
 					res.Add(model);
 				}
 				return res;
@@ -182,6 +192,20 @@ namespace ER_Diagram_Modeler.DiagramConstruction.Strategy
 		public TableRowModel PlaceholderRowModel()
 		{
 			return new TableRowModel {Name = "Id", Datatype = DatatypeProvider.Instance.FindDatatype("int", ConnectionType.SqlServer)};
+		}
+
+		public IComparer<RelationshipModel> Comparer { get; set; } = new MsSqlComparer();
+	}
+
+	public class MsSqlComparer : IComparer<RelationshipModel>
+	{
+		public int Compare(RelationshipModel x, RelationshipModel y)
+		{
+			if (x.Name.Equals(y.Name) && x.Id.Equals(y.Id))
+			{
+				return 1;
+			}
+			return 0;
 		}
 	}
 }

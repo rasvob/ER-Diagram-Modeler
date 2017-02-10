@@ -72,6 +72,7 @@ namespace ER_Diagram_Modeler.DiagramConstruction.Strategy
 					}
 					model.DeleteAction = first.DeleteAction;
 					model.UpdateAction = first.UpdateAction;
+					model.LastModified = first.LastModified;
 					model.Optionality = model.Attributes.All(t => t.Destination.AllowNull) ? Optionality.Optional : Optionality.Mandatory;
 					res.Add(model);
 				}
@@ -207,6 +208,28 @@ namespace ER_Diagram_Modeler.DiagramConstruction.Strategy
 			{
 				mapper.CreateForeignKey(model.Destination.Title, model.Source.Title, model.Attributes, model.Name, model.DeleteAction);
 			}
+		}
+
+		public IEnumerable<string> ListAllForeignKeys()
+		{
+			using(IOracleMapper mapper = new OracleMapper())
+			{
+				return mapper.ListAllForeignKeys();
+			}
+		}
+
+		public IComparer<RelationshipModel> Comparer { get; set; } = new OracleComparer();
+	}
+
+	public class OracleComparer : IComparer<RelationshipModel>
+	{
+		public int Compare(RelationshipModel x, RelationshipModel y)
+		{
+			if (x.Name.Equals(y.Name) && x.LastModified.Equals(y.LastModified))
+			{
+				return 1;
+			}
+			return 0;
 		}
 	}
 }

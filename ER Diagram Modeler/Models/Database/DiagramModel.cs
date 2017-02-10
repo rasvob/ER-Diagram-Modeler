@@ -7,7 +7,6 @@ namespace ER_Diagram_Modeler.Models.Database
 	public class DiagramModel: INotifyPropertyChanged
 	{
 		private string _name;
-		private int _id;
 		private string _xml;
 
 		public string Name
@@ -17,17 +16,6 @@ namespace ER_Diagram_Modeler.Models.Database
 			{
 				if (value == _name) return;
 				_name = value;
-				OnPropertyChanged();
-			}
-		}
-
-		public int Id
-		{
-			get { return _id; }
-			set
-			{
-				if (value == _id) return;
-				_id = value;
 				OnPropertyChanged();
 			}
 		}

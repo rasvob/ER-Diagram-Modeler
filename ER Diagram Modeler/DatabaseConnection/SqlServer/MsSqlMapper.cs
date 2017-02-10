@@ -19,7 +19,7 @@ namespace ER_Diagram_Modeler.DatabaseConnection.SqlServer
 		private static string SqlTableDetails = @"SELECT s.column_id, s.name, s.is_nullable, t.name, s.max_length, s.precision, s.scale FROM sys.columns s JOIN sys.types t ON s.system_type_id = t.system_type_id WHERE s.object_id = @Id;";
 		private static string SqlPrimaryKeys = @"sp_pkeys";
 		private static string SqlForeignKeys = @"sp_fkeys";
-		private static string SqlForeignKeysReferentialAction = @"SELECT f.name, f.delete_referential_action_desc, f.update_referential_action_desc FROM sys.foreign_keys f";
+		private static string SqlForeignKeysReferentialAction = @"SELECT f.name, f.delete_referential_action_desc, f.update_referential_action_desc, f.object_id, f.modify_date FROM sys.foreign_keys f";
 		private static string SqlCreateDatabase = @"CREATE DATABASE";
 		private static string SqlDropDatabase = @"DROP DATABASE";
 		private static string SqlCreateTable = @"CREATE TABLE {0} (Id{0} INT PRIMARY KEY);";
@@ -127,6 +127,8 @@ namespace ER_Diagram_Modeler.DatabaseConnection.SqlServer
 				string name = reader.GetString(i++);
 				string delete = reader.GetString(i++);
 				string update = reader.GetString(i++);
+				string id = reader.GetInt32(i++).ToString();
+				DateTime date = reader.GetDateTime(i++);
 
 				var dto = dtos.Where(t => t.Name.Equals(name));
 
@@ -134,6 +136,8 @@ namespace ER_Diagram_Modeler.DatabaseConnection.SqlServer
 				{
 					keyDto.DeleteAction = delete;
 					keyDto.UpdateAction = update;
+					keyDto.Id = id;
+					keyDto.LastModified = date;
 				}
 			}
 		}
@@ -362,7 +366,7 @@ namespace ER_Diagram_Modeler.DatabaseConnection.SqlServer
 			string tableColumns = string.Join(",", collumns.Select(t => t.Destination.Name));
 			string referencedColumns = string.Join(",", collumns.Select(t => t.Source.Name));
 
-			SqlCommand command = Database.CreateCommand(string.Format(SqlAddForeignKeyConstraint, table, name, tableColumns, referencedTable, referencedColumns, onDelete, onUpdate));
+			SqlCommand command = Database.CreateCommand(string.Format(SqlAddForeignKeyConstraint2, table, name, tableColumns, referencedTable, referencedColumns, onDelete, onUpdate));
 			command.ExecuteNonQuery();
 		}
 	}

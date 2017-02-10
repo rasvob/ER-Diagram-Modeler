@@ -20,5 +20,7 @@ namespace ER_Diagram_Modeler.DiagramConstruction.Strategy
 		void UpdatePrimaryKeyConstraint(TableModel table);
 		void RemoveRelationship(RelationshipModel model);
 		void AddRelationship(RelationshipModel model);
+		IEnumerable<string> ListAllForeignKeys();
+		IComparer<RelationshipModel> Comparer { get; set; }
 	}
 }
