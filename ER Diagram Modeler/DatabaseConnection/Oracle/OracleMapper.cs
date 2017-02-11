@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Xml.Linq;
 using ER_Diagram_Modeler.Configuration.Providers;
 using ER_Diagram_Modeler.DatabaseConnection.Dto;
 using ER_Diagram_Modeler.DatabaseConnection.SqlServer;
@@ -16,7 +17,7 @@ namespace ER_Diagram_Modeler.DatabaseConnection.Oracle
 {
 	public class OracleMapper: IOracleMapper
 	{
-		private static string SqlListTables = @"SELECT OBJECT_NAME, OBJECT_ID FROM SYS.ALL_OBJECTS WHERE OBJECT_TYPE = 'TABLE' AND OWNER = :Owner AND OBJECT_NAME <> '__ERDiagramModelerData'";
+		private static string SqlListTables = @"SELECT OBJECT_NAME, OBJECT_ID FROM SYS.ALL_OBJECTS WHERE OBJECT_TYPE = 'TABLE' AND OWNER = :Owner AND OBJECT_NAME <> '__ERDIAGRAMS'";
 		private static string SqlTableDetails = @"SELECT COLUMN_NAME, COLUMN_ID, DATA_TYPE, DATA_LENGTH, DATA_PRECISION, DATA_SCALE, NULLABLE FROM SYS.ALL_TAB_COLUMNS WHERE TABLE_NAME = :TableName";
 		private static string SqlPrimaryKey = @"SELECT CONSTRAINT_NAME FROM SYS.ALL_CONSTRAINTS WHERE CONSTRAINT_TYPE = 'P' AND Owner = :Owner AND TABLE_NAME = :TableName";
 		private static string SqlConsColumns = @"SELECT COLUMN_NAME FROM SYS.ALL_CONS_COLUMNS WHERE CONSTRAINT_NAME = :Cons";
@@ -289,6 +290,31 @@ WHERE a.CONSTRAINT_TYPE = 'R'
 		{
 			OracleCommand command = Database.CreateCommand(string.Format(SqlDropConstraint, TableNameWithOwnerCaseSensitve(table), name));
 			command.ExecuteNonQuery();
+		}
+
+		public void CreateDiagramTable()
+		{
+			throw new NotImplementedException();
+		}
+
+		public int InsertDiagram(string name, XDocument data)
+		{
+			throw new NotImplementedException();
+		}
+
+		public int UpdateDiagram(string name, XDocument data)
+		{
+			throw new NotImplementedException();
+		}
+
+		public int DeleteDiagram(string name)
+		{
+			throw new NotImplementedException();
+		}
+
+		public IEnumerable<DiagramModel> SelectDiagrams()
+		{
+			throw new NotImplementedException();
 		}
 
 		public void AlterColumn(string table, TableRowModel model, bool modifyNull = true)

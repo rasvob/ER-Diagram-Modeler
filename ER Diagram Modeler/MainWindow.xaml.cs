@@ -12,6 +12,7 @@ using ER_Diagram_Modeler.Configuration.Providers;
 using ER_Diagram_Modeler.DatabaseConnection.Oracle;
 using ER_Diagram_Modeler.DatabaseConnection.SqlServer;
 using ER_Diagram_Modeler.DiagramConstruction;
+using ER_Diagram_Modeler.DiagramConstruction.Strategy;
 using ER_Diagram_Modeler.Dialogs;
 using ER_Diagram_Modeler.EventArgs;
 using ER_Diagram_Modeler.Models.Designer;
@@ -556,15 +557,14 @@ namespace ER_Diagram_Modeler
 
 		private void SaveDiagram_OnExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
+			//TODO: Save to DB
 			DatabaseModelDesigner designer;
 			if(TryGetSelectedDesigner(out designer))
 			{
 				XElement element = designer.ViewModel.CreateElement();
-
-				using(StreamWriter sw = new StreamWriter(File.Create("diagram.xml")))
-				{
-					sw.Write(element);
-				}
+				XDocument doc = XDocument.Parse(element.ToString());
+				var ctx = new DatabaseContext(SessionProvider.Instance.ConnectionType);
+				int res = ctx.SaveDiagram(designer.ViewModel.DiagramTitle, doc);
 			}
 		}
 

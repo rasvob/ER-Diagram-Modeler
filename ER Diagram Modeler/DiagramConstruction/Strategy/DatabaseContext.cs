@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Xml.Linq;
+using ER_Diagram_Modeler.Models.Database;
 using ER_Diagram_Modeler.Models.Designer;
 using ER_Diagram_Modeler.ViewModels.Enums;
 
@@ -107,6 +109,21 @@ namespace ER_Diagram_Modeler.DiagramConstruction.Strategy
 		public bool AreRelationshipModelsTheSame(RelationshipModel model1, RelationshipModel model2)
 		{
 			return _strategy.Comparer.Compare(model1, model2) == 1;
+		}
+
+		public int SaveDiagram(string name, XDocument data)
+		{
+			return _strategy.SaveDiagram(name, data);
+		}
+
+		public int DeleteDiagram(string name)
+		{
+			return _strategy.DeleteDiagram(name);
+		}
+
+		public IEnumerable<DiagramModel> SelectDiagrams()
+		{
+			return _strategy.SelectDiagrams();
 		}
 	}
 }

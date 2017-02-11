@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Sockets;
+using System.Xml.Linq;
 using ER_Diagram_Modeler.Configuration.Providers;
 using ER_Diagram_Modeler.DatabaseConnection;
 using ER_Diagram_Modeler.DatabaseConnection.Dto;
 using ER_Diagram_Modeler.DatabaseConnection.SqlServer;
+using ER_Diagram_Modeler.Models.Database;
 using ER_Diagram_Modeler.Models.Designer;
 using ER_Diagram_Modeler.Models.Helpers;
 using ER_Diagram_Modeler.ViewModels.Enums;
@@ -14,6 +16,8 @@ namespace ER_Diagram_Modeler.DiagramConstruction.Strategy
 {
 	public class MsSqlStrategy: IDatabseStrategy
 	{
+		public IComparer<RelationshipModel> Comparer { get; set; } = new MsSqlComparer();
+
 		public TableModel ReadTableDetails(string id, string name)
 		{
 			using (IMapper mapper = new MsSqlMapper())
@@ -194,7 +198,33 @@ namespace ER_Diagram_Modeler.DiagramConstruction.Strategy
 			return new TableRowModel {Name = "Id", Datatype = DatatypeProvider.Instance.FindDatatype("int", ConnectionType.SqlServer)};
 		}
 
-		public IComparer<RelationshipModel> Comparer { get; set; } = new MsSqlComparer();
+
+		public int SaveDiagram(string name, XDocument data)
+		{
+			using(IMapper mapper = new MsSqlMapper())
+			{
+				IEnumerable<DiagramModel> diagrams = mapper.SelectDiagrams();
+				mapper.CreateDiagramTable();
+				return diagrams.Any(t => t.Name.Equals(name)) ? mapper.UpdateDiagram(name, data) : mapper.InsertDiagram(name, data);
+			}
+		}
+
+		public int DeleteDiagram(string name)
+		{
+			using (IMapper mapper = new MsSqlMapper())
+			{
+				return mapper.DeleteDiagram(name);
+			}
+
+		}
+
+		public IEnumerable<DiagramModel> SelectDiagrams()
+		{
+			using (IMapper mapper = new MsSqlMapper())
+			{
+				return mapper.SelectDiagrams();
+			}
+		}
 	}
 
 	public class MsSqlComparer : IComparer<RelationshipModel>

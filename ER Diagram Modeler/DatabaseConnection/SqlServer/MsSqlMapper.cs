@@ -4,6 +4,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Windows.Forms;
+using System.Xml.Linq;
 using ER_Diagram_Modeler.Configuration.Providers;
 using ER_Diagram_Modeler.DatabaseConnection.Dto;
 using ER_Diagram_Modeler.Models.Database;
@@ -15,7 +16,7 @@ namespace ER_Diagram_Modeler.DatabaseConnection.SqlServer
 	public class MsSqlMapper: IMsSqlMapper
 	{
 		private static string SqlListDatabases = @"SELECT database_id, name FROM sys.databases WHERE name NOT IN ('master', 'tempdb', 'model', 'msdb');";
-		private static string SqlListTables = @"SELECT object_id, name FROM sys.tables WHERE name <> 'sysdiagrams' AND name <> '__ERDiagramModelerData';";
+		private static string SqlListTables = @"SELECT object_id, name FROM sys.tables WHERE name <> 'sysdiagrams' AND name <> '__ERDIAGRAMS';";
 		private static string SqlTableDetails = @"SELECT s.column_id, s.name, s.is_nullable, t.name, s.max_length, s.precision, s.scale FROM sys.columns s JOIN sys.types t ON s.system_type_id = t.system_type_id WHERE s.object_id = @Id;";
 		private static string SqlPrimaryKeys = @"sp_pkeys";
 		private static string SqlForeignKeys = @"sp_fkeys";
@@ -32,6 +33,14 @@ namespace ER_Diagram_Modeler.DatabaseConnection.SqlServer
 		private static string SqlAddPrimaryKeyConstraint = @"ALTER TABLE [{0}] ADD CONSTRAINT {1} PRIMARY KEY CLUSTERED ({2})";
 		private static string SqlAddForeignKeyConstraint = @"ALTER TABLE [{0}] ADD CONSTRAINT {1} FOREIGN KEY ({2}) REFERENCES [{3}] ({4})";
 		private static string SqlAddForeignKeyConstraint2 = @"ALTER TABLE [{0}] ADD CONSTRAINT {1} FOREIGN KEY ({2}) REFERENCES [{3}] ({4}) ON DELETE {5} ON UPDATE {6}";
+		private static string SqlCreateDiagramTable = @"IF (NOT EXISTS (SELECT * FROM sys.tables WHERE name = '__ERDIAGRAMS'))
+BEGIN
+	CREATE TABLE __ERDIAGRAMS (NAME VARCHAR(100) PRIMARY KEY, DATA XML NOT NULL)
+END";
+		private static string SqlInsertDiagram = @"INSERT INTO __ERDIAGRAMS(NAME, DATA) VALUES(@Name, @Data)";
+		private static string SqlUpdateDiagram = @"UPDATE __ERDIAGRAMS SET DATA = @Data WHERE NAME = @Name";
+		private static string SqlSelectDiagrams = @"SELECT NAME, DATA FROM __ERDIAGRAMS";
+		private static string SqlDeleteDiagram = @"DELETE FROM __ERDIAGRAMS WHERE NAME = @Name";
 
 		public MsSqlDatabase Database { get; set; }
 
@@ -256,6 +265,60 @@ namespace ER_Diagram_Modeler.DatabaseConnection.SqlServer
 		{
 			SqlCommand command = Database.CreateCommand(string.Format(SqlDropConstraint, table, name));
 			command.ExecuteNonQuery();
+		}
+
+		public void CreateDiagramTable()
+		{
+			SqlCommand command = Database.CreateCommand(SqlCreateDiagramTable);
+			command.ExecuteNonQuery();
+		}
+
+		public int InsertDiagram(string name, XDocument data)
+		{
+			SqlCommand command = Database.CreateCommand(SqlInsertDiagram);
+			command.Parameters.AddWithValue("Name", name);
+			command.Parameters.AddWithValue("Data", data);
+			return command.ExecuteNonQuery();
+		}
+
+		public int UpdateDiagram(string name, XDocument data)
+		{
+			SqlCommand command = Database.CreateCommand(SqlUpdateDiagram);
+			command.Parameters.AddWithValue("Name", name);
+			command.Parameters.AddWithValue("Data", data);
+			return command.ExecuteNonQuery();
+		}
+
+		public int DeleteDiagram(string name)
+		{
+			SqlCommand command = Database.CreateCommand(SqlDeleteDiagram);
+			command.Parameters.AddWithValue("Name", name);
+			return command.ExecuteNonQuery();
+		}
+
+		public IEnumerable<DiagramModel> SelectDiagrams()
+		{
+			SqlCommand command = Database.CreateCommand(SqlSelectDiagrams);
+			SqlDataReader reader = command.ExecuteReader();
+			var res = ReadDiagramDetails(reader);
+			reader.Close();
+			return res;
+		}
+
+		private IEnumerable<DiagramModel> ReadDiagramDetails(SqlDataReader reader)
+		{
+			var res = new List<DiagramModel>();
+
+			while (reader.Read())
+			{
+				var diagram = new DiagramModel();
+				int i = 0;
+				diagram.Name = reader.GetString(i++);
+				diagram.Xml = reader.GetString(i++);
+				res.Add(diagram);
+			}
+
+			return res;
 		}
 
 		private IEnumerable<TableModel> ReadListTables(SqlDataReader reader)

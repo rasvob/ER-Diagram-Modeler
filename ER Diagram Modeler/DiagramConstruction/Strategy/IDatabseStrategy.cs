@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using System.Xml.Linq;
+using ER_Diagram_Modeler.Models.Database;
 using ER_Diagram_Modeler.Models.Designer;
 using ER_Diagram_Modeler.ViewModels;
 
@@ -21,6 +23,9 @@ namespace ER_Diagram_Modeler.DiagramConstruction.Strategy
 		void RemoveRelationship(RelationshipModel model);
 		void AddRelationship(RelationshipModel model);
 		IEnumerable<string> ListAllForeignKeys();
+		int SaveDiagram(string name, XDocument data);
+		int DeleteDiagram(string name);
+		IEnumerable<DiagramModel> SelectDiagrams();
 		IComparer<RelationshipModel> Comparer { get; set; }
 	}
 }

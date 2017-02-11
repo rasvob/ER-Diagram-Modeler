@@ -2,7 +2,7 @@
 Export to PNG
 
 ---DB_Part
-Save to XML/DB
+Save to XML/DB - Oracle mapper
 Create script
 Output window
 
