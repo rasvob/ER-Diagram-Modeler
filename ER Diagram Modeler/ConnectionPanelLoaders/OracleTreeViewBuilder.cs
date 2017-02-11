@@ -10,7 +10,7 @@ namespace ER_Diagram_Modeler.ConnectionPanelLoaders
 {
 	public class OracleTreeViewBuilder: TreeViewBuilder
 	{
-		public OracleTreeViewBuilder(Action<TableModel> addTableAction, IEnumerable<DatabaseInfo> infos) : base(addTableAction, infos)
+		public OracleTreeViewBuilder(Action<TableModel> addTableAction, IEnumerable<DatabaseInfo> infos, Action<DiagramModel> addDiagramAction, Action<DiagramModel> dropDiagramAction) : base(addTableAction, infos, addDiagramAction, dropDiagramAction)
 		{
 		}
 
@@ -31,6 +31,20 @@ namespace ER_Diagram_Modeler.ConnectionPanelLoaders
 				}
 
 			res.Add(tables);
+
+			TreeViewItem diagrams = new TreeViewItem();
+			diagrams.Header = "Diagrams";
+
+			ObservableCollection<DiagramModel> diagramModels = Infos.FirstOrDefault()?.Diagrams;
+			if (diagramModels != null)
+				foreach (DiagramModel model in diagramModels)
+				{
+					var item = new TreeViewItem { Header = model.Name };
+					SetupTreeViewItemDiagramContextMenu(item, model);
+					diagrams.Items.Add(item);
+				}
+
+			res.Add(diagrams);
 			return res;
 		}
 	}

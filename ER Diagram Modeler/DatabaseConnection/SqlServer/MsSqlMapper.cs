@@ -16,7 +16,7 @@ namespace ER_Diagram_Modeler.DatabaseConnection.SqlServer
 	public class MsSqlMapper: IMsSqlMapper
 	{
 		private static string SqlListDatabases = @"SELECT database_id, name FROM sys.databases WHERE name NOT IN ('master', 'tempdb', 'model', 'msdb');";
-		private static string SqlListTables = @"SELECT object_id, name FROM sys.tables WHERE name <> 'sysdiagrams' AND name <> '__ERDIAGRAMS';";
+		private static string SqlListTables = @"SELECT object_id, name FROM sys.tables WHERE name <> 'sysdiagrams' AND name <> 'ERDIAGRAMS';";
 		private static string SqlTableDetails = @"SELECT s.column_id, s.name, s.is_nullable, t.name, s.max_length, s.precision, s.scale FROM sys.columns s JOIN sys.types t ON s.system_type_id = t.system_type_id WHERE s.object_id = @Id;";
 		private static string SqlPrimaryKeys = @"sp_pkeys";
 		private static string SqlForeignKeys = @"sp_fkeys";
@@ -33,14 +33,14 @@ namespace ER_Diagram_Modeler.DatabaseConnection.SqlServer
 		private static string SqlAddPrimaryKeyConstraint = @"ALTER TABLE [{0}] ADD CONSTRAINT {1} PRIMARY KEY CLUSTERED ({2})";
 		private static string SqlAddForeignKeyConstraint = @"ALTER TABLE [{0}] ADD CONSTRAINT {1} FOREIGN KEY ({2}) REFERENCES [{3}] ({4})";
 		private static string SqlAddForeignKeyConstraint2 = @"ALTER TABLE [{0}] ADD CONSTRAINT {1} FOREIGN KEY ({2}) REFERENCES [{3}] ({4}) ON DELETE {5} ON UPDATE {6}";
-		private static string SqlCreateDiagramTable = @"IF (NOT EXISTS (SELECT * FROM sys.tables WHERE name = '__ERDIAGRAMS'))
+		private static string SqlCreateDiagramTable = @"IF (NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'ERDIAGRAMS'))
 BEGIN
-	CREATE TABLE __ERDIAGRAMS (NAME VARCHAR(100) PRIMARY KEY, DATA XML NOT NULL)
+	CREATE TABLE ERDIAGRAMS (NAME VARCHAR(100) PRIMARY KEY, DATA XML NOT NULL)
 END";
-		private static string SqlInsertDiagram = @"INSERT INTO __ERDIAGRAMS(NAME, DATA) VALUES(@Name, @Data)";
-		private static string SqlUpdateDiagram = @"UPDATE __ERDIAGRAMS SET DATA = @Data WHERE NAME = @Name";
-		private static string SqlSelectDiagrams = @"SELECT NAME, DATA FROM __ERDIAGRAMS";
-		private static string SqlDeleteDiagram = @"DELETE FROM __ERDIAGRAMS WHERE NAME = @Name";
+		private static string SqlInsertDiagram = @"INSERT INTO ERDIAGRAMS(NAME, DATA) VALUES(@Name, @Data)";
+		private static string SqlUpdateDiagram = @"UPDATE ERDIAGRAMS SET DATA = @Data WHERE NAME = @Name";
+		private static string SqlSelectDiagrams = @"SELECT NAME, DATA FROM ERDIAGRAMS";
+		private static string SqlDeleteDiagram = @"DELETE FROM ERDIAGRAMS WHERE NAME = @Name";
 
 		public MsSqlDatabase Database { get; set; }
 
@@ -277,7 +277,7 @@ END";
 		{
 			SqlCommand command = Database.CreateCommand(SqlInsertDiagram);
 			command.Parameters.AddWithValue("Name", name);
-			command.Parameters.AddWithValue("Data", data);
+			command.Parameters.AddWithValue("Data", data.ToString());
 			return command.ExecuteNonQuery();
 		}
 
@@ -285,7 +285,7 @@ END";
 		{
 			SqlCommand command = Database.CreateCommand(SqlUpdateDiagram);
 			command.Parameters.AddWithValue("Name", name);
-			command.Parameters.AddWithValue("Data", data);
+			command.Parameters.AddWithValue("Data", data.ToString());
 			return command.ExecuteNonQuery();
 		}
 

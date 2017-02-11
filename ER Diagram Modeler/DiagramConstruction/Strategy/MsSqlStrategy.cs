@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Net.Sockets;
 using System.Xml.Linq;
@@ -203,7 +204,7 @@ namespace ER_Diagram_Modeler.DiagramConstruction.Strategy
 		{
 			using(IMapper mapper = new MsSqlMapper())
 			{
-				IEnumerable<DiagramModel> diagrams = mapper.SelectDiagrams();
+				IEnumerable<DiagramModel> diagrams = SelectDiagrams();
 				mapper.CreateDiagramTable();
 				return diagrams.Any(t => t.Name.Equals(name)) ? mapper.UpdateDiagram(name, data) : mapper.InsertDiagram(name, data);
 			}
@@ -222,7 +223,15 @@ namespace ER_Diagram_Modeler.DiagramConstruction.Strategy
 		{
 			using (IMapper mapper = new MsSqlMapper())
 			{
-				return mapper.SelectDiagrams();
+				try
+				{
+					IEnumerable<DiagramModel> diagrams = mapper.SelectDiagrams();
+					return diagrams;
+				}
+				catch (SqlException)
+				{
+					return new List<DiagramModel>();
+				}
 			}
 		}
 	}

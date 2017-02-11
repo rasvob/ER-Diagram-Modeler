@@ -616,7 +616,7 @@ namespace ER_Diagram_Modeler.Views.Canvas
 			ViewModel.MouseMode = MouseMode.Select;
 		}
 
-		public async void CanvasDimensionsChanged()
+		public async Task CanvasDimensionsChanged()
 		{
 			var settings = new MetroDialogSettings()
 			{
@@ -629,6 +629,11 @@ namespace ER_Diagram_Modeler.Views.Canvas
 			var progressController = await parent.ShowProgressAsync("Please wait...", "Guidelines are updating", false, settings);
 			await UpdateLines();
 			await progressController.CloseAsync();
+
+			StreamGeometry geometry = DesignerCanvas.CreateGridWithStreamGeometry(ViewModel.CanvasHeight, ViewModel.CanvasWidth,
+					DesignerCanvas.GridCellWidth);
+			ModelDesignerCanvas.RefreshGuideLines(geometry);
+
 			ViewModel.OnComputedPropertyChanged();
 		}
 

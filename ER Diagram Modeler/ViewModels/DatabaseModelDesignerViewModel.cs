@@ -27,8 +27,8 @@ namespace ER_Diagram_Modeler.ViewModels
 		private MouseMode _mouseMode = MouseMode.Select;
 		private double _viewportHeight;
 		private double _viewportWidth;
-		private double _canvasWidth = 2500;
-		private double _canvasHeight = 2500;
+		private double _canvasWidth = DefaultWidth;
+		private double _canvasHeight = DefaultWidth;
 		private double _zoomBoxCanvasWidth = 250;
 		private double _zoomBoxCanvasHeight = 250;
 		private double _veticalScrollOffset;
@@ -40,6 +40,8 @@ namespace ER_Diagram_Modeler.ViewModels
 		private bool _areGuideLinesVisible = true;
 		private string _diagramTitle;
 		private bool _areTableLimitsEnabled = true;
+
+		public static double DefaultWidth = 2500;
 
 		public bool AreTableLimitsEnabled
 		{

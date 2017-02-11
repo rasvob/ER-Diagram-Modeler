@@ -45,7 +45,13 @@ WHERE a.CONSTRAINT_TYPE = 'R'
 		private static string SqlAddForeignKeyConstraint = "ALTER TABLE {0} ADD CONSTRAINT {1} FOREIGN KEY ({2}) REFERENCES {3} ({4})";
 		private static string SqlAddForeignKeyConstraint2 = "ALTER TABLE {0} ADD CONSTRAINT {1} FOREIGN KEY ({2}) REFERENCES {3} ({4}) {5}";
 
+		private static string SqlCreateDiagramTable = @"CREATE TABLE {0} (NAME VARCHAR2(100) PRIMARY KEY, DATA CLOB NOT NULL)";
+		private static string SqlDoesDiagramTableExist = @"SELECT count(*) FROM ALL_TABLES a WHERE a.OWNER = :Owner AND a.TABLE_NAME = 'ERDIAGRAMS'";
 
+		private static string SqlInsertDiagram = @"INSERT INTO {0}(NAME, DATA) VALUES(:Name, :Data)";
+		private static string SqlUpdateDiagram = @"UPDATE {0} SET DATA = :Data WHERE NAME = :Name";
+		private static string SqlSelectDiagrams = @"SELECT NAME, DATA FROM {0}";
+		private static string SqlDeleteDiagram = @"DELETE FROM {0} WHERE NAME = :Name";
 
 		public OracleDatabase Database { get; set; }
 		public string Owner { get; set; }
@@ -294,27 +300,63 @@ WHERE a.CONSTRAINT_TYPE = 'R'
 
 		public void CreateDiagramTable()
 		{
-			throw new NotImplementedException();
+			OracleCommand command = Database.CreateCommand(SqlDoesDiagramTableExist);
+			command.Parameters.Add("Owner", OracleDbType.Varchar2, Owner, ParameterDirection.Input);
+			var count = (decimal) command.ExecuteScalar();
+
+			if(count == 0)
+			{
+				OracleCommand commandCreate = Database.CreateCommand(string.Format(SqlCreateDiagramTable, DiagramTable));
+				commandCreate.ExecuteNonQuery();
+			}
 		}
 
 		public int InsertDiagram(string name, XDocument data)
 		{
-			throw new NotImplementedException();
+			OracleCommand command = Database.CreateCommand(string.Format(SqlInsertDiagram, DiagramTable));
+			command.Parameters.Add("Name", OracleDbType.Varchar2, name, ParameterDirection.Input);
+			command.Parameters.Add("Data", OracleDbType.Varchar2, data.ToString(), ParameterDirection.Input);
+			return command.ExecuteNonQuery();
 		}
 
 		public int UpdateDiagram(string name, XDocument data)
 		{
-			throw new NotImplementedException();
+			OracleCommand command = Database.CreateCommand(string.Format(SqlUpdateDiagram, DiagramTable));
+			command.Parameters.Add("Data", OracleDbType.Varchar2, data.ToString(), ParameterDirection.Input);
+			command.Parameters.Add("Name", OracleDbType.Varchar2, name, ParameterDirection.Input);
+			return command.ExecuteNonQuery();
 		}
 
 		public int DeleteDiagram(string name)
 		{
-			throw new NotImplementedException();
+			OracleCommand command = Database.CreateCommand(string.Format(SqlDeleteDiagram, DiagramTable));
+			command.Parameters.Add("Name", OracleDbType.Varchar2, name, ParameterDirection.Input);
+			return command.ExecuteNonQuery();
 		}
 
 		public IEnumerable<DiagramModel> SelectDiagrams()
 		{
-			throw new NotImplementedException();
+			OracleCommand command = Database.CreateCommand(string.Format(SqlSelectDiagrams, DiagramTable));
+			OracleDataReader reader = command.ExecuteReader();
+			var res = ReadDiagrams(reader);
+			reader.Close();
+			return res;
+		}
+
+		private IEnumerable<DiagramModel> ReadDiagrams(OracleDataReader reader)
+		{
+			var res = new List<DiagramModel>();
+
+			while (reader.Read())
+			{
+				var diagram = new DiagramModel();
+				int i = 0;
+				diagram.Name = reader.GetString(i++);
+				diagram.Xml = reader.GetString(i++);
+				res.Add(diagram);
+			}
+
+			return res;
 		}
 
 		public void AlterColumn(string table, TableRowModel model, bool modifyNull = true)
@@ -356,6 +398,7 @@ WHERE a.CONSTRAINT_TYPE = 'R'
 
 		private string TableNameWithOwner(string table) => $"{Owner}.{table}";
 		private string TableNameWithOwnerCaseSensitve(string table) => $"{Owner}.\"{table}\"";
+		private string DiagramTable => $"{Owner}.\"ERDIAGRAMS\"";
 
 		public void CreateForeignKey(string table, string referencedTable, IEnumerable<RowModelPair> collumns, string fkName = null, string onDelete = "NO ACTION")
 		{

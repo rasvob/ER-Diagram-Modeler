@@ -18,6 +18,7 @@ using ER_Diagram_Modeler.ConnectionPanelLoaders;
 using ER_Diagram_Modeler.Controls.Buttons;
 using ER_Diagram_Modeler.DatabaseConnection.Oracle;
 using ER_Diagram_Modeler.DatabaseConnection.SqlServer;
+using ER_Diagram_Modeler.DiagramConstruction.Strategy;
 using ER_Diagram_Modeler.Models.Database;
 using ER_Diagram_Modeler.Models.Designer;
 using ER_Diagram_Modeler.ViewModels;
@@ -35,6 +36,8 @@ namespace ER_Diagram_Modeler.Views.Panels
 	{
 		public event EventHandler<ConnectionType> ConnectionClick;
 		public event EventHandler<TableModel> AddTable;
+		public event EventHandler<DiagramModel> AddDiagram;
+		public event EventHandler<DiagramModel> DropDiagram;
 		public event EventHandler CreateMsSqlDatabase;
 		public event EventHandler<string> DropMsSqlDatabase;
 		public List<DatabaseInfo> DatabaseInfos { get; set; }
@@ -47,8 +50,8 @@ namespace ER_Diagram_Modeler.Views.Panels
 		private void Disconnect_OnExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
 			SessionProvider.Instance.ConnectionType = ConnectionType.None;
-			SessionProvider.Instance.Database = null;
-			SessionProvider.Instance.ServerName = null;
+			SessionProvider.Instance.Database = string.Empty;
+			SessionProvider.Instance.ServerName = string.Empty;
 			HideDatabaseStackPanels();
 		}
 
@@ -115,23 +118,30 @@ namespace ER_Diagram_Modeler.Views.Panels
 
 		public void LoadOracleData()
 		{
-			using(IOracleMapper mapper = new OracleMapper())
+			var ctx = new DatabaseContext(ConnectionType.Oracle);
+			
+			DatabaseInfos = new List<DatabaseInfo>();
+			DatabaseInfo info = new DatabaseInfo()
 			{
-				DatabaseInfos = new List<DatabaseInfo>();
-				DatabaseInfo info = new DatabaseInfo()
-				{
-					Name = "Tables"
-				};
+				Name = "Tables"
+			};
 
-				IEnumerable<TableModel> tables = mapper.ListTables();
+			IEnumerable<TableModel> tables = ctx.ListTables();
 
-				foreach (TableModel model in tables)
-				{
-					info.Tables.Add(model);
-				}
-
-				DatabaseInfos.Add(info);
+			foreach (TableModel model in tables)
+			{
+				info.Tables.Add(model);
 			}
+
+			IEnumerable<DiagramModel> diagrams = ctx.SelectDiagrams();
+
+			foreach (DiagramModel diagram in diagrams)
+			{
+				info.Diagrams.Add(diagram);
+			}
+
+			DatabaseInfos.Add(info);
+			
 			LoadOracleTreeData();
 			OracleStackPanel.Visibility = Visibility.Visible;
 		}
@@ -191,15 +201,14 @@ namespace ER_Diagram_Modeler.Views.Panels
 				return;
 			}
 
-			//Is the same ?
+			//TODO: Is the same ?
 			SessionProvider.Instance.Database = cb.Name;
-
 			LoadMsSqlTreeViewData();
 		}
 
 		private void LoadMsSqlTreeViewData()
 		{
-			TreeViewBuilder builder = new MsSqlTreeViewBuilder(OnAddTable, DropDatabaseAction, DatabaseInfos);
+			TreeViewBuilder builder = new MsSqlTreeViewBuilder(OnAddTable, DropDatabaseAction, DatabaseInfos, OnAddDiagram, OnDropDiagram);
 			List<TreeViewItem> item = builder.BuildTreeView();
 			MsSqlTreeView.Items.Clear();
 			item.ForEach(t => MsSqlTreeView.Items.Add(t));
@@ -207,7 +216,7 @@ namespace ER_Diagram_Modeler.Views.Panels
 
 		private void LoadOracleTreeData()
 		{
-			TreeViewBuilder builder = new OracleTreeViewBuilder(OnAddTable, DatabaseInfos);
+			TreeViewBuilder builder = new OracleTreeViewBuilder(OnAddTable, DatabaseInfos, OnAddDiagram, OnDropDiagram);
 			List<TreeViewItem> item = builder.BuildTreeView();
 			OracleTreeView.Items.Clear();
 			item.ForEach(t => OracleTreeView.Items.Add(t));
@@ -241,6 +250,16 @@ namespace ER_Diagram_Modeler.Views.Panels
 		protected virtual void OnDropMsSqlDatabase(string e)
 		{
 			DropMsSqlDatabase?.Invoke(this, e);
+		}
+
+		protected virtual void OnAddDiagram(DiagramModel e)
+		{
+			AddDiagram?.Invoke(this, e);
+		}
+
+		protected virtual void OnDropDiagram(DiagramModel e)
+		{
+			DropDiagram?.Invoke(this, e);
 		}
 	}
 }

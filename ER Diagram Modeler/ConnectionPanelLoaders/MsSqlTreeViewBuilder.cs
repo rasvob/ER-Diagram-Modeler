@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Windows.Controls;
 using ER_Diagram_Modeler.Configuration.Providers;
 using ER_Diagram_Modeler.DatabaseConnection.SqlServer;
+using ER_Diagram_Modeler.DiagramConstruction.Strategy;
 using ER_Diagram_Modeler.Models.Database;
 using ER_Diagram_Modeler.Models.Designer;
+using ER_Diagram_Modeler.ViewModels.Enums;
 
 namespace ER_Diagram_Modeler.ConnectionPanelLoaders
 {
@@ -14,40 +16,60 @@ namespace ER_Diagram_Modeler.ConnectionPanelLoaders
 
 		public override List<TreeViewItem> BuildTreeView()
 		{
-			//TODO: Load diagrams
 			string origdb = SessionProvider.Instance.Database;
 			List<TreeViewItem> res = new List<TreeViewItem>();
+			var ctx = new DatabaseContext(ConnectionType.SqlServer);
 			foreach(DatabaseInfo databaseInfo in Infos)
 			{
 				SessionProvider.Instance.Database = databaseInfo.Name;
-				using(MsSqlMapper mapper = new MsSqlMapper())
+				TreeViewItem root = new TreeViewItem();
+				root.Header = databaseInfo.Name;
+				SetupDatabaseItemContextMenu(root);
+				databaseInfo.Tables.Clear();
+
+				TreeViewItem tables = new TreeViewItem();
+				tables.Header = "Tables";
+
+				foreach(TableModel model in ctx.ListTables())
 				{
-					TreeViewItem root = new TreeViewItem();
-					root.Header = databaseInfo.Name;
-					SetupDatabaseItemContextMenu(root);
-					databaseInfo.Tables.Clear();
+					databaseInfo.Tables.Add(model);
 
-					TreeViewItem tables = new TreeViewItem();
-					tables.Header = "Tables";
-
-					foreach(TableModel model in mapper.ListTables())
+					TreeViewItem item = new TreeViewItem
 					{
-						databaseInfo.Tables.Add(model);
+						Header = model.Title,
+						IsEnabled = databaseInfo.Name.Equals(origdb)
+					};
 
-						TreeViewItem item = new TreeViewItem
-						{
-							Header = model.Title,
-							IsEnabled = databaseInfo.Name.Equals(origdb)
-						};
-
-						SetupTreeViewItemContextMenu(item, model);
-						tables.Items.Add(item);
-					}
-
-					root.Items.Add(tables);
-					res.Add(root);
+					SetupTreeViewItemContextMenu(item, model);
+					tables.Items.Add(item);
 				}
-			}
+				root.Items.Add(tables);
+
+				databaseInfo.Diagrams.Clear();
+
+				TreeViewItem diagrams = new TreeViewItem();
+				diagrams.Header = "Diagrams";
+
+				IEnumerable<DiagramModel> diagramModels = ctx.SelectDiagrams();
+
+				foreach (DiagramModel model in diagramModels)
+				{
+					databaseInfo.Diagrams.Add(model);
+
+					TreeViewItem item = new TreeViewItem
+					{
+						Header = model.Name,
+						IsEnabled = databaseInfo.Name.Equals(origdb)
+					};
+
+					SetupTreeViewItemDiagramContextMenu(item, model);
+					diagrams.Items.Add(item);
+				}
+
+				root.Items.Add(diagrams);
+
+				res.Add(root);
+				}
 
 			SessionProvider.Instance.Database = origdb;
 
@@ -63,7 +85,7 @@ namespace ER_Diagram_Modeler.ConnectionPanelLoaders
 			item.ContextMenu = menu;
 		}
 
-		public MsSqlTreeViewBuilder(Action<TableModel> addTableAction, Action<string> dropDatabaseAction, IEnumerable<DatabaseInfo> infos) : base(addTableAction, infos)
+		public MsSqlTreeViewBuilder(Action<TableModel> addTableAction, Action<string> dropDatabaseAction, IEnumerable<DatabaseInfo> infos, Action<DiagramModel> addDiagramAction, Action<DiagramModel> dropDiagramAction) : base(addTableAction, infos, addDiagramAction, dropDiagramAction)
 		{
 			_dropDatabaseAction = dropDatabaseAction;
 		}

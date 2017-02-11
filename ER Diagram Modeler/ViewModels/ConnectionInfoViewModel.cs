@@ -2583,7 +2583,7 @@ namespace ER_Diagram_Modeler.ViewModels
 
 			DestinationConnector.Orientation =
 				(ConnectorOrientation)
-				Enum.Parse(typeof(ConnectorOrientation), element.Attribute("DestinationConnector")?.Value);
+				Enum.Parse(typeof(ConnectorOrientation), element.Attribute("DestinationConnectorOrientation")?.Value);
 
 			var points =
 				element.Element("Points")?

@@ -80,6 +80,7 @@
 	<Window.InputBindings>
 		<KeyBinding Command="{StaticResource Commands.SaveDiagram}" Modifiers="Control" Key="S"></KeyBinding>
 		<KeyBinding Command="{StaticResource Commands.SaveDiagramAs}" Modifiers="Control+Shift" Key="S"></KeyBinding>
+		<KeyBinding Command="{StaticResource Commands.NewDiagram}" Modifiers="Control+Shift" Key="N"></KeyBinding>
 	</Window.InputBindings>
 
 	<Controls:MetroWindow.Flyouts>
@@ -393,9 +394,9 @@
 		<Menu Grid.Row="0">
 			<MenuItem Header="File">
 				<MenuItem Name="MenuItemTest" Header="Test PK" Click="MenuItemTest_OnClick"/>
-				<MenuItem Name="MenuItemAddDiagram" Header="Add new diagram" Command="{StaticResource Commands.NewDiagram}"/>
-				<MenuItem Name="MenuItemSaveDiagram" Header="Save diagram" Command="{StaticResource Commands.SaveDiagram}"></MenuItem>
-				<MenuItem Name="MenuItemSaveDiagramAs" Header="Save diagram as..." Command="{StaticResource Commands.SaveDiagramAs}"></MenuItem>
+				<MenuItem Name="MenuItemAddDiagram" Header="Add new diagram (Ctrl + Shift + N)" Command="{StaticResource Commands.NewDiagram}"/>
+				<MenuItem Name="MenuItemSaveDiagram" Header="Save diagram (Ctrl + S)" Command="{StaticResource Commands.SaveDiagram}"></MenuItem>
+				<MenuItem Name="MenuItemSaveDiagramAs" Header="Save diagram as... (Ctrl + Shift + S)" Command="{StaticResource Commands.SaveDiagramAs}"></MenuItem>
 				<MenuItem Header="Exit"/>
 			</MenuItem>
 			<MenuItem Header="Views">

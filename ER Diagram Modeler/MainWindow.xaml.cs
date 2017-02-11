@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Media;
 using System.Xml.Linq;
 using ER_Diagram_Modeler.Configuration.Providers;
 using ER_Diagram_Modeler.DatabaseConnection.Oracle;
@@ -15,6 +16,7 @@ using ER_Diagram_Modeler.DiagramConstruction;
 using ER_Diagram_Modeler.DiagramConstruction.Strategy;
 using ER_Diagram_Modeler.Dialogs;
 using ER_Diagram_Modeler.EventArgs;
+using ER_Diagram_Modeler.Models.Database;
 using ER_Diagram_Modeler.Models.Designer;
 using ER_Diagram_Modeler.ViewModels;
 using ER_Diagram_Modeler.ViewModels.Enums;
@@ -23,6 +25,7 @@ using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
 using Oracle.ManagedDataAccess.Client;
 using Xceed.Wpf.AvalonDock.Layout;
+using Xceed.Wpf.Toolkit.Core.Utilities;
 
 namespace ER_Diagram_Modeler
 {
@@ -47,10 +50,37 @@ namespace ER_Diagram_Modeler
 			DatabaseConnectionSidebar.AddTable += DatabaseConnectionSidebarOnAddTable;
 			DatabaseConnectionSidebar.CreateMsSqlDatabase += DatabaseConnectionSidebarOnCreateMsSqlDatabase;
 			DatabaseConnectionSidebar.DropMsSqlDatabase += DatabaseConnectionSidebarOnDropMsSqlDatabase;
+			DatabaseConnectionSidebar.AddDiagram += DatabaseConnectionSidebarOnAddDiagram;
+			DatabaseConnectionSidebar.DropDiagram += DatabaseConnectionSidebarOnDropDiagram;
+		}
+
+		private void DatabaseConnectionSidebarOnDropDiagram(object sender, DiagramModel diagramModel)
+		{
+			var ctx = new DatabaseContext(SessionProvider.Instance.ConnectionType);
+			var res = ctx.DeleteDiagram(diagramModel.Name);
+			DatabaseConnectionSidebar.RefreshTreeData();
+		}
+
+		private void DatabaseConnectionSidebarOnAddDiagram(object sender, DiagramModel diagramModel)
+		{
+			DiagramFacade.CreateNewDiagram(this, diagramModel.Name);
+			DatabaseModelDesigner designer;
+			if (TryGetSelectedDesigner(out designer))
+			{
+				var facade = new DiagramFacade(designer.ViewModel);
+				facade.LoadDiagram(designer.ModelDesignerCanvas, XDocument.Parse(diagramModel.Xml));
+			}
+			DatabaseConnectionSidebar.RefreshTreeData();
 		}
 
 		private async void DatabaseConnectionSidebarOnDropMsSqlDatabase(object sender, string dbName)
 		{
+			if (dbName.Equals(SessionProvider.Instance.Database))
+			{
+				await this.ShowMessageAsync("Drop database", $"Database {dbName} is currently in use");
+				return;
+			}
+
 			var progress = await this.ShowProgressAsync($"Drop database {dbName}", "Please wait...");
 			progress.SetIndeterminate();
 
@@ -141,12 +171,22 @@ namespace ER_Diagram_Modeler
 			var content = MainDocumentPane.Children[idx].Content;
 			designer = content as DatabaseModelDesigner;
 
-			if (designer == null)
+			return designer != null;
+		}
+
+		private bool TryGetSelectedPanel(out LayoutAnchorable panel)
+		{
+			var idx = MainDocumentPane.SelectedContentIndex;
+			panel = null;
+
+			if(idx < 0)
 			{
 				return false;
 			}
 
-			return true;
+			panel = MainDocumentPane.Children[idx] as LayoutAnchorable;
+
+			return panel != null;
 		}
 
 		private void DatabaseConnectionSidebarOnConnectionClick(object sender, ConnectionType connectionType)
@@ -177,7 +217,7 @@ namespace ER_Diagram_Modeler
 			
 		}
 
-		private void ChangeCanvasSize_OnExecuted(object sender, ExecutedRoutedEventArgs e)
+		private async void ChangeCanvasSize_OnExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
 			var activeDiagramModeler = MainDocumentPane.SelectedContent.Content as DatabaseModelDesigner;
 			if (activeDiagramModeler != null)
@@ -190,11 +230,11 @@ namespace ER_Diagram_Modeler
 				};
 				dialog.ShowDialog();
 
-				if (dialog.DialogResult.HasValue && dialog.DialogResult.Value)
+				if(dialog.DialogResult.HasValue && dialog.DialogResult.Value)
 				{
 					activeDiagramModeler.ViewModel.CanvasWidth = dialog.CanvasWidth;
 					activeDiagramModeler.ViewModel.CanvasHeight = dialog.CanvasHeight;
-					activeDiagramModeler.CanvasDimensionsChanged();
+					await activeDiagramModeler.CanvasDimensionsChanged();
 				}
 			}
 		}
@@ -557,14 +597,10 @@ namespace ER_Diagram_Modeler
 
 		private void SaveDiagram_OnExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
-			//TODO: Save to DB
 			DatabaseModelDesigner designer;
 			if(TryGetSelectedDesigner(out designer))
 			{
-				XElement element = designer.ViewModel.CreateElement();
-				XDocument doc = XDocument.Parse(element.ToString());
-				var ctx = new DatabaseContext(SessionProvider.Instance.ConnectionType);
-				int res = ctx.SaveDiagram(designer.ViewModel.DiagramTitle, doc);
+				SaveDiagramAndRefresh(designer.ViewModel);
 			}
 		}
 
@@ -574,9 +610,36 @@ namespace ER_Diagram_Modeler
 			e.CanExecute = TryGetSelectedDesigner(out designer);
 		}
 
-		private void SaveDiagramAs_OnExecuted(object sender, ExecutedRoutedEventArgs e)
+		private async void SaveDiagramAs_OnExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
-			throw new NotImplementedException();
+			DatabaseModelDesigner designer;
+			if(TryGetSelectedDesigner(out designer))
+			{
+				LayoutAnchorable panel;
+				if (TryGetSelectedPanel(out panel))
+				{
+					string result = await this.ShowInputAsync("Save as...", "Diagram name", new MetroDialogSettings()
+					{
+						DefaultText = designer.ViewModel.DiagramTitle,
+						AnimateShow = true
+					});
+
+					if(!string.IsNullOrEmpty(result))
+					{
+						designer.ViewModel.DiagramTitle = result;
+						panel.Title = result;
+					}
+				}
+				
+				SaveDiagramAndRefresh(designer.ViewModel);
+			}
+		}
+
+		private void SaveDiagramAndRefresh(DatabaseModelDesignerViewModel vm)
+		{
+			var facade = new DiagramFacade(vm);
+			var res = facade.SaveDiagram();
+			DatabaseConnectionSidebar.RefreshTreeData();
 		}
 	}
 }

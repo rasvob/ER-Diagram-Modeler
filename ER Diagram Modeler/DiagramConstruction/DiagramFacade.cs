@@ -6,6 +6,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
+using System.Windows.Media;
+using System.Xml.Linq;
+using System.Xml.XPath;
 using ER_Diagram_Modeler.Annotations;
 using ER_Diagram_Modeler.Configuration.Providers;
 using ER_Diagram_Modeler.DatabaseConnection;
@@ -177,6 +180,96 @@ namespace ER_Diagram_Modeler.DiagramConstruction
 					await AddRelationship(relationshipModel, canvas);
 				}
 			}
+		}
+
+		public void LoadDiagram(DesignerCanvas canvas, XDocument data)
+		{
+			var root = data.Root;
+			ViewModel.LoadFromElement(data.Root);
+
+			if (ViewModel.CanvasWidth != DatabaseModelDesignerViewModel.DefaultWidth || ViewModel.CanvasHeight != DatabaseModelDesignerViewModel.DefaultWidth)
+			{
+				StreamGeometry geometry = DesignerCanvas.CreateGridWithStreamGeometry(ViewModel.CanvasHeight, ViewModel.CanvasWidth,
+					DesignerCanvas.GridCellWidth);
+				canvas.RefreshGuideLines(geometry);
+			}
+			
+			var ctx = new DatabaseContext(SessionProvider.Instance.ConnectionType);
+			var tablesInDb = ctx.ListTables();
+			var tableElements = root?.XPathSelectElements("TableViewModels/TableViewModel")
+				.Select(t =>
+				{
+					var vm = new TableViewModel();
+					vm.LoadFromElement(t);
+					return vm;
+				})
+				.Where(s => tablesInDb.Any(t => t.Id.Equals(s.Model.Id)))
+				.ToList();
+
+			if (tableElements == null || !tableElements.Any())
+			{
+				return;	
+			}
+
+			tableElements?.ForEach(t => t.Model.RefreshModel(ctx.ReadTableDetails(t.Model.Id, t.Model.Title)));
+			tableElements?.ForEach(t => ViewModel.TableViewModels.Add(t));
+
+			var relationShipsInDb = ctx.ListAllForeignKeys();
+			var allRelationshipsDetails = tableElements?
+				.SelectMany(t => ctx.ListRelationshipsForTable(t.Model.Title, tableElements.Select(s => s.Model)))
+				.GroupBy(t => t.Name)
+				.Select(t => t.FirstOrDefault())
+				.ToList();
+
+			var relationElements = root?.XPathSelectElements("ConnectionInfoViewModels/ConnectionInfoViewModel")
+				.Select(t =>
+				{
+					var vm = new ConnectionInfoViewModel {DesignerCanvas = canvas};
+					vm.LoadFromElement(t);
+					return vm;
+				})
+				.Where(t => relationShipsInDb.Any(s => s.Equals(t.RelationshipModel.Name)))
+				.Where(t => allRelationshipsDetails.Any(s => ctx.AreRelationshipModelsTheSame(t.RelationshipModel, s)))
+				.ToList();
+
+			
+			relationElements.ForEach(t =>
+			{
+				t.SourceViewModel = tableElements.FirstOrDefault(s => s.Model.Id.Equals(t.RelationshipModel.Source.Id));
+				t.DestinationViewModel = tableElements.FirstOrDefault(s => s.Model.Id.Equals(t.RelationshipModel.Destination.Id));
+				t.RelationshipModel.RefreshModel(allRelationshipsDetails.FirstOrDefault(s => ctx.AreRelationshipModelsTheSame(t.RelationshipModel, s)));
+				ViewModel.ConnectionInfoViewModels.Add(t);
+				t.BuildLoadedConnection();
+			});
+
+			var newRelations =
+				allRelationshipsDetails
+					.Where(t => !relationElements.Any(s => s.RelationshipModel.Name.Equals(t.Name)))
+					.Select(t =>
+					{
+						var vm = new ConnectionInfoViewModel
+						{
+							DesignerCanvas = canvas,
+							SourceViewModel = tableElements.FirstOrDefault(s => s.Model.Id.Equals(t.Source.Id)),
+							DestinationViewModel = tableElements.FirstOrDefault(s => s.Model.Id.Equals(t.Destination.Id))
+						};
+						vm.RelationshipModel.RefreshModel(t);
+						return vm;
+					})
+					.ToList();
+
+			newRelations.ForEach(async t =>
+			{
+				ViewModel.ConnectionInfoViewModels.Add(t);
+				await t.BuildConnection3(ViewModel);
+			});
+		}
+
+		public int SaveDiagram()
+		{
+			XDocument doc = XDocument.Parse(ViewModel.CreateElement().ToString());
+			var ctx = new DatabaseContext(SessionProvider.Instance.ConnectionType);
+			return ctx.SaveDiagram(ViewModel.DiagramTitle, doc);
 		}
 
 #region HELPERS

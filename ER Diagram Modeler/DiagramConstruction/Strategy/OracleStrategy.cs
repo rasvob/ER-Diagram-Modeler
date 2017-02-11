@@ -226,7 +226,7 @@ namespace ER_Diagram_Modeler.DiagramConstruction.Strategy
 		{
 			using(IMapper mapper = new OracleMapper())
 			{
-				IEnumerable<DiagramModel> diagrams = mapper.SelectDiagrams();
+				IEnumerable<DiagramModel> diagrams = SelectDiagrams();
 				mapper.CreateDiagramTable();
 				return diagrams.Any(t => t.Name.Equals(name)) ? mapper.UpdateDiagram(name, data) : mapper.InsertDiagram(name, data);
 			}
@@ -244,7 +244,15 @@ namespace ER_Diagram_Modeler.DiagramConstruction.Strategy
 		{
 			using(IMapper mapper = new OracleMapper())
 			{
-				return mapper.SelectDiagrams();
+				try
+				{
+					IEnumerable<DiagramModel> diagrams = mapper.SelectDiagrams();
+					return diagrams;
+				}
+				catch (OracleException e)
+				{
+					return new List<DiagramModel>();
+				}
 			}
 		}
 	}
