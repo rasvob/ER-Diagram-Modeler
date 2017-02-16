@@ -52,6 +52,22 @@ namespace ER_Diagram_Modeler
 			DatabaseConnectionSidebar.DropMsSqlDatabase += DatabaseConnectionSidebarOnDropMsSqlDatabase;
 			DatabaseConnectionSidebar.AddDiagram += DatabaseConnectionSidebarOnAddDiagram;
 			DatabaseConnectionSidebar.DropDiagram += DatabaseConnectionSidebarOnDropDiagram;
+			DatabaseConnectionSidebar.DisconnectClick += DatabaseConnectionSidebarOnDisconnectClick;
+			DatabaseConnectionSidebar.MsSqlDatabaseChanged += DatabaseConnectionSidebarOnMsSqlDatabaseChanged;
+		}
+
+		private async void DatabaseConnectionSidebarOnMsSqlDatabaseChanged(object sender, string s)
+		{
+			await DiagramFacade.CloseDiagramsOnDisconnect(this);
+			SessionProvider.Instance.Database = s;
+			DatabaseConnectionSidebar.LoadMsSqlTreeViewData();
+		}
+
+		private async void DatabaseConnectionSidebarOnDisconnectClick(object sender, System.EventArgs eventArgs)
+		{
+			await DiagramFacade.CloseDiagramsOnDisconnect(this);
+			SessionProvider.Instance.Disconnect();
+			DatabaseConnectionSidebar.HideDatabaseStackPanels();
 		}
 
 		private void DatabaseConnectionSidebarOnDropDiagram(object sender, DiagramModel diagramModel)

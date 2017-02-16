@@ -61,5 +61,12 @@ namespace ER_Diagram_Modeler.Configuration.Providers
 				return string.Empty;
 			}
 		}
+
+		public void Disconnect()
+		{
+			ConnectionType = ConnectionType.None;
+			Database = string.Empty;
+			ServerName = string.Empty;
+		}
 	}
 }

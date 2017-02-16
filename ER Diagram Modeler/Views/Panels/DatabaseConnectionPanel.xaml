@@ -25,7 +25,6 @@
 		<CommandBinding Command="{StaticResource DisconnectFromServerCommand}" 
 				Executed="Disconnect_OnExecuted"
 				CanExecute="Disconnect_OnCanExecute">
-			
 		</CommandBinding>
 
 		<CommandBinding Command="{StaticResource CreateMsSqlDatabaseCommand}" 

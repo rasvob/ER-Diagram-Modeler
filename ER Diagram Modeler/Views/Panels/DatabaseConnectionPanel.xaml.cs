@@ -35,6 +35,8 @@ namespace ER_Diagram_Modeler.Views.Panels
 	public partial class DatabaseConnectionPanel : UserControl
 	{
 		public event EventHandler<ConnectionType> ConnectionClick;
+		public event EventHandler DisconnectClick;
+		public event EventHandler<string> MsSqlDatabaseChanged; 
 		public event EventHandler<TableModel> AddTable;
 		public event EventHandler<DiagramModel> AddDiagram;
 		public event EventHandler<DiagramModel> DropDiagram;
@@ -49,10 +51,7 @@ namespace ER_Diagram_Modeler.Views.Panels
 
 		private void Disconnect_OnExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
-			SessionProvider.Instance.ConnectionType = ConnectionType.None;
-			SessionProvider.Instance.Database = string.Empty;
-			SessionProvider.Instance.ServerName = string.Empty;
-			HideDatabaseStackPanels();
+			OnDisconnectClick();
 		}
 
 		private void Disconnect_OnCanExecute(object sender, CanExecuteRoutedEventArgs e)
@@ -112,6 +111,8 @@ namespace ER_Diagram_Modeler.Views.Panels
 				MsSqlDatabaseComboBox.DisplayMemberPath = "Name";
 				MsSqlDatabaseComboBox.SelectedIndex = selected;
 			}
+
+			LoadMsSqlTreeViewData();
 
 			MsSqlServerGrid.Visibility = Visibility.Visible;
 		}
@@ -201,12 +202,15 @@ namespace ER_Diagram_Modeler.Views.Panels
 				return;
 			}
 
-			//TODO: Is the same ?
-			SessionProvider.Instance.Database = cb.Name;
-			LoadMsSqlTreeViewData();
+			if (SessionProvider.Instance.Database.Equals(cb.Name))
+			{
+				return;
+			}
+
+			OnMsSqlDatabaseChanged(cb.Name);
 		}
 
-		private void LoadMsSqlTreeViewData()
+		public void LoadMsSqlTreeViewData()
 		{
 			TreeViewBuilder builder = new MsSqlTreeViewBuilder(OnAddTable, DropDatabaseAction, DatabaseInfos, OnAddDiagram, OnDropDiagram);
 			List<TreeViewItem> item = builder.BuildTreeView();
@@ -214,7 +218,7 @@ namespace ER_Diagram_Modeler.Views.Panels
 			item.ForEach(t => MsSqlTreeView.Items.Add(t));
 		}
 
-		private void LoadOracleTreeData()
+		public void LoadOracleTreeData()
 		{
 			TreeViewBuilder builder = new OracleTreeViewBuilder(OnAddTable, DatabaseInfos, OnAddDiagram, OnDropDiagram);
 			List<TreeViewItem> item = builder.BuildTreeView();
@@ -260,6 +264,16 @@ namespace ER_Diagram_Modeler.Views.Panels
 		protected virtual void OnDropDiagram(DiagramModel e)
 		{
 			DropDiagram?.Invoke(this, e);
+		}
+
+		protected virtual void OnDisconnectClick()
+		{
+			DisconnectClick?.Invoke(this, System.EventArgs.Empty);
+		}
+
+		protected virtual void OnMsSqlDatabaseChanged(string e)
+		{
+			MsSqlDatabaseChanged?.Invoke(this, e);
 		}
 	}
 }

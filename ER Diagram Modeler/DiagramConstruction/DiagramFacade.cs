@@ -18,6 +18,7 @@ using ER_Diagram_Modeler.Models.Designer;
 using ER_Diagram_Modeler.ViewModels;
 using ER_Diagram_Modeler.Views.Canvas;
 using ER_Diagram_Modeler.Views.Canvas.TableItem;
+using MahApps.Metro.Controls.Dialogs;
 using Pathfinding;
 using Pathfinding.Structure;
 using Xceed.Wpf.AvalonDock.Layout;
@@ -392,6 +393,62 @@ namespace ER_Diagram_Modeler.DiagramConstruction
 			return point.X >= area.Left && point.X <= area.Right && point.Y >= area.Top && point.Y <= area.Bottom;
 		}
 
+		public static async Task CloseDiagramsOnDisconnect(MainWindow window)
+		{
+			var forSave = new Queue<DatabaseModelDesignerViewModel>();
+			IEnumerable<LayoutContent> contents =
+				window.MainDocumentPane.ChildrenSorted.Where(t => t.Content is DatabaseModelDesigner).ToList();
+
+			bool yesToAll = false;
+
+			foreach (LayoutContent content in contents)
+			{
+				DatabaseModelDesigner designer = content.Content as DatabaseModelDesigner;
+
+				if (designer == null)
+				{
+					continue;
+				}
+
+				content.Close();
+
+				if (yesToAll)
+				{
+					forSave.Enqueue(designer.ViewModel);
+					continue;
+				}
+
+				var res = await window.ShowMessageAsync("Save diagram",
+					$"Do you want to save diagram ? ({designer.ViewModel.DiagramTitle})",
+					MessageDialogStyle.AffirmativeAndNegativeAndSingleAuxiliary, new MetroDialogSettings()
+					{
+						AnimateShow = true,
+						AnimateHide = false,
+						AffirmativeButtonText = "Yes",
+						FirstAuxiliaryButtonText = "Yes to all",
+						NegativeButtonText = "No"
+					});
+
+				switch (res)
+				{
+					case MessageDialogResult.Affirmative:
+						forSave.Enqueue(designer.ViewModel);
+						break;
+					case MessageDialogResult.FirstAuxiliary:
+						yesToAll = true;
+						forSave.Enqueue(designer.ViewModel);
+						break;
+				}
+			}
+
+			var facade = new DiagramFacade(new DatabaseModelDesigner());
+			while(forSave.Count > 0)
+			{
+				var vm = forSave.Dequeue();
+				facade.ViewModel = vm;
+				facade.SaveDiagram();
+			}			
+		}
 		#endregion
 	}
 }

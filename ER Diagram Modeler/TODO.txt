@@ -2,7 +2,7 @@
 Export to PNG
 
 ---DB_Part
-Save to XML/DB - Oracle mapper
+Open diagrams treeview item
 Create script
 Output window
 

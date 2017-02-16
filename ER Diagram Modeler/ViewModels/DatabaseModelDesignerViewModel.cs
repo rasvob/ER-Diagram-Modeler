@@ -22,6 +22,8 @@ namespace ER_Diagram_Modeler.ViewModels
 {
 	public class DatabaseModelDesignerViewModel: INotifyPropertyChanged, IDiagramSerializable
 	{
+		public static double DefaultWidth = 2500;
+
 		private ObservableCollection<TableViewModel> _tableViewModels;
 		private double _scale = 1;
 		private MouseMode _mouseMode = MouseMode.Select;
@@ -40,8 +42,19 @@ namespace ER_Diagram_Modeler.ViewModels
 		private bool _areGuideLinesVisible = true;
 		private string _diagramTitle;
 		private bool _areTableLimitsEnabled = true;
+		private string _database = string.Empty;
 
-		public static double DefaultWidth = 2500;
+		public string Database
+		{
+			get { return _database; }
+			set
+			{
+				if (value == _database) return;
+				_database = value;
+				OnPropertyChanged();
+			}
+		}
+
 
 		public bool AreTableLimitsEnabled
 		{
@@ -378,7 +391,8 @@ namespace ER_Diagram_Modeler.ViewModels
 			var elem = new XElement("DatabaseModelDesignerViewModel", 
 				new XAttribute("DiagramTitle", DiagramTitle),
 				new XAttribute("CanvasWidth", CanvasWidth),
-				new XAttribute("CanvasHeight", CanvasHeight));
+				new XAttribute("CanvasHeight", CanvasHeight),
+				new XAttribute("Database", Database));
 
 			var tables = new XElement("TableViewModels");
 			TableViewModels.ToList().ForEach(t => tables.Add(t.CreateElement()));
@@ -395,6 +409,7 @@ namespace ER_Diagram_Modeler.ViewModels
 			DiagramTitle = element.Attribute("DiagramTitle").Value;
 			CanvasWidth = Convert.ToDouble(element.Attribute("CanvasWidth")?.Value);
 			CanvasHeight = Convert.ToDouble(element.Attribute("CanvasHeight")?.Value);
+			Database = element.Attribute("Database")?.Value;
 		}
 	}
 }
