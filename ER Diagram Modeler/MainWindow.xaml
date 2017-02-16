@@ -431,7 +431,21 @@
 							<canvas:DatabaseModelDesigner x:Name="DatabaseModelDesigner"></canvas:DatabaseModelDesigner>
 						</xcad:LayoutAnchorable>-->
 					</xcad:LayoutDocumentPane>
+					
+					
 				</xcad:LayoutPanel>
+				
+				<xcad:LayoutRoot.BottomSide>
+					<xcad:LayoutAnchorSide>
+						<xcad:LayoutAnchorGroup>
+							<xcad:LayoutAnchorable  x:Name="OutputLayoutAnchorable" Title="Output" ContentId="OutputWindow" CanClose="False" CanAutoHide="True" CanFloat="True" CanHide="True">
+								<TextBlock Text="SELECT * FROM sys.tables WHERE objectid = '75212314'">
+
+								</TextBlock>
+							</xcad:LayoutAnchorable>
+						</xcad:LayoutAnchorGroup>
+					</xcad:LayoutAnchorSide>
+				</xcad:LayoutRoot.BottomSide>
 			</xcad:LayoutRoot>
 		</xcad:DockingManager>
 
