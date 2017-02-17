@@ -66,6 +66,10 @@
     <SignManifests>false</SignManifests>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="ICSharpCode.AvalonEdit, Version=5.0.3.0, Culture=neutral, PublicKeyToken=9cc39be672370310, processorArchitecture=MSIL">
+      <HintPath>..\packages\AvalonEdit.5.0.3\lib\Net40\ICSharpCode.AvalonEdit.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="MahApps.Metro, Version=1.2.3.0, Culture=neutral, PublicKeyToken=f4fb5a3c4d1e5b4f, processorArchitecture=MSIL">
       <HintPath>..\packages\MahApps.Metro.1.2.3.0\lib\net45\MahApps.Metro.dll</HintPath>
       <Private>True</Private>
@@ -124,6 +128,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="CommandOutput\IOutputListener.cs" />
+    <Compile Include="CommandOutput\Output.cs" />
+    <Compile Include="CommandOutput\OutputPanelListener.cs" />
     <Compile Include="Configuration\Providers\DatatypeProvider.cs" />
     <Compile Include="Configuration\Providers\SessionProvider.cs" />
     <Compile Include="ConnectionPanelLoaders\MsSqlTreeViewBuilder.cs" />
@@ -218,6 +225,9 @@
     </Compile>
     <Compile Include="Views\Panels\DatabaseConnectionPanel.xaml.cs">
       <DependentUpon>DatabaseConnectionPanel.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Panels\OutputPanel.xaml.cs">
+      <DependentUpon>OutputPanel.xaml</DependentUpon>
     </Compile>
     <Page Include="Controls\Buttons\DesignerToolBarButton.xaml">
       <SubType>Designer</SubType>
@@ -315,6 +325,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\Panels\OutputPanel.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">
@@ -342,6 +356,9 @@
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
     <AppDesigner Include="Properties\" />
+    <Content Include="Resources\SQLSyntaxHL.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

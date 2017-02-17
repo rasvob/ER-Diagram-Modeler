@@ -5,6 +5,7 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Windows.Forms;
 using System.Xml.Linq;
+using ER_Diagram_Modeler.CommandOutput;
 using ER_Diagram_Modeler.Configuration.Providers;
 using ER_Diagram_Modeler.DatabaseConnection.Dto;
 using ER_Diagram_Modeler.Models.Database;
@@ -87,6 +88,7 @@ END";
 		public void CreateTable(string name)
 		{
 			SqlCommand command = Database.CreateCommand(string.Format(SqlCreateTable, name));
+			Output.WriteLine(command.CommandText);
 			command.ExecuteNonQuery();
 		}
 
@@ -154,15 +156,18 @@ END";
 		public void CreateDatabase(string name)
 		{
 			SqlCommand command = Database.CreateCommand($"{SqlCreateDatabase} [{name}]");
+			Output.WriteLine(command.CommandText);
 			command.ExecuteNonQuery();
 		}
 
 		public void DropDatabase(string name)
 		{
 			SqlCommand commandAlter = Database.CreateCommand($"alter database [{name}] set single_user with rollback immediate");
+			Output.WriteLine(commandAlter.CommandText);
 			commandAlter.ExecuteNonQuery();
 
 			SqlCommand command = Database.CreateCommand($"{SqlDropDatabase} [{name}]");
+			Output.WriteLine(command.CommandText);
 			command.ExecuteNonQuery();
 		}
 
@@ -202,18 +207,21 @@ END";
 			command.CommandType = CommandType.StoredProcedure;
 			command.Parameters.AddWithValue("objname", oldName);
 			command.Parameters.AddWithValue("newname", newName);
+			Output.WriteLine(OutputPanelListener.PrepareSql(command, command.Parameters));
 			command.ExecuteNonQuery();
 		}
 
 		public void AddNewColumn(string table, TableRowModel model)
 		{
 			SqlCommand command = Database.CreateCommand(string.Format(SqlAddColumn, table, model));
+			Output.WriteLine(command.CommandText);
 			command.ExecuteNonQuery();
 		}
 
 		public void AlterColumn(string table, TableRowModel model)
 		{
 			SqlCommand command = Database.CreateCommand(string.Format(SqlAlterColumn, table, model));
+			Output.WriteLine(command.CommandText);
 			command.ExecuteNonQuery();
 		}
 
@@ -224,30 +232,35 @@ END";
 			command.Parameters.AddWithValue("objname", $"{table}.{oldName}");
 			command.Parameters.AddWithValue("newname", newName);
 			command.Parameters.AddWithValue("objtype", "COLUMN");
+			Output.WriteLine(OutputPanelListener.PrepareSql(command, command.Parameters));
 			command.ExecuteNonQuery();
 		}
 
 		public void DropColumn(string table, string column)
 		{
 			SqlCommand command = Database.CreateCommand(string.Format(SqlDropColumn, table, column));
+			Output.WriteLine(command.CommandText);
 			command.ExecuteNonQuery();
 		}
 
 		public void DropTable(string table)
 		{
 			SqlCommand command = Database.CreateCommand(string.Format(SqlDropTable, table));
+			Output.WriteLine(command.CommandText);
 			command.ExecuteNonQuery();
 		}
 
 		public void DropPrimaryKey(string table, string primaryKeyConstraintName)
 		{
 			SqlCommand command = Database.CreateCommand(string.Format(SqlDropConstraint, table, primaryKeyConstraintName));
+			Output.WriteLine(command.CommandText);
 			command.ExecuteNonQuery();
 		}
 
 		public void CreatePrimaryKey(string table, string[] columns)
 		{
 			SqlCommand command = Database.CreateCommand(string.Format(SqlAddPrimaryKeyConstraint, table, $"PK_{table}_{columns[0]}", string.Join(",", columns)));
+			Output.WriteLine(command.CommandText);
 			command.ExecuteNonQuery();
 		}
 
@@ -258,12 +271,14 @@ END";
 			string referencedColumns = string.Join(",", collumns.Select(t => t.Source.Name));
 
 			SqlCommand command = Database.CreateCommand(string.Format(SqlAddForeignKeyConstraint, table, name, tableColumns, referencedTable, referencedColumns));
+			Output.WriteLine(command.CommandText);
 			command.ExecuteNonQuery();
 		}
 
 		public void DropForeignKey(string table, string name)
 		{
 			SqlCommand command = Database.CreateCommand(string.Format(SqlDropConstraint, table, name));
+			Output.WriteLine(command.CommandText);
 			command.ExecuteNonQuery();
 		}
 
@@ -430,6 +445,7 @@ END";
 			string referencedColumns = string.Join(",", collumns.Select(t => t.Source.Name));
 
 			SqlCommand command = Database.CreateCommand(string.Format(SqlAddForeignKeyConstraint2, table, name, tableColumns, referencedTable, referencedColumns, onDelete, onUpdate));
+			Output.WriteLine(command.CommandText);
 			command.ExecuteNonQuery();
 		}
 	}

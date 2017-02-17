@@ -35,12 +35,12 @@
 			<RoutedUICommand x:Key="Commands.SaveDiagramAs" />
 		</ResourceDictionary>
 	</Window.Resources>
-	
+
 	<Window.CommandBindings>
 		<CommandBinding Command="{StaticResource Commands.CanvasSizeCommand}"
 						Executed="ChangeCanvasSize_OnExecuted"
 						CanExecute="ChangeCanvasSize_OnCanExecute"></CommandBinding>
-		
+
 		<CommandBinding Command="{StaticResource Commands.ConnectToMsSqlServer}"
 						Executed="ConnectToMsSql_OnExecuted"
 						CanExecute="ConnectToMsSql_OnCanExecute"></CommandBinding>
@@ -56,7 +56,7 @@
 		<CommandBinding Command="{StaticResource Commands.NewDiagram}"
 						Executed="NewDiagram_OnExecuted"
 						CanExecute="NewDiagram_OnCanExecute"></CommandBinding>
-		
+
 		<CommandBinding Command="{StaticResource Commands.ApplyAttributeEdit}"
 						Executed="ApplyAttributeEdit_OnExecuted"
 						CanExecute="ApplyAttributeEdit_OnCanExecute"></CommandBinding>
@@ -76,7 +76,7 @@
 						CanExecute="SaveDiagram_OnCanExecute"
 						></CommandBinding>
 	</Window.CommandBindings>
-	
+
 	<Window.InputBindings>
 		<KeyBinding Command="{StaticResource Commands.SaveDiagram}" Modifiers="Control" Key="S"></KeyBinding>
 		<KeyBinding Command="{StaticResource Commands.SaveDiagramAs}" Modifiers="Control+Shift" Key="S"></KeyBinding>
@@ -152,7 +152,7 @@
 				AnimateOpacity="False"
 				Theme="Light"
 				IsModal="True">
-				
+
 				<Grid Margin="30">
 					<Grid.RowDefinitions>
 						<RowDefinition Height="Auto"></RowDefinition>
@@ -170,7 +170,7 @@
 							<ColumnDefinition Width="Auto"></ColumnDefinition>
 							<ColumnDefinition Width="Auto"></ColumnDefinition>
 						</Grid.ColumnDefinitions>
-						
+
 						<TextBox Grid.Column="0"
 							Text="{Binding FlyoutRowModel.Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, NotifyOnValidationError=True, ValidatesOnDataErrors=True}"
 							IsReadOnly="False"
@@ -179,9 +179,9 @@
 							Controls:TextBoxHelper.Watermark="Name"
 							Margin="5"
 							>
-							
+
 						</TextBox>
-						
+
 						<ComboBox 
 								x:Name="DataTypeComboBox"
 								Grid.Column="1"
@@ -382,7 +382,7 @@
 		</Controls:FlyoutsControl>
 	</Controls:MetroWindow.Flyouts>
 
-	<Grid> 
+	<Grid>
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto"></RowDefinition>
 			<RowDefinition Height="Auto"></RowDefinition>
@@ -407,7 +407,7 @@
 			</MenuItem>
 			<MenuItem Header="About"></MenuItem>
 		</Menu>
-			
+
 		<!--MainView with Docking-->
 		<xcad:DockingManager Grid.Row="2"
 							 AllowMixedOrientation="False"
@@ -431,17 +431,17 @@
 							<canvas:DatabaseModelDesigner x:Name="DatabaseModelDesigner"></canvas:DatabaseModelDesigner>
 						</xcad:LayoutAnchorable>-->
 					</xcad:LayoutDocumentPane>
-					
-					
+
+
 				</xcad:LayoutPanel>
-				
+
 				<xcad:LayoutRoot.BottomSide>
 					<xcad:LayoutAnchorSide>
 						<xcad:LayoutAnchorGroup>
 							<xcad:LayoutAnchorable  x:Name="OutputLayoutAnchorable" Title="Output" ContentId="OutputWindow" CanClose="False" CanAutoHide="True" CanFloat="True" CanHide="True">
-								<TextBlock Text="SELECT * FROM sys.tables WHERE objectid = '75212314'">
-
-								</TextBlock>
+								<panels:OutputPanel x:Name="OutputPanel">
+									
+								</panels:OutputPanel>
 							</xcad:LayoutAnchorable>
 						</xcad:LayoutAnchorGroup>
 					</xcad:LayoutAnchorSide>
@@ -449,7 +449,7 @@
 			</xcad:LayoutRoot>
 		</xcad:DockingManager>
 
-		
+
 		<!--StatusBar-->
 		<StatusBar Grid.Row="3">
 			<StatusBarItem Content="Ready"/>
@@ -457,66 +457,3 @@
 
 	</Grid>
 </Controls:MetroWindow>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

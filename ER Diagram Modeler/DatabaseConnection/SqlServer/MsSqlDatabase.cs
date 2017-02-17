@@ -2,6 +2,7 @@
 using System.Data;
 using System.Data.SqlClient;
 using System.Threading.Tasks;
+using ER_Diagram_Modeler.CommandOutput;
 using ER_Diagram_Modeler.Configuration.Providers;
 using ER_Diagram_Modeler.ViewModels.Enums;
 

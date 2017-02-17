@@ -210,15 +210,15 @@ namespace ER_Diagram_Modeler.Models.Designer
 		{
 			var sb = new StringBuilder();
 			sb.Append(Name);
-			if (Lenght.HasValue)
+			if (Lenght.HasValue && Lenght.Value != 0)
 			{
 				sb.Append($"({Lenght.Value})");
 			}
-			else if (Scale.HasValue && !Precision.HasValue)
+			else if (Scale.HasValue && !Precision.HasValue && Scale.Value != 0)
 			{
 				sb.Append($"({Scale.Value})");
 			}
-			else if (Scale.HasValue && Precision.HasValue)
+			else if (Scale.HasValue && Precision.HasValue && Scale.Value != 0 && Precision.Value != 0)
 			{
 				sb.Append($"({Precision.Value},{Scale.Value})");
 			}
