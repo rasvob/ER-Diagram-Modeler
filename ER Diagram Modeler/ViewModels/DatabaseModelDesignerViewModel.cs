@@ -333,6 +333,7 @@ namespace ER_Diagram_Modeler.ViewModels
 			TableViewModels = new ObservableCollection<TableViewModel>();
 			ConnectionInfoViewModels = new ObservableCollection<ConnectionInfoViewModel>();
 			ChangeZoomCommand = new SimpleCommand(ChangeZoomCommand_Executed);
+			Database = "NO_DB";
 		}
 
 		private void ChangeZoomCommand_Executed(object o)
@@ -391,8 +392,7 @@ namespace ER_Diagram_Modeler.ViewModels
 			var elem = new XElement("DatabaseModelDesignerViewModel", 
 				new XAttribute("DiagramTitle", DiagramTitle),
 				new XAttribute("CanvasWidth", CanvasWidth),
-				new XAttribute("CanvasHeight", CanvasHeight),
-				new XAttribute("Database", Database));
+				new XAttribute("CanvasHeight", CanvasHeight));
 
 			var tables = new XElement("TableViewModels");
 			TableViewModels.ToList().ForEach(t => tables.Add(t.CreateElement()));
@@ -409,7 +409,7 @@ namespace ER_Diagram_Modeler.ViewModels
 			DiagramTitle = element.Attribute("DiagramTitle").Value;
 			CanvasWidth = Convert.ToDouble(element.Attribute("CanvasWidth")?.Value);
 			CanvasHeight = Convert.ToDouble(element.Attribute("CanvasHeight")?.Value);
-			Database = element.Attribute("Database")?.Value;
+			//Database = element.Attribute("Database")?.Value;
 		}
 	}
 }
