@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Data.SqlClient;
 using System.Windows;
+using ER_Diagram_Modeler.CommandOutput;
 using ER_Diagram_Modeler.Configuration.Providers;
 using ER_Diagram_Modeler.DiagramConstruction.Strategy;
 using ER_Diagram_Modeler.EventArgs;
@@ -25,6 +26,7 @@ namespace ER_Diagram_Modeler.DiagramConstruction
 			catch(Exception exception) when(exception is SqlException || exception is OracleException)
 			{
 				model.Title = oldName;
+				Output.WriteLine(OutputPanelListener.PrepareException(exception.Message));
 				return exception.Message;
 			}
 		}
@@ -39,6 +41,7 @@ namespace ER_Diagram_Modeler.DiagramConstruction
 			}
 			catch(Exception exception) when(exception is SqlException || exception is OracleException)
 			{
+				Output.WriteLine(OutputPanelListener.PrepareException(exception.Message));
 				return exception.Message;
 			}
 		}
@@ -70,6 +73,7 @@ namespace ER_Diagram_Modeler.DiagramConstruction
 			}
 			catch(Exception exception) when(exception is SqlException || exception is OracleException || exception is ApplicationException)
 			{
+				Output.WriteLine(OutputPanelListener.PrepareException(exception.Message));
 				return exception.Message;
 			}
 			finally
@@ -90,6 +94,7 @@ namespace ER_Diagram_Modeler.DiagramConstruction
 			}
 			catch(Exception exception) when(exception is SqlException || exception is OracleException)
 			{
+				Output.WriteLine(OutputPanelListener.PrepareException(exception.Message));
 				return exception.Message;
 			}
 		}
@@ -104,6 +109,7 @@ namespace ER_Diagram_Modeler.DiagramConstruction
 			}
 			catch(Exception exception) when(exception is SqlException || exception is OracleException)
 			{
+				Output.WriteLine(OutputPanelListener.PrepareException(exception.Message));
 				return exception.Message;
 			}
 		}
@@ -124,6 +130,7 @@ namespace ER_Diagram_Modeler.DiagramConstruction
 			}
 			catch(Exception exception) when(exception is SqlException || exception is OracleException || exception is ApplicationException)
 			{
+				Output.WriteLine(OutputPanelListener.PrepareException(exception.Message));
 				return exception.Message;
 			}
 		}
@@ -139,6 +146,7 @@ namespace ER_Diagram_Modeler.DiagramConstruction
 			}
 			catch(Exception exception) when(exception is SqlException || exception is OracleException)
 			{
+				Output.WriteLine(OutputPanelListener.PrepareException(exception.Message));
 				return exception.Message;
 			}
 			finally
@@ -159,6 +167,7 @@ namespace ER_Diagram_Modeler.DiagramConstruction
 			}
 			catch(Exception exception) when(exception is SqlException || exception is OracleException)
 			{
+				Output.WriteLine(OutputPanelListener.PrepareException(exception.Message));
 				return exception.Message;
 			}
 		}
@@ -174,6 +183,7 @@ namespace ER_Diagram_Modeler.DiagramConstruction
 			}
 			catch(Exception exception) when(exception is SqlException || exception is OracleException)
 			{
+				Output.WriteLine(OutputPanelListener.PrepareException(exception.Message));
 				return exception.Message;
 			}
 		}

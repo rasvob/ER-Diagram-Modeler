@@ -320,6 +320,15 @@ END";
 			return res;
 		}
 
+		public DataSet ExecuteRawQuery(string sql)
+		{
+			SqlCommand command = Database.CreateCommand(sql);
+			var dataset = new DataSet("Result");
+			var adapter = new SqlDataAdapter(command);
+			adapter.Fill(dataset);
+			return dataset;
+		}
+
 		private IEnumerable<DiagramModel> ReadDiagramDetails(SqlDataReader reader)
 		{
 			var res = new List<DiagramModel>();

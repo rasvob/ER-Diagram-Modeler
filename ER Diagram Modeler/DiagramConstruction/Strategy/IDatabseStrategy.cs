@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Data;
 using System.Xml.Linq;
 using ER_Diagram_Modeler.Models.Database;
 using ER_Diagram_Modeler.Models.Designer;
@@ -26,6 +27,7 @@ namespace ER_Diagram_Modeler.DiagramConstruction.Strategy
 		int SaveDiagram(string name, XDocument data);
 		int DeleteDiagram(string name);
 		IEnumerable<DiagramModel> SelectDiagrams();
+		DataSet ExecuteRawQuery(string sql);
 		IComparer<RelationshipModel> Comparer { get; set; }
 	}
 }

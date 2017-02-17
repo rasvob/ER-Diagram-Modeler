@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Net.Sockets;
@@ -17,6 +18,14 @@ namespace ER_Diagram_Modeler.DiagramConstruction.Strategy
 {
 	public class MsSqlStrategy: IDatabseStrategy
 	{
+		public DataSet ExecuteRawQuery(string sql)
+		{
+			using(IMapper mapper = new MsSqlMapper())
+			{
+				return mapper.ExecuteRawQuery(sql);
+			}
+		}
+
 		public IComparer<RelationshipModel> Comparer { get; set; } = new MsSqlComparer();
 
 		public TableModel ReadTableDetails(string id, string name)

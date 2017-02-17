@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
 using System.Data.SqlClient;
 using System.Diagnostics;
 using System.IO;
@@ -9,6 +12,7 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Xml.Linq;
+using ER_Diagram_Modeler.CommandOutput;
 using ER_Diagram_Modeler.Configuration.Providers;
 using ER_Diagram_Modeler.DatabaseConnection.Oracle;
 using ER_Diagram_Modeler.DatabaseConnection.SqlServer;
@@ -21,6 +25,7 @@ using ER_Diagram_Modeler.Models.Designer;
 using ER_Diagram_Modeler.ViewModels;
 using ER_Diagram_Modeler.ViewModels.Enums;
 using ER_Diagram_Modeler.Views.Canvas;
+using ER_Diagram_Modeler.Views.Panels;
 using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
 using Oracle.ManagedDataAccess.Client;
@@ -161,6 +166,24 @@ namespace ER_Diagram_Modeler
 			var content = MainDocumentPane.Children[idx].Content;
 
 			var diagram = content as DatabaseModelDesigner;
+
+			if (diagram == null)
+			{
+				var title = await ShowNewDiagramDialog();
+
+				if(title == null)
+				{
+					return;
+				}
+
+				DiagramFacade.CreateNewDiagram(this, title);
+
+				idx = MainDocumentPane.SelectedContentIndex;
+			}
+
+			content = MainDocumentPane.Children[idx].Content;
+			diagram = content as DatabaseModelDesigner;
+
 			if (diagram == null)
 			{
 				return;
@@ -385,6 +408,7 @@ namespace ER_Diagram_Modeler
 			if (res != null)
 			{
 				await this.ShowMessageAsync("Column error", res);
+				Output.WriteLine(OutputPanelListener.PrepareException(res));
 			}
 			else
 			{
@@ -449,6 +473,7 @@ namespace ER_Diagram_Modeler
 			if (res != null)
 			{
 				await this.ShowMessageAsync("Rename table", res);
+				Output.WriteLine(OutputPanelListener.PrepareException(res));
 				return;
 			}
 
@@ -462,6 +487,7 @@ namespace ER_Diagram_Modeler
 			if(res != null)
 			{
 				await this.ShowMessageAsync("Drop column", res);
+				Output.WriteLine(OutputPanelListener.PrepareException(res));
 			}
 
 			ToggleRowFlyout();
@@ -476,6 +502,7 @@ namespace ER_Diagram_Modeler
 			if(res != null)
 			{
 				await this.ShowMessageAsync("Drop column", res);
+				Output.WriteLine(OutputPanelListener.PrepareException(res));
 			}
 		}
 
@@ -496,6 +523,7 @@ namespace ER_Diagram_Modeler
 				if (res != null)
 				{
 					await this.ShowMessageAsync("Drop table", res);
+					Output.WriteLine(OutputPanelListener.PrepareException(res));
 					return;
 				}
 
@@ -516,6 +544,7 @@ namespace ER_Diagram_Modeler
 			if(res != null)
 			{
 				await this.ShowMessageAsync("Primary key constraint", res);
+				Output.WriteLine(OutputPanelListener.PrepareException(res));
 			}
 		}
 
@@ -578,6 +607,7 @@ namespace ER_Diagram_Modeler
 			{
 				await closeProgress(progressDialogController);
 				await this.ShowMessageAsync("Connection error", exception.Message);
+				Output.WriteLine(OutputPanelListener.PrepareException(exception.Message));
 				SessionProvider.Instance.ConnectionType = ConnectionType.None;
 			}
 		}
@@ -599,10 +629,10 @@ namespace ER_Diagram_Modeler
 		public async void AnchorableDesignerActiveChangedHandler(object sender, System.EventArgs e)
 		{
 			var anchorable = sender as LayoutAnchorable;
-
+			
 			DatabaseModelDesigner designer = anchorable?.Content as DatabaseModelDesigner;
 
-			if (designer == null)
+			if (designer == null || !anchorable.IsActive)
 			{
 				return;
 			}
@@ -655,7 +685,75 @@ namespace ER_Diagram_Modeler
 		{
 			var facade = new DiagramFacade(vm);
 			var res = facade.SaveDiagram();
+			Output.WriteLine(DiagramFacade.DiagramSaved);
 			DatabaseConnectionSidebar.RefreshTreeData();
+		}
+
+		private void ShowOutputLayout_OnExecuted(object sender, ExecutedRoutedEventArgs e)
+		{
+			OutputLayoutAnchorable.Show();
+		}
+
+		private void ShowOutputLayout_OnCanExecute(object sender, CanExecuteRoutedEventArgs e)
+		{
+			e.CanExecute = OutputLayoutAnchorable.IsHidden;
+		}
+
+		/// <summary>
+		/// Window closing
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="args"></param>
+		private async void MainWindow_OnClosing(object sender, CancelEventArgs args)
+		{
+			await DiagramFacade.CloseDiagramsOnDisconnect(this);
+		}
+
+		/// <summary>
+		/// Can execute new query command
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		private void NewQuery_OnCanExecute(object sender, CanExecuteRoutedEventArgs e)
+		{
+			e.CanExecute = SessionProvider.Instance.ConnectionType != ConnectionType.None;
+		}
+
+		/// <summary>
+		/// Add new query panel
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		private async void NewQuery_OnExecuted(object sender, ExecutedRoutedEventArgs e)
+		{
+			var title = await this.ShowInputAsync("New query", "Query name", new MetroDialogSettings { DefaultText = "SQL Query" });
+
+			if (title != string.Empty)
+			{
+				var panel = new QueryPanel();
+				panel.QueryResultReady += PanelOnQueryResultReady;
+				panel.BuildNewQueryPanel(this, title);
+
+				MainDocumentPane.Children.Add(panel.Anchorable);
+				int indexOf = MainDocumentPane.Children.IndexOf(panel.Anchorable);
+				MainDocumentPane.SelectedContentIndex = indexOf;
+			}
+		}
+
+		private void PanelOnQueryResultReady(object sender, DataSet dataSet)
+		{
+			QueryResultPanel.RefreshData(dataSet);
+			QueryResultLayoutAnchorable.Show();
+		}
+
+		private void ShowDatasetLayout_OnCanExecute(object sender, CanExecuteRoutedEventArgs e)
+		{
+			e.CanExecute = QueryResultLayoutAnchorable.IsHidden;
+		}
+
+		private void ShowDatasetLayout_OnExecuted(object sender, ExecutedRoutedEventArgs e)
+		{
+			QueryResultLayoutAnchorable.Show();
 		}
 	}
 }

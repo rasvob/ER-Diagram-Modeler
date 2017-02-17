@@ -41,15 +41,20 @@
 										   Command="{StaticResource ClearOutputCommand}"
 										   Icon="{StaticResource CloseIcon}" />
 		</StackPanel>
-		
-		<avalonedit:TextEditor Grid.Column="1"
-			Margin="3"
-			HorizontalScrollBarVisibility="Auto"
-			ShowLineNumbers="False"
-			IsReadOnly="True"
-			FontFamily="Consolas"
-			FontSize="10pt"
-			x:Name="OutputTextBox">
-		</avalonedit:TextEditor>
-    </Grid>
+
+		<ScrollViewer Grid.Column="1"
+					  HorizontalScrollBarVisibility="Auto">
+			<avalonedit:TextEditor 
+				Margin="3"
+				HorizontalScrollBarVisibility="Hidden"
+				VerticalScrollBarVisibility="Hidden"
+				ShowLineNumbers="False"
+				IsReadOnly="True"
+				IsEnabled="False"
+				FontFamily="Consolas"
+				FontSize="10pt"
+				x:Name="OutputTextBox">
+			</avalonedit:TextEditor>
+		</ScrollViewer>
+	</Grid>
 </UserControl>

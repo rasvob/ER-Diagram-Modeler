@@ -31,5 +31,6 @@ namespace ER_Diagram_Modeler.DatabaseConnection
 		int UpdateDiagram(string name, XDocument data);
 		int DeleteDiagram(string name);
 		IEnumerable<DiagramModel> SelectDiagrams();
+		DataSet ExecuteRawQuery(string sql);
 	}
 }

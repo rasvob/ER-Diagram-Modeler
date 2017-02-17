@@ -226,8 +226,14 @@
     <Compile Include="Views\Panels\DatabaseConnectionPanel.xaml.cs">
       <DependentUpon>DatabaseConnectionPanel.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Panels\DataSetResultPanel.xaml.cs">
+      <DependentUpon>DataSetResultPanel.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Panels\OutputPanel.xaml.cs">
       <DependentUpon>OutputPanel.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Panels\QueryPanel.xaml.cs">
+      <DependentUpon>QueryPanel.xaml</DependentUpon>
     </Compile>
     <Page Include="Controls\Buttons\DesignerToolBarButton.xaml">
       <SubType>Designer</SubType>
@@ -325,7 +331,15 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\Panels\DataSetResultPanel.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\Panels\OutputPanel.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Panels\QueryPanel.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

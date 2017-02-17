@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Xml.Linq;
 using ER_Diagram_Modeler.Models.Database;
 using ER_Diagram_Modeler.Models.Designer;
@@ -124,6 +125,11 @@ namespace ER_Diagram_Modeler.DiagramConstruction.Strategy
 		public IEnumerable<DiagramModel> SelectDiagrams()
 		{
 			return _strategy.SelectDiagrams();
+		}
+
+		public DataSet ExecuteRawQuery(string sql)
+		{
+			return _strategy.ExecuteRawQuery(sql);
 		}
 	}
 }

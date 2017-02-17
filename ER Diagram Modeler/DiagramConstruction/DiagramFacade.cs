@@ -10,6 +10,7 @@ using System.Windows.Media;
 using System.Xml.Linq;
 using System.Xml.XPath;
 using ER_Diagram_Modeler.Annotations;
+using ER_Diagram_Modeler.CommandOutput;
 using ER_Diagram_Modeler.Configuration.Providers;
 using ER_Diagram_Modeler.DatabaseConnection;
 using ER_Diagram_Modeler.DiagramConstruction.Strategy;
@@ -29,6 +30,10 @@ namespace ER_Diagram_Modeler.DiagramConstruction
 	{
 		public DatabaseModelDesignerViewModel ViewModel { get; set; }
 		public Action<TableModel> AddTableCallbackAction { get; set; }
+
+		public static string DiagramSaved = "DIAGRAM SAVED";
+		public static string DiagramLoaded = "DIAGRAM LOADED";
+		public static string DiagramCreated = "DIAGRAM CREATED";
 
 		public DiagramFacade(DatabaseModelDesignerViewModel viewModel)
 		{
@@ -207,7 +212,9 @@ namespace ER_Diagram_Modeler.DiagramConstruction
 				.Where(s => tablesInDb.Any(t => t.Id.Equals(s.Model.Id)))
 				.ToList();
 
-			if (tableElements == null || !tableElements.Any())
+			Output.WriteLine(DiagramLoaded);
+
+			if(tableElements == null || !tableElements.Any())
 			{
 				return;	
 			}
@@ -264,6 +271,7 @@ namespace ER_Diagram_Modeler.DiagramConstruction
 				ViewModel.ConnectionInfoViewModels.Add(t);
 				await t.BuildConnection3(ViewModel);
 			});
+
 		}
 
 		public int SaveDiagram()
@@ -333,6 +341,7 @@ namespace ER_Diagram_Modeler.DiagramConstruction
 			window.MainDocumentPane.Children.Add(anchorable);
 			int indexOf = window.MainDocumentPane.Children.IndexOf(anchorable);
 			window.MainDocumentPane.SelectedContentIndex = indexOf;
+			Output.WriteLine(DiagramCreated);
 		}
 
 		public static IEnumerable<Rectangle> GetTableRectangles(IEnumerable<TableViewModel> tables, int step = 1)
@@ -399,6 +408,8 @@ namespace ER_Diagram_Modeler.DiagramConstruction
 			IEnumerable<LayoutContent> contents =
 				window.MainDocumentPane.ChildrenSorted.Where(t => t.Content is DatabaseModelDesigner).ToList();
 
+			var facade = new DiagramFacade(new DatabaseModelDesigner());
+
 			bool yesToAll = false;
 
 			foreach (LayoutContent content in contents)
@@ -410,11 +421,10 @@ namespace ER_Diagram_Modeler.DiagramConstruction
 					continue;
 				}
 
-				content.Close();
-
 				if (yesToAll)
 				{
 					forSave.Enqueue(designer.ViewModel);
+					content.Close();
 					continue;
 				}
 
@@ -432,16 +442,18 @@ namespace ER_Diagram_Modeler.DiagramConstruction
 				switch (res)
 				{
 					case MessageDialogResult.Affirmative:
-						forSave.Enqueue(designer.ViewModel);
+						facade.ViewModel = designer.ViewModel;
+						facade.SaveDiagram();
 						break;
 					case MessageDialogResult.FirstAuxiliary:
 						yesToAll = true;
 						forSave.Enqueue(designer.ViewModel);
 						break;
 				}
+
+				content.Close();
 			}
 
-			var facade = new DiagramFacade(new DatabaseModelDesigner());
 			while(forSave.Count > 0)
 			{
 				var vm = forSave.Dequeue();

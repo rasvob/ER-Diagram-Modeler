@@ -4,6 +4,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Xml.Linq;
+using ER_Diagram_Modeler.CommandOutput;
 using ER_Diagram_Modeler.Configuration.Providers;
 using ER_Diagram_Modeler.DatabaseConnection.Dto;
 using ER_Diagram_Modeler.DatabaseConnection.SqlServer;
@@ -143,6 +144,7 @@ WHERE a.CONSTRAINT_TYPE = 'R'
 		public void CreateTable(string name)
 		{
 			OracleCommand command = Database.CreateCommand(string.Format(SqlCreateTable, TableNameWithOwnerCaseSensitve(name), name));
+			Output.WriteLine(command.CommandText);
 			command.ExecuteNonQuery();
 		}
 
@@ -236,42 +238,49 @@ WHERE a.CONSTRAINT_TYPE = 'R'
 		public void RenameTable(string oldName, string newName)
 		{
 			OracleCommand command = Database.CreateCommand(string.Format(SqlRenameTable, oldName, newName));
+			Output.WriteLine(command.CommandText);
 			command.ExecuteNonQuery();
 		}
 
 		public void AddNewColumn(string table, TableRowModel model)
 		{
 			OracleCommand command = Database.CreateCommand(string.Format(SqlAddColumn, TableNameWithOwnerCaseSensitve(table), model));
+			Output.WriteLine(command.CommandText);
 			command.ExecuteNonQuery();
 		}
 
 		public void AlterColumn(string table, TableRowModel model)
 		{
 			OracleCommand command = Database.CreateCommand(string.Format(SqlModifyColumn, TableNameWithOwnerCaseSensitve(table), model));
+			Output.WriteLine(command.CommandText);
 			command.ExecuteNonQuery();
 		}
 
 		public void RenameColumn(string table, string oldName, string newName)
 		{
 			OracleCommand command = Database.CreateCommand(string.Format(SqlRenameColumn, TableNameWithOwnerCaseSensitve(table), oldName, newName));
+			Output.WriteLine(command.CommandText);
 			command.ExecuteNonQuery();
 		}
 
 		public void DropColumn(string table, string column)
 		{
 			OracleCommand command = Database.CreateCommand(string.Format(SqlDropColumn, TableNameWithOwnerCaseSensitve(table), column));
+			Output.WriteLine(command.CommandText);
 			command.ExecuteNonQuery();
 		}
 
 		public void DropTable(string table)
 		{
 			OracleCommand command = Database.CreateCommand(string.Format(SqlDropTable, TableNameWithOwnerCaseSensitve(table)));
+			Output.WriteLine(command.CommandText);
 			command.ExecuteNonQuery();
 		}
 
 		public void DropPrimaryKey(string table, string primaryKeyConstraintName)
 		{
 			OracleCommand command = Database.CreateCommand(string.Format(SqlDropConstraint, TableNameWithOwnerCaseSensitve(table), primaryKeyConstraintName));
+			Output.WriteLine(command.CommandText);
 			command.ExecuteNonQuery();
 		}
 
@@ -279,6 +288,7 @@ WHERE a.CONSTRAINT_TYPE = 'R'
 		{
 			string cols = string.Join(",", columns);
 			OracleCommand command = Database.CreateCommand(string.Format(SqlAddPrimaryKeyConstraint, TableNameWithOwnerCaseSensitve(table), $"PK_{table}", cols));
+			Output.WriteLine(command.CommandText);
 			command.ExecuteNonQuery();
 		}
 
@@ -289,12 +299,14 @@ WHERE a.CONSTRAINT_TYPE = 'R'
 			string referencedColumns = string.Join(",", collumns.Select(t => t.Source.Name));
 
 			OracleCommand command = Database.CreateCommand(string.Format(SqlAddForeignKeyConstraint, TableNameWithOwnerCaseSensitve(table), name, tableColumns, TableNameWithOwnerCaseSensitve(referencedTable), referencedColumns));
+			Output.WriteLine(command.CommandText);
 			command.ExecuteNonQuery();
 		}
 
 		public void DropForeignKey(string table, string name)
 		{
 			OracleCommand command = Database.CreateCommand(string.Format(SqlDropConstraint, TableNameWithOwnerCaseSensitve(table), name));
+			Output.WriteLine(command.CommandText);
 			command.ExecuteNonQuery();
 		}
 
@@ -341,6 +353,15 @@ WHERE a.CONSTRAINT_TYPE = 'R'
 			var res = ReadDiagrams(reader);
 			reader.Close();
 			return res;
+		}
+
+		public DataSet ExecuteRawQuery(string sql)
+		{
+			OracleCommand command = Database.CreateCommand(sql);
+			var dataset = new DataSet("Result");
+			var adapter = new OracleDataAdapter(command);
+			adapter.Fill(dataset);
+			return dataset;
 		}
 
 		private IEnumerable<DiagramModel> ReadDiagrams(OracleDataReader reader)
@@ -419,6 +440,7 @@ WHERE a.CONSTRAINT_TYPE = 'R'
 			}
 			
 			OracleCommand command = Database.CreateCommand(commandStr);
+			Output.WriteLine(command.CommandText);
 			command.ExecuteNonQuery();
 		}
 	}

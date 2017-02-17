@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Xml.Linq;
 using ER_Diagram_Modeler.Configuration.Providers;
@@ -16,6 +17,14 @@ namespace ER_Diagram_Modeler.DiagramConstruction.Strategy
 {
 	public class OracleStrategy: IDatabseStrategy
 	{
+		public DataSet ExecuteRawQuery(string sql)
+		{
+			using(IMapper mapper = new OracleMapper())
+			{
+				return mapper.ExecuteRawQuery(sql);
+			}
+		}
+
 		public IComparer<RelationshipModel> Comparer { get; set; } = new OracleComparer();
 
 		public TableModel ReadTableDetails(string id, string name)
@@ -249,7 +258,7 @@ namespace ER_Diagram_Modeler.DiagramConstruction.Strategy
 					IEnumerable<DiagramModel> diagrams = mapper.SelectDiagrams();
 					return diagrams;
 				}
-				catch (OracleException e)
+				catch (OracleException)
 				{
 					return new List<DiagramModel>();
 				}

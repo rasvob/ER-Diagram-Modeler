@@ -25,7 +25,12 @@
 
 	  <Keywords fontWeight="bold" foreground="Green" >
 		  <Word>DIAGRAM SAVED</Word>
+		  <Word>DIAGRAM LOADED</Word>
 		  <Word>DIAGRAM CREATED</Word>
+	  </Keywords>
+
+	  <Keywords fontWeight="bold" foreground="Red" >
+		  <Word>EXCEPTION:</Word>
 	  </Keywords>
 	  
     <Keywords fontWeight="bold" foreground="Blue" >

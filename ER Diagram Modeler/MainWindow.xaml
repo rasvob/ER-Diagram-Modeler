@@ -21,6 +21,7 @@
 		BorderThickness="1"
 		Icon="icon.ico"
         Title="ER Diagram Modeler" 
+		Closing="MainWindow_OnClosing"
 		Height="700" Width="1200">
 	<Window.Resources>
 		<ResourceDictionary>
@@ -28,11 +29,14 @@
 			<RoutedUICommand x:Key="Commands.ConnectToMsSqlServer" />
 			<RoutedUICommand x:Key="Commands.ConnectToOracle" />
 			<RoutedUICommand x:Key="Commands.ShowDatabaseConnectionLayout" />
+			<RoutedUICommand x:Key="Commands.ShowOutputLayout" />
+			<RoutedUICommand x:Key="Commands.ShowDatasetLayout" />
 			<RoutedUICommand x:Key="Commands.NewDiagram" />
 			<RoutedUICommand x:Key="Commands.ApplyAttributeEdit" />
 			<RoutedUICommand x:Key="Commands.RemoveColumn" />
 			<RoutedUICommand x:Key="Commands.SaveDiagram" />
 			<RoutedUICommand x:Key="Commands.SaveDiagramAs" />
+			<RoutedUICommand x:Key="Commands.NewQuery" />
 		</ResourceDictionary>
 	</Window.Resources>
 
@@ -75,12 +79,28 @@
 						Executed="SaveDiagramAs_OnExecuted"
 						CanExecute="SaveDiagram_OnCanExecute"
 						></CommandBinding>
+
+		<CommandBinding Command="{StaticResource Commands.ShowOutputLayout}"
+						Executed="ShowOutputLayout_OnExecuted"
+						CanExecute="ShowOutputLayout_OnCanExecute"
+						></CommandBinding>
+
+		<CommandBinding Command="{StaticResource Commands.ShowDatasetLayout}"
+						Executed="ShowDatasetLayout_OnExecuted"
+						CanExecute="ShowDatasetLayout_OnCanExecute"
+						></CommandBinding>
+
+		<CommandBinding Command="{StaticResource Commands.NewQuery}"
+						Executed="NewQuery_OnExecuted"
+						CanExecute="NewQuery_OnCanExecute"
+						></CommandBinding>
 	</Window.CommandBindings>
 
 	<Window.InputBindings>
 		<KeyBinding Command="{StaticResource Commands.SaveDiagram}" Modifiers="Control" Key="S"></KeyBinding>
 		<KeyBinding Command="{StaticResource Commands.SaveDiagramAs}" Modifiers="Control+Shift" Key="S"></KeyBinding>
 		<KeyBinding Command="{StaticResource Commands.NewDiagram}" Modifiers="Control+Shift" Key="N"></KeyBinding>
+		<KeyBinding Command="{StaticResource Commands.NewQuery}" Modifiers="Control" Key="Q"></KeyBinding>
 	</Window.InputBindings>
 
 	<Controls:MetroWindow.Flyouts>
@@ -395,12 +415,15 @@
 			<MenuItem Header="File">
 				<MenuItem Name="MenuItemTest" Header="Test PK" Click="MenuItemTest_OnClick"/>
 				<MenuItem Name="MenuItemAddDiagram" Header="Add new diagram (Ctrl + Shift + N)" Command="{StaticResource Commands.NewDiagram}"/>
+				<MenuItem Name="MenuItemAddQuery" Header="Add new query window (Ctrl + Q)" Command="{StaticResource Commands.NewQuery}"/>
 				<MenuItem Name="MenuItemSaveDiagram" Header="Save diagram (Ctrl + S)" Command="{StaticResource Commands.SaveDiagram}"></MenuItem>
 				<MenuItem Name="MenuItemSaveDiagramAs" Header="Save diagram as... (Ctrl + Shift + S)" Command="{StaticResource Commands.SaveDiagramAs}"></MenuItem>
 				<MenuItem Header="Exit"/>
 			</MenuItem>
 			<MenuItem Header="Views">
 				<MenuItem Name="MenuItemConnectionPanel" Header="Database Connection" Command="{StaticResource Commands.ShowDatabaseConnectionLayout}"/>
+				<MenuItem Name="MenuItemOutputPanel" Header="Output" Command="{StaticResource Commands.ShowOutputLayout}"/>
+				<MenuItem Name="MenuItemQueryResultPanel" Header="Query result" Command="{StaticResource Commands.ShowDatasetLayout}"/>
 			</MenuItem>
 			<MenuItem Header="Settings">
 				<MenuItem Header="Change canvas dimensions" Command="{StaticResource Commands.CanvasSizeCommand}"></MenuItem>
@@ -437,18 +460,22 @@
 
 				<xcad:LayoutRoot.BottomSide>
 					<xcad:LayoutAnchorSide>
-						<xcad:LayoutAnchorGroup>
-							<xcad:LayoutAnchorable  x:Name="OutputLayoutAnchorable" Title="Output" ContentId="OutputWindow" CanClose="False" CanAutoHide="True" CanFloat="True" CanHide="True">
+						<xcad:LayoutAnchorGroup x:Name="BottomAnchorGroup">
+							<xcad:LayoutAnchorable x:Name="OutputLayoutAnchorable" Title="Output" ContentId="OutputWindow" CanClose="False" CanAutoHide="True" CanFloat="True" CanHide="True">
 								<panels:OutputPanel x:Name="OutputPanel">
 									
 								</panels:OutputPanel>
+							</xcad:LayoutAnchorable>
+
+							<xcad:LayoutAnchorable  x:Name="QueryResultLayoutAnchorable" Title="Query result" ContentId="DatasetResultId" CanClose="False" CanAutoHide="True" CanFloat="True" CanHide="True">
+								<panels:DataSetResultPanel x:Name="QueryResultPanel">
+								</panels:DataSetResultPanel>
 							</xcad:LayoutAnchorable>
 						</xcad:LayoutAnchorGroup>
 					</xcad:LayoutAnchorSide>
 				</xcad:LayoutRoot.BottomSide>
 			</xcad:LayoutRoot>
 		</xcad:DockingManager>
-
 
 		<!--StatusBar-->
 		<StatusBar Grid.Row="3">
