@@ -42,7 +42,7 @@ namespace ER_Diagram_Modeler.ViewModels
 		private bool _areGuideLinesVisible = true;
 		private string _diagramTitle;
 		private bool _areTableLimitsEnabled = true;
-		private string _database = string.Empty;
+		private string _database = "NO_DB";
 
 		public string Database
 		{
