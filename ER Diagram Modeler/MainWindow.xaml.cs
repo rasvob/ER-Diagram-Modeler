@@ -28,6 +28,7 @@ using ER_Diagram_Modeler.Views.Canvas;
 using ER_Diagram_Modeler.Views.Panels;
 using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
+using Microsoft.Win32;
 using Oracle.ManagedDataAccess.Client;
 using Xceed.Wpf.AvalonDock.Layout;
 using Xceed.Wpf.Toolkit.Core.Utilities;
@@ -43,6 +44,7 @@ namespace ER_Diagram_Modeler
 		private TableModel _flyoutTableModel;
 		private EditRowEventArgs _flyoutRowEventArgs = null;
 		private readonly DatabaseUpdater _updater;
+		private bool _canClose = false;
 
 		public MainWindow()
 		{
@@ -251,11 +253,6 @@ namespace ER_Diagram_Modeler
 			}
 		}
 
-		private void MenuItemTest_OnClick(object sender, RoutedEventArgs e)
-		{
-			
-		}
-
 		private async void ChangeCanvasSize_OnExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
 			var activeDiagramModeler = MainDocumentPane.SelectedContent.Content as DatabaseModelDesigner;
@@ -286,6 +283,10 @@ namespace ER_Diagram_Modeler
 
 		private async void ConnectToMsSql_OnExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
+			await DiagramFacade.CloseDiagramsOnDisconnect(this);
+			SessionProvider.Instance.Disconnect();
+			DatabaseConnectionSidebar.HideDatabaseStackPanels();
+
 			ProgressDialogController progressDialogController = null;
 
 			Func<ProgressDialogController, Task> closeProgress = async t =>
@@ -550,6 +551,10 @@ namespace ER_Diagram_Modeler
 
 		private async void ConnectToOracle_OnExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
+			await DiagramFacade.CloseDiagramsOnDisconnect(this);
+			SessionProvider.Instance.Disconnect();
+			DatabaseConnectionSidebar.HideDatabaseStackPanels();
+
 			//TODO: REMOVE LOGIN CREDS
 			ProgressDialogController progressDialogController = null;
 
@@ -706,7 +711,15 @@ namespace ER_Diagram_Modeler
 		/// <param name="args"></param>
 		private async void MainWindow_OnClosing(object sender, CancelEventArgs args)
 		{
+			if (_canClose)
+			{
+				return;
+			}
+
+			args.Cancel = true;
 			await DiagramFacade.CloseDiagramsOnDisconnect(this);
+			_canClose = true;
+			Application.Current.Shutdown();
 		}
 
 		/// <summary>
@@ -754,6 +767,58 @@ namespace ER_Diagram_Modeler
 		private void ShowDatasetLayout_OnExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
 			QueryResultLayoutAnchorable.Show();
+		}
+
+		private void OpenQueryFile_OnExecuted(object sender, ExecutedRoutedEventArgs e)
+		{
+			var dialog = new OpenFileDialog
+			{
+				Filter = "SQL Files|*.sql|Text Files|*.txt|All files|*.*",
+				Multiselect = false
+			};
+			bool? showDialog = dialog.ShowDialog(this);
+
+			if (!showDialog.Value) return;
+
+			string text = File.ReadAllText(dialog.FileName);
+
+			var panel = new QueryPanel {Text = text, FilePath = dialog.FileName};
+			panel.QueryResultReady += PanelOnQueryResultReady;
+			panel.BuildNewQueryPanel(this, Path.GetFileNameWithoutExtension(dialog.FileName));
+
+			MainDocumentPane.Children.Add(panel.Anchorable);
+			int indexOf = MainDocumentPane.Children.IndexOf(panel.Anchorable);
+			MainDocumentPane.SelectedContentIndex = indexOf;
+		}
+
+		private async void ShowAbout_OnExecuted(object sender, ExecutedRoutedEventArgs e)
+		{
+			await this.ShowMessageAsync("About", "Created by Radek Svoboda (rasvob14@gmail.com)");
+		}
+
+		private void ShowMsSqlConnectionPanel_OnExecuted(object sender, ExecutedRoutedEventArgs e)
+		{
+			var flyoutMsSql = Flyouts.Items[0] as Flyout;
+
+			if(flyoutMsSql != null)
+			{
+				flyoutMsSql.IsOpen = !flyoutMsSql.IsOpen;
+			}
+		}
+
+		private void ShowOracleConnectionPanel_OnExecuted(object sender, ExecutedRoutedEventArgs e)
+		{
+			var flyoutMsSql = Flyouts.Items[2] as Flyout;
+
+			if(flyoutMsSql != null)
+			{
+				flyoutMsSql.IsOpen = !flyoutMsSql.IsOpen;
+			}
+		}
+
+		private void Exit_OnClick(object sender, RoutedEventArgs e)
+		{
+			Close();
 		}
 	}
 }

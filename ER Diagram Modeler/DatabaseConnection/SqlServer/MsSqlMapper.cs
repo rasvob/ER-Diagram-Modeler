@@ -323,6 +323,7 @@ END";
 		public DataSet ExecuteRawQuery(string sql)
 		{
 			SqlCommand command = Database.CreateCommand(sql);
+			Output.WriteLine(command.CommandText);
 			var dataset = new DataSet("Result");
 			var adapter = new SqlDataAdapter(command);
 			adapter.Fill(dataset);

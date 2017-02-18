@@ -25,7 +25,7 @@
 		Height="700" Width="1200">
 	<Window.Resources>
 		<ResourceDictionary>
-			<RoutedCommand x:Key="Commands.CanvasSizeCommand"></RoutedCommand>
+			<RoutedCommand x:Key="Commands.CanvasSizeCommand" />
 			<RoutedUICommand x:Key="Commands.ConnectToMsSqlServer" />
 			<RoutedUICommand x:Key="Commands.ConnectToOracle" />
 			<RoutedUICommand x:Key="Commands.ShowDatabaseConnectionLayout" />
@@ -37,6 +37,10 @@
 			<RoutedUICommand x:Key="Commands.SaveDiagram" />
 			<RoutedUICommand x:Key="Commands.SaveDiagramAs" />
 			<RoutedUICommand x:Key="Commands.NewQuery" />
+			<RoutedUICommand x:Key="Commands.OpenQueryFile" />
+			<RoutedUICommand x:Key="Commands.ShowAbout" />
+			<RoutedUICommand x:Key="Commands.ShowMsSqlConnectionPanel" />
+			<RoutedUICommand x:Key="Commands.ShowOracleConnectionPanel" />
 		</ResourceDictionary>
 	</Window.Resources>
 
@@ -94,6 +98,15 @@
 						Executed="NewQuery_OnExecuted"
 						CanExecute="NewQuery_OnCanExecute"
 						></CommandBinding>
+
+		<CommandBinding Command="{StaticResource Commands.OpenQueryFile}"
+						Executed="OpenQueryFile_OnExecuted"
+						CanExecute="NewQuery_OnCanExecute"
+						></CommandBinding>
+
+		<CommandBinding Command="{StaticResource Commands.ShowAbout}" Executed="ShowAbout_OnExecuted" />
+		<CommandBinding Command="{StaticResource Commands.ShowMsSqlConnectionPanel}" Executed="ShowMsSqlConnectionPanel_OnExecuted" />
+		<CommandBinding Command="{StaticResource Commands.ShowOracleConnectionPanel}" Executed="ShowOracleConnectionPanel_OnExecuted" />
 	</Window.CommandBindings>
 
 	<Window.InputBindings>
@@ -101,6 +114,9 @@
 		<KeyBinding Command="{StaticResource Commands.SaveDiagramAs}" Modifiers="Control+Shift" Key="S"></KeyBinding>
 		<KeyBinding Command="{StaticResource Commands.NewDiagram}" Modifiers="Control+Shift" Key="N"></KeyBinding>
 		<KeyBinding Command="{StaticResource Commands.NewQuery}" Modifiers="Control" Key="Q"></KeyBinding>
+		<KeyBinding Command="{StaticResource Commands.OpenQueryFile}" Modifiers="Control" Key="O"></KeyBinding>
+		<KeyBinding Command="{StaticResource Commands.ShowMsSqlConnectionPanel}" Modifiers="Alt" Key="M"></KeyBinding>
+		<KeyBinding Command="{StaticResource Commands.ShowOracleConnectionPanel}" Modifiers="Alt" Key="O"></KeyBinding>
 	</Window.InputBindings>
 
 	<Controls:MetroWindow.Flyouts>
@@ -413,12 +429,18 @@
 		<!--Menu-->
 		<Menu Grid.Row="0">
 			<MenuItem Header="File">
-				<MenuItem Name="MenuItemTest" Header="Test PK" Click="MenuItemTest_OnClick"/>
-				<MenuItem Name="MenuItemAddDiagram" Header="Add new diagram (Ctrl + Shift + N)" Command="{StaticResource Commands.NewDiagram}"/>
-				<MenuItem Name="MenuItemAddQuery" Header="Add new query window (Ctrl + Q)" Command="{StaticResource Commands.NewQuery}"/>
-				<MenuItem Name="MenuItemSaveDiagram" Header="Save diagram (Ctrl + S)" Command="{StaticResource Commands.SaveDiagram}"></MenuItem>
-				<MenuItem Name="MenuItemSaveDiagramAs" Header="Save diagram as... (Ctrl + Shift + S)" Command="{StaticResource Commands.SaveDiagramAs}"></MenuItem>
-				<MenuItem Header="Exit"/>
+				<MenuItem Header="Diagram">
+					<MenuItem Name="MenuItemAddDiagram" Header="Add new diagram (Ctrl + Shift + N)" Command="{StaticResource Commands.NewDiagram}"/>
+					<MenuItem Name="MenuItemSaveDiagram" Header="Save diagram (Ctrl + S)" Command="{StaticResource Commands.SaveDiagram}"></MenuItem>
+					<MenuItem Name="MenuItemSaveDiagramAs" Header="Save diagram as... (Ctrl + Shift + S)" Command="{StaticResource Commands.SaveDiagramAs}"></MenuItem>
+				</MenuItem>
+
+				<MenuItem Header="Query">
+					<MenuItem Name="MenuItemAddQuery" Header="Add new query window (Ctrl + Q)" Command="{StaticResource Commands.NewQuery}"/>
+					<MenuItem Name="MenuItemOpenQuery" Header="Open SQL query (Ctrl + O)" Command="{StaticResource Commands.OpenQueryFile}"/>
+				</MenuItem>
+								
+				<MenuItem Header="Exit" Click="Exit_OnClick"/>
 			</MenuItem>
 			<MenuItem Header="Views">
 				<MenuItem Name="MenuItemConnectionPanel" Header="Database Connection" Command="{StaticResource Commands.ShowDatabaseConnectionLayout}"/>
@@ -428,7 +450,7 @@
 			<MenuItem Header="Settings">
 				<MenuItem Header="Change canvas dimensions" Command="{StaticResource Commands.CanvasSizeCommand}"></MenuItem>
 			</MenuItem>
-			<MenuItem Header="About"></MenuItem>
+			<MenuItem Header="About" Command="{StaticResource Commands.ShowAbout}"></MenuItem>
 		</Menu>
 
 		<!--MainView with Docking-->

@@ -66,16 +66,6 @@ namespace ER_Diagram_Modeler.Views.Panels
 			if (btn != null) btn.ContextMenu.IsOpen = true;
 		}
 
-		private void ConnectToSqlServerMenuItem_OnClick(object sender, RoutedEventArgs e)
-		{
-			OnConnectionClick(ConnectionType.SqlServer);
-		}
-
-		private void ConnectToOracleMenuItem_OnClick(object sender, RoutedEventArgs e)
-		{
-			OnConnectionClick(ConnectionType.Oracle);
-		}
-
 		protected virtual void OnConnectionClick(ConnectionType e)
 		{
 			ConnectionClick?.Invoke(this, e);
@@ -274,6 +264,16 @@ namespace ER_Diagram_Modeler.Views.Panels
 		protected virtual void OnMsSqlDatabaseChanged(string e)
 		{
 			MsSqlDatabaseChanged?.Invoke(this, e);
+		}
+
+		private void ConnectToSqlServerMenuItem_OnClick(object sender, RoutedEventArgs e)
+		{
+			OnConnectionClick(ConnectionType.SqlServer);
+		}
+
+		private void ConnectToOracleMenuItem_OnClick(object sender, RoutedEventArgs e)
+		{
+			OnConnectionClick(ConnectionType.Oracle);
 		}
 	}
 }

@@ -24,15 +24,18 @@
 	<UserControl.CommandBindings>
 		<CommandBinding Command="{StaticResource DisconnectFromServerCommand}" 
 				Executed="Disconnect_OnExecuted"
-				CanExecute="Disconnect_OnCanExecute">
-		</CommandBinding>
+				CanExecute="Disconnect_OnCanExecute" />
+
 
 		<CommandBinding Command="{StaticResource CreateMsSqlDatabaseCommand}" 
 				Executed="CreateNewMsSqlDatabase_OnExecuted"
-				CanExecute="CreateNewMsSqlDatabase_OnCanExecute">
-		</CommandBinding>
+				CanExecute="CreateNewMsSqlDatabase_OnCanExecute" />
+
 	</UserControl.CommandBindings>
 	
+	<UserControl.InputBindings>
+		<KeyBinding Command="{StaticResource DisconnectFromServerCommand}" Modifiers="Alt" Key="D"></KeyBinding>
+	</UserControl.InputBindings>
 	
 	<Grid>
 		<Grid.RowDefinitions>
@@ -49,8 +52,8 @@
 										   Icon="{StaticResource ConnectToServerIcon}">
 				<Button.ContextMenu>
 					<ContextMenu>
-						<MenuItem Header="MS SQL Server" Name="ConnectToSqlServerMenuItem" Click="ConnectToSqlServerMenuItem_OnClick"></MenuItem>
-						<MenuItem Header="Oracle" Name="ConnectToOracleMenuItem" Click="ConnectToOracleMenuItem_OnClick"></MenuItem>
+						<MenuItem Header="MS SQL Server (Alt + M)" Name="ConnectToSqlServerMenuItem" Click="ConnectToSqlServerMenuItem_OnClick"></MenuItem>
+						<MenuItem Header="Oracle (Alt + O)" Name="ConnectToOracleMenuItem" Click="ConnectToOracleMenuItem_OnClick"></MenuItem>
 					</ContextMenu>
 				</Button.ContextMenu>
 			</buttons:DesignerToolBarButton>

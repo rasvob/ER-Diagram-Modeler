@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Data;
 using System.Data.SqlClient;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Windows;
@@ -12,6 +13,7 @@ using ER_Diagram_Modeler.Configuration.Providers;
 using ER_Diagram_Modeler.DiagramConstruction.Strategy;
 using ICSharpCode.AvalonEdit.Highlighting;
 using ICSharpCode.AvalonEdit.Highlighting.Xshd;
+using Microsoft.Win32;
 using Oracle.ManagedDataAccess.Client;
 using Xceed.Wpf.AvalonDock.Layout;
 
@@ -26,8 +28,14 @@ namespace ER_Diagram_Modeler.Views.Panels
 		public LayoutAnchorable Anchorable { get; set; }
 		public event EventHandler<DataSet> QueryResultReady;
 
-		//TODO: Only debug
+		public string FilePath { get; set; }
+		public string Text
+		{
+			get { return QueryEditor.Text; }
+			set { QueryEditor.Text = value; }
+		}
 
+		//TODO: Only debug
 		private string TestSql = @"SELECT * 
 FROM sys.tables
 
@@ -113,17 +121,45 @@ exec sp_pkeys @table_name = 'hodnoceni_uzivatel'"
 
 		private void Save_OnExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
-			
+			if (FilePath == null)
+			{
+				ShowSaveDialog();
+			}
+			SaveFile();
 		}
 
 		private void SaveAs_OnExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
-			
+			ShowSaveDialog();
+			SaveFile();
 		}
 
-		private void Load_OnExecuted(object sender, ExecutedRoutedEventArgs e)
+		private void SaveFile()
 		{
-			
+			if (QueryEditor.Text != null && FilePath != null)
+			{
+				File.WriteAllText(FilePath, QueryEditor.Text);
+				Output.WriteLine("FILE SAVED");
+			}
+		}
+
+		private void ShowSaveDialog()
+		{
+			var dialog = new SaveFileDialog
+			{
+				Filter = "SQL Files|*.sql|Text Files|*.txt|All files|*.*",
+				CreatePrompt = true,
+				OverwritePrompt = true,
+				AddExtension = true,
+				DefaultExt = ".sql",
+			};
+			bool? b = dialog.ShowDialog(Window.GetWindow(this));
+
+			if(b.Value)
+			{
+				FilePath = dialog.FileName;
+				Anchorable.Title = Path.GetFileNameWithoutExtension(FilePath);
+			}
 		}
 
 		protected virtual void OnQueryResultReady(DataSet e)

@@ -5,10 +5,25 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:ER_Diagram_Modeler.Views.Panels"
              mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="300">
+             d:DesignHeight="300" d:DesignWidth="300" 
+			 d:DataContext="{d:DesignInstance local:DataSetResultViewModel}">
     <Grid>
 		<ScrollViewer VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Auto" x:Name="DatasetScrollViewer" PreviewMouseWheel="DatasetScrollViewer_OnPreviewMouseWheel">
-			<StackPanel Orientation="Vertical" x:Name="GridStackPanel"/>
+			<ListView ItemsSource="{Binding Views, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
+				<ListView.ItemTemplate>
+					<DataTemplate>
+						<DataGrid 
+							ItemsSource="{Binding}"
+							CanUserDeleteRows="False"
+							CanUserAddRows="False"
+							CanUserResizeRows="False"
+							CanUserResizeColumns="True"
+							CanUserSortColumns="True"
+							CanUserReorderColumns="True"
+							IsReadOnly="True" />
+					</DataTemplate>
+				</ListView.ItemTemplate>
+			</ListView>
 		</ScrollViewer>
 	</Grid>
 </UserControl>

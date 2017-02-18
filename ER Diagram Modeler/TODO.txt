@@ -3,8 +3,7 @@ Export to PNG
 
 ---DB_Part
 Open diagrams treeview item
-Create script
-Output window
+Create SQL
 
 ---Other
 Add comments

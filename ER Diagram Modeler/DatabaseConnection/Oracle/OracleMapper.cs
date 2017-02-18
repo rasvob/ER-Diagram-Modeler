@@ -358,6 +358,7 @@ WHERE a.CONSTRAINT_TYPE = 'R'
 		public DataSet ExecuteRawQuery(string sql)
 		{
 			OracleCommand command = Database.CreateCommand(sql);
+			Output.WriteLine(command.CommandText);
 			var dataset = new DataSet("Result");
 			var adapter = new OracleDataAdapter(command);
 			adapter.Fill(dataset);

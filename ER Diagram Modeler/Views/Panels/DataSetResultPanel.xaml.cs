@@ -1,18 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
+using System.Runtime.CompilerServices;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using ER_Diagram_Modeler.Annotations;
 using Xceed.Wpf.AvalonDock.Layout;
 
 namespace ER_Diagram_Modeler.Views.Panels
@@ -24,10 +16,12 @@ namespace ER_Diagram_Modeler.Views.Panels
 	{
 		public string Title { get; set; } = "Query result";
 		public LayoutAnchorable Anchorable { get; set; }
+		public DataSetResultViewModel ViewModel { get; set; } = new DataSetResultViewModel();
 
 		public DataSetResultPanel()
 		{
 			InitializeComponent();
+			DataContext = ViewModel;
 		}
 
 		public void BuildNewQueryPanel(MainWindow window, string title)
@@ -47,27 +41,11 @@ namespace ER_Diagram_Modeler.Views.Panels
 
 		public void RefreshData(DataSet data)
 		{
-			GridStackPanel.Children.Clear();
+			ViewModel.Views.Clear();
 			foreach (DataTable table in data.Tables)
 			{
-				DataGrid grid = CreateDataGrid(table.DefaultView);
-				grid.IsReadOnly = true;
-				GridStackPanel.Children.Add(grid);
+				ViewModel.Views.Add(table.DefaultView);
 			}
-		}
-
-		private DataGrid CreateDataGrid(DataView view)
-		{
-			return new DataGrid
-			{
-				CanUserAddRows = false,
-				CanUserDeleteRows = false,
-				CanUserReorderColumns = true,
-				CanUserResizeColumns = true,
-				CanUserResizeRows = true,
-				CanUserSortColumns = true,
-				ItemsSource = view,
-			};
 		}
 
 		private void DatasetScrollViewer_OnPreviewMouseWheel(object sender, MouseWheelEventArgs e)
@@ -75,6 +53,35 @@ namespace ER_Diagram_Modeler.Views.Panels
 			ScrollViewer scv = (ScrollViewer)sender;
 			scv.ScrollToVerticalOffset(scv.VerticalOffset - e.Delta);
 			e.Handled = true;
+		}
+	}
+
+	public class DataSetResultViewModel: INotifyPropertyChanged
+	{
+		public DataSetResultViewModel()
+		{
+			Views = new ObservableCollection<DataView>();
+		}
+
+		private ObservableCollection<DataView> _views;
+
+		public ObservableCollection<DataView> Views
+		{
+			get { return _views; }
+			set
+			{
+				if (Equals(value, _views)) return;
+				_views = value;
+				OnPropertyChanged();
+			}
+		}
+
+		public event PropertyChangedEventHandler PropertyChanged;
+
+		[NotifyPropertyChangedInvocator]
+		protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+		{
+			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 		}
 	}
 }
