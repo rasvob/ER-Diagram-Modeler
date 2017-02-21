@@ -40,12 +40,29 @@ namespace ER_Diagram_Modeler
 	/// </summary>
 	public partial class MainWindow : MetroWindow
 	{
+		/// <summary>
+		/// ViewModels for Main window
+		/// </summary>
 		public MainWindowViewModel MainWindowViewModel { get; set; }
-		private TableModel _flyoutTableModel;
-		private EditRowEventArgs _flyoutRowEventArgs = null;
-		private readonly DatabaseUpdater _updater;
-		private bool _canClose = false;
 
+		/// <summary>
+		/// Modify row helper event args
+		/// </summary>
+		private TableModel _flyoutTableModel;
+
+		/// <summary>
+		/// Modify row helper event args
+		/// </summary>
+		private EditRowEventArgs _flyoutRowEventArgs = null;
+
+		/// <summary>
+		/// DB Structure updated
+		/// </summary>
+		private readonly DatabaseUpdater _updater;
+
+		/// <summary>
+		/// Application initialization with subscribtion for connection panel events
+		/// </summary>
 		public MainWindow()
 		{
 			SessionProvider.Instance.ConnectionType = ConnectionType.None;
@@ -63,6 +80,11 @@ namespace ER_Diagram_Modeler
 			DatabaseConnectionSidebar.MsSqlDatabaseChanged += DatabaseConnectionSidebarOnMsSqlDatabaseChanged;
 		}
 
+		/// <summary>
+		/// Changed DB in Connection panel - MS Sql Server only
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="s">Selected DB</param>
 		private async void DatabaseConnectionSidebarOnMsSqlDatabaseChanged(object sender, string s)
 		{
 			await DiagramFacade.CloseDiagramsOnDisconnect(this);
@@ -70,6 +92,11 @@ namespace ER_Diagram_Modeler
 			DatabaseConnectionSidebar.LoadMsSqlTreeViewData();
 		}
 
+		/// <summary>
+		/// End current session
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="eventArgs"></param>
 		private async void DatabaseConnectionSidebarOnDisconnectClick(object sender, System.EventArgs eventArgs)
 		{
 			await DiagramFacade.CloseDiagramsOnDisconnect(this);
@@ -77,6 +104,11 @@ namespace ER_Diagram_Modeler
 			DatabaseConnectionSidebar.HideDatabaseStackPanels();
 		}
 
+		/// <summary>
+		/// Delete saved diagram
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="diagramModel">Diagram for deletion</param>
 		private void DatabaseConnectionSidebarOnDropDiagram(object sender, DiagramModel diagramModel)
 		{
 			var ctx = new DatabaseContext(SessionProvider.Instance.ConnectionType);
@@ -84,6 +116,11 @@ namespace ER_Diagram_Modeler
 			DatabaseConnectionSidebar.RefreshTreeData();
 		}
 
+		/// <summary>
+		/// Open saved diagram
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="diagramModel">Diagram for opening</param>
 		private void DatabaseConnectionSidebarOnAddDiagram(object sender, DiagramModel diagramModel)
 		{
 			DiagramFacade.CreateNewDiagram(this, diagramModel.Name);
@@ -96,6 +133,11 @@ namespace ER_Diagram_Modeler
 			DatabaseConnectionSidebar.RefreshTreeData();
 		}
 
+		/// <summary>
+		/// Drop selected DB - MS Sql Server only
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="dbName">DB for drop</param>
 		private async void DatabaseConnectionSidebarOnDropMsSqlDatabase(object sender, string dbName)
 		{
 			if (dbName.Equals(SessionProvider.Instance.Database))
@@ -124,6 +166,11 @@ namespace ER_Diagram_Modeler
 			}
 		}
 
+		/// <summary>
+		/// Create new DB - MS Sql Server only
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="eventArgs"></param>
 		private async void DatabaseConnectionSidebarOnCreateMsSqlDatabase(object sender, System.EventArgs eventArgs)
 		{
 			string name = await this.ShowInputAsync("Create database", "Database name");
@@ -147,6 +194,11 @@ namespace ER_Diagram_Modeler
 			}
 		}
 
+		/// <summary>
+		/// Add table to active diagram
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="model">Added table</param>
 		private async void DatabaseConnectionSidebarOnAddTable(object sender, TableModel model)
 		{
 			var idx = MainDocumentPane.SelectedContentIndex;
@@ -199,6 +251,11 @@ namespace ER_Diagram_Modeler
 			facade.AddTable(model);
 		}
 
+		/// <summary>
+		/// Try to get active diagram
+		/// </summary>
+		/// <param name="designer">Active digram, null if there is none</param>
+		/// <returns></returns>
 		private bool TryGetSelectedDesigner(out DatabaseModelDesigner designer)
 		{
 			var idx = MainDocumentPane.SelectedContentIndex;
@@ -215,6 +272,11 @@ namespace ER_Diagram_Modeler
 			return designer != null;
 		}
 
+		/// <summary>
+		/// Try to get active panel
+		/// </summary>
+		/// <param name="panel">Selected panel, null if there is no active panel</param>
+		/// <returns></returns>
 		private bool TryGetSelectedPanel(out LayoutAnchorable panel)
 		{
 			var idx = MainDocumentPane.SelectedContentIndex;
@@ -230,6 +292,11 @@ namespace ER_Diagram_Modeler
 			return panel != null;
 		}
 
+		/// <summary>
+		/// Open flyout for connection
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="connectionType">Type of session</param>
 		private void DatabaseConnectionSidebarOnConnectionClick(object sender, ConnectionType connectionType)
 		{
 			switch (connectionType)
@@ -253,6 +320,11 @@ namespace ER_Diagram_Modeler
 			}
 		}
 
+		/// <summary>
+		/// Change diagram canvas size
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private async void ChangeCanvasSize_OnExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
 			var activeDiagramModeler = MainDocumentPane.SelectedContent.Content as DatabaseModelDesigner;
@@ -275,12 +347,22 @@ namespace ER_Diagram_Modeler
 			}
 		}
 
+		/// <summary>
+		/// Can execute diagram canvas size change - check
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private void ChangeCanvasSize_OnCanExecute(object sender, CanExecuteRoutedEventArgs e)
 		{
 			var activeDiagramModeler = MainDocumentPane.SelectedContent?.Content as DatabaseModelDesigner;
 			e.CanExecute = activeDiagramModeler != null;
 		}
 
+		/// <summary>
+		/// Connect to MS SQL Server
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private async void ConnectToMsSql_OnExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
 			await DiagramFacade.CloseDiagramsOnDisconnect(this);
@@ -344,16 +426,31 @@ namespace ER_Diagram_Modeler
 			}
 		}
 
+		/// <summary>
+		/// Show hidden connection panel
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private void ShowDatabaseConnectionLayout_OnExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
 			DatabaseConnectionLayoutAnchorable.Show();
 		}
 
+		/// <summary>
+		/// Is connection panel hidden - check
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private void ShowDatabaseConnectionLayout_OnCanExecute(object sender, CanExecuteRoutedEventArgs e)
 		{
 			e.CanExecute = DatabaseConnectionLayoutAnchorable.IsHidden;
 		}
 
+		/// <summary>
+		/// Are MS Sql connection parameters valid - check
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private void ConnectToMsSql_OnCanExecute(object sender, CanExecuteRoutedEventArgs e)
 		{
 			if (!MsSqlServerNameTextBox.Text.Any())
@@ -374,6 +471,11 @@ namespace ER_Diagram_Modeler
 			e.CanExecute = true;
 		}
 
+		/// <summary>
+		/// Create new diagram
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private async void NewDiagram_OnExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
 			var result = await ShowNewDiagramDialog();
@@ -386,6 +488,10 @@ namespace ER_Diagram_Modeler
 			DiagramFacade.CreateNewDiagram(this, result);
 		}
 
+		/// <summary>
+		/// Show name dialog for new diagram
+		/// </summary>
+		/// <returns></returns>
 		private async Task<string> ShowNewDiagramDialog()
 		{
 			var result = await this.ShowInputAsync("Diagram title", "Enter diagram title", new MetroDialogSettings()
@@ -396,11 +502,21 @@ namespace ER_Diagram_Modeler
 			return result;
 		}
 
+		/// <summary>
+		/// Can create new digram check
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private void NewDiagram_OnCanExecute(object sender, CanExecuteRoutedEventArgs e)
 		{
 			e.CanExecute = SessionProvider.Instance.ConnectionType != ConnectionType.None;
 		}
 
+		/// <summary>
+		/// Alter column in table
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private async void ApplyAttributeEdit_OnExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
 			TableModel refreshed;
@@ -419,6 +535,11 @@ namespace ER_Diagram_Modeler
 			ToggleRowFlyout();
 		}
 
+		/// <summary>
+		/// Can alter table column check
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private void ApplyAttributeEdit_OnCanExecute(object sender, CanExecuteRoutedEventArgs e)
 		{
 			var row = MainWindowViewModel.FlyoutRowModel;
@@ -432,6 +553,11 @@ namespace ER_Diagram_Modeler
 			e.CanExecute = row.IsValid();
 		}
 
+		/// <summary>
+		/// Add new row event handler
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="args"></param>
 		public void AddNewRowHandler(object sender, TableModel args)
 		{
 			ToggleRowFlyout();
@@ -440,6 +566,11 @@ namespace ER_Diagram_Modeler
 			_flyoutRowEventArgs = null;
 		}
 
+		/// <summary>
+		/// Edit row event handler
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="args"></param>
 		public void EditRowHandler(object sender, EditRowEventArgs args)
 		{
 			ToggleRowFlyout();
@@ -449,6 +580,9 @@ namespace ER_Diagram_Modeler
 			_flyoutTableModel = args.TableModel;
 		}
 
+		/// <summary>
+		/// Helper method for showing row edit flyout
+		/// </summary>
 		private void ToggleRowFlyout()
 		{
 			var flyout = Flyouts.Items[1] as Flyout;
@@ -459,6 +593,11 @@ namespace ER_Diagram_Modeler
 			}
 		}
 
+		/// <summary>
+		/// Rename selected table and refresh treeview
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		public async void RenameTableHandler(object sender, TableModel e)
 		{
 			var originalName = e.Title;
@@ -481,6 +620,11 @@ namespace ER_Diagram_Modeler
 			DatabaseConnectionSidebar.RefreshTreeData();
 		}
 
+		/// <summary>
+		/// Drop column from DB table
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private async void RemoveColumn_OnExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
 			var res = _updater.RemoveColumn(_flyoutTableModel, ref _flyoutRowEventArgs);
@@ -494,6 +638,11 @@ namespace ER_Diagram_Modeler
 			ToggleRowFlyout();
 		}
 
+		/// <summary>
+		/// Drop column handler
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		public async void RemoveRowHandler(object sender, EditRowEventArgs e)
 		{
 			_flyoutTableModel = e.TableModel;
@@ -507,11 +656,21 @@ namespace ER_Diagram_Modeler
 			}
 		}
 
+		/// <summary>
+		/// Drop column - Can execute method
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private void RemoveColumn_OnCanExecute(object sender, CanExecuteRoutedEventArgs e)
 		{
 			e.CanExecute = _flyoutRowEventArgs != null;
 		}
 
+		/// <summary>
+		/// Drop table from Db
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		public async void DropTableHandler(object sender, TableModel e)
 		{
 			var dialog = await this.ShowMessageAsync("Drop table", $"Do you really want to drop {e.Title} ? Changes can't be undone!",
@@ -538,6 +697,11 @@ namespace ER_Diagram_Modeler
 			}
 		}
 
+		/// <summary>
+		/// Update primary key constraint
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		public async void UpdatePrimaryKeyConstraintHandler(object sender, TableModel e)
 		{
 			var res = _updater.UpdatePrimaryKeyConstraint(e);
@@ -549,6 +713,11 @@ namespace ER_Diagram_Modeler
 			}
 		}
 
+		/// <summary>
+		/// Connect to Oracle
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private async void ConnectToOracle_OnExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
 			await DiagramFacade.CloseDiagramsOnDisconnect(this);
@@ -617,6 +786,11 @@ namespace ER_Diagram_Modeler
 			}
 		}
 
+		/// <summary>
+		/// Are Oracle connection parameters valid - check
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private void ConnectToOracle_OnCanExecute(object sender, CanExecuteRoutedEventArgs e)
 		{
 			string[] inputBoxes = {
@@ -626,11 +800,21 @@ namespace ER_Diagram_Modeler
 			e.CanExecute = inputBoxes.All(t => t.Length > 0) && OraclePortTextBox.Text.All(char.IsDigit);
 		}
 
+		/// <summary>
+		/// Refresh treeview after table creation
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		public void CreateTableHandler(object sender, System.EventArgs e)
 		{
 			DatabaseConnectionSidebar.RefreshTreeData();
 		}
 
+		/// <summary>
+		/// Synchronize diagram after activation of panel with DB structure
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		public async void AnchorableDesignerActiveChangedHandler(object sender, System.EventArgs e)
 		{
 			var anchorable = sender as LayoutAnchorable;
@@ -646,6 +830,11 @@ namespace ER_Diagram_Modeler
 			await facade.RefreshDiagram(designer.ModelDesignerCanvas);
 		}
 
+		/// <summary>
+		/// Save diagram and refresh treeview in panel
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private void SaveDiagram_OnExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
 			DatabaseModelDesigner designer;
@@ -655,12 +844,22 @@ namespace ER_Diagram_Modeler
 			}
 		}
 
+		/// <summary>
+		/// Save current diagram - Can execute method
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private void SaveDiagram_OnCanExecute(object sender, CanExecuteRoutedEventArgs e)
 		{
 			DatabaseModelDesigner designer;
 			e.CanExecute = TryGetSelectedDesigner(out designer);
 		}
 
+		/// <summary>
+		/// Save current diagram with new name
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private async void SaveDiagramAs_OnExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
 			DatabaseModelDesigner designer;
@@ -686,6 +885,10 @@ namespace ER_Diagram_Modeler
 			}
 		}
 
+		/// <summary>
+		/// Save diagram to DB and refresh treeview in panel
+		/// </summary>
+		/// <param name="vm"></param>
 		private void SaveDiagramAndRefresh(DatabaseModelDesignerViewModel vm)
 		{
 			var facade = new DiagramFacade(vm);
@@ -694,11 +897,21 @@ namespace ER_Diagram_Modeler
 			DatabaseConnectionSidebar.RefreshTreeData();
 		}
 
+		/// <summary>
+		/// Show hidden Output panel
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private void ShowOutputLayout_OnExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
 			OutputLayoutAnchorable.Show();
 		}
 
+		/// <summary>
+		/// Show hidden Output panel - Can execute method
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private void ShowOutputLayout_OnCanExecute(object sender, CanExecuteRoutedEventArgs e)
 		{
 			e.CanExecute = OutputLayoutAnchorable.IsHidden;
@@ -707,11 +920,18 @@ namespace ER_Diagram_Modeler
 		/// <summary>
 		/// Window closing
 		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="args"></param>
-		private async void MainWindow_OnClosing(object sender, CancelEventArgs args)
+		/// <param name="sender">Current window</param>
+		/// <param name="args">CancelEventArgs</param>
+		private void MainWindow_OnClosing(object sender, CancelEventArgs args)
 		{
-			await DiagramFacade.CloseDiagramsOnDisconnect(this);
+			try
+			{
+				DiagramFacade.SaveAllDiagrams(this);
+			}
+			catch (Exception e)
+			{
+				Debug.WriteLine(e.Message);
+			}
 		}
 
 		/// <summary>
@@ -751,16 +971,31 @@ namespace ER_Diagram_Modeler
 			QueryResultLayoutAnchorable.Show();
 		}
 
+		/// <summary>
+		/// Show hidden query result panel - Can execute method
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private void ShowDatasetLayout_OnCanExecute(object sender, CanExecuteRoutedEventArgs e)
 		{
 			e.CanExecute = QueryResultLayoutAnchorable.IsHidden;
 		}
 
+		/// <summary>
+		/// Show hidden query result panel
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private void ShowDatasetLayout_OnExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
 			QueryResultLayoutAnchorable.Show();
 		}
 
+		/// <summary>
+		/// Open *.sql/*.txt file in new query window
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private void OpenQueryFile_OnExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
 			var dialog = new OpenFileDialog
@@ -788,6 +1023,11 @@ namespace ER_Diagram_Modeler
 			await this.ShowMessageAsync("About", "Created by Radek Svoboda (rasvob14@gmail.com)");
 		}
 
+		/// <summary>
+		/// Show MS SQL Server connection options
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private void ShowMsSqlConnectionPanel_OnExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
 			var flyoutMsSql = Flyouts.Items[0] as Flyout;
@@ -798,6 +1038,11 @@ namespace ER_Diagram_Modeler
 			}
 		}
 
+		/// <summary>
+		/// Show Oracle connection options
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private void ShowOracleConnectionPanel_OnExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
 			var flyoutMsSql = Flyouts.Items[2] as Flyout;
@@ -808,6 +1053,11 @@ namespace ER_Diagram_Modeler
 			}
 		}
 
+		/// <summary>
+		/// Menu item - About
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private void Exit_OnClick(object sender, RoutedEventArgs e)
 		{
 			Close();

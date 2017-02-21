@@ -26,9 +26,19 @@ using Xceed.Wpf.AvalonDock.Layout;
 
 namespace ER_Diagram_Modeler.DiagramConstruction
 {
+	/// <summary>
+	/// Facade for DatabaseModelDesigner operations
+	/// </summary>
 	public class DiagramFacade
 	{
+		/// <summary>
+		/// Viewmodel of working diagram
+		/// </summary>
 		public DatabaseModelDesignerViewModel ViewModel { get; set; }
+
+		/// <summary>
+		/// Callback action after adding new table
+		/// </summary>
 		public Action<TableModel> AddTableCallbackAction { get; set; }
 
 		public static string DiagramSaved = "DIAGRAM SAVED";
@@ -45,11 +55,23 @@ namespace ER_Diagram_Modeler.DiagramConstruction
 			ViewModel = designer.ViewModel;
 		}
 
+		/// <summary>
+		/// Add table to diagram
+		/// </summary>
+		/// <param name="source">Table for add</param>
+		/// <returns>True if added, false if not</returns>
 		public bool AddTable(TableModel source)
 		{
 			return AddTable(source, -1, -1);
 		}
 
+		/// <summary>
+		/// Add table to digram on given coordinates
+		/// </summary>
+		/// <param name="name">Name of new table</param>
+		/// <param name="x">Left property</param>
+		/// <param name="y">Top property</param>
+		/// <returns>True if added, false if not</returns>
 		public bool AddTable(string name, int x, int y)
 		{
 			var ctx = new DatabaseContext(SessionProvider.Instance.ConnectionType);
@@ -71,6 +93,13 @@ namespace ER_Diagram_Modeler.DiagramConstruction
 			return AddTable(model, x, y);
 		}
 
+		/// <summary>
+		/// Add table (existing) to digram on given coordinates
+		/// </summary>
+		/// <param name="source">Table for add</param>
+		/// <param name="x">Left property</param>
+		/// <param name="y">Top property</param>
+		/// <returns>True if added, false if not</returns>
 		public bool AddTable(TableModel source, int x, int y)
 		{
 			var ctx = new DatabaseContext(SessionProvider.Instance.ConnectionType);
@@ -85,6 +114,12 @@ namespace ER_Diagram_Modeler.DiagramConstruction
 			return true;
 		}
 
+		/// <summary>
+		/// Add existing realtionships for given table
+		/// </summary>
+		/// <param name="model">Table</param>
+		/// <param name="canvas">Canvas for relationship add</param>
+		/// <returns>Task for async execution</returns>
 		public async Task AddRelationShipsForTable(TableModel model, DesignerCanvas canvas)
 		{
 			var ctx = new DatabaseContext(SessionProvider.Instance.ConnectionType);
@@ -97,6 +132,12 @@ namespace ER_Diagram_Modeler.DiagramConstruction
 			}
 		}
 
+		/// <summary>
+		/// Add given relationship to diagrram
+		/// </summary>
+		/// <param name="relationship">Relationship</param>
+		/// <param name="canvas">Canvas for relationship add</param>
+		/// <returns>Task for async execution</returns>
 		public async Task AddRelationship(RelationshipModel relationship, DesignerCanvas canvas)
 		{
 			ConnectionInfoViewModel vm = new ConnectionInfoViewModel();
@@ -108,6 +149,10 @@ namespace ER_Diagram_Modeler.DiagramConstruction
 			ViewModel.ConnectionInfoViewModels.Add(vm);
 		}
 
+		/// <summary>
+		/// Remove table from diagram
+		/// </summary>
+		/// <param name="model">Table for remove</param>
 		public void RemoveTable(TableModel model)
 		{
 			var table = ViewModel.TableViewModels.FirstOrDefault(t => t.Model.Equals(model));
@@ -118,6 +163,12 @@ namespace ER_Diagram_Modeler.DiagramConstruction
 			}
 		}
 
+		/// <summary>
+		/// Create viewmodel for new table
+		/// </summary>
+		/// <param name="source">Table model</param>
+		/// <param name="ctx">Strategy context</param>
+		/// <returns>Viewmodel for table</returns>
 		private TableViewModel CreateTableViewModel(TableModel source, DatabaseContext ctx)
 		{
 			TableModel model = ctx.ReadTableDetails(source.Id, source.Title);
@@ -130,6 +181,12 @@ namespace ER_Diagram_Modeler.DiagramConstruction
 			return vm;
 		}
 
+		/// <summary>
+		/// Add viewmodel to diagram on given coordinations
+		/// </summary>
+		/// <param name="vm">Viewmodel for add</param>
+		/// <param name="x">Left property</param>
+		/// <param name="y">Top property</param>
 		private void AddTableViewModel(TableViewModel vm, int x, int y)
 		{
 			vm.Left = x > -1 ? x : 0;
@@ -147,6 +204,11 @@ namespace ER_Diagram_Modeler.DiagramConstruction
 			ViewModel.TableViewModels.Add(vm);
 		}
 
+		/// <summary>
+		/// Synchronize current diagram with DB
+		/// </summary>
+		/// <param name="canvas">Canvas with diagram</param>
+		/// <returns>Task for async execution</returns>
 		public async Task RefreshDiagram(DesignerCanvas canvas)
 		{
 			var ctx = new DatabaseContext(SessionProvider.Instance.ConnectionType);
@@ -188,6 +250,11 @@ namespace ER_Diagram_Modeler.DiagramConstruction
 			}
 		}
 
+		/// <summary>
+		/// Load diagram from DB
+		/// </summary>
+		/// <param name="canvas">Canvas for diagram</param>
+		/// <param name="data">XML attribute from DB</param>
 		public void LoadDiagram(DesignerCanvas canvas, XDocument data)
 		{
 			var root = data.Root;
@@ -274,6 +341,10 @@ namespace ER_Diagram_Modeler.DiagramConstruction
 
 		}
 
+		/// <summary>
+		/// Save diagram to DB
+		/// </summary>
+		/// <returns>Returns 1 if saved, 0 if not</returns>
 		public int SaveDiagram()
 		{
 			XDocument doc = XDocument.Parse(ViewModel.CreateElement().ToString());
@@ -282,7 +353,11 @@ namespace ER_Diagram_Modeler.DiagramConstruction
 		}
 
 #region HELPERS
-
+		
+		/// <summary>
+		/// Helper method for update of table position
+		/// </summary>
+		/// <param name="table">Table</param>
 		private void UpdateTablePosition(TableContent table)
 		{
 			int step = 100;
@@ -311,6 +386,11 @@ namespace ER_Diagram_Modeler.DiagramConstruction
 			}
 		}
 
+		/// <summary>
+		/// Create new diagram panel in Main Window
+		/// </summary>
+		/// <param name="window">App window</param>
+		/// <param name="title">Title of diagram</param>
 		public static void CreateNewDiagram(MainWindow window, string title)
 		{
 			LayoutAnchorable anchorable = new LayoutAnchorable()
@@ -344,6 +424,12 @@ namespace ER_Diagram_Modeler.DiagramConstruction
 			Output.WriteLine(DiagramCreated);
 		}
 
+		/// <summary>
+		/// Rectangular areas of tables - for pathfinding
+		/// </summary>
+		/// <param name="tables">Table viewmodels</param>
+		/// <param name="step">How coarse size of rectangle is</param>
+		/// <returns>Rectangular areas</returns>
 		public static IEnumerable<Rectangle> GetTableRectangles(IEnumerable<TableViewModel> tables, int step = 1)
 		{
 			return tables.Select(t =>
@@ -369,6 +455,12 @@ namespace ER_Diagram_Modeler.DiagramConstruction
 			});
 		}
 
+		/// <summary>
+		/// Create smaller grid for pathfinding
+		/// </summary>
+		/// <param name="designer">From this viewmodel is grid created</param>
+		/// <param name="step">Grid row/col step</param>
+		/// <returns>Task for async execution => Created grid</returns>
 		public static async Task<Grid> CreateMinifiedGridForPathFinding(DatabaseModelDesignerViewModel designer, int step)
 		{
 			var rects = GetTableRectangles(designer.TableViewModels, step).Select(s =>
@@ -383,6 +475,12 @@ namespace ER_Diagram_Modeler.DiagramConstruction
 			return res;
 		}
 
+		/// <summary>
+		/// Create smaller grid for pathfinding - for non-async calls
+		/// </summary>
+		/// <param name="designer">From this viewmodel is grid created</param>
+		/// <param name="step">Grid row/col step</param>
+		/// <returns>Created grid</returns>
 		public static Grid CreateMinifiedGridForPathFindingSync(DatabaseModelDesignerViewModel designer, int step)
 		{
 			var rects = GetTableRectangles(designer.TableViewModels, step).Select(s =>
@@ -397,11 +495,22 @@ namespace ER_Diagram_Modeler.DiagramConstruction
 			return PathFinderHelper.CreateGrid((int) (designer.CanvasWidth / step), (int) designer.CanvasHeight / step, rects);
 		}
 
+		/// <summary>
+		/// Check if point lies within rectangular area
+		/// </summary>
+		/// <param name="area">Rectangle</param>
+		/// <param name="point">Point</param>
+		/// <returns>True if point is within, false if not</returns>
 		public static bool DoesPointIntersectWithRectangle(Rectangle area, Point point)
 		{
 			return point.X >= area.Left && point.X <= area.Right && point.Y >= area.Top && point.Y <= area.Bottom;
 		}
 
+		/// <summary>
+		/// Cloase and save diagrams after session end
+		/// </summary>
+		/// <param name="window">Main app window</param>
+		/// <returns>Task for async execution</returns>
 		public static async Task CloseDiagramsOnDisconnect(MainWindow window)
 		{
 			var forSave = new Queue<DatabaseModelDesignerViewModel>();
@@ -460,6 +569,25 @@ namespace ER_Diagram_Modeler.DiagramConstruction
 				facade.ViewModel = vm;
 				facade.SaveDiagram();
 			}			
+		}
+
+		/// <summary>
+		/// Save all opened diagrams to DB
+		/// </summary>
+		/// <param name="window">Main app window</param>
+		public static void SaveAllDiagrams(MainWindow window)
+		{
+			IEnumerable<DatabaseModelDesignerViewModel> viewModels = window.MainDocumentPane.ChildrenSorted
+				.Where(t => t.Content is DatabaseModelDesigner)
+				.Select(t => t.Content as DatabaseModelDesigner)
+				.Select(t => t?.ViewModel);
+			var facade = new DiagramFacade(new DatabaseModelDesigner());
+
+			foreach (DatabaseModelDesignerViewModel viewModel in viewModels)
+			{
+				facade.ViewModel = viewModel;
+				facade.SaveDiagram();
+			}
 		}
 		#endregion
 	}

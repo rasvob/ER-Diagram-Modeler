@@ -4,6 +4,8 @@ Export to PNG
 ---DB_Part
 Open diagrams treeview item
 Create SQL
+Rework of treeview update
+Async for some SQL
 
 ---Other
 Add comments
