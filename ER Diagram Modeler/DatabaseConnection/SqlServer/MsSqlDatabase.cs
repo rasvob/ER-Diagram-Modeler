@@ -8,9 +8,19 @@ using ER_Diagram_Modeler.ViewModels.Enums;
 
 namespace ER_Diagram_Modeler.DatabaseConnection.SqlServer
 {
+	/// <summary>
+	/// Ms Sql database connection operations
+	/// </summary>
 	public class MsSqlDatabase: IDatabase<SqlCommand>
 	{
+		/// <summary>
+		/// Current connection
+		/// </summary>
 		public SqlConnection Connection { get; set; }
+
+		/// <summary>
+		/// Connection string
+		/// </summary>
 		public string ConnectionString { get; set; }
 
 		public MsSqlDatabase()
@@ -18,11 +28,20 @@ namespace ER_Diagram_Modeler.DatabaseConnection.SqlServer
 			Connection = new SqlConnection();
 		}
 
+		/// <summary>
+		/// Connect to DB - Session connection string
+		/// </summary>
+		/// <returns>True if success, false if not</returns>
 		public bool Connect()
 		{
 			return Connect(ConnectionString);
 		}
 
+		/// <summary>
+		/// Connect to DB
+		/// </summary>
+		/// <param name="conString">Connection string</param>
+		/// <returns>rue if success, false if not</returns>
 		public bool Connect(string conString)
 		{
 			if (Connection.State != ConnectionState.Open)
@@ -35,11 +54,19 @@ namespace ER_Diagram_Modeler.DatabaseConnection.SqlServer
 			return false;
 		}
 
+		/// <summary>
+		/// Close DB connection
+		/// </summary>
 		public void Close()
 		{
 			Connection.Close();
 		}
 
+		/// <summary>
+		/// Execute command and return number of rows affected
+		/// </summary>
+		/// <param name="command">SQL Command</param>
+		/// <returns>Number of rows affected</returns>
 		public int ExecuteNonQuery(SqlCommand command)
 		{
 			int rowNumber = 0;
@@ -54,16 +81,31 @@ namespace ER_Diagram_Modeler.DatabaseConnection.SqlServer
 			return rowNumber;
 		}
 
+		/// <summary>
+		/// Create SqlCommand
+		/// </summary>
+		/// <param name="sql">SQL Command text</param>
+		/// <returns>SqlCommand object</returns>
 		public SqlCommand CreateCommand(string sql)
 		{
 			return new SqlCommand(sql, Connection);
 		}
 
+		/// <summary>
+		/// Execute reader for command
+		/// </summary>
+		/// <param name="command">Sql Command</param>
+		/// <returns>Sql reader object</returns>
 		public SqlDataReader Select(SqlCommand command)
 		{
 			return command.ExecuteReader();
 		}
 
+		/// <summary>
+		/// Try connection with credentials
+		/// </summary>
+		/// <param name="connStreing">Connection string</param>
+		/// <returns>Task for async execution</returns>
 		private async Task TryToConnectToServer(string connStreing)
 		{
 			SqlConnection connection = new SqlConnection(connStreing);
@@ -71,6 +113,14 @@ namespace ER_Diagram_Modeler.DatabaseConnection.SqlServer
 			connection.Close();
 		}
 
+		/// <summary>
+		/// Build MS Sql Server session
+		/// </summary>
+		/// <param name="server">Hostname</param>
+		/// <param name="integratedSecurity">True if you are using Windows authentication</param>
+		/// <param name="username">Username</param>
+		/// <param name="password">Password</param>
+		/// <returns>Task for async execution</returns>
 		public async Task BuildSession(string server, bool integratedSecurity, string username = null, string password = null)
 		{
 			SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder

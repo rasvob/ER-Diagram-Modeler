@@ -2,6 +2,9 @@
 
 namespace ER_Diagram_Modeler.DatabaseConnection.Dto
 {
+	/// <summary>
+	/// DTO For Foreign keys
+	/// </summary>
 	public class ForeignKeyDto
 	{
 		public string PrimaryKeyTable { get; set; }

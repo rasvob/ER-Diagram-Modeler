@@ -14,6 +14,9 @@ using ER_Diagram_Modeler.Models.Helpers;
 
 namespace ER_Diagram_Modeler.DatabaseConnection.SqlServer
 {
+	/// <summary>
+	/// Mapper implementation for MS Sql Server
+	/// </summary>
 	public class MsSqlMapper: IMsSqlMapper
 	{
 		private static string SqlListDatabases = @"SELECT database_id, name FROM sys.databases WHERE name NOT IN ('master', 'tempdb', 'model', 'msdb');";
@@ -43,20 +46,33 @@ END";
 		private static string SqlSelectDiagrams = @"SELECT NAME, DATA FROM ERDIAGRAMS";
 		private static string SqlDeleteDiagram = @"DELETE FROM ERDIAGRAMS WHERE NAME = @Name";
 
+		/// <summary>
+		/// Current DB Connection
+		/// </summary>
 		public MsSqlDatabase Database { get; set; }
 
+		/// <summary>
+		/// Connect to session based DB
+		/// </summary>
 		public MsSqlMapper()
 		{
 			Database = new MsSqlDatabase();
 			Database.Connect(SessionProvider.Instance.ConnectionString);
 		}
 
+		/// <summary>
+		/// Connect to DB
+		/// </summary>
+		/// <param name="connString">Connection string</param>
 		public MsSqlMapper(string connString)
 		{
 			Database = new MsSqlDatabase();
 			Database.Connect(connString);
 		}
 
+		/// <summary>
+		/// Close DB Connection
+		/// </summary>
 		public void Dispose()
 		{
 			if (Database.Connection.State == ConnectionState.Open)
@@ -65,6 +81,10 @@ END";
 			}
 		}
 
+		/// <summary>
+		/// List name of all foreign key coninstraints
+		/// </summary>
+		/// <returns>Names of all foreign key coninstraints</returns>
 		public IEnumerable<string> ListAllForeignKeys()
 		{
 			SqlCommand command = Database.CreateCommand(SqlForeignKeysReferentialAction);
@@ -73,6 +93,11 @@ END";
 			return res;
 		}
 
+		/// <summary>
+		/// Read data from reader
+		/// </summary>
+		/// <param name="refReader">Sql data reader</param>
+		/// <returns>Collection of read data</returns>
 		private IEnumerable<string> ReadForeignKeyNames(SqlDataReader refReader)
 		{
 			var res = new List<string>();
@@ -85,6 +110,10 @@ END";
 			return res;
 		}
 
+		/// <summary>
+		/// Create new table in DB
+		/// </summary>
+		/// <param name="name">Table name</param>
 		public void CreateTable(string name)
 		{
 			SqlCommand command = Database.CreateCommand(string.Format(SqlCreateTable, name));
@@ -92,6 +121,10 @@ END";
 			command.ExecuteNonQuery();
 		}
 
+		/// <summary>
+		/// List all databases of given instance
+		/// </summary>
+		/// <returns>Collection of databases</returns>
 		public IEnumerable<DatabaseInfo> ListDatabases()
 		{
 			SqlCommand command = Database.CreateCommand(SqlListDatabases);
@@ -101,6 +134,11 @@ END";
 			return res;
 		}
 
+		/// <summary>
+		/// List foreign key coninstraints for table
+		/// </summary>
+		/// <param name="tableName">Name of table</param>
+		/// <returns>Collection of constraint</returns>
 		public IEnumerable<ForeignKeyDto> ListForeignKeys(string tableName)
 		{
 			SqlCommand commandPrimaryKeys = Database.CreateCommand(SqlForeignKeys);
@@ -130,6 +168,11 @@ END";
 			return msSqlForeignKeyDtos;
 		}
 
+		/// <summary>
+		/// Read data from reader
+		/// </summary>
+		/// <param name="reader">Sql data reader</param>
+		/// <param name="dtos">Collection of FK Constraint DTO</param>
 		public void ReadReferentialActions(SqlDataReader reader, IEnumerable<ForeignKeyDto> dtos)
 		{
 			while (reader.Read())
@@ -153,6 +196,10 @@ END";
 			}
 		}
 
+		/// <summary>
+		/// Create new database
+		/// </summary>
+		/// <param name="name">DB name</param>
 		public void CreateDatabase(string name)
 		{
 			SqlCommand command = Database.CreateCommand($"{SqlCreateDatabase} [{name}]");
@@ -160,6 +207,10 @@ END";
 			command.ExecuteNonQuery();
 		}
 
+		/// <summary>
+		/// Drop database
+		/// </summary>
+		/// <param name="name">DB Name</param>
 		public void DropDatabase(string name)
 		{
 			SqlCommand commandAlter = Database.CreateCommand($"alter database [{name}] set single_user with rollback immediate");
@@ -171,6 +222,10 @@ END";
 			command.ExecuteNonQuery();
 		}
 
+		/// <summary>
+		/// List tables in DB
+		/// </summary>
+		/// <returns>Collection of tables with ID and name</returns>
 		public IEnumerable<TableModel> ListTables()
 		{
 			SqlCommand command = Database.CreateCommand(SqlListTables);
@@ -180,6 +235,12 @@ END";
 			return res;
 		}
 
+		/// <summary>
+		/// Get table info with all collumns from DB
+		/// </summary>
+		/// <param name="id">Object ID</param>
+		/// <param name="name">Table name</param>
+		/// <returns>Table model</returns>
 		public TableModel SelectTableDetails(string id, string name)
 		{
 			SqlCommand command = Database.CreateCommand(SqlTableDetails);
@@ -201,6 +262,11 @@ END";
 			return res;
 		}
 
+		/// <summary>
+		/// Rename table in DB
+		/// </summary>
+		/// <param name="oldName">Old table name</param>
+		/// <param name="newName">New table name</param>
 		public void RenameTable(string oldName, string newName)
 		{
 			SqlCommand command = Database.CreateCommand(SqlRenameTable);
@@ -211,6 +277,11 @@ END";
 			command.ExecuteNonQuery();
 		}
 
+		/// <summary>
+		/// Add columnd to table in DB
+		/// </summary>
+		/// <param name="table">Table name</param>
+		/// <param name="model">Column model</param>
 		public void AddNewColumn(string table, TableRowModel model)
 		{
 			SqlCommand command = Database.CreateCommand(string.Format(SqlAddColumn, table, model));
@@ -218,6 +289,11 @@ END";
 			command.ExecuteNonQuery();
 		}
 
+		/// <summary>
+		/// Alter columnd to table in DB
+		/// </summary>
+		/// <param name="table">Table name</param>
+		/// <param name="model">Column model</param>
 		public void AlterColumn(string table, TableRowModel model)
 		{
 			SqlCommand command = Database.CreateCommand(string.Format(SqlAlterColumn, table, model));
@@ -225,6 +301,12 @@ END";
 			command.ExecuteNonQuery();
 		}
 
+		/// <summary>
+		/// Rename column in table
+		/// </summary>
+		/// <param name="table">Table name</param>
+		/// <param name="oldName">Old name</param>
+		/// <param name="newName">New name</param>
 		public void RenameColumn(string table, string oldName, string newName)
 		{
 			SqlCommand command = Database.CreateCommand(SqlRenameTable);
@@ -236,6 +318,11 @@ END";
 			command.ExecuteNonQuery();
 		}
 
+		/// <summary>
+		/// Drop column in table
+		/// </summary>
+		/// <param name="table">Table name</param>
+		/// <param name="column">Column name</param>
 		public void DropColumn(string table, string column)
 		{
 			SqlCommand command = Database.CreateCommand(string.Format(SqlDropColumn, table, column));
@@ -243,6 +330,10 @@ END";
 			command.ExecuteNonQuery();
 		}
 
+		/// <summary>
+		/// Drop table from DB
+		/// </summary>
+		/// <param name="table">Table name</param>
 		public void DropTable(string table)
 		{
 			SqlCommand command = Database.CreateCommand(string.Format(SqlDropTable, table));
@@ -250,6 +341,11 @@ END";
 			command.ExecuteNonQuery();
 		}
 
+		/// <summary>
+		/// Drop primary key constraint
+		/// </summary>
+		/// <param name="table">Table name</param>
+		/// <param name="primaryKeyConstraintName">Constraint name</param>
 		public void DropPrimaryKey(string table, string primaryKeyConstraintName)
 		{
 			SqlCommand command = Database.CreateCommand(string.Format(SqlDropConstraint, table, primaryKeyConstraintName));
@@ -257,6 +353,11 @@ END";
 			command.ExecuteNonQuery();
 		}
 
+		/// <summary>
+		/// Create new primary key constraint
+		/// </summary>
+		/// <param name="table">Table name</param>
+		/// <param name="columns">Name of primary key columns</param>
 		public void CreatePrimaryKey(string table, string[] columns)
 		{
 			SqlCommand command = Database.CreateCommand(string.Format(SqlAddPrimaryKeyConstraint, table, $"PK_{table}_{columns[0]}", string.Join(",", columns)));
@@ -264,6 +365,13 @@ END";
 			command.ExecuteNonQuery();
 		}
 
+		/// <summary>
+		/// Create new foreign key constraint
+		/// </summary>
+		/// <param name="table">Table name</param>
+		/// <param name="referencedTable">Referenced table name</param>
+		/// <param name="collumns">Collection of column models</param>
+		/// <param name="fkName">Name of constraint, generated if null</param>
 		public void CreateForeignKey(string table, string referencedTable, IEnumerable<RowModelPair> collumns, string fkName = null)
 		{
 			string name = fkName ?? $"{table}_{referencedTable}_FK";
@@ -275,6 +383,11 @@ END";
 			command.ExecuteNonQuery();
 		}
 
+		/// <summary>
+		/// Drop foreign key constraint
+		/// </summary>
+		/// <param name="table">Table name</param>
+		/// <param name="name">Constraint name</param>
 		public void DropForeignKey(string table, string name)
 		{
 			SqlCommand command = Database.CreateCommand(string.Format(SqlDropConstraint, table, name));
@@ -282,12 +395,21 @@ END";
 			command.ExecuteNonQuery();
 		}
 
+		/// <summary>
+		/// Create table for saving diagrams
+		/// </summary>
 		public void CreateDiagramTable()
 		{
 			SqlCommand command = Database.CreateCommand(SqlCreateDiagramTable);
 			command.ExecuteNonQuery();
 		}
 
+		/// <summary>
+		/// Save new diagram to DB
+		/// </summary>
+		/// <param name="name">Diagram name</param>
+		/// <param name="data">XML data</param>
+		/// <returns>One if successful, zero if not</returns>
 		public int InsertDiagram(string name, XDocument data)
 		{
 			SqlCommand command = Database.CreateCommand(SqlInsertDiagram);
@@ -296,6 +418,12 @@ END";
 			return command.ExecuteNonQuery();
 		}
 
+		/// <summary>
+		/// Save diagram to DB
+		/// </summary>
+		/// <param name="name">Diagram name</param>
+		/// <param name="data">XML data</param>
+		/// <returns>One if successful, zero if not</returns>
 		public int UpdateDiagram(string name, XDocument data)
 		{
 			SqlCommand command = Database.CreateCommand(SqlUpdateDiagram);
@@ -304,6 +432,11 @@ END";
 			return command.ExecuteNonQuery();
 		}
 
+		/// <summary>
+		/// Delete diagram from DB
+		/// </summary>
+		/// <param name="name">Diagram name</param>
+		/// <returns>One if successful, zero if not</returns>
 		public int DeleteDiagram(string name)
 		{
 			SqlCommand command = Database.CreateCommand(SqlDeleteDiagram);
@@ -311,6 +444,10 @@ END";
 			return command.ExecuteNonQuery();
 		}
 
+		/// <summary>
+		/// Select existing diagrams
+		/// </summary>
+		/// <returns>Collections of diagrams</returns>
 		public IEnumerable<DiagramModel> SelectDiagrams()
 		{
 			SqlCommand command = Database.CreateCommand(SqlSelectDiagrams);
@@ -320,6 +457,11 @@ END";
 			return res;
 		}
 
+		/// <summary>
+		/// Execute raw query
+		/// </summary>
+		/// <param name="sql">SQL Command text</param>
+		/// <returns>Dataset with results</returns>
 		public DataSet ExecuteRawQuery(string sql)
 		{
 			SqlCommand command = Database.CreateCommand(sql);
@@ -330,6 +472,11 @@ END";
 			return dataset;
 		}
 
+		/// <summary>
+		/// Read data from reader
+		/// </summary>
+		/// <param name="reader">Sql data reader</param>
+		/// <returns>Collection of read data</returns>
 		private IEnumerable<DiagramModel> ReadDiagramDetails(SqlDataReader reader)
 		{
 			var res = new List<DiagramModel>();
@@ -346,6 +493,11 @@ END";
 			return res;
 		}
 
+		/// <summary>
+		/// Read data from reader
+		/// </summary>
+		/// <param name="reader">Sql data reader</param>
+		/// <returns>Collection of read data</returns>
 		private IEnumerable<TableModel> ReadListTables(SqlDataReader reader)
 		{
 			List<TableModel> res = new List<TableModel>();
@@ -362,6 +514,11 @@ END";
 			return res;
 		}
 
+		/// <summary>
+		/// Read data from reader
+		/// </summary>
+		/// <param name="reader">Sql data reader</param>
+		/// <returns>Collection of read data</returns>
 		private IEnumerable<ForeignKeyDto> ReadForeignKeys(SqlDataReader reader)
 		{
 			var res = new List<ForeignKeyDto>();
@@ -382,6 +539,12 @@ END";
 			return res;
 		}
 
+		/// <summary>
+		/// Read data from reader
+		/// </summary>
+		/// <param name="reader">Sql data reader</param>
+		/// <param name="model">Table model</param>
+		/// <returns>Collection of read data</returns>
 		private void ReadPrimaryKeys(SqlDataReader reader, TableModel model)
 		{
 			while (reader.Read())
@@ -398,6 +561,11 @@ END";
 			}
 		}
 
+		/// <summary>
+		/// Read data from reader
+		/// </summary>
+		/// <param name="reader">Sql data reader</param>
+		/// <returns>Collection of read data</returns>
 		private TableModel ReadTableDetails(SqlDataReader reader)
 		{
 			var res = new TableModel();
@@ -431,6 +599,11 @@ END";
 			return res;
 		}
 
+		/// <summary>
+		/// Read data from reader
+		/// </summary>
+		/// <param name="reader">Sql data reader</param>
+		/// <returns>Collection of read data</returns>
 		public IEnumerable<DatabaseInfo> ReadListDatabases(SqlDataReader reader)
 		{
 			List<DatabaseInfo> res = new List<DatabaseInfo>();
@@ -447,6 +620,15 @@ END";
 			return res;
 		}
 
+		/// <summary>
+		/// Create new foreign key constraint
+		/// </summary>
+		/// <param name="table">Table name</param>
+		/// <param name="referencedTable">Referenced table name</param>
+		/// <param name="collumns">Collection of constraint columns</param>
+		/// <param name="fkName">Name of constraint, generated if NULL</param>
+		/// <param name="onUpdate">Action on update, all standard MS Sql  actions</param>
+		/// <param name="onDelete">Action on delete, all standard MS Sql actions</param>
 		public void CreateForeignKey(string table, string referencedTable, IEnumerable<RowModelPair> collumns, string fkName = null,
 			string onUpdate = "NO ACTION", string onDelete = "NO ACTION")
 		{

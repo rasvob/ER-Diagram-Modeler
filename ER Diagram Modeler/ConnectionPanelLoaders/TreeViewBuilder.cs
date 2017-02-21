@@ -6,11 +6,29 @@ using ER_Diagram_Modeler.Models.Designer;
 
 namespace ER_Diagram_Modeler.ConnectionPanelLoaders
 {
+	/// <summary>
+	/// Abstract class for treeview creation
+	/// </summary>
 	public abstract class TreeViewBuilder
 	{
+		/// <summary>
+		/// Add table callback
+		/// </summary>
 		private readonly Action<TableModel> _addTableAction;
+
+		/// <summary>
+		/// Data for treeview
+		/// </summary>
 		protected readonly IEnumerable<DatabaseInfo> Infos;
+
+		/// <summary>
+		/// Add diagram callback
+		/// </summary>
 		private readonly Action<DiagramModel> _addDiagramAction;
+
+		/// <summary>
+		/// Delete diagram callback
+		/// </summary>
 		private readonly Action<DiagramModel> _dropDiagramAction;
 
 		protected TreeViewBuilder(Action<TableModel> addTableAction, IEnumerable<DatabaseInfo> infos, Action<DiagramModel> addDiagramAction, Action<DiagramModel> dropDiagramAction)
@@ -21,6 +39,11 @@ namespace ER_Diagram_Modeler.ConnectionPanelLoaders
 			_dropDiagramAction = dropDiagramAction;
 		}
 
+		/// <summary>
+		/// Setup context menu and event listeners for table item
+		/// </summary>
+		/// <param name="item">Current item</param>
+		/// <param name="model">Table model</param>
 		protected void SetupTreeViewItemContextMenu(TreeViewItem item, TableModel model)
 		{
 			ContextMenu menu = new ContextMenu();
@@ -31,6 +54,11 @@ namespace ER_Diagram_Modeler.ConnectionPanelLoaders
 			item.ContextMenu = menu;
 		}
 
+		/// <summary>
+		/// Setup context menu and event listeners for diagram item
+		/// </summary>
+		/// <param name="item">Current item</param>
+		/// <param name="model">Diagram model</param>
 		protected void SetupTreeViewItemDiagramContextMenu(TreeViewItem item, DiagramModel model)
 		{
 			ContextMenu menu = new ContextMenu();
@@ -44,6 +72,10 @@ namespace ER_Diagram_Modeler.ConnectionPanelLoaders
 			item.ContextMenu = menu;
 		}
 
+		/// <summary>
+		/// Build treeview
+		/// </summary>
+		/// <returns>Collection of treeview items</returns>
 		public abstract List<TreeViewItem> BuildTreeView();
 	}
 }

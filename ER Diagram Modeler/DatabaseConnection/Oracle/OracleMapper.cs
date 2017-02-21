@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Xml.Linq;
 using ER_Diagram_Modeler.CommandOutput;
 using ER_Diagram_Modeler.Configuration.Providers;
@@ -16,6 +17,9 @@ using Xceed.Wpf.DataGrid;
 
 namespace ER_Diagram_Modeler.DatabaseConnection.Oracle
 {
+	/// <summary>
+	/// Mapper implementation for Oracle
+	/// </summary>
 	public class OracleMapper: IOracleMapper
 	{
 		private static string SqlListTables = @"SELECT OBJECT_NAME, OBJECT_ID FROM SYS.ALL_OBJECTS WHERE OBJECT_TYPE = 'TABLE' AND OWNER = :Owner AND OBJECT_NAME <> '__ERDIAGRAMS'";
@@ -54,9 +58,19 @@ WHERE a.CONSTRAINT_TYPE = 'R'
 		private static string SqlSelectDiagrams = @"SELECT NAME, DATA FROM {0}";
 		private static string SqlDeleteDiagram = @"DELETE FROM {0} WHERE NAME = :Name";
 
+		/// <summary>
+		/// Current DB Connection
+		/// </summary>
 		public OracleDatabase Database { get; set; }
+
+		/// <summary>
+		/// Owner of current schema
+		/// </summary>
 		public string Owner { get; set; }
 
+		/// <summary>
+		/// Connect to session based DB
+		/// </summary>
 		public OracleMapper()
 		{
 			Database = new OracleDatabase();
@@ -64,12 +78,21 @@ WHERE a.CONSTRAINT_TYPE = 'R'
 			Owner = SessionProvider.Instance.Username.ToUpper();
 		}
 
+		/// <summary>
+		/// Connect to DB
+		/// </summary>
+		/// <param name="connString">Connection string</param>
 		public OracleMapper(string connString)
 		{
 			Database = new OracleDatabase();
 			Database.Connect(connString);
 		}
 
+		/// <summary>
+		/// Connect to DB
+		/// </summary>
+		/// <param name="connString">Connection string</param>
+		/// <param name="owner">Schema owner</param>
 		public OracleMapper(string connString, string owner)
 		{
 			Database = new OracleDatabase();
@@ -77,6 +100,9 @@ WHERE a.CONSTRAINT_TYPE = 'R'
 			Database.Connect(connString);
 		}
 
+		/// <summary>
+		/// Close DB Connection
+		/// </summary>
 		public void Dispose()
 		{
 			if(Database.Connection.State == ConnectionState.Open)
@@ -85,6 +111,11 @@ WHERE a.CONSTRAINT_TYPE = 'R'
 			}
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="tableName"></param>
+		/// <returns></returns>
 		public IEnumerable<ForeignKeyDto> ListForeignKeys(string tableName)
 		{
 			OracleCommand command = Database.CreateCommand(SqlForeignKeys);
@@ -97,6 +128,10 @@ WHERE a.CONSTRAINT_TYPE = 'R'
 			return res;
 		}
 
+		/// <summary>
+		/// List name of all foreign key coninstraints
+		/// </summary>
+		/// <returns>Names of all foreign key coninstraints</returns>
 		public IEnumerable<string> ListAllForeignKeys()
 		{
 			OracleCommand command = Database.CreateCommand(SqlAllForeignKeys);
@@ -107,6 +142,11 @@ WHERE a.CONSTRAINT_TYPE = 'R'
 			return res;
 		}
 
+		/// <summary>
+		/// Read data from reader
+		/// </summary>
+		/// <param name="reader">Oracle data reader</param>
+		/// <returns>Collection of read data</returns>
 		private IEnumerable<string> ReadForeignKeyNames(OracleDataReader reader)
 		{
 			var res = new List<string>();
@@ -119,6 +159,11 @@ WHERE a.CONSTRAINT_TYPE = 'R'
 			return res;
 		}
 
+		/// <summary>
+		/// Read data from reader
+		/// </summary>
+		/// <param name="reader">Oracle data reader</param>
+		/// <returns>Collection of read data</returns>
 		private IEnumerable<ForeignKeyDto> ReadForeignKeys(OracleDataReader reader)
 		{
 			var res = new List<ForeignKeyDto>();
@@ -141,6 +186,10 @@ WHERE a.CONSTRAINT_TYPE = 'R'
 			return res;
 		}
 
+		/// <summary>
+		/// Create new table in DB
+		/// </summary>
+		/// <param name="name">Table name</param>
 		public void CreateTable(string name)
 		{
 			OracleCommand command = Database.CreateCommand(string.Format(SqlCreateTable, TableNameWithOwnerCaseSensitve(name), name));
@@ -148,6 +197,12 @@ WHERE a.CONSTRAINT_TYPE = 'R'
 			command.ExecuteNonQuery();
 		}
 
+		/// <summary>
+		/// Get table info with all collumns from DB
+		/// </summary>
+		/// <param name="id">Object ID</param>
+		/// <param name="name">Table name</param>
+		/// <returns>Table model</returns>
 		public TableModel SelectTableDetails(string id, string name)
 		{
 			OracleCommand command = Database.CreateCommand(SqlTableDetails);
@@ -177,6 +232,13 @@ WHERE a.CONSTRAINT_TYPE = 'R'
 			return res;
 		}
 
+		/// <summary>
+		/// Read data from reader
+		/// </summary>
+		/// <param name="reader">Oracle data reader</param>
+		/// <param name="table">Table model</param>
+		/// <param name="consName">PK Constraint name</param>
+		/// <returns>Collection of read data</returns>
 		private void ReadTablePrimaryKey(OracleDataReader reader, TableModel table, string consName)
 		{
 			while (reader.Read())
@@ -193,6 +255,11 @@ WHERE a.CONSTRAINT_TYPE = 'R'
 			}
 		}
 
+		/// <summary>
+		/// Read data from reader
+		/// </summary>
+		/// <param name="reader">Sql data reader</param>
+		/// <returns>Read data fro table</returns>
 		private TableModel ReadTableDetails(OracleDataReader reader)
 		{
 			var res = new TableModel();
@@ -219,7 +286,19 @@ WHERE a.CONSTRAINT_TYPE = 'R'
 
 				if (type == null)
 				{
-					continue;
+					var regex = new Regex("^timestamp(\\((\\d)\\))?");
+					if (regex.IsMatch(typeName.ToLower()))
+					{
+						type =
+							row.DatatypesItemSource.FirstOrDefault(
+								t => t.Name.Equals("timestamp", StringComparison.InvariantCultureIgnoreCase));
+
+						
+					}
+					if(type == null)
+					{
+						continue;
+					}
 				}
 
 				type.Lenght = type.HasLenght ? (int)len : type.Lenght;
@@ -235,6 +314,11 @@ WHERE a.CONSTRAINT_TYPE = 'R'
 			return res;
 		}
 
+		/// <summary>
+		/// Rename table in DB
+		/// </summary>
+		/// <param name="oldName">Old table name</param>
+		/// <param name="newName">New table name</param>
 		public void RenameTable(string oldName, string newName)
 		{
 			OracleCommand command = Database.CreateCommand(string.Format(SqlRenameTable, oldName, newName));
@@ -242,6 +326,11 @@ WHERE a.CONSTRAINT_TYPE = 'R'
 			command.ExecuteNonQuery();
 		}
 
+		/// <summary>
+		/// Add columnd to table in DB
+		/// </summary>
+		/// <param name="table">Table name</param>
+		/// <param name="model">Column model</param>
 		public void AddNewColumn(string table, TableRowModel model)
 		{
 			OracleCommand command = Database.CreateCommand(string.Format(SqlAddColumn, TableNameWithOwnerCaseSensitve(table), model));
@@ -249,6 +338,11 @@ WHERE a.CONSTRAINT_TYPE = 'R'
 			command.ExecuteNonQuery();
 		}
 
+		/// <summary>
+		/// Alter columnd to table in DB
+		/// </summary>
+		/// <param name="table">Table name</param>
+		/// <param name="model">Column model</param>
 		public void AlterColumn(string table, TableRowModel model)
 		{
 			OracleCommand command = Database.CreateCommand(string.Format(SqlModifyColumn, TableNameWithOwnerCaseSensitve(table), model));
@@ -256,6 +350,12 @@ WHERE a.CONSTRAINT_TYPE = 'R'
 			command.ExecuteNonQuery();
 		}
 
+		/// <summary>
+		/// Rename column in table
+		/// </summary>
+		/// <param name="table">Table name</param>
+		/// <param name="oldName">Old name</param>
+		/// <param name="newName">New name</param>
 		public void RenameColumn(string table, string oldName, string newName)
 		{
 			OracleCommand command = Database.CreateCommand(string.Format(SqlRenameColumn, TableNameWithOwnerCaseSensitve(table), oldName, newName));
@@ -263,6 +363,11 @@ WHERE a.CONSTRAINT_TYPE = 'R'
 			command.ExecuteNonQuery();
 		}
 
+		/// <summary>
+		/// Drop column in table
+		/// </summary>
+		/// <param name="table">Table name</param>
+		/// <param name="column">Column name</param>
 		public void DropColumn(string table, string column)
 		{
 			OracleCommand command = Database.CreateCommand(string.Format(SqlDropColumn, TableNameWithOwnerCaseSensitve(table), column));
@@ -270,6 +375,10 @@ WHERE a.CONSTRAINT_TYPE = 'R'
 			command.ExecuteNonQuery();
 		}
 
+		/// <summary>
+		/// Drop table from DB
+		/// </summary>
+		/// <param name="table">Table name</param>
 		public void DropTable(string table)
 		{
 			OracleCommand command = Database.CreateCommand(string.Format(SqlDropTable, TableNameWithOwnerCaseSensitve(table)));
@@ -277,6 +386,11 @@ WHERE a.CONSTRAINT_TYPE = 'R'
 			command.ExecuteNonQuery();
 		}
 
+		/// <summary>
+		/// Drop primary key constraint
+		/// </summary>
+		/// <param name="table">Table name</param>
+		/// <param name="primaryKeyConstraintName">Constraint name</param>
 		public void DropPrimaryKey(string table, string primaryKeyConstraintName)
 		{
 			OracleCommand command = Database.CreateCommand(string.Format(SqlDropConstraint, TableNameWithOwnerCaseSensitve(table), primaryKeyConstraintName));
@@ -284,6 +398,11 @@ WHERE a.CONSTRAINT_TYPE = 'R'
 			command.ExecuteNonQuery();
 		}
 
+		/// <summary>
+		/// Create new primary key constraint
+		/// </summary>
+		/// <param name="table">Table name</param>
+		/// <param name="columns">Name of primary key columns</param>
 		public void CreatePrimaryKey(string table, string[] columns)
 		{
 			string cols = string.Join(",", columns);
@@ -292,6 +411,13 @@ WHERE a.CONSTRAINT_TYPE = 'R'
 			command.ExecuteNonQuery();
 		}
 
+		/// <summary>
+		/// Create new foreign key constraint
+		/// </summary>
+		/// <param name="table">Table name</param>
+		/// <param name="referencedTable">Referenced table name</param>
+		/// <param name="collumns">Collection of column models</param>
+		/// <param name="fkName">Name of constraint, generated if null</param>
 		public void CreateForeignKey(string table, string referencedTable, IEnumerable<RowModelPair> collumns, string fkName = null)
 		{
 			string name = fkName ?? $"{table}_{referencedTable}_FK";
@@ -303,6 +429,11 @@ WHERE a.CONSTRAINT_TYPE = 'R'
 			command.ExecuteNonQuery();
 		}
 
+		/// <summary>
+		/// Drop foreign key constraint
+		/// </summary>
+		/// <param name="table">Table name</param>
+		/// <param name="name">Constraint name</param>
 		public void DropForeignKey(string table, string name)
 		{
 			OracleCommand command = Database.CreateCommand(string.Format(SqlDropConstraint, TableNameWithOwnerCaseSensitve(table), name));
@@ -310,6 +441,9 @@ WHERE a.CONSTRAINT_TYPE = 'R'
 			command.ExecuteNonQuery();
 		}
 
+		/// <summary>
+		/// Create table for saving diagrams
+		/// </summary>
 		public void CreateDiagramTable()
 		{
 			OracleCommand command = Database.CreateCommand(SqlDoesDiagramTableExist);
@@ -323,6 +457,12 @@ WHERE a.CONSTRAINT_TYPE = 'R'
 			}
 		}
 
+		/// <summary>
+		/// Save new diagram to DB
+		/// </summary>
+		/// <param name="name">Diagram name</param>
+		/// <param name="data">XML data</param>
+		/// <returns>One if successful, zero if not</returns>
 		public int InsertDiagram(string name, XDocument data)
 		{
 			OracleCommand command = Database.CreateCommand(string.Format(SqlInsertDiagram, DiagramTable));
@@ -331,6 +471,12 @@ WHERE a.CONSTRAINT_TYPE = 'R'
 			return command.ExecuteNonQuery();
 		}
 
+		/// <summary>
+		/// Save diagram to DB
+		/// </summary>
+		/// <param name="name">Diagram name</param>
+		/// <param name="data">XML data</param>
+		/// <returns>One if successful, zero if not</returns>
 		public int UpdateDiagram(string name, XDocument data)
 		{
 			OracleCommand command = Database.CreateCommand(string.Format(SqlUpdateDiagram, DiagramTable));
@@ -339,6 +485,11 @@ WHERE a.CONSTRAINT_TYPE = 'R'
 			return command.ExecuteNonQuery();
 		}
 
+		/// <summary>
+		/// Delete diagram from DB
+		/// </summary>
+		/// <param name="name">Diagram name</param>
+		/// <returns>One if successful, zero if not</returns>
 		public int DeleteDiagram(string name)
 		{
 			OracleCommand command = Database.CreateCommand(string.Format(SqlDeleteDiagram, DiagramTable));
@@ -346,6 +497,10 @@ WHERE a.CONSTRAINT_TYPE = 'R'
 			return command.ExecuteNonQuery();
 		}
 
+		/// <summary>
+		/// Select existing diagrams
+		/// </summary>
+		/// <returns>Collections of diagrams</returns>
 		public IEnumerable<DiagramModel> SelectDiagrams()
 		{
 			OracleCommand command = Database.CreateCommand(string.Format(SqlSelectDiagrams, DiagramTable));
@@ -355,6 +510,11 @@ WHERE a.CONSTRAINT_TYPE = 'R'
 			return res;
 		}
 
+		/// <summary>
+		/// Execute raw query
+		/// </summary>
+		/// <param name="sql">SQL Command text</param>
+		/// <returns>Dataset with results</returns>
 		public DataSet ExecuteRawQuery(string sql)
 		{
 			OracleCommand command = Database.CreateCommand(sql);
@@ -365,6 +525,11 @@ WHERE a.CONSTRAINT_TYPE = 'R'
 			return dataset;
 		}
 
+		/// <summary>
+		/// Read data from reader
+		/// </summary>
+		/// <param name="reader">Sql data reader</param>
+		/// <returns>Collection of read data</returns>
 		private IEnumerable<DiagramModel> ReadDiagrams(OracleDataReader reader)
 		{
 			var res = new List<DiagramModel>();
@@ -381,6 +546,11 @@ WHERE a.CONSTRAINT_TYPE = 'R'
 			return res;
 		}
 
+		/// <summary>
+		/// Alter columnd to table in DB
+		/// </summary>
+		/// <param name="table">Table name</param>
+		/// <param name="model">Column model</param>
 		public void AlterColumn(string table, TableRowModel model, bool modifyNull = true)
 		{
 			if (!modifyNull)
@@ -392,6 +562,10 @@ WHERE a.CONSTRAINT_TYPE = 'R'
 			AlterColumn(table, model);
 		}
 
+		/// <summary>
+		/// List tables in DB
+		/// </summary>
+		/// <returns>Collection of tables with ID and name</returns>
 		public IEnumerable<TableModel> ListTables()
 		{
 			OracleCommand command = Database.CreateCommand(SqlListTables);
@@ -402,6 +576,11 @@ WHERE a.CONSTRAINT_TYPE = 'R'
 			return res;
 		}
 
+		/// <summary>
+		/// Read data from reader
+		/// </summary>
+		/// <param name="reader">Sql data reader</param>
+		/// <returns>Collection of read data</returns>
 		private IEnumerable<TableModel> ReadTableList(OracleDataReader reader)
 		{
 			var res = new List<TableModel>();
@@ -422,6 +601,14 @@ WHERE a.CONSTRAINT_TYPE = 'R'
 		private string TableNameWithOwnerCaseSensitve(string table) => $"{Owner}.\"{table}\"";
 		private string DiagramTable => $"{Owner}.\"ERDIAGRAMS\"";
 
+		/// <summary>
+		/// Create new foreign key constraint
+		/// </summary>
+		/// <param name="table">Table name</param>
+		/// <param name="referencedTable">Referenced table name</param>
+		/// <param name="collumns">Collection of constraint columns</param>
+		/// <param name="fkName">Name of constraint, generated if NULL</param>
+		/// <param name="onDelete">Action on delete, all standard MS Sql actions</param>
 		public void CreateForeignKey(string table, string referencedTable, IEnumerable<RowModelPair> collumns, string fkName = null, string onDelete = "NO ACTION")
 		{
 			string name = fkName ?? $"{table}_{referencedTable}_FK";

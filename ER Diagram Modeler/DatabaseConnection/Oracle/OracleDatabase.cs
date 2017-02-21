@@ -8,9 +8,19 @@ using Oracle.ManagedDataAccess.Client;
 
 namespace ER_Diagram_Modeler.DatabaseConnection.Oracle
 {
+	/// <summary>
+	/// Oracle database connection operations
+	/// </summary>
 	public class OracleDatabase: IDatabase<OracleCommand>
 	{
+		/// <summary>
+		/// Current connection
+		/// </summary>
 		public OracleConnection Connection { get; set; }
+
+		/// <summary>
+		/// Connection string
+		/// </summary>
 		public string ConnectionString { get; set; }
 
 		public OracleDatabase()
@@ -18,11 +28,20 @@ namespace ER_Diagram_Modeler.DatabaseConnection.Oracle
 			Connection = new OracleConnection();
 		}
 
-		public  bool Connect()
+		/// <summary>
+		/// Connect to DB - Session connection string
+		/// </summary>
+		/// <returns>True if success, false if not</returns>
+		public bool Connect()
 		{
 			return Connect(ConnectionString);
 		}
 
+		/// <summary>
+		/// Connect to DB
+		/// </summary>
+		/// <param name="conString">Connection string</param>
+		/// <returns>rue if success, false if not</returns>
 		public bool Connect(string conString)
 		{
 			if(Connection.State != ConnectionState.Open)
@@ -35,11 +54,19 @@ namespace ER_Diagram_Modeler.DatabaseConnection.Oracle
 			return false;
 		}
 
+		/// <summary>
+		/// Close DB connection
+		/// </summary>
 		public void Close()
 		{
 			Connection.Close();
 		}
 
+		/// <summary>
+		/// Create OracleCommand
+		/// </summary>
+		/// <param name="sql">SQL Command text</param>
+		/// <returns>OracleCommand object</returns>
 		public OracleCommand CreateCommand(string sql)
 		{
 			return new OracleCommand(sql, Connection)
@@ -48,6 +75,11 @@ namespace ER_Diagram_Modeler.DatabaseConnection.Oracle
 			};
 		}
 
+		/// <summary>
+		/// Try connection with credentials
+		/// </summary>
+		/// <param name="connStreing">Connection string</param>
+		/// <returns>Task for async execution</returns>
 		private async Task TryToConnectToServer(string connStreing)
 		{
 			OracleConnection connection = new OracleConnection(connStreing);
@@ -55,6 +87,15 @@ namespace ER_Diagram_Modeler.DatabaseConnection.Oracle
 			connection.Close();
 		}
 
+		/// <summary>
+		/// Build Oracle session
+		/// </summary>
+		/// <param name="server">Hostname</param>
+		/// <param name="port">Port (default 1521)</param>
+		/// <param name="sid">SID</param>
+		/// <param name="username">Username</param>
+		/// <param name="password">Password</param>
+		/// <returns>Task for async execution</returns>
 		public async Task BuildSession(string server, string port, string sid,string username = null, string password = null)
 		{
 			OracleConnectionStringBuilder builder = new OracleConnectionStringBuilder

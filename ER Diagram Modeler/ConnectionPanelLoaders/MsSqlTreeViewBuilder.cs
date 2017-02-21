@@ -12,8 +12,15 @@ namespace ER_Diagram_Modeler.ConnectionPanelLoaders
 {
 	public class MsSqlTreeViewBuilder: TreeViewBuilder
 	{
-		private Action<string> _dropDatabaseAction; 
+		/// <summary>
+		/// Drop DB callback
+		/// </summary>
+		private Action<string> _dropDatabaseAction;
 
+		/// <summary>
+		/// Build treeview for MS Sql server
+		/// </summary>
+		/// <returns>Collection of treeview items</returns>
 		public override List<TreeViewItem> BuildTreeView()
 		{
 			string origdb = SessionProvider.Instance.Database;
@@ -76,6 +83,10 @@ namespace ER_Diagram_Modeler.ConnectionPanelLoaders
 			return res;
 		}
 
+		/// <summary>
+		/// Setup DB treeview item
+		/// </summary>
+		/// <param name="item">Current item</param>
 		private void SetupDatabaseItemContextMenu(TreeViewItem item)
 		{
 			ContextMenu menu = new ContextMenu();

@@ -10,8 +10,14 @@ using System.Windows.Shapes;
 
 namespace ER_Diagram_Modeler.Controls.Buttons
 {
+	/// <summary>
+	/// Toolbar button control
+	/// </summary>
 	class DesignerToolBarButton: Button
 	{
+		/// <summary>
+		/// Icon
+		/// </summary>
 		public Geometry Icon
 		{
 			get { return (Geometry) GetValue(IconProperty); }
@@ -21,6 +27,9 @@ namespace ER_Diagram_Modeler.Controls.Buttons
 			}
 		}
 
+		/// <summary>
+		/// Is button checked
+		/// </summary>
 		public bool IsChecked
 		{
 			get { return (bool) GetValue(IsCheckedProperty); }
@@ -30,8 +39,14 @@ namespace ER_Diagram_Modeler.Controls.Buttons
 			}
 		}
 
+		/// <summary>
+		/// XAML Property
+		/// </summary>
 		public static readonly DependencyProperty IconProperty = DependencyProperty.Register("Icon", typeof(Geometry), typeof(DesignerToolBarButton), new FrameworkPropertyMetadata(null));
 
+		/// <summary>
+		/// XAML Property
+		/// </summary>
 		public static readonly DependencyProperty IsCheckedProperty = DependencyProperty.Register("IsChecked", typeof(bool), typeof(DesignerToolBarButton), new FrameworkPropertyMetadata(false));
 
 		public DesignerToolBarButton()

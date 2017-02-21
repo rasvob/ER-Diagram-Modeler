@@ -5,8 +5,16 @@ using ER_Diagram_Modeler.ViewModels.Enums;
 
 namespace ER_Diagram_Modeler.DatabaseConnection
 {
+	/// <summary>
+	/// Static factory for mappers
+	/// </summary>
 	public static class MapperFactory
 	{
+		/// <summary>
+		/// Get mapper instance based on connection type
+		/// </summary>
+		/// <param name="type">Connection type</param>
+		/// <returns>Mapper with IMapper interface</returns>
 		public static IMapper GetMapper(ConnectionType type)
 		{
 			switch (type)
@@ -20,6 +28,12 @@ namespace ER_Diagram_Modeler.DatabaseConnection
 			}
 		}
 
+		/// <summary>
+		/// Get mapper instance based on connection type for connection string
+		/// </summary>
+		/// <param name="type">Connection type</param>
+		/// <param name="connectionString">Connection string</param>
+		/// <returns>Mapper with IMapper interface</returns>
 		public static IMapper GetMapper(ConnectionType type, string connectionString)
 		{
 			switch(type)

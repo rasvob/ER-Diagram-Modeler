@@ -8,12 +8,19 @@ using ER_Diagram_Modeler.Models.Designer;
 
 namespace ER_Diagram_Modeler.ConnectionPanelLoaders
 {
+	/// <summary>
+	/// Oracle treeviw builder
+	/// </summary>
 	public class OracleTreeViewBuilder: TreeViewBuilder
 	{
 		public OracleTreeViewBuilder(Action<TableModel> addTableAction, IEnumerable<DatabaseInfo> infos, Action<DiagramModel> addDiagramAction, Action<DiagramModel> dropDiagramAction) : base(addTableAction, infos, addDiagramAction, dropDiagramAction)
 		{
 		}
 
+		/// <summary>
+		/// Build treeview for Oracle
+		/// </summary>
+		/// <returns>Collection of treeview items</returns>
 		public override List<TreeViewItem> BuildTreeView()
 		{
 			List<TreeViewItem> res = new List<TreeViewItem>();
