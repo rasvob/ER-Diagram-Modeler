@@ -6,6 +6,9 @@ using ER_Diagram_Modeler.EventArgs;
 
 namespace ER_Diagram_Modeler.Views.Canvas.Connection
 {
+	/// <summary>
+	/// Bending point mark visualization
+	/// </summary>
 	public class ConnectionPointMark
 	{
 		private ConnectionPoint _point;
@@ -13,6 +16,9 @@ namespace ER_Diagram_Modeler.Views.Canvas.Connection
 		private readonly EllipseGeometry _geometry;
 		private const int Radius = 5;
 
+		/// <summary>
+		/// Coordinates
+		/// </summary>
 		public ConnectionPoint Point
 		{
 			get { return _point; }
@@ -24,11 +30,19 @@ namespace ER_Diagram_Modeler.Views.Canvas.Connection
 			}
 		}
 
+		/// <summary>
+		/// Coordinates changed
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="connectionPointEventArgs"></param>
 		private void PointOnCoordinatesChanged(object sender, ConnectionPointEventArgs connectionPointEventArgs)
 		{
 			SetEllipsePosition();
 		}
 
+		/// <summary>
+		/// Circle mark
+		/// </summary>
 		public Path Mark { get; }
 
 		public ConnectionPointMark()
@@ -42,6 +56,9 @@ namespace ER_Diagram_Modeler.Views.Canvas.Connection
 			Mark.Visibility = Visibility.Hidden;
 		}
 
+		/// <summary>
+		/// Set circle position
+		/// </summary>
 		private void SetEllipsePosition()
 		{
 			_geometry.Center = new Point(_point.X, _point.Y);

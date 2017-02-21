@@ -12,13 +12,34 @@ using Path = System.Windows.Shapes.Path;
 
 namespace ER_Diagram_Modeler.Views.Canvas.Connection
 {
+	/// <summary>
+	/// Connector visual element
+	/// </summary>
 	public class Connector
 	{
+		/// <summary>
+		/// Symbol One or Many
+		/// </summary>
 		public Path Symbol { get; }
+
+		/// <summary>
+		/// Short line at end of connector
+		/// </summary>
 		public Path ConnectionPath { get; set; }
+
+		/// <summary>
+		/// Optionality of relationship
+		/// </summary>
 		public Optionality Optionality { get; set; } = Optionality.Mandatory;
+
+		/// <summary>
+		/// Cadrinality of relationship
+		/// </summary>
 		public Cardinality Cardinality { get; set; }
 
+		/// <summary>
+		/// Is connector selected
+		/// </summary>
 		public bool IsSelected
 		{
 			get { return _isSelected; }
@@ -31,6 +52,9 @@ namespace ER_Diagram_Modeler.Views.Canvas.Connection
 			}
 		}
 
+		/// <summary>
+		/// End point
+		/// </summary>
 		public ConnectionPoint EndPoint
 		{
 			get { return _endPoint; }
@@ -41,11 +65,19 @@ namespace ER_Diagram_Modeler.Views.Canvas.Connection
 			}
 		}
 
+		/// <summary>
+		/// End point X or Y changed
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="connectionPointEventArgs"></param>
 		private void EndPointOnCoordinatesChanged(object sender, ConnectionPointEventArgs connectionPointEventArgs)
 		{
 			UpdateConnector();
 		}
 
+		/// <summary>
+		/// Orientation of symbol
+		/// </summary>
 		public ConnectorOrientation Orientation
 		{
 			get { return _orientation; }
@@ -56,10 +88,26 @@ namespace ER_Diagram_Modeler.Views.Canvas.Connection
 			}
 		}
 
+		/// <summary>
+		/// Lenght of path
+		/// </summary>
 		public static readonly double ConnectionPathLength = 25;
+
+		/// <summary>
+		/// Line of lines of symbol
+		/// </summary>
 		public static readonly double SymbolLinesLength = 20;
+
+		/// <summary>
+		/// Difference between ends of lines
+		/// </summary>
 		public static readonly double SymbolLineEndsDiff = 8;
+
+		/// <summary>
+		/// Connctor lenght including line for connection
+		/// </summary>
 		public static readonly double ConnectorLenght = SymbolLinesLength + ConnectionPathLength;
+
 		public static readonly DoubleCollection DashArray = new DoubleCollection() { 2 };
 
 		private ConnectorOrientation _orientation;
@@ -70,6 +118,9 @@ namespace ER_Diagram_Modeler.Views.Canvas.Connection
 		private readonly PathGeometry _connectionGeometry;
 		private bool _isSelected;
 
+		/// <summary>
+		/// Connector selected
+		/// </summary>
 		public event EventHandler ConnectorSelected;
 
 		public Connector()
@@ -100,12 +151,20 @@ namespace ER_Diagram_Modeler.Views.Canvas.Connection
 			ConnectionPath.PreviewMouseLeftButtonDown += SymbolOnPreviewMouseLeftButtonDown;
 		}
 
+		/// <summary>
+		/// Left mouse button down
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="args"></param>
 		private void SymbolOnPreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs args)
 		{
 			OnConnectorSelected();
 			args.Handled = true;
 		}
 
+		/// <summary>
+		/// Update connector by orientation
+		/// </summary>
 		public void UpdateConnector()
 		{
 			if (EndPoint == null)
@@ -131,6 +190,9 @@ namespace ER_Diagram_Modeler.Views.Canvas.Connection
 			}
 		}
 
+		/// <summary>
+		/// Build paths for visualization
+		/// </summary>
 		private void BuildBottomConnector()
 		{
 			var connectionPathEndPoint = new Point(EndPoint.X, EndPoint.Y - ConnectionPathLength);
@@ -181,6 +243,9 @@ namespace ER_Diagram_Modeler.Views.Canvas.Connection
 			}
 		}
 
+		/// <summary>
+		/// Build paths for visualization
+		/// </summary>
 		private void BuildTopConnector()
 		{
 			var connectionPathEndPoint = new Point(EndPoint.X, EndPoint.Y + ConnectionPathLength);
@@ -231,6 +296,9 @@ namespace ER_Diagram_Modeler.Views.Canvas.Connection
 			}
 		}
 
+		/// <summary>
+		/// Build paths for visualization
+		/// </summary>
 		private void BuildLeftConnector()
 		{
 			var connectionPathEndPoint = new Point(EndPoint.X + ConnectionPathLength, EndPoint.Y);
@@ -281,6 +349,9 @@ namespace ER_Diagram_Modeler.Views.Canvas.Connection
 			}
 		}
 
+		/// <summary>
+		/// Build paths for visualization
+		/// </summary>
 		private void BuildRightConnector()
 		{
 			var connectionPathEndPoint = new Point(EndPoint.X - ConnectionPathLength, EndPoint.Y);

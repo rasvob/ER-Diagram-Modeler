@@ -1,28 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Data.SqlClient;
 using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Forms;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using ER_Diagram_Modeler.Configuration.Providers;
-using ER_Diagram_Modeler.DiagramConstruction.Strategy;
 using ER_Diagram_Modeler.Dialogs;
 using ER_Diagram_Modeler.EventArgs;
 using ER_Diagram_Modeler.Models.Designer;
 using ER_Diagram_Modeler.ViewModels;
 using ER_Diagram_Modeler.ViewModels.Enums;
-using MahApps.Metro.Controls.Dialogs;
 using KeyEventArgs = System.Windows.Input.KeyEventArgs;
 using MenuItem = System.Windows.Controls.MenuItem;
 using UserControl = System.Windows.Controls.UserControl;
@@ -34,13 +18,44 @@ namespace ER_Diagram_Modeler.Views.Canvas.TableItem
 	/// </summary>
 	public partial class TableViewControl : UserControl
 	{
+		/// <summary>
+		/// Viewmodel for control
+		/// </summary>
 		public TableViewModel ViewModel { get; set; }
+
+		/// <summary>
+		/// Add column clicked
+		/// </summary>
 		public event EventHandler<TableModel> AddNewRow;
+
+		/// <summary>
+		/// Selected row double clicked
+		/// </summary>
 		public event EventHandler<EditRowEventArgs> EditSelectedRow;
+
+		/// <summary>
+		/// Delete pressed with selected row
+		/// </summary>
 		public event EventHandler<EditRowEventArgs> RemoveSelectedRow;
+
+		/// <summary>
+		/// Rename menu item clicked
+		/// </summary>
 		public event EventHandler<TableModel> RenameTable; 
+
+		/// <summary>
+		/// Drop table menu item clicked
+		/// </summary>
 		public event EventHandler<TableModel> DropTable;
+
+		/// <summary>
+		/// Primary key manager menu item clicked
+		/// </summary>
 		public event EventHandler<TableModel> UpdatePrimaryKeyConstraint;
+
+		/// <summary>
+		/// Refresh data model from DB
+		/// </summary>
 		public event EventHandler<TableModel> RefreshTableData;
 
 		public TableViewControl()
@@ -55,6 +70,9 @@ namespace ER_Diagram_Modeler.Views.Canvas.TableItem
 			DataContext = viewModel;
 		}
 
+		/// <summary>
+		/// Uncheck view mode in menu
+		/// </summary>
 		private void UncheckViewModeMenuItems()
 		{
 			foreach (MenuItem item in MenuItemViewModeList.Items)
@@ -63,6 +81,11 @@ namespace ER_Diagram_Modeler.Views.Canvas.TableItem
 			}
 		}
 
+		/// <summary>
+		/// View mode clicked
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private void MenuItem_OnClick(object sender, RoutedEventArgs e)
 		{
 			ViewModel.ViewMode = TableViewMode.Standard;
@@ -71,6 +94,11 @@ namespace ER_Diagram_Modeler.Views.Canvas.TableItem
 			if (item != null) item.IsChecked = true;
 		}
 
+		/// <summary>
+		/// View mode clicked
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private void MenuItem_NameOnly_OnClick(object sender, RoutedEventArgs e)
 		{
 			ViewModel.ViewMode = TableViewMode.NameOnly;
@@ -84,6 +112,11 @@ namespace ER_Diagram_Modeler.Views.Canvas.TableItem
 			OnRenameTable(ViewModel.Model);
 		}
 
+		/// <summary>
+		/// Show/hide datatypes
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private void MenuItemShowDatatype_OnClick(object sender, RoutedEventArgs e)
 		{
 			var item = sender as MenuItem;
@@ -102,6 +135,11 @@ namespace ER_Diagram_Modeler.Views.Canvas.TableItem
 			}
 		}
 
+		/// <summary>
+		/// Double click on row
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private void TableDataGrid_OnMouseDoubleClick(object sender, MouseButtonEventArgs e)
 		{
 			EditRowEventArgs args;
@@ -111,6 +149,9 @@ namespace ER_Diagram_Modeler.Views.Canvas.TableItem
 			}
 		}
 
+		/// <summary>
+		/// Add column clicked
+		/// </summary>
 		private void AddNewRow_OnClick(object sender, RoutedEventArgs e)
 		{
 			OnAddNewRow(ViewModel.Model);
@@ -131,6 +172,11 @@ namespace ER_Diagram_Modeler.Views.Canvas.TableItem
 			RenameTable?.Invoke(this, e);
 		}
 
+		/// <summary>
+		/// Delete pressed with selected row
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private void TableDataGrid_OnPreviewKeyUp(object sender, KeyEventArgs e)
 		{
 			if (e.Key != Key.Delete) return;
@@ -169,6 +215,11 @@ namespace ER_Diagram_Modeler.Views.Canvas.TableItem
 			RemoveSelectedRow?.Invoke(this, e);
 		}
 
+		/// <summary>
+		/// Table drop clicked
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private void DropTableItem_OnClick(object sender, RoutedEventArgs e)
 		{
 			OnDropTable(ViewModel.Model);
@@ -179,6 +230,11 @@ namespace ER_Diagram_Modeler.Views.Canvas.TableItem
 			DropTable?.Invoke(this, e);
 		}
 
+		/// <summary>
+		/// Primary key managed open
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private void ModPrimaryKeyItem_OnClick(object sender, RoutedEventArgs e)
 		{
 			var dialog = new PrimaryKeyDialog

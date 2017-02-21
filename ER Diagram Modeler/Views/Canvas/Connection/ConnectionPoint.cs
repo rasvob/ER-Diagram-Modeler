@@ -6,11 +6,17 @@ using ER_Diagram_Modeler.EventArgs;
 
 namespace ER_Diagram_Modeler.Views.Canvas.Connection
 {
+	/// <summary>
+	/// Point with X and Y coordinates and value change events
+	/// </summary>
 	public class ConnectionPoint: IEquatable<ConnectionPoint>, IDiagramSerializable
 	{
 		private double _x;
 		private double _y;
 
+		/// <summary>
+		/// X coordinate
+		/// </summary>
 		public double X
 		{
 			get { return _x; }
@@ -21,6 +27,9 @@ namespace ER_Diagram_Modeler.Views.Canvas.Connection
 			}
 		}
 
+		/// <summary>
+		/// Y coordinate
+		/// </summary>
 		public double Y
 		{
 			get { return _y; }
@@ -31,6 +40,9 @@ namespace ER_Diagram_Modeler.Views.Canvas.Connection
 			}
 		}
 
+		/// <summary>
+		/// Tolerance for IEquatable.Equals()
+		/// </summary>
 		public static readonly double EqualityTolerance = 0.005;
 
 		public ConnectionPoint()
@@ -50,16 +62,30 @@ namespace ER_Diagram_Modeler.Views.Canvas.Connection
 			Y += yOffset;
 		}
 
+		/// <summary>
+		/// Is point equal to other
+		/// </summary>
+		/// <param name="other">Other point</param>
+		/// <returns>True if is equal, false if not</returns>
 		public bool Equals(ConnectionPoint other)
 		{
 			return (Math.Abs(X - other.X) < EqualityTolerance) && (Math.Abs(Y - other.Y) < EqualityTolerance);
 		}
 
+		/// <summary>
+		/// Distance to other point
+		/// </summary>
+		/// <param name="other">Other point</param>
+		/// <returns>Distance between points</returns>
 		public double GetDistanceToPoint(ConnectionPoint other)
 		{
 			return Math.Sqrt(Math.Pow(X - other.X, 2) + Math.Pow(Y - other.Y, 2));
 		}
 
+		/// <summary>
+		/// Get hash code
+		/// </summary>
+		/// <returns>Get hash code</returns>
 		public override int GetHashCode()
 		{
 			unchecked
@@ -71,11 +97,18 @@ namespace ER_Diagram_Modeler.Views.Canvas.Connection
 			}
 		}
 
+		/// <summary>
+		/// Coords as vector
+		/// </summary>
+		/// <returns>String with both coordination</returns>
 		public override string ToString()
 		{
 			return $"[{X}|{Y}]";
 		}
 
+		/// <summary>
+		/// Coordinations changed event
+		/// </summary>
 		public event EventHandler<ConnectionPointEventArgs> CoordinatesChanged;
 
 		protected virtual void OnCoordinatesChanged(ConnectionPointEventArgs e)
@@ -83,11 +116,19 @@ namespace ER_Diagram_Modeler.Views.Canvas.Connection
 			CoordinatesChanged?.Invoke(this, e);
 		}
 
+		/// <summary>
+		/// Create XML element
+		/// </summary>
+		/// <returns>XML serialized data</returns>
 		public XElement CreateElement()
 		{
 			return new XElement("ConnectionPoint", new XAttribute("X", X), new XAttribute("Y", Y));
 		}
 
+		/// <summary>
+		/// Load property values from XML element
+		/// </summary>
+		/// <param name="element">XML serialized data from CreateElement()</param>
 		public void LoadFromElement(XElement element)
 		{
 			X = Convert.ToDouble(element.Attribute("X")?.Value);

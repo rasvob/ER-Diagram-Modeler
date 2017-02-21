@@ -12,6 +12,9 @@ using ER_Diagram_Modeler.ViewModels.Enums;
 
 namespace ER_Diagram_Modeler.Views.Canvas.Connection
 {
+	/// <summary>
+	/// Line in relationship visualization
+	/// </summary>
 	public class ConnectionLine: Control
 	{
 		private ConnectionPoint _dragStartPointStart = new ConnectionPoint();
@@ -26,6 +29,9 @@ namespace ER_Diagram_Modeler.Views.Canvas.Connection
 		public ConnectionPoint EndPoint { get; }
 		public Line Line { get; }
 
+		/// <summary>
+		/// Is line selected
+		/// </summary>
 		public bool IsSelected
 		{
 			get { return _isSelected; }
@@ -36,14 +42,39 @@ namespace ER_Diagram_Modeler.Views.Canvas.Connection
 			}
 		}
 
+		/// <summary>
+		/// Line stroke thickness
+		/// </summary>
 		public static double StrokeThickness = 3;
 
+		/// <summary>
+		/// Line selected
+		/// </summary>
 		public event EventHandler LineSelected;
+
+		/// <summary>
+		/// Line move finished
+		/// </summary>
 		public event EventHandler LineMoved;
+
+		/// <summary>
+		/// Line moving
+		/// </summary>
 		public event EventHandler LineMoving;
+
+		/// <summary>
+		/// Line move not started yet
+		/// </summary>
 		public event EventHandler<ConnectionLineBeforeMoveEventArgs> BeforeLineMove;
+
+		/// <summary>
+		/// Line was splitted
+		/// </summary>
 		public event EventHandler<ConnectionPoint> LineSplit; 
 
+		/// <summary>
+		/// Orientation of line
+		/// </summary>
 		public LineOrientation Orientation
 		{
 			get { return _orientation; }
@@ -83,11 +114,21 @@ namespace ER_Diagram_Modeler.Views.Canvas.Connection
 			Line.PreviewMouseUp += LineOnPreviewMouseUp;
 		}
 
+		/// <summary>
+		/// Mouse button up
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="mouseButtonEventArgs"></param>
 		private void LineOnPreviewMouseUp(object sender, MouseButtonEventArgs mouseButtonEventArgs)
 		{
 			OnLineSelected();
 		}
 
+		/// <summary>
+		/// Mouse button down
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="args"></param>
 		private void LineOnPreviewMouseDown(object sender, MouseButtonEventArgs args)
 		{
 			OnLineSelected();
@@ -114,6 +155,11 @@ namespace ER_Diagram_Modeler.Views.Canvas.Connection
 			}
 		}
 
+		/// <summary>
+		/// Mouse moved
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="args"></param>
 		private void LineOnMouseMove(object sender, MouseEventArgs args)
 		{
 			if (_dragStartPoint.HasValue)
@@ -135,6 +181,11 @@ namespace ER_Diagram_Modeler.Views.Canvas.Connection
 			}
 		}
 
+		/// <summary>
+		/// Mouse left button up
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="args"></param>
 		private void LineOnMouseLeftButtonUp(object sender, MouseButtonEventArgs args)
 		{
 			var snd = sender as Line;
@@ -145,6 +196,11 @@ namespace ER_Diagram_Modeler.Views.Canvas.Connection
 			args.Handled = true;
 		}
 
+		/// <summary>
+		/// Mouse left button down
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="args"></param>
 		private void LineOnMouseLeftButtonDown(object sender, MouseButtonEventArgs args)
 		{
 			var snd = sender as Line;
@@ -166,18 +222,32 @@ namespace ER_Diagram_Modeler.Views.Canvas.Connection
 			args.Handled = true;
 		}
 
+		/// <summary>
+		/// End point coordinated changed
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="args"></param>
 		private void EndPointOnCoordinatesChanged(object sender, ConnectionPointEventArgs args)
 		{
 			Line.X2 = args.X;
 			Line.Y2 = args.Y;
 		}
 
+		/// <summary>
+		/// Start point coordinated changed
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="args"></param>
 		private void StartPointOnCoordinatesChanged(object sender, ConnectionPointEventArgs args)
 		{
 			Line.X1 = args.X;
 			Line.Y1 = args.Y;
 		}
 
+		/// <summary>
+		/// Get lenght of line
+		/// </summary>
+		/// <returns>Lenght of line</returns>
 		public double GetLenght()
 		{
 			if (Orientation == LineOrientation.Horizontal)
@@ -187,6 +257,10 @@ namespace ER_Diagram_Modeler.Views.Canvas.Connection
 			return Math.Abs(EndPoint.Y - StartPoint.Y);
 		}
 
+		/// <summary>
+		/// Get coordinations of middle
+		/// </summary>
+		/// <returns>Middle point</returns>
 		public ConnectionPoint GetMiddlePoint()
 		{
 			ConnectionPoint middle = new ConnectionPoint();
@@ -205,6 +279,10 @@ namespace ER_Diagram_Modeler.Views.Canvas.Connection
 			return middle;
 		}
 
+		/// <summary>
+		/// Start and end point coordinates
+		/// </summary>
+		/// <returns></returns>
 		public override string ToString()
 		{
 			return $"{StartPoint} | {EndPoint}";
