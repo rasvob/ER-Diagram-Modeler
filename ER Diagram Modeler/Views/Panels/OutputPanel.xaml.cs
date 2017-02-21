@@ -22,6 +22,11 @@ namespace ER_Diagram_Modeler.Views.Panels
 			Loaded += OnLoaded;
 		}
 
+		/// <summary>
+		/// Enable highlight on load
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="routedEventArgs"></param>
 		private void OnLoaded(object sender, RoutedEventArgs routedEventArgs)
 		{
 			using(var reader =  XmlReader.Create(new StringReader(Properties.Resources.SQLSyntaxHL)))
@@ -30,6 +35,11 @@ namespace ER_Diagram_Modeler.Views.Panels
 			}
 		}
 
+		/// <summary>
+		/// Clear output
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private void ClearOutputCommand_OnExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
 			OutputTextBox.Clear();

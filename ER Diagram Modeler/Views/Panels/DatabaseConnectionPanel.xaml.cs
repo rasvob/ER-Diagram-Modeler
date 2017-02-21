@@ -34,14 +34,51 @@ namespace ER_Diagram_Modeler.Views.Panels
 	/// </summary>
 	public partial class DatabaseConnectionPanel : UserControl
 	{
+		/// <summary>
+		/// Connection item clicked
+		/// </summary>
 		public event EventHandler<ConnectionType> ConnectionClick;
+
+		/// <summary>
+		/// Disconnect item clicked
+		/// </summary>
 		public event EventHandler DisconnectClick;
+
+		/// <summary>
+		/// Database selected
+		/// </summary>
 		public event EventHandler<string> MsSqlDatabaseChanged; 
+
+		/// <summary>
+		/// Add table to diagram clicked
+		/// </summary>
 		public event EventHandler<TableModel> AddTable;
+
+		/// <summary>
+		/// Add diagram to window
+		/// </summary>
 		public event EventHandler<DiagramModel> AddDiagram;
+
+		/// <summary>
+		/// Delete diagram from DB
+		/// </summary>
 		public event EventHandler<DiagramModel> DropDiagram;
+
+		/// <summary>
+		/// Create new database
+		/// </summary>
+		/// <remarks>MS Sql server only</remarks>
 		public event EventHandler CreateMsSqlDatabase;
+
+		/// <summary>
+		/// Drop database
+		/// </summary>
+		/// <remarks>MS Sql Server only</remarks>
 		public event EventHandler<string> DropMsSqlDatabase;
+
+		/// <summary>
+		/// Treeview data
+		/// </summary>
 		public List<DatabaseInfo> DatabaseInfos { get; set; }
 
 		public DatabaseConnectionPanel()
@@ -49,16 +86,31 @@ namespace ER_Diagram_Modeler.Views.Panels
 			InitializeComponent();
 		}
 
+		/// <summary>
+		/// End session
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private void Disconnect_OnExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
 			OnDisconnectClick();
 		}
 
+		/// <summary>
+		/// Can disconnect
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private void Disconnect_OnCanExecute(object sender, CanExecuteRoutedEventArgs e)
 		{
 			e.CanExecute = SessionProvider.Instance.ConnectionType != ConnectionType.None;
 		}
 
+		/// <summary>
+		/// Connect to server open menu
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private void ConnectoToServerButton_OnClick(object sender, RoutedEventArgs e)
 		{
 			var btn = sender as DesignerToolBarButton;
@@ -66,11 +118,19 @@ namespace ER_Diagram_Modeler.Views.Panels
 			if (btn != null) btn.ContextMenu.IsOpen = true;
 		}
 
+		/// <summary>
+		/// Clicked on menu item
+		/// </summary>
+		/// <param name="e"></param>
 		protected virtual void OnConnectionClick(ConnectionType e)
 		{
 			ConnectionClick?.Invoke(this, e);
 		}
 
+		/// <summary>
+		/// Load Ms Sql tree data
+		/// </summary>
+		/// <param name="loadPrev">Select previous DB</param>
 		public void LoadMsSqlData(bool loadPrev = false)
 		{
 			int selected = 0;
@@ -107,6 +167,9 @@ namespace ER_Diagram_Modeler.Views.Panels
 			MsSqlServerGrid.Visibility = Visibility.Visible;
 		}
 
+		/// <summary>
+		/// Load Oracle tree data
+		/// </summary>
 		public void LoadOracleData()
 		{
 			var ctx = new DatabaseContext(ConnectionType.Oracle);
@@ -137,12 +200,18 @@ namespace ER_Diagram_Modeler.Views.Panels
 			OracleStackPanel.Visibility = Visibility.Visible;
 		}
 
+		/// <summary>
+		/// Hide controls
+		/// </summary>
 		public void HideDatabaseStackPanels()
 		{
 			MsSqlServerGrid.Visibility = Visibility.Collapsed;
 			OracleStackPanel.Visibility = Visibility.Collapsed;
 		}
 
+		/// <summary>
+		/// Refresh views
+		/// </summary>
 		public void RefreshTreeData()
 		{
 			switch (SessionProvider.Instance.ConnectionType)
@@ -166,6 +235,9 @@ namespace ER_Diagram_Modeler.Views.Panels
 			}
 		}
 
+		/// <summary>
+		/// Expand treeview item
+		/// </summary>
 		private void ExpandMsSqlTreeItem()
 		{
 			TreeViewItem itemMsSql = MsSqlTreeView.Items.Cast<TreeViewItem>().FirstOrDefault(t =>
@@ -183,6 +255,11 @@ namespace ER_Diagram_Modeler.Views.Panels
 			}
 		}
 
+		/// <summary>
+		/// DB selected from combobox
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private void MsSqlDatabaseComboBox_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
 			var cb = (sender as ComboBox)?.SelectedItem as DatabaseInfo;
@@ -200,6 +277,10 @@ namespace ER_Diagram_Modeler.Views.Panels
 			OnMsSqlDatabaseChanged(cb.Name);
 		}
 
+		/// <summary>
+		/// Load treeview data
+		/// </summary>
+		/// <remarks>MS Sql Server</remarks>
 		public void LoadMsSqlTreeViewData()
 		{
 			TreeViewBuilder builder = new MsSqlTreeViewBuilder(OnAddTable, DropDatabaseAction, DatabaseInfos, OnAddDiagram, OnDropDiagram);
@@ -208,6 +289,10 @@ namespace ER_Diagram_Modeler.Views.Panels
 			item.ForEach(t => MsSqlTreeView.Items.Add(t));
 		}
 
+		/// <summary>
+		/// Load treeview data
+		/// </summary>
+		/// <remarks>Oracle</remarks>
 		public void LoadOracleTreeData()
 		{
 			TreeViewBuilder builder = new OracleTreeViewBuilder(OnAddTable, DatabaseInfos, OnAddDiagram, OnDropDiagram);
@@ -231,6 +316,11 @@ namespace ER_Diagram_Modeler.Views.Panels
 			OnCreateMsSqlDatabase();
 		}
 
+		/// <summary>
+		/// Can create new DB
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private void CreateNewMsSqlDatabase_OnCanExecute(object sender, CanExecuteRoutedEventArgs e)
 		{
 			e.CanExecute = SessionProvider.Instance.ConnectionType == ConnectionType.SqlServer;

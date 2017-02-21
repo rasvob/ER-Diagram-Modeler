@@ -5,11 +5,17 @@ using System.Windows.Media;
 
 namespace ER_Diagram_Modeler.Views.Canvas.TableItem
 {
-    public class DesignerItemDecorator : Control
+	/// <summary>
+	/// Adorner for resize of item
+	/// </summary>
+	public class DesignerItemDecorator : Control
     {
         private Adorner _adorner;
 
-        public bool ShowDecorator
+		/// <summary>
+		/// Show overlay
+		/// </summary>
+		public bool ShowDecorator
         {
 	        get
 	        {
@@ -21,6 +27,10 @@ namespace ER_Diagram_Modeler.Views.Canvas.TableItem
 	        }
         }
 
+		/// <summary>
+		/// Show overlay
+		/// </summary>
+		/// <remarks>XAML</remarks>
         public static readonly DependencyProperty ShowDecoratorProperty =
             DependencyProperty.Register("ShowDecorator", typeof(bool), typeof(DesignerItemDecorator),
             new FrameworkPropertyMetadata(false, ShowDecoratorProperty_Changed));
@@ -30,6 +40,9 @@ namespace ER_Diagram_Modeler.Views.Canvas.TableItem
             Unloaded += UnloadedHandler;
         }
 
+		/// <summary>
+		/// Hide overlay
+		/// </summary>
         private void HideAdorner()
         {
             if (_adorner != null)
@@ -38,6 +51,9 @@ namespace ER_Diagram_Modeler.Views.Canvas.TableItem
             }
         }
 
+		/// <summary>
+		/// Show overlay
+		/// </summary>
         private void ShowAdorner()
         {
             if (this._adorner == null)
@@ -58,6 +74,11 @@ namespace ER_Diagram_Modeler.Views.Canvas.TableItem
             }
         }
 
+		/// <summary>
+		/// Unload overlay
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
         private void UnloadedHandler(object sender, RoutedEventArgs e)
         {
             if (_adorner != null)
@@ -68,6 +89,11 @@ namespace ER_Diagram_Modeler.Views.Canvas.TableItem
             }
         }
 
+		/// <summary>
+		/// Show or hide overlay
+		/// </summary>
+		/// <param name="d"></param>
+		/// <param name="e"></param>
         private static void ShowDecoratorProperty_Changed(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             DesignerItemDecorator decorator = (DesignerItemDecorator)d;

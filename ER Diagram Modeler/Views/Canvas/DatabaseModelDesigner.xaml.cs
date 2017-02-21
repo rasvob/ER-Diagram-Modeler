@@ -45,8 +45,14 @@ namespace ER_Diagram_Modeler.Views.Canvas
 		private TableViewModel _sourceModel;
 		private TableViewModel _destinationModel;
 
+		/// <summary>
+		/// New table added
+		/// </summary>
 		public event EventHandler TableCreated;
 
+		/// <summary>
+		/// Viewmodel for designer
+		/// </summary>
 		public DatabaseModelDesignerViewModel ViewModel
 		{
 			get { return _viewModel; }
@@ -60,6 +66,11 @@ namespace ER_Diagram_Modeler.Views.Canvas
 			}
 		}
 
+		/// <summary>
+		/// Scale changed
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="args"></param>
 		private void ViewModelOnScaleChanged(object sender, ScaleEventArgs args)
 		{
 			double contentHorizontalMiddle = (args.OldHorizontalOffset + args.OldViewportWidth/2)/args.OldScale;
@@ -85,6 +96,11 @@ namespace ER_Diagram_Modeler.Views.Canvas
 			DesignerScrollViewer.ScrollToVerticalOffset(newVerticalOffset);
 		}
 
+		/// <summary>
+		/// Table added or removed
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="args"></param>
 		private void TableViewModelsOnCollectionChanged(object sender, NotifyCollectionChangedEventArgs args)
 		{
 			switch (args.Action)
@@ -106,6 +122,11 @@ namespace ER_Diagram_Modeler.Views.Canvas
 			}
 		}
 
+		/// <summary>
+		/// Item is selected
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="args"></param>
 		private void ItemOnPropertyChanged(object sender, PropertyChangedEventArgs args)
 		{
 			if (args.PropertyName.Equals("IsSelected", StringComparison.CurrentCultureIgnoreCase))
@@ -136,6 +157,11 @@ namespace ER_Diagram_Modeler.Views.Canvas
 			DataContextChanged += OnDataContextChanged;
 		}
 
+		/// <summary>
+		/// Relationship added or removed
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="args"></param>
 		private void ConnectionsOnCollectionChanged(object sender, NotifyCollectionChangedEventArgs args)
 		{
 			switch (args.Action)
@@ -164,6 +190,11 @@ namespace ER_Diagram_Modeler.Views.Canvas
 			}
 		}
 
+		/// <summary>
+		/// Bending point mark added or removed
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="args"></param>
 		private void MarksOnCollectionChanged(object sender, NotifyCollectionChangedEventArgs args)
 		{
 			switch (args.Action)
@@ -184,6 +215,11 @@ namespace ER_Diagram_Modeler.Views.Canvas
 			}
 		}
 
+		/// <summary>
+		/// Deselect not selected element
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="val"></param>
 		private void ItemOnSelectionChange(object sender, bool val)
 		{
 			var conn = sender as ConnectionInfoViewModel;
@@ -217,6 +253,11 @@ namespace ER_Diagram_Modeler.Views.Canvas
 			}
 		}
 
+		/// <summary>
+		/// New line added to relationship visualization
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="args"></param>
 		private void LinesOnCollectionChanged(object sender, NotifyCollectionChangedEventArgs args)
 		{
 			switch (args.Action)
@@ -236,6 +277,11 @@ namespace ER_Diagram_Modeler.Views.Canvas
 			}
 		}
 
+		/// <summary>
+		/// Mouse clicked
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private async void ModelDesignerCanvasOnMouseDown(object sender, MouseButtonEventArgs e)
 		{
 			switch (ViewModel.MouseMode)
@@ -289,11 +335,20 @@ namespace ER_Diagram_Modeler.Views.Canvas
 			}
 		}
 
+		/// <summary>
+		/// Data context changed
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="dependencyPropertyChangedEventArgs"></param>
 		private void OnDataContextChanged(object sender, DependencyPropertyChangedEventArgs dependencyPropertyChangedEventArgs)
 		{
 			ZoomBox.ViewModel = ViewModel;
 		}
 
+		/// <summary>
+		/// Add table to canvas
+		/// </summary>
+		/// <param name="viewModel">Viewmodel of table</param>
 		private void AddTableElement(TableViewModel viewModel)
 		{
 			var content = new TableContent(viewModel);
@@ -324,6 +379,10 @@ namespace ER_Diagram_Modeler.Views.Canvas
 			ModelDesignerCanvas.Children.Add(content);
 		}
 
+		/// <summary>
+		/// Remove table from canvas
+		/// </summary>
+		/// <param name="viewModel">Viewmodel of table</param>
 		private void RemoveTableElement(TableViewModel viewModel)
 		{
 			var table = ModelDesignerCanvas.Children.OfType<TableContent>().FirstOrDefault(t => t.TableViewModel.Equals(viewModel));
@@ -337,6 +396,10 @@ namespace ER_Diagram_Modeler.Views.Canvas
 			ModelDesignerCanvas.Children.Remove(table);
 		}
 
+		/// <summary>
+		/// Add lines to canvas
+		/// </summary>
+		/// <param name="connection">Viewmodel of relationship</param>
 		private void AddConnectionElement(ConnectionInfoViewModel connection)
 		{
 			foreach (ConnectionLine connectionLine in connection.Lines)
@@ -349,6 +412,10 @@ namespace ER_Diagram_Modeler.Views.Canvas
 			ModelDesignerCanvas.Children.Add(connection.DestinationConnector.Symbol);
 		}
 
+		/// <summary>
+		/// Remove lines from canvas
+		/// </summary>
+		/// <param name="connection">Viewmodel of relationship</param>
 		private void RemoveConnectionElement(ConnectionInfoViewModel connection)
 		{
 			foreach (ConnectionLine connectionLine in connection.Lines)
@@ -361,6 +428,9 @@ namespace ER_Diagram_Modeler.Views.Canvas
 			ModelDesignerCanvas.Children.Remove(connection.DestinationConnector.Symbol);
 		}
 
+		/// <summary>
+		/// Deselect tables
+		/// </summary>
 		public void DeleteSelectedTables()
 		{
 			var delete = ViewModel.TableViewModels.Where(t => t.IsSelected).ToList();
@@ -379,6 +449,9 @@ namespace ER_Diagram_Modeler.Views.Canvas
 			}
 		}
 
+		/// <summary>
+		/// Deselect connections
+		/// </summary>
 		private void DeleteSelectedConnections()
 		{
 			var connectionsForRemove = ViewModel.ConnectionInfoViewModels.Where(t => t.IsSelected).ToList();
@@ -388,6 +461,10 @@ namespace ER_Diagram_Modeler.Views.Canvas
 			}
 		}
 
+		/// <summary>
+		/// Ensure bounds
+		/// </summary>
+		/// <param name="content">Item on canvas</param>
 		private void MeasureToFit(TableContent content)
 		{
 			if (content.ActualWidth + content.TableViewModel.Left >= ModelDesignerCanvas.ActualWidth)
@@ -401,6 +478,9 @@ namespace ER_Diagram_Modeler.Views.Canvas
 			}
 		}
 
+		/// <summary>
+		/// Deselect connections
+		/// </summary>
 		private void DeselectConnections()
 		{
 			foreach (ConnectionInfoViewModel info in ViewModel.ConnectionInfoViewModels)
@@ -409,6 +489,11 @@ namespace ER_Diagram_Modeler.Views.Canvas
 			}
 		}
 
+		/// <summary>
+		/// Scroll caused viewport offset change
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="args"></param>
 		private void DesignerScrollViewerOnScrollChanged(object sender, ScrollChangedEventArgs args)
 		{
 			//Extent size glith-stop
@@ -424,20 +509,31 @@ namespace ER_Diagram_Modeler.Views.Canvas
 
 		#region TestRegion
 
-		//Test command F4
-		private async void TestCommand_OnExecuted(object sender, ExecutedRoutedEventArgs e)
+		/// <summary>
+		/// Test command F4
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		private void TestCommand_OnExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
-			var facade = new DiagramFacade(ViewModel);
-		 	await facade.RefreshDiagram(ModelDesignerCanvas);
+			
 		}
 
-		//Test command F5
+		/// <summary>
+		/// Test command F5
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private void CommandBinding_OnExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
 
 		}
 
-		//Test command F6
+		/// <summary>
+		/// Test command F6
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private void CommandBinding3_OnExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
 			
@@ -445,6 +541,11 @@ namespace ER_Diagram_Modeler.Views.Canvas
 
 		#endregion
 
+		/// <summary>
+		/// Left mouse button down
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private void DesignerScrollViewer_OnPreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
 		{
 			if (ViewModel.MouseMode == MouseMode.Panning)
@@ -458,6 +559,11 @@ namespace ER_Diagram_Modeler.Views.Canvas
 			}
 		}
 
+		/// <summary>
+		/// Left mouse button up
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private void DesignerScrollViewer_OnPreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
 		{
 			if (ViewModel.MouseMode == MouseMode.Panning || _dragStartPoint.HasValue)
@@ -468,6 +574,11 @@ namespace ER_Diagram_Modeler.Views.Canvas
 			}
 		}
 
+		/// <summary>
+		/// Mouse move
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private void DesignerScrollViewer_OnPreviewMouseMove(object sender, MouseEventArgs e)
 		{
 			if (ViewModel.MouseMode == MouseMode.Panning)
@@ -482,6 +593,11 @@ namespace ER_Diagram_Modeler.Views.Canvas
 			}
 		}
 
+		/// <summary>
+		/// Key pressed
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private void DesignerScrollViewer_OnPreviewKeyDown(object sender, KeyEventArgs e)
 		{
 			if (e.Source is ScrollViewer)
@@ -494,6 +610,11 @@ namespace ER_Diagram_Modeler.Views.Canvas
 			}
 		}
 
+		/// <summary>
+		/// Key released
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private void DesignerScrollViewer_OnPreviewKeyUp(object sender, KeyEventArgs e)
 		{
 			if (e.Source is ScrollViewer)
@@ -506,6 +627,11 @@ namespace ER_Diagram_Modeler.Views.Canvas
 			}
 		}
 
+		/// <summary>
+		/// Mouse wheel used
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private void DesignerScrollViewer_OnPreviewMouseWheel(object sender, MouseWheelEventArgs e)
 		{
 			if (Keyboard.Modifiers != 0)
@@ -549,12 +675,21 @@ namespace ER_Diagram_Modeler.Views.Canvas
 			}
 		}
 
-
+		/// <summary>
+		/// Change mouse mode for table add
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private void NewTableCommand_OnExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
 			ViewModel.MouseMode = MouseMode.NewTable;
 		}
 
+		/// <summary>
+		/// New table
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private void NewTableCommand_OnCanExecute(object sender, CanExecuteRoutedEventArgs e)
 		{
 			var parent = VisualTreeHelperEx.FindAncestorByType<MainWindow>(this);
@@ -576,25 +711,44 @@ namespace ER_Diagram_Modeler.Views.Canvas
 			}
 		}
 
+		/// <summary>
+		/// Delete selected from diagram not from DB
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private void DeleteTablesCommand_OnExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
 			DeleteSelectedTables();
 			//DeleteSelectedConnections();
 		}
 
+		/// <summary>
+		/// Delete selected from diagram not from DB - check
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private void DeleteTablesCommand_OnCanExecute(object sender, CanExecuteRoutedEventArgs e)
 		{
 			if (ViewModel != null)
 				e.CanExecute = ViewModel.TableViewModels.Any(t => t.IsSelected);
 		}
 
-
+		/// <summary>
+		/// Show guidelines as grid in canvas
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private void ShowGuideLinesCommand_OnExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
 			ViewModel.AreGuideLinesVisible = !ViewModel.AreGuideLinesVisible;
 			ModelDesignerCanvas.SetGuideLinesVisible(ViewModel.AreGuideLinesVisible);
 		}
 
+		/// <summary>
+		/// Add new foreign key
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private void AddForeignKeyCommand_OnExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
 			if (ViewModel.TableViewModels.Count(t => t.IsSelected) == 2)
@@ -611,11 +765,20 @@ namespace ER_Diagram_Modeler.Views.Canvas
 			dialog.ShowDialog();
 		}
 
+		/// <summary>
+		/// Mouse mode changed
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private void SelectionModeCommand_OnExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
 			ViewModel.MouseMode = MouseMode.Select;
 		}
 
+		/// <summary>
+		/// Dimensions changed
+		/// </summary>
+		/// <returns></returns>
 		public async Task CanvasDimensionsChanged()
 		{
 			var settings = new MetroDialogSettings()
@@ -637,6 +800,10 @@ namespace ER_Diagram_Modeler.Views.Canvas
 			ViewModel.OnComputedPropertyChanged();
 		}
 
+		/// <summary>
+		/// Update guidelines
+		/// </summary>
+		/// <returns></returns>
 		private async Task UpdateLines()
 		{
 			double cellWidth = DesignerCanvas.GridCellWidth;
@@ -650,11 +817,19 @@ namespace ER_Diagram_Modeler.Views.Canvas
 			ModelDesignerCanvas.RefreshGuideLines(geometry);
 		}
 
+		/// <summary>
+		/// Create table in DB
+		/// </summary>
 		protected virtual void OnTableCreated()
 		{
 			TableCreated?.Invoke(this, System.EventArgs.Empty);
 		}
 
+		/// <summary>
+		/// Enable/disable table move limits
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private void EnableTableLimits_OnExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
 			ViewModel.AreTableLimitsEnabled = !ViewModel.AreTableLimitsEnabled;
@@ -665,6 +840,11 @@ namespace ER_Diagram_Modeler.Views.Canvas
 			}
 		}
 
+		/// <summary>
+		/// Redraw selected line
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private async void RefreshOneLine_OnExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
 			ConnectionInfoViewModel viewModel = ViewModel.ConnectionInfoViewModels.FirstOrDefault(t => t.IsSelected);
@@ -675,6 +855,11 @@ namespace ER_Diagram_Modeler.Views.Canvas
 			}
 		}
 
+		/// <summary>
+		/// Redraw all lines
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private async void RefeshLines_OnExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
 			foreach (ConnectionInfoViewModel vm in ViewModel.ConnectionInfoViewModels)
@@ -683,6 +868,11 @@ namespace ER_Diagram_Modeler.Views.Canvas
 			}
 		}
 
+		/// <summary>
+		/// Can redraw line - check
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private void RefreshOneLine_OnCanExecute(object sender, CanExecuteRoutedEventArgs e)
 		{
 			if (ViewModel == null)

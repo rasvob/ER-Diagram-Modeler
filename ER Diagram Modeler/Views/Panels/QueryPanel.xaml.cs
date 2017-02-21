@@ -24,18 +24,36 @@ namespace ER_Diagram_Modeler.Views.Panels
 	/// </summary>
 	public partial class QueryPanel : UserControl
 	{
+		/// <summary>
+		/// Panel title
+		/// </summary>
 		public string Title { get; set; } = "SQL Query";
+
+		/// <summary>
+		/// Panel holding control
+		/// </summary>
 		public LayoutAnchorable Anchorable { get; set; }
+
+		/// <summary>
+		/// Result can be presented
+		/// </summary>
 		public event EventHandler<DataSet> QueryResultReady;
 
+		/// <summary>
+		/// Path to file for saving
+		/// </summary>
 		public string FilePath { get; set; }
+
+		/// <summary>
+		/// Text in editor
+		/// </summary>
 		public string Text
 		{
 			get { return QueryEditor.Text; }
 			set { QueryEditor.Text = value; }
 		}
 
-		//TODO: Only debug
+		//TODO: Only debug - REMOVE LATER
 		private string TestSql = @"SELECT * 
 FROM sys.tables
 
@@ -59,8 +77,8 @@ SELECT * FROM sys.databases WHERE name NOT IN ('master', 'tempdb', 'model', 'msd
 
 SELECT * FROM sys.foreign_key_columns
 
-exec sp_pkeys @table_name = 'hodnoceni_uzivatel'"
-			;
+exec sp_pkeys @table_name = 'hodnoceni_uzivatel'";
+
 		public QueryPanel()
 		{
 			InitializeComponent();
@@ -68,6 +86,11 @@ exec sp_pkeys @table_name = 'hodnoceni_uzivatel'"
 			Loaded += OnLoaded;
 		}
 
+		/// <summary>
+		/// Build new panel with dock
+		/// </summary>
+		/// <param name="window">App window</param>
+		/// <param name="title">Title of panel</param>
 		public void BuildNewQueryPanel(MainWindow window, string title)
 		{
 			Anchorable = new LayoutAnchorable()
@@ -83,6 +106,11 @@ exec sp_pkeys @table_name = 'hodnoceni_uzivatel'"
 			Anchorable.Content = this;
 		}
 
+		/// <summary>
+		/// Syntax highlight enabled on load
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="routedEventArgs"></param>
 		private void OnLoaded(object sender, RoutedEventArgs routedEventArgs)
 		{
 			using(var reader = XmlReader.Create(new StringReader(Properties.Resources.SQLSyntaxHL)))
@@ -91,6 +119,11 @@ exec sp_pkeys @table_name = 'hodnoceni_uzivatel'"
 			}
 		}
 
+		/// <summary>
+		/// Execute SQL
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private void RunQuery_OnExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
 			var ctx = new DatabaseContext(SessionProvider.Instance.ConnectionType);
@@ -105,6 +138,11 @@ exec sp_pkeys @table_name = 'hodnoceni_uzivatel'"
 			}
 		}
 
+		/// <summary>
+		/// Execute selected SQL
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private void RunSelectedQuery_OnExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
 			var ctx = new DatabaseContext(SessionProvider.Instance.ConnectionType);
@@ -119,6 +157,11 @@ exec sp_pkeys @table_name = 'hodnoceni_uzivatel'"
 			}
 		}
 
+		/// <summary>
+		/// Save code to file
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private void Save_OnExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
 			if (FilePath == null)
@@ -128,12 +171,20 @@ exec sp_pkeys @table_name = 'hodnoceni_uzivatel'"
 			SaveFile();
 		}
 
+		/// <summary>
+		/// Save code to file with new name
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private void SaveAs_OnExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
 			ShowSaveDialog();
 			SaveFile();
 		}
 
+		/// <summary>
+		/// Save text to file
+		/// </summary>
 		private void SaveFile()
 		{
 			if (QueryEditor.Text != null && FilePath != null)
@@ -143,6 +194,9 @@ exec sp_pkeys @table_name = 'hodnoceni_uzivatel'"
 			}
 		}
 
+		/// <summary>
+		/// Show save dialog
+		/// </summary>
 		private void ShowSaveDialog()
 		{
 			var dialog = new SaveFileDialog

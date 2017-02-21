@@ -11,22 +11,61 @@ using ER_Diagram_Modeler.ViewModels.Enums;
 
 namespace ER_Diagram_Modeler.Views.Canvas.TableItem
 {
+	/// <summary>
+	/// Wrapper for tableview control resize/move on canvas
+	/// </summary>
 	public class TableContent: ContentControl
 	{
+		/// <summary>
+		/// Viewmodel of control
+		/// </summary>
 		public TableViewModel TableViewModel { get; set; }
 
+		/// <summary>
+		/// Add column clicked
+		/// </summary>
 		public event EventHandler<TableModel> AddNewRow;
+
+		/// <summary>
+		/// Selected row double clicked
+		/// </summary>
 		public event EventHandler<EditRowEventArgs> EditSelectedRow;
+
+		/// <summary>
+		/// Rename menu item clicked
+		/// </summary>
 		public event EventHandler<TableModel> RenameTable;
+
+		/// <summary>
+		/// Delete pressed with selected row
+		/// </summary>
 		public event EventHandler<EditRowEventArgs> RemoveSelectedRow;
+
+		/// <summary>
+		/// Drop table menu item clicked
+		/// </summary>
 		public event EventHandler<TableModel> DropTable;
+
+		/// <summary>
+		/// Primary key manager menu item clicked
+		/// </summary>
 		public event EventHandler<TableModel> UpdatePrimaryKeyConstraint;
 
+		/// <summary>
+		/// Selected item Z Index
+		/// </summary>
 		public static readonly int ZIndexSelectedValue = DesignerCanvas.TableSelectedZIndex;
+
+		/// <summary>
+		/// Unselected item Z Index
+		/// </summary>
 		public static readonly int ZIndexUnSelectedValue = DesignerCanvas.TableUnselectedZIndex;
 
 		private double _oldHeight;
 
+		/// <summary>
+		/// Is item selected
+		/// </summary>
 		public bool IsSelected
 		{
 			get
@@ -40,9 +79,20 @@ namespace ER_Diagram_Modeler.Views.Canvas.TableItem
 			}
 		}
 
+		/// <summary>
+		/// Minimum item width
+		/// </summary>
 		public static double TableItemMinWidth { get; } = (double)Application.Current.FindResource("TableMinWidth");
+
+		/// <summary>
+		/// Minimum item height
+		/// </summary>
 		public static double TableItemMinHeight { get; } = (double)Application.Current.FindResource("TableMinHeight");
 
+		/// <summary>
+		/// Is item selected
+		/// </summary>
+		/// <remarks>XAML</remarks>
 		public static readonly DependencyProperty IsSelectedProperty = DependencyProperty
 			.Register(
 				"IsSelected", 
@@ -51,14 +101,27 @@ namespace ER_Diagram_Modeler.Views.Canvas.TableItem
 				new FrameworkPropertyMetadata(false)
 			);
 
+		/// <summary>
+		/// Thumb template
+		/// </summary>
 		public static readonly DependencyProperty MoveThumbTemplateProperty =
 			DependencyProperty.RegisterAttached("MoveThumbTemplate", typeof(ControlTemplate), typeof(TableContent));
 
+		/// <summary>
+		/// Get thumb template
+		/// </summary>
+		/// <param name="element">UI element</param>
+		/// <returns>Control template of element</returns>
 		public static ControlTemplate GetMoveThumbTemplate(UIElement element)
 		{
 			return (ControlTemplate) element.GetValue(MoveThumbTemplateProperty);
 		}
 
+		/// <summary>
+		/// Set thumb template
+		/// </summary>
+		/// <param name="element"></param>
+		/// <param name="value"></param>
 		public static void SetMoveThumbTemplate(UIElement element, ControlTemplate value)
 		{
 			element.SetValue(MoveThumbTemplateProperty, value);
@@ -69,7 +132,9 @@ namespace ER_Diagram_Modeler.Views.Canvas.TableItem
 			DefaultStyleKeyProperty.OverrideMetadata(typeof(TableContent), new FrameworkPropertyMetadata(typeof(TableContent)));
 		}
 
-		//For XAML Creation
+		/// <summary>
+		/// For XAML Creation
+		/// </summary>
 		public TableContent() { }
 
 		public TableContent(TableViewModel tableViewModel)
@@ -117,6 +182,11 @@ namespace ER_Diagram_Modeler.Views.Canvas.TableItem
 			OnAddNewRow(tableModel);
 		}
 
+		/// <summary>
+		/// View mode changed
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="args"></param>
 		private void TableViewModelOnPropertyChanged(object sender, PropertyChangedEventArgs args)
 		{
 			if (args.PropertyName.Equals("ViewMode"))
@@ -140,7 +210,10 @@ namespace ER_Diagram_Modeler.Views.Canvas.TableItem
 			}
 		}
 
-
+		/// <summary>
+		/// Item clicked
+		/// </summary>
+		/// <param name="e"></param>
 		protected override void OnPreviewMouseDown(MouseButtonEventArgs e)
 		{
 			base.OnPreviewMouseDown(e);

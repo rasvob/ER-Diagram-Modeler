@@ -14,6 +14,9 @@ using Xceed.Wpf.Toolkit.Core.Utilities;
 
 namespace ER_Diagram_Modeler.Views.Canvas.TableItem
 {
+	/// <summary>
+	/// Wrapper for moving items on canvas
+	/// </summary>
 	public class MoveThumb: Thumb
 	{
 		private DesignerCanvas _canvas;
@@ -27,6 +30,11 @@ namespace ER_Diagram_Modeler.Views.Canvas.TableItem
 			DragCompleted += OnDragCompleted;
 		}
 
+		/// <summary>
+		/// Mouse drag completed
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="dragCompletedEventArgs"></param>
 		private void OnDragCompleted(object sender, DragCompletedEventArgs dragCompletedEventArgs)
 		{
 			SnapToGrid();
@@ -34,6 +42,11 @@ namespace ER_Diagram_Modeler.Views.Canvas.TableItem
 			_item.TableViewModel.IsMoving = false;
 		}
 
+		/// <summary>
+		/// Mouse drag started
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="dragStartedEventArgs"></param>
 		private void OnDragStarted(object sender, DragStartedEventArgs dragStartedEventArgs)
 		{
 			_item = DataContext as TableContent;
@@ -52,6 +65,11 @@ namespace ER_Diagram_Modeler.Views.Canvas.TableItem
 			}
 		}
 
+		/// <summary>
+		/// Mouse drag in progress
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="dragDeltaEventArgs"></param>
 		private void OnDragDelta(object sender, DragDeltaEventArgs dragDeltaEventArgs)
 		{
 			if (_item != null && _canvas != null && _item.IsSelected)
@@ -153,6 +171,9 @@ namespace ER_Diagram_Modeler.Views.Canvas.TableItem
 			}
 		}
 
+		/// <summary>
+		/// If is grid enabled, snap to intersects
+		/// </summary>
 		private void SnapToGrid()
 		{
 			if (_canvas.IsGridEnabled)
@@ -202,6 +223,20 @@ namespace ER_Diagram_Modeler.Views.Canvas.TableItem
 			}
 		}
 
+		/// <summary>
+		/// Are connections breaking connections - check
+		/// </summary>
+		/// <param name="topLimit">Top offset limit</param>
+		/// <param name="leftLimit">Left offset limit</param>
+		/// <param name="botLimit">Bottom offset limit</param>
+		/// <param name="rightLimit">Right offset limit</param>
+		/// <param name="top">Top offset</param>
+		/// <param name="left">Left offset</param>
+		/// <param name="bottom">Bottom offset</param>
+		/// <param name="right">Right offset</param>
+		/// <param name="approxTop">Cell top offset</param>
+		/// <param name="approxLeft">Cell left offset</param>
+		/// <returns>True of is out of bounds, false if not</returns>
 		private bool WillSnapToGridBrokeConnections(double topLimit, double leftLimit, double botLimit, double rightLimit, double top, double left, double bottom, double right, double approxTop, double approxLeft)
 		{
 			if (topLimit < double.MaxValue && approxTop < top - topLimit)

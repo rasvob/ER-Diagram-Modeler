@@ -15,6 +15,9 @@ using Xceed.Wpf.Toolkit.Core.Utilities;
 
 namespace ER_Diagram_Modeler.Views.Canvas.TableItem
 {
+	/// <summary>
+	/// Wrapper for resizing items on canvas
+	/// </summary>
 	class ResizeThumb: Thumb
 	{
 		private TableContent _item;
@@ -28,12 +31,20 @@ namespace ER_Diagram_Modeler.Views.Canvas.TableItem
 			DragCompleted += OnDragCompleted;
 		}
 
+		/// <summary>
+		/// Drag of thumb completed
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="dragCompletedEventArgs"></param>
 		private void OnDragCompleted(object sender, DragCompletedEventArgs dragCompletedEventArgs)
 		{
 			SnapToGrid();
 			_item.TableViewModel.OnPositionAndMeasureChangesCompleted();
 		}
 
+		/// <summary>
+		/// If is grid enabled, snap to intersects
+		/// </summary>
 		private void SnapToGrid()
 		{
 			if (_canvas.IsGridEnabled)
@@ -136,6 +147,11 @@ namespace ER_Diagram_Modeler.Views.Canvas.TableItem
 			}
 		}
 
+		/// <summary>
+		/// Drag of thumb started
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private void ResizeThumb_DragStarted(object sender, DragStartedEventArgs e)
 		{
 			_item = DataContext as TableContent;
@@ -151,6 +167,11 @@ namespace ER_Diagram_Modeler.Views.Canvas.TableItem
 			}
 		}
 
+		/// <summary>
+		/// Drag of thumb in progress
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private void ResizeThumb_DragDelta(object sender, DragDeltaEventArgs e)
 		{
 			if (_item != null && _canvas != null && _item.IsSelected)

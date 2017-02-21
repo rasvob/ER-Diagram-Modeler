@@ -18,7 +18,11 @@ namespace ER_Diagram_Modeler
 	/// </summary>
 	public partial class App : Application
 	{
-		//FOR DEBUG ONLY - AVALONDOCK ISSUE
+		/// <summary>
+		/// Init point of app
+		/// </summary>
+		/// <param name="e"></param>
+		/// <remarks>Exception logging only in avalon dock isn!t revisited</remarks>
 		protected override void OnStartup(StartupEventArgs e)
 		{
 			base.OnStartup(e);
@@ -27,12 +31,20 @@ namespace ER_Diagram_Modeler
 			//this.DispatcherUnhandledException += OnDispatcherUnhandledException;
 		}
 
+		/// <summary>
+		/// Trace write exceptions
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="dispatcherUnhandledExceptionEventArgs"></param>
 		private void OnDispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs dispatcherUnhandledExceptionEventArgs)
 		{
 			Trace.WriteLine(dispatcherUnhandledExceptionEventArgs.Exception.Message);
 			dispatcherUnhandledExceptionEventArgs.Handled = true;
 		}
 
+		/// <summary>
+		/// En-Us culture set on start
+		/// </summary>
 		private void SetEnglighCultureInfo()
 		{
 			CultureInfo.CurrentCulture = new CultureInfo("en-US");

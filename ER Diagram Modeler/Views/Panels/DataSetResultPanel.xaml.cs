@@ -14,8 +14,19 @@ namespace ER_Diagram_Modeler.Views.Panels
 	/// </summary>
 	public partial class DataSetResultPanel : UserControl
 	{
+		/// <summary>
+		/// Panel title
+		/// </summary>
 		public string Title { get; set; } = "Query result";
+
+		/// <summary>
+		/// Dockable panel
+		/// </summary>
 		public LayoutAnchorable Anchorable { get; set; }
+
+		/// <summary>
+		/// Control viewmodel
+		/// </summary>
 		public DataSetResultViewModel ViewModel { get; set; } = new DataSetResultViewModel();
 
 		public DataSetResultPanel()
@@ -24,6 +35,11 @@ namespace ER_Diagram_Modeler.Views.Panels
 			DataContext = ViewModel;
 		}
 
+		/// <summary>
+		/// Build dockable panel
+		/// </summary>
+		/// <param name="window">App window</param>
+		/// <param name="title">Title of panel</param>
 		public void BuildNewQueryPanel(MainWindow window, string title)
 		{
 			Anchorable = new LayoutAnchorable()
@@ -39,6 +55,10 @@ namespace ER_Diagram_Modeler.Views.Panels
 			Anchorable.Content = this;
 		}
 
+		/// <summary>
+		/// Refresh data in grid
+		/// </summary>
+		/// <param name="data"></param>
 		public void RefreshData(DataSet data)
 		{
 			ViewModel.Views.Clear();
@@ -48,6 +68,12 @@ namespace ER_Diagram_Modeler.Views.Panels
 			}
 		}
 
+
+		/// <summary>
+		/// Scroll hook
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private void DatasetScrollViewer_OnPreviewMouseWheel(object sender, MouseWheelEventArgs e)
 		{
 			ScrollViewer scv = (ScrollViewer)sender;
@@ -56,6 +82,9 @@ namespace ER_Diagram_Modeler.Views.Panels
 		}
 	}
 
+	/// <summary>
+	/// Viewmodel of  DataSetResultPanel
+	/// </summary>
 	public class DataSetResultViewModel: INotifyPropertyChanged
 	{
 		public DataSetResultViewModel()
@@ -65,6 +94,9 @@ namespace ER_Diagram_Modeler.Views.Panels
 
 		private ObservableCollection<DataView> _views;
 
+		/// <summary>
+		/// Dataset DefaultView results
+		/// </summary>
 		public ObservableCollection<DataView> Views
 		{
 			get { return _views; }
@@ -76,6 +108,9 @@ namespace ER_Diagram_Modeler.Views.Panels
 			}
 		}
 
+		/// <summary>
+		/// For data binding
+		/// </summary>
 		public event PropertyChangedEventHandler PropertyChanged;
 
 		[NotifyPropertyChangedInvocator]

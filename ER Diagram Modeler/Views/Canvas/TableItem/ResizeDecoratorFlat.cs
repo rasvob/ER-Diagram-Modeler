@@ -8,6 +8,9 @@ using System.Windows.Controls;
 
 namespace ER_Diagram_Modeler.Views.Canvas.TableItem
 {
+	/// <summary>
+	/// Decorator for resize thumb
+	/// </summary>
 	class ResizeDecoratorFlat: Control
 	{
 		static ResizeDecoratorFlat()
