@@ -1,34 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Forms;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using ER_Diagram_Modeler.Annotations;
 using ER_Diagram_Modeler.Configuration.Providers;
 using ER_Diagram_Modeler.DiagramConstruction;
-using ER_Diagram_Modeler.DiagramConstruction.Strategy;
 using ER_Diagram_Modeler.Models.Designer;
 using ER_Diagram_Modeler.Models.Helpers;
 using ER_Diagram_Modeler.ViewModels;
 using ER_Diagram_Modeler.ViewModels.Enums;
 using ER_Diagram_Modeler.Views.Canvas;
-using ER_Diagram_Modeler.Views.Canvas.Connection;
 using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
-using Rectangle = System.Drawing.Rectangle;
 
 namespace ER_Diagram_Modeler.Dialogs
 {
@@ -45,6 +31,9 @@ namespace ER_Diagram_Modeler.Dialogs
 		private Visibility _onUpdateVisibility = Visibility.Visible;
 		private string[] _referentialAction;
 
+		/// <summary>
+		/// Array of actions: "NO ACTION", "CASCADE", "SET NULL", "SET DEFAULT"
+		/// </summary>
 		public string[] ReferentialAction
 		{
 			get { return _referentialAction; }
@@ -56,6 +45,9 @@ namespace ER_Diagram_Modeler.Dialogs
 			}
 		}
 
+		/// <summary>
+		/// Hide/Show OnUpdate action combobox
+		/// </summary>
 		public Visibility OnUpdateVisibility
 		{
 			get { return _onUpdateVisibility; }
@@ -67,6 +59,9 @@ namespace ER_Diagram_Modeler.Dialogs
 			}
 		}
 
+		/// <summary>
+		/// Viewmodel for DatabaseModelDesignerViewModel
+		/// </summary>
 		public DatabaseModelDesignerViewModel DesignerViewModel
 		{
 			get { return _designerViewModel; }
@@ -78,8 +73,14 @@ namespace ER_Diagram_Modeler.Dialogs
 			}
 		}
 
+		/// <summary>
+		/// Canvas for visualization
+		/// </summary>
 		public DesignerCanvas Canvas { get; set; }
 
+		/// <summary>
+		/// Table with primary key
+		/// </summary>
 		public TableViewModel SourceTableVm
 		{
 			get { return _sourceTableVm; }
@@ -91,6 +92,9 @@ namespace ER_Diagram_Modeler.Dialogs
 			}
 		}
 
+		/// <summary>
+		/// Table with foreign key
+		/// </summary>
 		public TableViewModel DestinationTableVm
 		{
 			get { return _destinationTableVm; }
@@ -102,6 +106,9 @@ namespace ER_Diagram_Modeler.Dialogs
 			}
 		}
 
+		/// <summary>
+		/// Data for grid
+		/// </summary>
 		public List<RowModelPair> GridData
 		{
 			get { return _gridData; }
@@ -113,6 +120,9 @@ namespace ER_Diagram_Modeler.Dialogs
 			}
 		}
 
+		/// <summary>
+		/// Name of constraint
+		/// </summary>
 		public string RelationshipName
 		{
 			get { return _relationshipName; }
@@ -153,6 +163,11 @@ namespace ER_Diagram_Modeler.Dialogs
 			}
 		}
 
+		/// <summary>
+		/// Create new
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private async void Confirm_OnExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
 			var isOk = await CheckIntegrity();
@@ -196,11 +211,20 @@ namespace ER_Diagram_Modeler.Dialogs
 			}
 		}
 
+		/// <summary>
+		/// Close dialog
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private void Cancel_OnExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
 			Close();
 		}
 
+		/// <summary>
+		/// Are data valid - check
+		/// </summary>
+		/// <returns></returns>
 		private async Task<bool> CheckIntegrity()
 		{
 			string err = "";
@@ -242,6 +266,9 @@ namespace ER_Diagram_Modeler.Dialogs
 			return true;
 		}
 
+		/// <summary>
+		/// For data binding
+		/// </summary>
 		public event PropertyChangedEventHandler PropertyChanged;
 
 		[NotifyPropertyChangedInvocator]

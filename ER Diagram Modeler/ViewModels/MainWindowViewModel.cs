@@ -10,11 +10,17 @@ using ER_Diagram_Modeler.ViewModels.Enums;
 
 namespace ER_Diagram_Modeler.ViewModels
 {
+	/// <summary>
+	/// Main Window viewmodel
+	/// </summary>
 	public class MainWindowViewModel: INotifyPropertyChanged
 	{
 		private List<DatabaseModelDesignerViewModel> _databaseModelDesignerViewModels;
 		private TableRowModel _flyoutRowModel;
 
+		/// <summary>
+		/// Column model for edit
+		/// </summary>
 		public TableRowModel FlyoutRowModel
 		{
 			get { return _flyoutRowModel; }
@@ -26,6 +32,9 @@ namespace ER_Diagram_Modeler.ViewModels
 			}
 		}
 
+		/// <summary>
+		/// Opened designers viewmodels
+		/// </summary>
 		public List<DatabaseModelDesignerViewModel> DatabaseModelDesignerViewModels
 		{
 			get { return _databaseModelDesignerViewModels; }
@@ -43,7 +52,14 @@ namespace ER_Diagram_Modeler.ViewModels
 			FlyoutRowModel = new TableRowModel();
 		}
 
+		/// <summary>
+		/// For data binding
+		/// </summary>
 		public event PropertyChangedEventHandler PropertyChanged;
+
+		/// <summary>
+		/// Change of mouse mode
+		/// </summary>
 		public event EventHandler<MouseMode> MouseModeChanged;  
 
 		[NotifyPropertyChangedInvocator]

@@ -12,6 +12,9 @@ using ER_Diagram_Modeler.ViewModels.Enums;
 
 namespace ER_Diagram_Modeler.Models.Designer
 {
+	/// <summary>
+	/// Datatype representation
+	/// </summary>
 	public class Datatype: INotifyPropertyChanged,IDataErrorInfo
 	{
 		private string _name;
@@ -188,6 +191,10 @@ namespace ER_Diagram_Modeler.Models.Designer
 			
 		}
 
+		/// <summary>
+		/// Copy constructor
+		/// </summary>
+		/// <param name="datatype">Source datatype</param>
 		public Datatype(Datatype datatype)
 		{
 			Name = datatype.Name;
@@ -206,6 +213,10 @@ namespace ER_Diagram_Modeler.Models.Designer
 			Precision = datatype.Precision;
 		}
 
+		/// <summary>
+		/// Create string representation
+		/// </summary>
+		/// <returns>SQL string</returns>
 		public override string ToString()
 		{
 			var sb = new StringBuilder();
@@ -225,7 +236,11 @@ namespace ER_Diagram_Modeler.Models.Designer
 			return sb.ToString();
 		}
 
-
+		/// <summary>
+		/// Load from XML element
+		/// </summary>
+		/// <param name="node"></param>
+		/// <returns>De-serialized datatype</returns>
 		public static Datatype LoadFromXmlNode(XElement node)
 		{
 			var res = new Datatype();
@@ -259,6 +274,11 @@ namespace ER_Diagram_Modeler.Models.Designer
 			return res;
 		}
 
+		/// <summary>
+		/// Load all datatypes from XML
+		/// </summary>
+		/// <param name="connectionType"></param>
+		/// <returns>All datatypes</returns>
 		public static List<Datatype> LoadDatatypesFromResource(ConnectionType connectionType)
 		{
 			var res = new List<Datatype>();
@@ -286,6 +306,11 @@ namespace ER_Diagram_Modeler.Models.Designer
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 		}
 
+		/// <summary>
+		/// Error indexer
+		/// </summary>
+		/// <param name="columnName">Name of input</param>
+		/// <returns>Error string</returns>
 		public string this[string columnName]
 		{
 			get

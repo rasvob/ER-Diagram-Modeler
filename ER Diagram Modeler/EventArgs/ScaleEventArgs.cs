@@ -1,5 +1,8 @@
 ﻿namespace ER_Diagram_Modeler.EventArgs
 {
+	/// <summary>
+	/// Scale change EventArgs
+	/// </summary>
 	public class ScaleEventArgs: System.EventArgs
 	{
 		public double OldScale { get; set; }

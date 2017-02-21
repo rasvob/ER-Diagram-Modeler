@@ -6,6 +6,9 @@ using ER_Diagram_Modeler.Models.Designer;
 
 namespace ER_Diagram_Modeler.Models.Database
 {
+	/// <summary>
+	/// Database tables and diagrams
+	/// </summary>
 	public class DatabaseInfo: INotifyPropertyChanged
 	{
 		private string _name;
@@ -13,6 +16,9 @@ namespace ER_Diagram_Modeler.Models.Database
 		private ObservableCollection<TableModel> _tables;
 		private ObservableCollection<DiagramModel> _diagrams;
 
+		/// <summary>
+		/// DB name
+		/// </summary>
 		public string Name
 		{
 			get { return _name; }
@@ -24,6 +30,9 @@ namespace ER_Diagram_Modeler.Models.Database
 			}
 		}
 
+		/// <summary>
+		/// DB ObjectId
+		/// </summary>
 		public int Id
 		{
 			get { return _id; }
@@ -35,6 +44,9 @@ namespace ER_Diagram_Modeler.Models.Database
 			}
 		}
 
+		/// <summary>
+		/// Tables in DB
+		/// </summary>
 		public ObservableCollection<TableModel> Tables
 		{
 			get { return _tables; }
@@ -46,6 +58,9 @@ namespace ER_Diagram_Modeler.Models.Database
 			}
 		}
 
+		/// <summary>
+		/// Diagrams in DB
+		/// </summary>
 		public ObservableCollection<DiagramModel> Diagrams
 		{
 			get { return _diagrams; }
@@ -63,6 +78,9 @@ namespace ER_Diagram_Modeler.Models.Database
 			Tables = new ObservableCollection<TableModel>();
 		}
 
+		/// <summary>
+		/// For data binding
+		/// </summary>
 		public event PropertyChangedEventHandler PropertyChanged;
 
 		[NotifyPropertyChangedInvocator]

@@ -5,6 +5,9 @@ using ER_Diagram_Modeler.ViewModels.Enums;
 
 namespace ER_Diagram_Modeler.ValueConverters
 {
+	/// <summary>
+	/// Disable canvas on panning
+	/// </summary>
 	public class MouseModeToCanvasEnabledConverter: IValueConverter
 	{
 		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)

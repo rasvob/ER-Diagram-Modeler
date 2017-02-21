@@ -13,6 +13,9 @@ using ER_Diagram_Modeler.Views.Canvas.TableItem;
 
 namespace ER_Diagram_Modeler.ViewModels
 {
+	/// <summary>
+	/// Viewmodel for table
+	/// </summary>
 	public class TableViewModel: INotifyPropertyChanged, IDiagramSerializable
 	{
 		private TableModel _model;
@@ -25,6 +28,9 @@ namespace ER_Diagram_Modeler.ViewModels
 		private bool _isMoving;
 		private bool _areLimitsEnabled = true;
 
+		/// <summary>
+		/// Are table limits for resize or move enabled
+		/// </summary>
 		public bool AreLimitsEnabled
 		{
 			get { return _areLimitsEnabled; }
@@ -36,6 +42,9 @@ namespace ER_Diagram_Modeler.ViewModels
 			}
 		}
 
+		/// <summary>
+		/// Is table moving
+		/// </summary>
 		public bool IsMoving
 		{
 			get { return _isMoving; }
@@ -47,6 +56,9 @@ namespace ER_Diagram_Modeler.ViewModels
 			}
 		}
 
+		/// <summary>
+		/// Height of table on canvas
+		/// </summary>
 		public double Height
 		{
 			get { return _height; }
@@ -63,6 +75,9 @@ namespace ER_Diagram_Modeler.ViewModels
 			}
 		}
 
+		/// <summary>
+		/// Width of table on canvas
+		/// </summary>
 		public double Width
 		{
 			get { return _width; }
@@ -79,6 +94,9 @@ namespace ER_Diagram_Modeler.ViewModels
 			}
 		}
 
+		/// <summary>
+		/// Is table selected
+		/// </summary>
 		public bool IsSelected
 		{
 			get { return _isSelected; }
@@ -90,6 +108,9 @@ namespace ER_Diagram_Modeler.ViewModels
 			}
 		}
 
+		/// <summary>
+		/// Standard or NameOnly viewmode
+		/// </summary>
 		public TableViewMode ViewMode
 		{
 			get { return _viewMode; }
@@ -101,6 +122,9 @@ namespace ER_Diagram_Modeler.ViewModels
 			}
 		}
 
+		/// <summary>
+		/// Model with data from DB
+		/// </summary>
 		public TableModel Model
 		{
 			get { return _model; }
@@ -112,6 +136,9 @@ namespace ER_Diagram_Modeler.ViewModels
 			}
 		}
 
+		/// <summary>
+		/// Left offset on canvas
+		/// </summary>
 		public double Left
 		{
 			get { return _left; }
@@ -128,6 +155,9 @@ namespace ER_Diagram_Modeler.ViewModels
 			}
 		}
 
+		/// <summary>
+		/// Top offset on canvas
+		/// </summary>
 		public double Top
 		{
 			get { return _top; }
@@ -154,11 +184,34 @@ namespace ER_Diagram_Modeler.ViewModels
 			_model = model;
 		}
 
+		/// <summary>
+		/// For data binding
+		/// </summary>
 		public event PropertyChangedEventHandler PropertyChanged;
+
+		/// <summary>
+		/// Table moving/resizing
+		/// </summary>
 		public event EventHandler<TablePositionAndMeasureEventArgs> PositionAndMeasureChanged;
+
+		/// <summary>
+		/// Moving/resizing complete
+		/// </summary>
 		public event EventHandler PositionAndMeasureChangesCompleted;
+
+		/// <summary>
+		/// Moving/resizing started
+		/// </summary>
 		public event EventHandler PositionAndMeasureChangesStarted;
+
+		/// <summary>
+		/// View mode changed
+		/// </summary>
 		public event EventHandler TableViewModeChanged;
+
+		/// <summary>
+		/// Table loaded on canvas
+		/// </summary>
 		public event EventHandler<TableContent> TableLoaded; 
 
 		[NotifyPropertyChangedInvocator]
@@ -192,6 +245,10 @@ namespace ER_Diagram_Modeler.ViewModels
 			TableLoaded?.Invoke(this, e);
 		}
 
+		/// <summary>
+		/// Create XML element
+		/// </summary>
+		/// <returns>XML serialized data</returns>
 		public XElement CreateElement()
 		{
 			return new XElement("TableViewModel",
@@ -203,6 +260,10 @@ namespace ER_Diagram_Modeler.ViewModels
 				new XAttribute("Height", Height));
 		}
 
+		/// <summary>
+		/// Load property values from XML element
+		/// </summary>
+		/// <param name="element">XML serialized data from CreateElement()</param>
 		public void LoadFromElement(XElement element)
 		{
 			Model = new TableModel();

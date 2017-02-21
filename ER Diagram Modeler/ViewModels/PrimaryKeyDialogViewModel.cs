@@ -6,8 +6,14 @@ using ER_Diagram_Modeler.Models.Designer;
 
 namespace ER_Diagram_Modeler.ViewModels
 {
+	/// <summary>
+	/// Primary key manage dialog viewmodel
+	/// </summary>
 	public class PrimaryKeyDialogViewModel: INotifyPropertyChanged
 	{
+		/// <summary>
+		/// Table name
+		/// </summary>
 		public string TableName
 		{
 			get { return _tableName; }
@@ -22,6 +28,9 @@ namespace ER_Diagram_Modeler.ViewModels
 		private ObservableCollection<TableRowModel> _rowModels = new ObservableCollection<TableRowModel>();
 		private string _tableName;
 
+		/// <summary>
+		/// Table columns
+		/// </summary>
 		public ObservableCollection<TableRowModel> RowModels
 		{
 			get { return _rowModels; }
@@ -33,6 +42,9 @@ namespace ER_Diagram_Modeler.ViewModels
 			}
 		}
 
+		/// <summary>
+		/// For data binding
+		/// </summary>
 		public event PropertyChangedEventHandler PropertyChanged;
 
 		[NotifyPropertyChangedInvocator]

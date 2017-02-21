@@ -4,6 +4,9 @@ using System.Windows.Data;
 
 namespace ER_Diagram_Modeler.ValueConverters
 {
+	/// <summary>
+	/// Scale To Percent
+	/// </summary>
 	public class ScaleToPercentConverter: IValueConverter
 	{
 		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)

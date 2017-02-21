@@ -1,28 +1,24 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Xml.Linq;
 using ER_Diagram_Modeler.Annotations;
-using ER_Diagram_Modeler.Configuration.Providers;
 using ER_Diagram_Modeler.DiagramConstruction.Serialization;
 using ER_Diagram_Modeler.EventArgs;
-using ER_Diagram_Modeler.Models.Designer;
-using ER_Diagram_Modeler.Properties;
 using ER_Diagram_Modeler.ViewModels.Enums;
-using Pathfinding.Structure;
 
 namespace ER_Diagram_Modeler.ViewModels
 {
 	public class DatabaseModelDesignerViewModel: INotifyPropertyChanged, IDiagramSerializable
 	{
-		public static double DefaultWidth = 2500;
+		/// <summary>
+		/// Default canvas size
+		/// </summary>
+		public static readonly double DefaultWidth = 2500;
 
 		private ObservableCollection<TableViewModel> _tableViewModels;
 		private double _scale = 1;
@@ -44,6 +40,9 @@ namespace ER_Diagram_Modeler.ViewModels
 		private bool _areTableLimitsEnabled = true;
 		private string _database = "NO_DB";
 
+		/// <summary>
+		/// DB Name
+		/// </summary>
 		public string Database
 		{
 			get { return _database; }
@@ -55,7 +54,9 @@ namespace ER_Diagram_Modeler.ViewModels
 			}
 		}
 
-
+		/// <summary>
+		/// Is table movement enabled
+		/// </summary>
 		public bool AreTableLimitsEnabled
 		{
 			get { return _areTableLimitsEnabled; }
@@ -67,6 +68,9 @@ namespace ER_Diagram_Modeler.ViewModels
 			}
 		}
 
+		/// <summary>
+		/// Title
+		/// </summary>
 		public string DiagramTitle
 		{
 			get { return _diagramTitle; }
@@ -78,6 +82,9 @@ namespace ER_Diagram_Modeler.ViewModels
 			}
 		}
 
+		/// <summary>
+		/// Are canvas guideline visible
+		/// </summary>
 		public bool AreGuideLinesVisible
 		{
 			get { return _areGuideLinesVisible; }
@@ -89,6 +96,9 @@ namespace ER_Diagram_Modeler.ViewModels
 			}
 		}
 
+		/// <summary>
+		/// Visualization of foreign key constraint
+		/// </summary>
 		public ObservableCollection<ConnectionInfoViewModel> ConnectionInfoViewModels
 		{
 			get { return _connectionInfoViewModels; }
@@ -100,6 +110,9 @@ namespace ER_Diagram_Modeler.ViewModels
 			}
 		}
 
+		/// <summary>
+		/// Show/hide zoombox control
+		/// </summary>
 		public Visibility ZoomBoxVisibility
 		{
 			get { return _zoomBoxVisibility; }
@@ -111,6 +124,9 @@ namespace ER_Diagram_Modeler.ViewModels
 			}
 		}
 
+		/// <summary>
+		/// Minimum scale limit
+		/// </summary>
 		public double MinScale
 		{
 			get { return _minScale; }
@@ -122,6 +138,9 @@ namespace ER_Diagram_Modeler.ViewModels
 			}
 		}
 
+		/// <summary>
+		/// Maximum scale limit
+		/// </summary>
 		public double MaxScale
 		{
 			get { return _maxScale; }
@@ -133,6 +152,9 @@ namespace ER_Diagram_Modeler.ViewModels
 			}
 		}
 
+		/// <summary>
+		/// Hozizontal scroll offset
+		/// </summary>
 		public double HorizontalScrollOffset
 		{
 			get { return _horizontalScrollOffset; }
@@ -145,6 +167,9 @@ namespace ER_Diagram_Modeler.ViewModels
 			}
 		}
 
+		/// <summary>
+		/// Vertical scroll offset
+		/// </summary>
 		public double VeticalScrollOffset
 		{
 			get { return _veticalScrollOffset; }
@@ -157,6 +182,9 @@ namespace ER_Diagram_Modeler.ViewModels
 			}
 		}
 
+		/// <summary>
+		/// Height of zoombox canvas
+		/// </summary>
 		public double ZoomBoxCanvasHeight
 		{
 			get { return _zoomBoxCanvasHeight; }
@@ -168,6 +196,9 @@ namespace ER_Diagram_Modeler.ViewModels
 			}
 		}
 
+		/// <summary>
+		/// Width of zoombox canvas
+		/// </summary>
 		public double ZoomBoxCanvasWidth
 		{
 			get { return _zoomBoxCanvasWidth; }
@@ -179,6 +210,9 @@ namespace ER_Diagram_Modeler.ViewModels
 			}
 		}
 
+		/// <summary>
+		/// Height of canvas
+		/// </summary>
 		public double CanvasHeight
 		{
 			get { return _canvasHeight; }
@@ -191,6 +225,9 @@ namespace ER_Diagram_Modeler.ViewModels
 			}
 		}
 
+		/// <summary>
+		/// Width of zoombox canvas
+		/// </summary>
 		public double CanvasWidth
 		{
 			get { return _canvasWidth; }
@@ -203,6 +240,9 @@ namespace ER_Diagram_Modeler.ViewModels
 			}
 		}
 
+		/// <summary>
+		/// Width of viewport
+		/// </summary>
 		public double ViewportWidth
 		{
 			get { return _viewportWidth; }
@@ -215,6 +255,9 @@ namespace ER_Diagram_Modeler.ViewModels
 			}
 		}
 
+		/// <summary>
+		/// Height of viewport
+		/// </summary>
 		public double ViewportHeight
 		{
 			get { return _viewportHeight; }
@@ -227,6 +270,9 @@ namespace ER_Diagram_Modeler.ViewModels
 			}
 		}
 
+		/// <summary>
+		/// Mouse mode
+		/// </summary>
 		public MouseMode MouseMode
 		{
 			get { return _mouseMode; }
@@ -238,6 +284,9 @@ namespace ER_Diagram_Modeler.ViewModels
 			}
 		}
 
+		/// <summary>
+		/// Scale (zoom level)
+		/// </summary>
 		public double Scale
 		{
 			get { return _scale; }
@@ -259,6 +308,9 @@ namespace ER_Diagram_Modeler.ViewModels
 			}
 		}
 
+		/// <summary>
+		/// Viewport width in zoombox
+		/// </summary>
 		public double ZoomBoxThumbWidth
 		{
 			get
@@ -273,6 +325,9 @@ namespace ER_Diagram_Modeler.ViewModels
 			}
 		}
 
+		/// <summary>
+		/// Viewport height in zoombox
+		/// </summary>
 		public double ZoomBoxThumbHeight
 		{
 			get
@@ -287,6 +342,9 @@ namespace ER_Diagram_Modeler.ViewModels
 			}
 		}
 
+		/// <summary>
+		/// Viewport offset from top in zoombox
+		/// </summary>
 		public double ZoomBoxThumbTop
 		{
 			get
@@ -301,6 +359,9 @@ namespace ER_Diagram_Modeler.ViewModels
 			}
 		}
 
+		/// <summary>
+		/// Viewport offset from left in zoombox
+		/// </summary>
 		public double ZoomBoxThumbLeft
 		{
 			get
@@ -315,6 +376,9 @@ namespace ER_Diagram_Modeler.ViewModels
 			}
 		}
 
+		/// <summary>
+		/// Tables visualization
+		/// </summary>
 		public ObservableCollection<TableViewModel> TableViewModels
 		{
 			get { return _tableViewModels; }
@@ -326,6 +390,9 @@ namespace ER_Diagram_Modeler.ViewModels
 			}
 		}
 
+		/// <summary>
+		/// Command for change of scale
+		/// </summary>
 		public ICommand ChangeZoomCommand { get; private set; }
 
 		public DatabaseModelDesignerViewModel()
@@ -336,6 +403,10 @@ namespace ER_Diagram_Modeler.ViewModels
 			Database = "NO_DB";
 		}
 
+		/// <summary>
+		/// Change scale
+		/// </summary>
+		/// <param name="o">Scale</param>
 		private void ChangeZoomCommand_Executed(object o)
 		{
 			double scale;
@@ -347,6 +418,10 @@ namespace ER_Diagram_Modeler.ViewModels
 			}
 		}
 
+		/// <summary>
+		/// Limit scale in bounds
+		/// </summary>
+		/// <param name="scale">Final scale</param>
 		private void SnapScaleToRange(ref double scale)
 		{
 			if (scale > MaxScale)
@@ -359,8 +434,19 @@ namespace ER_Diagram_Modeler.ViewModels
 			}
 		}
 
+		/// <summary>
+		/// For data binding
+		/// </summary>
 		public event PropertyChangedEventHandler PropertyChanged;
+
+		/// <summary>
+		/// Scale is changed
+		/// </summary>
 		public event EventHandler<ScaleEventArgs> ScaleChanged;
+
+		/// <summary>
+		/// Canvas dimensions changed
+		/// </summary>
 		public event EventHandler CanvasDimensionsChanged;
 
 		[NotifyPropertyChangedInvocator]
@@ -387,6 +473,10 @@ namespace ER_Diagram_Modeler.ViewModels
 			CanvasDimensionsChanged?.Invoke(this, System.EventArgs.Empty);
 		}
 
+		/// <summary>
+		/// Create XML element
+		/// </summary>
+		/// <returns>XML serialized data</returns>
 		public XElement CreateElement()
 		{
 			var elem = new XElement("DatabaseModelDesignerViewModel", 
@@ -404,6 +494,10 @@ namespace ER_Diagram_Modeler.ViewModels
 			return elem;
 		}
 
+		/// <summary>
+		/// Load property values from XML element
+		/// </summary>
+		/// <param name="element">XML serialized data from CreateElement()</param>
 		public void LoadFromElement(XElement element)
 		{
 			DiagramTitle = element.Attribute("DiagramTitle").Value;

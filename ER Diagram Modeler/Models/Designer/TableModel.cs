@@ -11,12 +11,21 @@ using ER_Diagram_Modeler.ViewModels.Enums;
 
 namespace ER_Diagram_Modeler.Models.Designer
 {
+	/// <summary>
+	/// Table representation
+	/// </summary>
 	public class TableModel: INotifyPropertyChanged, IDataErrorInfo, IDiagramSerializable
 	{
+		/// <summary>
+		/// ObjectId or GUID if not in DB yet
+		/// </summary>
 		public string Id { get; set; } = Guid.NewGuid().ToString();
 		private string _title = "Table1";
 		private ObservableCollection<TableRowModel> _attributes = new ObservableCollection<TableRowModel>();
 
+		/// <summary>
+		/// Table name
+		/// </summary>
 		public string Title
 		{
 			get { return _title; }
@@ -28,6 +37,9 @@ namespace ER_Diagram_Modeler.Models.Designer
 			}
 		}
 
+		/// <summary>
+		/// Table columns
+		/// </summary>
 		public ObservableCollection<TableRowModel> Attributes
 		{
 			get { return _attributes; }
@@ -39,6 +51,10 @@ namespace ER_Diagram_Modeler.Models.Designer
 			}
 		}
 
+		/// <summary>
+		/// Seralize attributes
+		/// </summary>
+		/// <returns></returns>
 		public override string ToString()
 		{
 			var sb = new StringBuilder();
@@ -50,6 +66,9 @@ namespace ER_Diagram_Modeler.Models.Designer
 			return sb.ToString();
 		}
 
+		/// <summary>
+		/// For data binding
+		/// </summary>
 		public event PropertyChangedEventHandler PropertyChanged;
 
 		[NotifyPropertyChangedInvocator]
@@ -58,6 +77,11 @@ namespace ER_Diagram_Modeler.Models.Designer
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 		}
 
+		/// <summary>
+		/// Error indexer
+		/// </summary>
+		/// <param name="columnName">Input name</param>
+		/// <returns></returns>
 		public string this[string columnName]
 		{
 			get
@@ -76,12 +100,20 @@ namespace ER_Diagram_Modeler.Models.Designer
 
 		public string Error => string.Empty;
 
+		/// <summary>
+		/// Update attribute from loaded
+		/// </summary>
+		/// <param name="old">Updating</param>
+		/// <param name="row">Updated</param>
 		public void UpdateAttributes(TableRowModel old, TableRowModel row)
 		{
 			int indexOf = Attributes.IndexOf(old);
 			Attributes[indexOf] = row;
 		}
 
+		/// <summary>
+		/// Add default column for CREATE TABLE statement
+		/// </summary>
 		public void AddDefaultAttribute()
 		{
 			switch (SessionProvider.Instance.ConnectionType)
@@ -99,6 +131,10 @@ namespace ER_Diagram_Modeler.Models.Designer
 			}
 		}
 
+		/// <summary>
+		/// Refresh data from DB
+		/// </summary>
+		/// <param name="fresh">Updated model</param>
 		public void RefreshModel(TableModel fresh)
 		{
 			Id = fresh.Id;
@@ -111,11 +147,19 @@ namespace ER_Diagram_Modeler.Models.Designer
 			}
 		}
 
+		/// <summary>
+		/// Create XML element
+		/// </summary>
+		/// <returns>XML serialized element</returns>
 		public XElement CreateElement()
 		{
 			return new XElement("TableModel", new XAttribute("Title", Title), new XAttribute("Id", Id));
 		}
 
+		/// <summary>
+		/// Load data from XML
+		/// </summary>
+		/// <param name="element">Data in XML</param>
 		public void LoadFromElement(XElement element)
 		{
 			Title = element.Attribute("Title")?.Value;

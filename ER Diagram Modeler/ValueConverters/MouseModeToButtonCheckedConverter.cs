@@ -5,6 +5,9 @@ using ER_Diagram_Modeler.ViewModels.Enums;
 
 namespace ER_Diagram_Modeler.ValueConverters
 {
+	/// <summary>
+	/// Button IsChecked state by command state
+	/// </summary>
 	public class MouseModeToButtonCheckedConverter: IValueConverter
 	{
 		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)

@@ -1,22 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data.SqlClient;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
-using ER_Diagram_Modeler.Annotations;
-using ER_Diagram_Modeler.Configuration.Providers;
-using ER_Diagram_Modeler.DiagramConstruction.Strategy;
+﻿using System.Windows.Input;
 using ER_Diagram_Modeler.Models.Designer;
 using MahApps.Metro.Controls;
 
@@ -29,6 +11,9 @@ namespace ER_Diagram_Modeler.Dialogs
 	{
 		private TableModel _model;
 
+		/// <summary>
+		/// Table model
+		/// </summary>
 		public TableModel Model
 		{
 			get { return _model; }
@@ -44,11 +29,21 @@ namespace ER_Diagram_Modeler.Dialogs
 			InitializeComponent();
 		}
 
+		/// <summary>
+		/// Dialog result = true
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private void Proceed_OnExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
 			DialogResult = true;
 		}
 
+		/// <summary>
+		/// Check if name is valid
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private void Proceed_OnCanExecute(object sender, CanExecuteRoutedEventArgs e)
 		{
 			if (Model == null)

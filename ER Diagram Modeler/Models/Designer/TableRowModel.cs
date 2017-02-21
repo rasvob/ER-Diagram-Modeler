@@ -10,6 +10,9 @@ using ER_Diagram_Modeler.Configuration.Providers;
 
 namespace ER_Diagram_Modeler.Models.Designer
 {
+	/// <summary>
+	/// Represent column in table and row in datagrid control
+	/// </summary>
 	public class TableRowModel: INotifyPropertyChanged, IDataErrorInfo
 	{
 		private string _name;
@@ -23,6 +26,9 @@ namespace ER_Diagram_Modeler.Models.Designer
 		private string _id;
 		private string _primaryKeyConstraintName;
 
+		/// <summary>
+		/// Name of primary key constraint
+		/// </summary>
 		public string PrimaryKeyConstraintName
 		{
 			get { return _primaryKeyConstraintName; }
@@ -34,6 +40,9 @@ namespace ER_Diagram_Modeler.Models.Designer
 			}
 		}
 
+		/// <summary>
+		/// Column ID
+		/// </summary>
 		public string Id
 		{
 			get { return _id; }
@@ -45,6 +54,9 @@ namespace ER_Diagram_Modeler.Models.Designer
 			}
 		}
 
+		/// <summary>
+		/// Selected datatype in control
+		/// </summary>
 		public Datatype SelectedDatatype
 		{
 			get { return _selectedDatatype; }
@@ -58,6 +70,9 @@ namespace ER_Diagram_Modeler.Models.Designer
 			}
 		}
 
+		/// <summary>
+		/// Datatypes for selection in control
+		/// </summary>
 		public IEnumerable<Datatype> DatatypesItemSource
 		{
 			get { return _datatypesItemSource; }
@@ -69,6 +84,9 @@ namespace ER_Diagram_Modeler.Models.Designer
 			}
 		}
 
+		/// <summary>
+		/// Loaded from DB
+		/// </summary>
 		public Datatype LoadeDatatypeFromDb
 		{
 			get { return _loadeDatatypeFromDb; }
@@ -80,6 +98,9 @@ namespace ER_Diagram_Modeler.Models.Designer
 			}
 		}
 
+		/// <summary>
+		/// Column name
+		/// </summary>
 		public string Name
 		{
 			get { return _name; }
@@ -91,6 +112,9 @@ namespace ER_Diagram_Modeler.Models.Designer
 			}
 		}
 
+		/// <summary>
+		/// Datatype of column
+		/// </summary>
 		public Datatype Datatype
 		{
 			get { return _datatype; }
@@ -102,6 +126,9 @@ namespace ER_Diagram_Modeler.Models.Designer
 			}
 		}
 
+		/// <summary>
+		/// Does column allow NULL values
+		/// </summary>
 		public bool AllowNull
 		{
 			get { return _allowNull; }
@@ -113,6 +140,9 @@ namespace ER_Diagram_Modeler.Models.Designer
 			}
 		}
 
+		/// <summary>
+		/// Is primary key
+		/// </summary>
 		public bool PrimaryKey
 		{
 			get { return _primaryKey; }
@@ -128,6 +158,10 @@ namespace ER_Diagram_Modeler.Models.Designer
 			}
 		}
 
+		/// <summary>
+		/// SQL string
+		/// </summary>
+		/// <returns></returns>
 		public override string ToString()
 		{
 			var sb = new StringBuilder();
@@ -142,6 +176,11 @@ namespace ER_Diagram_Modeler.Models.Designer
 			Name = string.Empty;
 		}
 
+		/// <summary>
+		/// Copy constructor
+		/// </summary>
+		/// <param name="name">Column name</param>
+		/// <param name="datatype">Source datatype</param>
 		public TableRowModel(string name, Datatype datatype)
 		{
 			Name = name;
@@ -170,6 +209,9 @@ namespace ER_Diagram_Modeler.Models.Designer
 			}
 		}
 
+		/// <summary>
+		/// For data binding
+		/// </summary>
 		public event PropertyChangedEventHandler PropertyChanged;
 
 		[NotifyPropertyChangedInvocator]
@@ -178,6 +220,11 @@ namespace ER_Diagram_Modeler.Models.Designer
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 		}
 
+		/// <summary>
+		/// Error indexer
+		/// </summary>
+		/// <param name="columnName">Input name</param>
+		/// <returns></returns>
 		public string this[string columnName]
 		{
 			get
@@ -200,6 +247,10 @@ namespace ER_Diagram_Modeler.Models.Designer
 
 		public string Error => string.Empty;
 
+		/// <summary>
+		/// Check validity of datatype
+		/// </summary>
+		/// <returns>True if is valid, false if not</returns>
 		public bool IsValid()
 		{
 			if(!this["Name"].Equals(string.Empty))

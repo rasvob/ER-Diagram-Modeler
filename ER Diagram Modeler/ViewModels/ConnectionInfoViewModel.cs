@@ -27,14 +27,44 @@ namespace ER_Diagram_Modeler.ViewModels
 {
 	public class ConnectionInfoViewModel: IDiagramSerializable
 	{
+		/// <summary>
+		/// Constraint model from DB
+		/// </summary>
 		public RelationshipModel RelationshipModel { get; set; } = new RelationshipModel();
+
+		/// <summary>
+		/// Lines creating relationship visualization
+		/// </summary>
 		public ObservableCollection<ConnectionLine> Lines { get; } = new ObservableCollection<ConnectionLine>();
+
+		/// <summary>
+		/// Bending points from Lines collection
+		/// </summary>
 		public ObservableCollection<ConnectionPoint> Points { get; } = new ObservableCollection<ConnectionPoint>();
+
+		/// <summary>
+		/// Marked bending points
+		/// </summary>
 		public ObservableCollection<ConnectionPointMark> Marks { get; } = new ObservableCollection<ConnectionPointMark>();
+
+		/// <summary>
+		/// Side "One" in One:Many relationship
+		/// </summary>
 		public Connector SourceConnector { get; } = new Connector();
+
+		/// <summary>
+		/// Side "Many" in One:Many relationship
+		/// </summary>
 		public Connector DestinationConnector { get; } = new Connector();
+
+		/// <summary>
+		/// Indicates if SourceConnector is connected to Points[0] object
+		/// </summary>
 		public bool? IsSourceConnectorAtStartPoint { get; set; }
 
+		/// <summary>
+		/// Canvas for visualization of lines and connectors
+		/// </summary>
 		public DesignerCanvas DesignerCanvas
 		{
 			get { return _canvas; }
@@ -53,13 +83,34 @@ namespace ER_Diagram_Modeler.ViewModels
 		private TableViewModel _destinationViewModel;
 		private DesignerCanvas _canvas;
 
+		/// <summary>
+		/// Selected or deselected relationship
+		/// </summary>
 		public event EventHandler<bool> SelectionChange;
+
+		/// <summary>
+		/// Connector side changed
+		/// </summary>
 		public event EventHandler<Connector> ConnectorChange;
 
+		/// <summary>
+		/// Tolerance for merging
+		/// </summary>
 		public static readonly double PointsDistaceTolerance = 8.0;
+
+		/// <summary>
+		/// Line offset from connector
+		/// </summary>
 		public static readonly double DefaultConnectionLineLength = 80;
+
+		/// <summary>
+		/// Width od cell for minified grid
+		/// </summary>
 		public static readonly int GraphTransformStep = 60;
 
+		/// <summary>
+		/// Viewmodel for primary key table
+		/// </summary>
 		public TableViewModel SourceViewModel
 		{
 			get { return _sourceViewModel; }
@@ -81,6 +132,10 @@ namespace ER_Diagram_Modeler.ViewModels
 			}
 		}
 
+
+		/// <summary>
+		/// Viewmodel for foreign key table
+		/// </summary>
 		public TableViewModel DestinationViewModel
 		{
 			get { return _destinationViewModel; }
@@ -102,6 +157,9 @@ namespace ER_Diagram_Modeler.ViewModels
 			}
 		}
 
+		/// <summary>
+		/// Is relationship selected in canvas
+		/// </summary>
 		public bool IsSelected
 		{
 			get { return _isSelected; }
@@ -129,11 +187,21 @@ namespace ER_Diagram_Modeler.ViewModels
 			DestinationConnector.ConnectorSelected += OnConnectorSelected;
 		}
 
+		/// <summary>
+		/// Selection changed
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="eventArgs"></param>
 		private void OnConnectorSelected(object sender, System.EventArgs eventArgs)
 		{
 			IsSelected = true;
 		}
 
+		/// <summary>
+		/// Viewmode changed
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="eventArgs"></param>
 		private void ViewModelOnTableViewModeChanged(object sender, System.EventArgs eventArgs)
 		{
 			var table = sender as TableViewModel;
@@ -156,6 +224,11 @@ namespace ER_Diagram_Modeler.ViewModels
 			}
 		}
 
+		/// <summary>
+		/// Position of table changed
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private void SourceViewModelOnPositionAndMeasureChanged(object sender, TablePositionAndMeasureEventArgs e)
 		{
 			var table = sender as TableViewModel;
@@ -293,6 +366,11 @@ namespace ER_Diagram_Modeler.ViewModels
 			}
 		}
 
+		/// <summary>
+		/// Position of table changed
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private void DestinationViewModelOnPositionAndMeasureChanged(object sender, TablePositionAndMeasureEventArgs e)
 		{
 			var table = DestinationViewModel;
@@ -435,28 +513,53 @@ namespace ER_Diagram_Modeler.ViewModels
 			}
 		}
 
+		/// <summary>
+		/// Position of table started changing
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="eventArgs"></param>
 		private void SourceViewModelOnPositionAndMeasureChangesStarted(object sender, System.EventArgs eventArgs)
 		{
 			SplitLinesIfNeeded();
 		}
 
+		/// <summary>
+		/// Position of table started changing
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="eventArgs"></param>
 		private void SourceViewModelOnPositionAndMeasureChangesCompleted(object sender, System.EventArgs eventArgs)
 		{
 			_newBendPoints.Clear();
 			SynchronizeBendingPoints();
 		}
 
+		/// <summary>
+		/// Position of table started changing
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="eventArgs"></param>
 		private void DestinationViewModelOnPositionAndMeasureChangesStarted(object sender, System.EventArgs eventArgs)
 		{
 			SplitLinesIfNeeded();
 		}
 
+		/// <summary>
+		/// Position of table completed changing
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="eventArgs"></param>
 		private void DestinationViewModelOnPositionAndMeasureChangesCompleted(object sender, System.EventArgs eventArgs)
 		{
 			_newBendPoints.Clear();
 			SynchronizeBendingPoints();
 		}
 
+		/// <summary>
+		/// Changes in points collection
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="args"></param>
 		private void PointsOnCollectionChanged(object sender, NotifyCollectionChangedEventArgs args)
 		{
 			switch (args.Action)
@@ -478,6 +581,9 @@ namespace ER_Diagram_Modeler.ViewModels
 			}
 		}
 
+		/// <summary>
+		/// Create lines from bending points
+		/// </summary>
 		public void BuildLinesFromPoints()
 		{
 			if (Points.Count < 2)
@@ -559,17 +665,30 @@ namespace ER_Diagram_Modeler.ViewModels
 			DestinationConnector.UpdateConnector();
 		}
 
+		/// <summary>
+		/// Line selected
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="eventArgs"></param>
 		private void LineOnLineSelected(object sender, System.EventArgs eventArgs)
 		{
 			IsSelected = true;
 		}
 
+		/// <summary>
+		/// Line splitted to two parts
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="connectionPoint"></param>
 		private void LineOnLineSplit(object sender, ConnectionPoint connectionPoint)
 		{
 			var line = sender as ConnectionLine;
 			SplitLine(line, connectionPoint);
 		}
 
+		/// <summary>
+		/// Add bending points to collection
+		/// </summary>
 		public void BuildPointsFromLines()
 		{
 			if (Lines.Count < 1)
@@ -586,6 +705,11 @@ namespace ER_Diagram_Modeler.ViewModels
 			}
 		}
 
+		/// <summary>
+		/// Line started moving
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="args"></param>
 		private void LineOnBeforeLineMove(object sender, ConnectionLineBeforeMoveEventArgs args)
 		{
 			var line = sender as ConnectionLine;
@@ -617,6 +741,11 @@ namespace ER_Diagram_Modeler.ViewModels
 			_bendPoint2 = Marks.FirstOrDefault(t => t.Point.Equals(line?.EndPoint));
 		}
 
+		/// <summary>
+		/// Line moving
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="args"></param>
 		private void LineOnLineMoving(object sender, System.EventArgs args)
 		{
 			var line = sender as ConnectionLine;
@@ -688,6 +817,11 @@ namespace ER_Diagram_Modeler.ViewModels
 			_newBendPoints.Clear();
 		}
 
+		/// <summary>
+		/// Glith prevention
+		/// </summary>
+		/// <param name="line">Line</param>
+		/// <returns></returns>
 		private bool EnsureBoundsForMiddleLine(ConnectionLine line)
 		{
 			Connector connector = null;
@@ -710,6 +844,11 @@ namespace ER_Diagram_Modeler.ViewModels
 			return EnsureBoundsForLineByConnectorPosition(line, connector);
 		}
 
+		/// <summary>
+		/// Line moving endned
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="eventArgs"></param>
 		private void LineOnLineMoved(object sender, System.EventArgs eventArgs)
 		{
 			var line = sender as ConnectionLine;
@@ -764,18 +903,33 @@ namespace ER_Diagram_Modeler.ViewModels
 			_newBendPoints.Clear();
 		}
 
+		/// <summary>
+		/// Glith prevention
+		/// </summary>
+		/// <param name="line">Line</param>
+		/// <returns>True if needed ensure, false if not</returns>
 		private bool EnsureBoundsForSecondLine(ConnectionLine line)
 		{
 			var connector = SourceConnector.EndPoint.Equals(Lines.FirstOrDefault()?.StartPoint) ? SourceConnector : DestinationConnector;
 			return EnsureBoundsForLineByConnectorPosition(line, connector);
 		}
 
+		/// <summary>
+		/// Glith prevention
+		/// </summary>
+		/// <param name="line">Line</param>
+		/// <returns>rue if needed ensure, false if not</returns>
 		private bool EnsureBoundsForLastButOneLine(ConnectionLine line)
 		{
 			var connector = SourceConnector.EndPoint.Equals(Lines.LastOrDefault()?.EndPoint) ? SourceConnector : DestinationConnector;
 			return EnsureBoundsForLineByConnectorPosition(line, connector);
 		}
 
+		/// <summary>
+		/// Glith prevention
+		/// </summary>
+		/// <param name="line">Line</param>
+		/// <returns>rue if needed ensure, false if not</returns>
 		private bool EnsureBoundsForLineByConnectorPosition(ConnectionLine line, Connector connector)
 		{
 			if (line.Orientation == LineOrientation.Vertical)
@@ -825,6 +979,12 @@ namespace ER_Diagram_Modeler.ViewModels
 			return false;
 		}
 
+
+		/// <summary>
+		/// Glith prevention
+		/// </summary>
+		/// <param name="line">Line</param>
+		/// <returns>rue if needed ensure, false if not</returns>
 		private bool EnsureBoundsToCanvasDimensions(ConnectionLine line)
 		{
 			switch (line.Orientation)
@@ -861,6 +1021,11 @@ namespace ER_Diagram_Modeler.ViewModels
 			return false;
 		}
 
+		/// <summary>
+		/// Glith prevention
+		/// </summary>
+		/// <param name="line">Line</param>
+		/// <returns>rue if needed ensure, false if not</returns>
 		private void CorrectConnectorPosition(ConnectionLine line)
 		{
 			if (Lines.Count == 1)
@@ -910,6 +1075,11 @@ namespace ER_Diagram_Modeler.ViewModels
 			}
 		}
 
+		/// <summary>
+		/// Glith prevention
+		/// </summary>
+		/// <param name="line">Line</param>
+		/// <returns>rue if needed ensure, false if not</returns>
 		private void CorrectPosition(Connector connector, ConnectionLine line, TableViewModel vm, bool isFirstLine)
 		{
 			const int correctionLenght1 = 10;
@@ -1263,16 +1433,29 @@ namespace ER_Diagram_Modeler.ViewModels
 			}
 		}
 
+		/// <summary>
+		/// Is line firts in collection
+		/// </summary>
+		/// <param name="line">Line</param>
+		/// <returns>True if needed ensure, false if not</returns>
 		private bool IsFirstLine(ConnectionLine line)
 		{
 			return Lines.IndexOf(line) == 0;
 		}
 
+		/// <summary>
+		/// Is line last in collection
+		/// </summary>
+		/// <param name="line">Line</param>
+		/// <returns>rue if needed ensure, false if not</returns>
 		private bool IsLastLine(ConnectionLine line)
 		{
 			return Lines.IndexOf(line) == Lines.Count - 1;
 		}
 
+		/// <summary>
+		/// Clear collection with Remove event trigger
+		/// </summary>
 		public void ClearPoints()
 		{
 			var len = Points.Count;
@@ -1283,6 +1466,9 @@ namespace ER_Diagram_Modeler.ViewModels
 			Points.Clear();
 		}
 
+		/// <summary>
+		/// Clear collection with Remove event trigger
+		/// </summary>
 		public void ClearLines()
 		{
 			int len = Lines.Count;
@@ -1293,6 +1479,9 @@ namespace ER_Diagram_Modeler.ViewModels
 			Lines.Clear();
 		}
 
+		/// <summary>
+		/// Clear collection with Remove event trigger
+		/// </summary>
 		public void ClearMarks()
 		{
 			int len = Marks.Count;
@@ -1303,6 +1492,9 @@ namespace ER_Diagram_Modeler.ViewModels
 			Marks.Clear();
 		}
 
+		/// <summary>
+		/// Remove points which are not bending
+		/// </summary>
 		private void RemoveRedundandBendPoints()
 		{
 			var forSelection = Points.Skip(1).Take(Points.Count - 2);
@@ -1315,6 +1507,10 @@ namespace ER_Diagram_Modeler.ViewModels
 			}
 		}
 
+		/// <summary>
+		/// Merge close lines in tolerance
+		/// </summary>
+		/// <param name="tolerance">Tolerance to merge</param>
 		private void NormalizeLinesWithTolerance(double tolerance)
 		{
 			if (Lines.Count < 3)
@@ -1348,6 +1544,9 @@ namespace ER_Diagram_Modeler.ViewModels
 			}
 		}
 
+		/// <summary>
+		/// Glitch prevention
+		/// </summary>
 		public void SynchronizeBendingPoints()
 		{
 			NormalizeLinesWithTolerance(PointsDistaceTolerance);
@@ -1357,12 +1556,20 @@ namespace ER_Diagram_Modeler.ViewModels
 			AdjustBendPointMarks();
 		}
 
+		/// <summary>
+		/// Remove first and last points because these are not bending
+		/// </summary>
 		private void AdjustBendPointMarks()
 		{
 			Marks.RemoveAt(0);
 			Marks.RemoveAt(Marks.Count - 1);
 		}
 
+		/// <summary>
+		/// Split line in two parts
+		/// </summary>
+		/// <param name="line">Line</param>
+		/// <param name="point">Split point</param>
 		private void SplitLine(ConnectionLine line, ConnectionPoint point)
 		{
 			var startPoint = Points.FirstOrDefault(t => t.Equals(line.StartPoint));
@@ -1379,6 +1586,10 @@ namespace ER_Diagram_Modeler.ViewModels
 			BuildLinesFromPoints();
 		}
 
+		/// <summary>
+		/// Configure aditional parameters
+		/// </summary>
+		/// <param name="line">Splitted line</param>
 		private void ConfigureSplitLine(ConnectionLine line)
 		{
 			if (line.StartPoint.Equals(line.EndPoint))
@@ -1391,16 +1602,28 @@ namespace ER_Diagram_Modeler.ViewModels
 			}
 		}
 
+		/// <summary>
+		/// Is foreign key for same table
+		/// </summary>
+		/// <returns>True if is self connected, false if not</returns>
 		private bool IsSelfConnection()
 		{
 			return DestinationViewModel.Equals(SourceViewModel);
 		}
 
+		/// <summary>
+		/// Are both tables selected
+		/// </summary>
+		/// <returns>True if selected, false if not</returns>
 		private bool IsSourceAndDestinationSelected()
 		{
 			return SourceViewModel.IsSelected && DestinationViewModel.IsSelected;
 		}
 
+		/// <summary>
+		/// Move all lines by offset
+		/// </summary>
+		/// <param name="args"></param>
 		private void MoveAllLines(TablePositionAndMeasureEventArgs args)
 		{
 			foreach (ConnectionLine line in Lines)
@@ -1413,6 +1636,15 @@ namespace ER_Diagram_Modeler.ViewModels
 			}
 		}
 
+		/// <summary>
+		/// Ensure limits for line due to the table position
+		/// </summary>
+		/// <param name="connector">Connector object</param>
+		/// <param name="table">Table</param>
+		/// <param name="endLine">Line connected to connector</param>
+		/// <param name="nextLine">Second / the one vefore last line</param>
+		/// <param name="e">EventArgs</param>
+		/// <param name="isFirstLine">Is line at Lines[0]</param>
 		private void AdjustConnectorMarkToHorizontalLimits(Connector connector, TableViewModel table, ConnectionLine endLine, ConnectionLine nextLine, TablePositionAndMeasureEventArgs e, bool isFirstLine)
 		{
 			if (connector.EndPoint.X + Connector.SymbolLineEndsDiff < table.Left + table.Width || e.LeftDelta < 0)
@@ -1452,6 +1684,15 @@ namespace ER_Diagram_Modeler.ViewModels
 			}
 		}
 
+		/// <summary>
+		/// Ensure limits for line due to the table position
+		/// </summary>
+		/// <param name="connector">Connector object</param>
+		/// <param name="table">Table</param>
+		/// <param name="endLine">Line connected to connector</param>
+		/// <param name="nextLine">Second / the one vefore last line</param>
+		/// <param name="e">EventArgs</param>
+		/// <param name="isFirstLine">Is line at Lines[0]</param>
 		private void AdjustConnectorMarkToVerticalLimits(Connector connector, TableViewModel table, ConnectionLine endLine, ConnectionLine nextLine, TablePositionAndMeasureEventArgs e, bool isFirstLine)
 		{
 			if (connector.EndPoint.Y + Connector.SymbolLineEndsDiff < table.Top + table.Height || e.TopDelta < 0)
@@ -1491,6 +1732,9 @@ namespace ER_Diagram_Modeler.ViewModels
 			}
 		}
 
+		/// <summary>
+		/// Split lines if table was moved when there is only one line in Lines collection
+		/// </summary>
 		private void SplitLinesIfNeeded()
 		{
 			if (Lines.Count == 1)
@@ -1500,6 +1744,10 @@ namespace ER_Diagram_Modeler.ViewModels
 			}
 		}
 
+		/// <summary>
+		/// Is any of selected tables moving
+		/// </summary>
+		/// <returns>True if is moving, false if not</returns>
 		private bool IsAnySelectedTableMoving()
 		{
 			ConnectionLine line = Lines.FirstOrDefault();
@@ -1514,6 +1762,11 @@ namespace ER_Diagram_Modeler.ViewModels
 			return itemsForCheck.Any();
 		}
 
+		/// <summary>
+		/// Adjust connector postition when table view mode changed
+		/// </summary>
+		/// <param name="connector">Connector</param>
+		/// <param name="table">Table</param>
 		private void MoveConnectorOnTableViewModeChange(Connector connector, TableViewModel table)
 		{
 			if (connector.Orientation == ConnectorOrientation.Right || connector.Orientation == ConnectorOrientation.Left)
@@ -1538,6 +1791,15 @@ namespace ER_Diagram_Modeler.ViewModels
 			}
 		}
 
+		/// <summary>
+		/// Get bounds for connection viewmodel
+		/// </summary>
+		/// <param name="top">Top offset</param>
+		/// <param name="bot">Top + height offset</param>
+		/// <param name="left">Left offset</param>
+		/// <param name="right">Left + width offset</param>
+		/// <param name="connector">Connector</param>
+		/// <param name="connection">Connection</param>
 		public static void GetConnectionLimits(ref double top, ref double bot, ref double left, ref double right, Connector connector, ConnectionInfoViewModel connection)
 		{
 			if (connection.Lines.Count <= 1)
@@ -1571,6 +1833,10 @@ namespace ER_Diagram_Modeler.ViewModels
 			}
 		}
 
+		/// <summary>
+		/// Visualize foreign key between viewmodels
+		/// </summary>
+		/// <remarks>DEPRECATED</remarks>
 		public void BuildConnection()
 		{
 			if (SourceViewModel == null)
@@ -1592,6 +1858,13 @@ namespace ER_Diagram_Modeler.ViewModels
 			BuildConnectionBetweenViewModels();
 		}
 
+		/// <summary>
+		/// Visualize foreign key between viewmodels
+		/// </summary>
+		/// <param name="designer">Designer with viewmodels</param>
+		/// <param name="grid">Computed grid for finding path</param>
+		/// <remarks>DEPRECATED</remarks>
+		/// <returns>Task for async execution</returns>
 		public async Task BuildConnection2(DatabaseModelDesignerViewModel designer, Grid grid = null)
 		{
 			if(SourceViewModel == null)
@@ -1607,6 +1880,11 @@ namespace ER_Diagram_Modeler.ViewModels
 			await BuildConnectionBetweenViewModelsUsingPathFinding(designer, grid);
 		}
 
+		/// <summary>
+		/// Visualize foreign key between viewmodels
+		/// </summary>
+		/// <param name="designer">Designer with viewmodels</param>
+		/// <returns>Task for async execution</returns>
 		public async Task BuildConnection3(DatabaseModelDesignerViewModel designer)
 		{
 			if(SourceViewModel == null)
@@ -1622,6 +1900,11 @@ namespace ER_Diagram_Modeler.ViewModels
 			await BuildConnectionBetweenViewModelsUsingReducedGraphPathFinding(designer);
 		}
 
+		/// <summary>
+		/// Visualization using pathfinding on reduced graph
+		/// </summary>
+		/// <param name="designer">Designer with viewmodels</param>
+		/// <returns>Task for async execution</returns>
 		private async Task BuildConnectionBetweenViewModelsUsingReducedGraphPathFinding(DatabaseModelDesignerViewModel designer)
 		{
 			int step = GraphTransformStep;
@@ -1696,6 +1979,14 @@ namespace ER_Diagram_Modeler.ViewModels
 			BuildLinesFromPoints();
 		}
 
+		/// <summary>
+		/// Setup direction of connector
+		/// </summary>
+		/// <param name="vm">Table viewmodel</param>
+		/// <param name="connector">Connector for setup</param>
+		/// <param name="designer">Designer with viewmodels</param>
+		/// <param name="step">Cell width</param>
+		/// <returns>Array of two points - point at connector and point with offset</returns>
 		private Point[] SetupConnector(TableViewModel vm, Connector connector, DatabaseModelDesignerViewModel designer,int step)
 		{
 			var horizontalLines = new List<int>();
@@ -1786,6 +2077,13 @@ namespace ER_Diagram_Modeler.ViewModels
 			return null;
 		}
 
+		/// <summary>
+		/// Visualization using pathfinding on full scale graph
+		/// </summary>
+		/// <remarks>DEPRECATED</remarks>
+		/// <param name="designer">Designer with viewmodels</param>
+		/// <param name="grid">Precomputed grid for pathfinding</param>
+		/// <returns>Task for async execution</returns>
 		private async Task BuildConnectionBetweenViewModelsUsingPathFinding(DatabaseModelDesignerViewModel designer, Grid grid = null)
 		{
 			Point start = new Point((int)SourceViewModel.Left + 20, (int)(SourceViewModel.Top + SourceViewModel.Height) + (int)Connector.ConnectorLenght);
@@ -2004,6 +2302,12 @@ namespace ER_Diagram_Modeler.ViewModels
 			BuildLinesFromPoints();
 		}
 
+		/// <summary>
+		/// Create full scale grid
+		/// </summary>
+		/// <remarks>DEPRECATED</remarks>
+		/// <param name="designer">Designer with viewmodels</param>
+		/// <returns>Grid for pathfinding algorithm</returns>
 		private Grid CreateGridForPathFinding(DatabaseModelDesignerViewModel designer)
 		{
 			var obs = GetRectangleAreas(designer);
@@ -2011,6 +2315,11 @@ namespace ER_Diagram_Modeler.ViewModels
 			return grid;
 		}
 
+		/// <summary>
+		/// Get rectangle areas blocked on canvas by tables
+		/// </summary>
+		/// <param name="designer">Designer with viewmodels</param>
+		/// <returns>Blocked rectangles</returns>
 		private IEnumerable<Rectangle> GetRectangleAreas(DatabaseModelDesignerViewModel designer)
 		{
 			var obs = new List<Rectangle>();
@@ -2046,6 +2355,10 @@ namespace ER_Diagram_Modeler.ViewModels
 			return obs;
 		}
 
+		/// <summary>
+		/// Build connection without pathfinding
+		/// </summary>
+		/// <remarks>DEPRECATED</remarks>
 		private void BuildConnectionBetweenViewModels()
 		{
 			if (AreTablesOverlaping())
@@ -2149,6 +2462,11 @@ namespace ER_Diagram_Modeler.ViewModels
 			BuildLinesFromPoints();
 		}
 
+		/// <summary>
+		/// Get distance between tables
+		/// </summary>
+		/// <param name="position">Relative destination to source table position</param>
+		/// <returns>Distance between tables</returns>
 		private double GetTableDistance(RelativeTablePosition position)
 		{
 			switch (position)
@@ -2174,12 +2492,20 @@ namespace ER_Diagram_Modeler.ViewModels
 			return 0;
 		}
 
+		/// <summary>
+		/// Is space between tables bigger then ConnectorLenght
+		/// </summary>
+		/// <param name="position">Relative destination to source table position</param>
+		/// <returns>True if there is enough space, false if is not</returns>
 		private bool IsSufficientDistance(RelativeTablePosition position)
 		{
 			//Less tolerace
 			return GetTableDistance(position) > Connector.ConnectorLenght + 3;
 		}
 
+		/// <summary>
+		/// Build connection based on position without pathfinding
+		/// </summary>
 		private void BuildHorizontalConnection()
 		{
 			var y = SourceViewModel.Top > DestinationViewModel.Top ? SourceViewModel.Top + SourceViewModel.Height + Connector.ConnectorLenght*2 : DestinationViewModel.Top + DestinationViewModel.Height + Connector.ConnectorLenght*2;
@@ -2198,6 +2524,9 @@ namespace ER_Diagram_Modeler.ViewModels
 			DestinationConnector.Orientation = ConnectorOrientation.Down;
 		}
 
+		/// <summary>
+		/// Build connection based on position without pathfinding
+		/// </summary>
 		private void BuildVerticalConnection()
 		{
 			var x = SourceViewModel.Left > DestinationViewModel.Left ? SourceViewModel.Left + SourceViewModel.Width + Connector.ConnectorLenght*2 : DestinationViewModel.Left + DestinationViewModel.Width + Connector.ConnectorLenght*2;
@@ -2216,6 +2545,9 @@ namespace ER_Diagram_Modeler.ViewModels
 			DestinationConnector.Orientation = ConnectorOrientation.Right;
 		}
 
+		/// <summary>
+		/// Build connection based on position without pathfinding
+		/// </summary>
 		private void BuildLeftTopConnection()
 		{
 			var point1 = new ConnectionPoint(SourceViewModel.Left + SourceViewModel.Width/2, SourceViewModel.Top - Connector.ConnectorLenght);
@@ -2230,6 +2562,9 @@ namespace ER_Diagram_Modeler.ViewModels
 			DestinationConnector.Orientation = ConnectorOrientation.Right;
 		}
 
+		/// <summary>
+		/// Build connection based on position without pathfinding
+		/// </summary>
 		private void BuildRightTopConnection()
 		{
 			var point1 = new ConnectionPoint(SourceViewModel.Left + SourceViewModel.Width/2, SourceViewModel.Top - Connector.ConnectorLenght);
@@ -2244,6 +2579,9 @@ namespace ER_Diagram_Modeler.ViewModels
 			DestinationConnector.Orientation = ConnectorOrientation.Left;
 		}
 
+		/// <summary>
+		/// Build connection based on position without pathfinding
+		/// </summary>
 		private void BuildLeftBottomConnection()
 		{
 			var point1 = new ConnectionPoint(SourceViewModel.Left + SourceViewModel.Width/2, SourceViewModel.Top + SourceViewModel.Height + Connector.ConnectorLenght);
@@ -2258,6 +2596,9 @@ namespace ER_Diagram_Modeler.ViewModels
 			DestinationConnector.Orientation = ConnectorOrientation.Right;
 		}
 
+		/// <summary>
+		/// Build connection based on position without pathfinding
+		/// </summary>
 		private void BuildRightBottomConnection()
 		{
 			var point1 = new ConnectionPoint(SourceViewModel.Left + SourceViewModel.Width/2, SourceViewModel.Top + SourceViewModel.Height + Connector.ConnectorLenght);
@@ -2272,6 +2613,10 @@ namespace ER_Diagram_Modeler.ViewModels
 			DestinationConnector.Orientation = ConnectorOrientation.Left;
 		}
 
+		/// <summary>
+		/// Build connection based on position without pathfinding
+		/// </summary>
+		/// <param name="fromRight">Build from direction</param>
 		private void BuildTopConnection(bool fromRight = false)
 		{
 			int x;
@@ -2295,6 +2640,10 @@ namespace ER_Diagram_Modeler.ViewModels
 			DestinationConnector.Orientation = ConnectorOrientation.Down;
 		}
 
+		/// <summary>
+		/// Build connection based on position without pathfinding
+		/// </summary>
+		/// <param name="fromRight">Build from direction</param>
 		private void BuildBottomConnection(bool fromRight = false)
 		{
 			int x;
@@ -2318,6 +2667,10 @@ namespace ER_Diagram_Modeler.ViewModels
 			DestinationConnector.Orientation = ConnectorOrientation.Up;
 		}
 
+		/// <summary>
+		/// Build connection based on position without pathfinding
+		/// </summary>
+		/// <param name="fromBottom">Build from direction</param>
 		private void BuildLeftConnection(bool fromBottom = false)
 		{
 			int y;
@@ -2341,6 +2694,10 @@ namespace ER_Diagram_Modeler.ViewModels
 			DestinationConnector.Orientation = ConnectorOrientation.Right;
 		}
 
+		/// <summary>
+		/// Build connection based on position without pathfinding
+		/// </summary>
+		/// <param name="fromBottom">Build from direction</param>
 		private void BuildRightConnection(bool fromBottom = false)
 		{
 			int y;
@@ -2364,6 +2721,10 @@ namespace ER_Diagram_Modeler.ViewModels
 			DestinationConnector.Orientation = ConnectorOrientation.Left;
 		}
 
+		/// <summary>
+		/// Relative destination to source table position
+		/// </summary>
+		/// <returns></returns>
 		private RelativeTablePosition GetRelativePositionOfDestinationTable()
 		{
 			var rectangles = new Rectangle[8];
@@ -2445,6 +2806,9 @@ namespace ER_Diagram_Modeler.ViewModels
 			return RelativeTablePosition.LeftTop;
 		}
 
+		/// <summary>
+		/// Build if tables are overlaping
+		/// </summary>
 		private void BuildOverlapConnection()
 		{
 			int off = (int)Connector.ConnectorLenght;
@@ -2495,6 +2859,10 @@ namespace ER_Diagram_Modeler.ViewModels
 			BuildLinesFromPoints();
 		}
 
+		/// <summary>
+		/// Does rectangular areas overlap
+		/// </summary>
+		/// <returns>True if they are, false if not</returns>
 		private bool AreTablesOverlaping()
 		{
 			if (SourceViewModel.Left < DestinationViewModel.Left + DestinationViewModel.Width && SourceViewModel.Left + SourceViewModel.Width + Connector.ConnectorLenght > DestinationViewModel.Left && SourceViewModel.Top < DestinationViewModel.Top + DestinationViewModel.Height && SourceViewModel.Height + SourceViewModel.Top > DestinationViewModel.Top)
@@ -2505,6 +2873,9 @@ namespace ER_Diagram_Modeler.ViewModels
 			return false;
 		}
 
+		/// <summary>
+		/// Build connection between table and itself
+		/// </summary>
 		private void BuildSelfConnection()
 		{
 			var point1 = new ConnectionPoint(SourceViewModel.Left + (SourceViewModel.Width/2), SourceViewModel.Top - Connector.ConnectorLenght);
@@ -2534,6 +2905,9 @@ namespace ER_Diagram_Modeler.ViewModels
 			BuildLinesFromPoints();
 		}
 
+		/// <summary>
+		/// Clear all collections
+		/// </summary>
 		public void ClearAll()
 		{
 			ClearLines();
@@ -2541,6 +2915,11 @@ namespace ER_Diagram_Modeler.ViewModels
 			ClearMarks();
 		}
 
+		/// <summary>
+		/// Rebuild visualization of foreign key
+		/// </summary>
+		/// <param name="vm">Designer with viewmodels</param>
+		/// <returns>Task for async execution</returns>
 		public async Task RebuildVisual(DatabaseModelDesignerViewModel vm)
 		{
 			ClearAll();
@@ -2557,6 +2936,10 @@ namespace ER_Diagram_Modeler.ViewModels
 			ConnectorChange?.Invoke(this, e);
 		}
 
+		/// <summary>
+		/// Create XML element
+		/// </summary>
+		/// <returns>XML serialized data</returns>
 		public XElement CreateElement()
 		{
 			XElement element = new XElement("ConnectionInfoViewModel",
@@ -2574,6 +2957,10 @@ namespace ER_Diagram_Modeler.ViewModels
 			return element;
 		}
 
+		/// <summary>
+		/// Load property values from XML element
+		/// </summary>
+		/// <param name="element">XML serialized data from CreateElement()</param>
 		public void LoadFromElement(XElement element)
 		{
 			RelationshipModel.LoadFromElement(element.Element("RelationshipModel"));
@@ -2594,6 +2981,9 @@ namespace ER_Diagram_Modeler.ViewModels
 			points?.ForEach(t => Points.Add(t));
 		}
 
+		/// <summary>
+		/// Build connection from DB
+		/// </summary>
 		public void BuildLoadedConnection()
 		{
 			if(SourceViewModel == null)

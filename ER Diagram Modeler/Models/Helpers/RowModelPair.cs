@@ -3,6 +3,9 @@ using ER_Diagram_Modeler.Models.Designer;
 
 namespace ER_Diagram_Modeler.Models.Helpers
 {
+	/// <summary>
+	/// Pair for simplified grid data binding
+	/// </summary>
 	public class RowModelPair
 	{
 		public TableRowModel Source { get; set; }

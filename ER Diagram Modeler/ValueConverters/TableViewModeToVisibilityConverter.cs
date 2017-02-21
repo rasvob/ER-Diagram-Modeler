@@ -6,6 +6,9 @@ using ER_Diagram_Modeler.ViewModels.Enums;
 
 namespace ER_Diagram_Modeler.ValueConverters
 {
+	/// <summary>
+	/// TableViewMode To Visibility
+	/// </summary>
 	public class TableViewModeToVisibilityConverter: IValueConverter
 	{
 		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)

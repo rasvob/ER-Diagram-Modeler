@@ -11,8 +11,17 @@ using Oracle.ManagedDataAccess.Client;
 
 namespace ER_Diagram_Modeler.DiagramConstruction
 {
+	/// <summary>
+	/// DB scheme changes
+	/// </summary>
 	public class DatabaseUpdater
 	{
+		/// <summary>
+		/// Rename table in DB
+		/// </summary>
+		/// <param name="oldName">Old table name</param>
+		/// <param name="model">Table model</param>
+		/// <returns>Exception message if failed, NULL if not</returns>
 		public string RenameTable(string oldName, TableModel model)
 		{
 			try
@@ -31,6 +40,12 @@ namespace ER_Diagram_Modeler.DiagramConstruction
 			}
 		}
 
+		/// <summary>
+		/// Add columnd to table in DB
+		/// </summary>
+		/// <param name="table">Table name</param>
+		/// <param name="column">Column model</param>
+		/// <returns>Exception message if failed, NULL if not</returns>
 		public string AddColumn(string table, TableRowModel column)
 		{
 			try
@@ -46,6 +61,14 @@ namespace ER_Diagram_Modeler.DiagramConstruction
 			}
 		}
 
+		/// <summary>
+		/// Add new column or update existing in DB
+		/// </summary>
+		/// <param name="model">Table model</param>
+		/// <param name="column">Column model</param>
+		/// <param name="refreshedModel">Model with new attributes</param>
+		/// <param name="args">Arguments provided by add/update event</param>
+		/// <returns>Exception message if failed, NULL if not</returns>
 		public string AddOrUpdateCollumn(TableModel model, TableRowModel column, out TableModel refreshedModel, ref EditRowEventArgs args)
 		{
 			var err = args == null ? AddColumn(model.Title, column) : UpdateColumn(model.Title, column);
@@ -63,6 +86,12 @@ namespace ER_Diagram_Modeler.DiagramConstruction
 			return err;
 		}
 
+		/// <summary>
+		/// Drop column in table
+		/// </summary>
+		/// <param name="table">Table model</param>
+		/// <param name="args">Arguments provided by drop event</param>
+		/// <returns>Exception message if failed, NULL if not</returns>
 		public string RemoveColumn(TableModel table, ref EditRowEventArgs args)
 		{
 			var ctx = new DatabaseContext(SessionProvider.Instance.ConnectionType);
@@ -84,6 +113,12 @@ namespace ER_Diagram_Modeler.DiagramConstruction
 			}
 		}
 
+		/// <summary>
+		/// Alter columnd to table in DB
+		/// </summary>
+		/// <param name="table">Table name</param>
+		/// <param name="column">Column model</param>
+		/// <returns>Exception message if failed, NULL if not</returns>
 		public string UpdateColumn(string table, TableRowModel column)
 		{
 			try
@@ -99,6 +134,13 @@ namespace ER_Diagram_Modeler.DiagramConstruction
 			}
 		}
 
+		/// <summary>
+		/// Rename column in table
+		/// </summary>
+		/// <param name="table">Table name</param>
+		/// <param name="oldName">Old name</param>
+		/// <param name="newName">New name</param>
+		/// <returns>Exception message if failed, NULL if not</returns>
 		public string RenameColumn(string table, string oldName, string newName)
 		{
 			try
@@ -114,12 +156,22 @@ namespace ER_Diagram_Modeler.DiagramConstruction
 			}
 		}
 
+		/// <summary>
+		/// Refresh current table
+		/// </summary>
+		/// <param name="model">Table model</param>
+		/// <returns>Refreshed table model</returns>
 		public TableModel RefreshModel(TableModel model)
 		{
 			var ctx = new DatabaseContext(SessionProvider.Instance.ConnectionType);
 			return ctx.ReadTableDetails(model.Id, model.Title);
 		}
 
+		/// <summary>
+		/// Drop table from DB
+		/// </summary>
+		/// <param name="table">Table model</param>
+		/// <returns>Exception message if failed, NULL if not</returns>
 		public string DropTable(TableModel table)
 		{
 			try
@@ -135,6 +187,11 @@ namespace ER_Diagram_Modeler.DiagramConstruction
 			}
 		}
 
+		/// <summary>
+		/// Update PK constraint
+		/// </summary>
+		/// <param name="model">Table model</param>
+		/// <returns>Exception message if failed, NULL if not</returns>
 		public string UpdatePrimaryKeyConstraint(TableModel model)
 		{
 			var ctx = new DatabaseContext(SessionProvider.Instance.ConnectionType);
@@ -156,6 +213,11 @@ namespace ER_Diagram_Modeler.DiagramConstruction
 			}
 		}
 
+		/// <summary>
+		/// Drop foreign key constraint
+		/// </summary>
+		/// <param name="model">Relationship model</param>
+		/// <returns>Exception message if failed, NULL if not</returns>
 		public string RemoveRelationship(RelationshipModel model)
 		{
 			var ctx = new DatabaseContext(SessionProvider.Instance.ConnectionType);
@@ -172,6 +234,11 @@ namespace ER_Diagram_Modeler.DiagramConstruction
 			}
 		}
 
+		/// <summary>
+		/// Create foreign key constraint
+		/// </summary>
+		/// <param name="model">Relationship model</param>
+		/// <returns>Exception message if failed, NULL if not</returns>
 		public string AddRelationship(RelationshipModel model)
 		{
 			var ctx = new DatabaseContext(SessionProvider.Instance.ConnectionType);

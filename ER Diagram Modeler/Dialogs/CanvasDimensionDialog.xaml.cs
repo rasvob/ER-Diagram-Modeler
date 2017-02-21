@@ -1,21 +1,7 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Diagnostics;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using ER_Diagram_Modeler.Annotations;
 using MahApps.Metro.Controls;
 using Xceed.Wpf.Toolkit.PropertyGrid.Attributes;
@@ -30,6 +16,9 @@ namespace ER_Diagram_Modeler.Dialogs
 		private double _canvasWidth = 2500;
 		private double _canvasHeight = 2500;
 
+		/// <summary>
+		/// Width of canvas
+		/// </summary>
 		public double CanvasWidth
 		{
 			get { return _canvasWidth; }
@@ -42,6 +31,9 @@ namespace ER_Diagram_Modeler.Dialogs
 			}
 		}
 
+		/// <summary>
+		/// Height of canvas
+		/// </summary>
 		public double CanvasHeight
 		{
 			get { return _canvasHeight; }
@@ -59,12 +51,22 @@ namespace ER_Diagram_Modeler.Dialogs
 			InitializeComponent();
 		}
 
+		/// <summary>
+		/// Close dialog
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private void Proceed_OnExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
 			DialogResult = true;
 			Close();
 		}
 
+		/// <summary>
+		/// Are data valid - check
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private void Proceed_OnCanExecute(object sender, CanExecuteRoutedEventArgs e)
 		{
 			if (this["CanvasWidth"].Equals(string.Empty) && this["CanvasHeight"].Equals(string.Empty))
@@ -90,6 +92,11 @@ namespace ER_Diagram_Modeler.Dialogs
 			Close();
 		}
 
+		/// <summary>
+		/// Check input values
+		/// </summary>
+		/// <param name="columnName">Name of input</param>
+		/// <returns>Error string</returns>
 		public string this[string columnName]
 		{
 			get
@@ -116,6 +123,10 @@ namespace ER_Diagram_Modeler.Dialogs
 		}
 
 		public string Error => string.Empty;
+
+		/// <summary>
+		/// For data binding
+		/// </summary>
 		public event PropertyChangedEventHandler PropertyChanged;
 
 		[NotifyPropertyChangedInvocator]

@@ -2,6 +2,9 @@
 
 namespace ER_Diagram_Modeler.EventArgs
 {
+	/// <summary>
+	/// Row edit EventArgs
+	/// </summary>
 	public class EditRowEventArgs: System.EventArgs
 	{
 		public TableModel TableModel { get; set; }

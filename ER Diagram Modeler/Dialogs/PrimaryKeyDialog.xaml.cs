@@ -1,16 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
+﻿using System.Linq;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using ER_Diagram_Modeler.Models.Designer;
 using ER_Diagram_Modeler.ViewModels;
 using MahApps.Metro.Controls;
@@ -24,6 +13,9 @@ namespace ER_Diagram_Modeler.Dialogs
 	{
 		private TableModel _tableModel;
 
+		/// <summary>
+		/// Table model for primary key configuration
+		/// </summary>
 		public TableModel TableModel
 		{
 			get { return _tableModel; }
@@ -42,6 +34,9 @@ namespace ER_Diagram_Modeler.Dialogs
 			}
 		}
 
+		/// <summary>
+		/// Viewmodel for dialog
+		/// </summary>
 		public PrimaryKeyDialogViewModel ViewModel { get; set; } = new PrimaryKeyDialogViewModel();
 
 		public PrimaryKeyDialog()
@@ -49,6 +44,11 @@ namespace ER_Diagram_Modeler.Dialogs
 			InitializeComponent();
 		}
 
+		/// <summary>
+		/// Update primary key constraint
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private void Confirm_OnExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
 			foreach (TableRowModel model in TableModel.Attributes)
@@ -59,6 +59,11 @@ namespace ER_Diagram_Modeler.Dialogs
 			DialogResult = true;
 		}
 
+		/// <summary>
+		/// Check if config is valid
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private void Confirm_OnCanExecute(object sender, CanExecuteRoutedEventArgs e)
 		{
 			if (TableModel == null)
@@ -69,6 +74,11 @@ namespace ER_Diagram_Modeler.Dialogs
 			e.CanExecute = true;
 		}
 
+		/// <summary>
+		/// DialogResult = false;
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private void Cancel_OnExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
 			DialogResult = false;

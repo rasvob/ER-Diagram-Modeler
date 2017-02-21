@@ -1,23 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 using ER_Diagram_Modeler.Annotations;
 using ER_Diagram_Modeler.DiagramConstruction;
-using ER_Diagram_Modeler.Models.Designer;
 using ER_Diagram_Modeler.Models.Helpers;
 using ER_Diagram_Modeler.ViewModels;
 using ER_Diagram_Modeler.Views.Canvas;
@@ -31,6 +19,9 @@ namespace ER_Diagram_Modeler.Dialogs
 	/// </summary>
 	public partial class ForeignKeysDialog : MetroWindow, INotifyPropertyChanged
 	{
+		/// <summary>
+		/// Viewmodel for ConnectionInfoViewModel 
+		/// </summary>
 		public ConnectionInfoViewModel InfoViewModel
 		{
 			get { return _infoViewModel; }
@@ -42,10 +33,18 @@ namespace ER_Diagram_Modeler.Dialogs
 			}
 		}
 
+		/// <summary>
+		/// Viewmodel for DatabaseModelDesignerViewModel
+		/// </summary>
 		public DatabaseModelDesignerViewModel DatabaseModelDesignerViewModel { get; set; }
+
+		
 		private ObservableCollection<RowModelPair> _gridData = new ObservableCollection<RowModelPair>();
 		private ConnectionInfoViewModel _infoViewModel;
 
+		/// <summary>
+		/// Collection of RowModelPair
+		/// </summary>
 		public ObservableCollection<RowModelPair> GridData
 		{
 			get { return _gridData; }
@@ -57,6 +56,9 @@ namespace ER_Diagram_Modeler.Dialogs
 			}
 		}
 
+		/// <summary>
+		/// Canvas for visualization
+		/// </summary>
 		public DesignerCanvas Canvas { get; set; }
 
 		public ForeignKeysDialog(DatabaseModelDesignerViewModel viewModel, ConnectionInfoViewModel selected = null)
@@ -75,6 +77,10 @@ namespace ER_Diagram_Modeler.Dialogs
 			SetupFlyout();
 		}
 
+		/// <summary>
+		/// Fill grid data
+		/// </summary>
+		/// <param name="index">Selected index</param>
 		private void SetupListBoxData(int index)
 		{
 			RelationshipsListBox.ItemsSource =
@@ -84,6 +90,9 @@ namespace ER_Diagram_Modeler.Dialogs
 			RelationshipsListBox.SelectedIndex = index;
 		}
 
+		/// <summary>
+		/// Setup flyout
+		/// </summary>
 		private void SetupFlyout()
 		{
 			FlyoutPrimaryTableComboBox.ItemsSource = DatabaseModelDesignerViewModel.TableViewModels;
@@ -95,6 +104,11 @@ namespace ER_Diagram_Modeler.Dialogs
 			FlyoutForeignTableComboBox.SelectedIndex = 0;
 		}
 
+		/// <summary>
+		/// Update gridview when foreign key is selected
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="selectionChangedEventArgs"></param>
 		private void RelationshipsListBoxOnSelectionChanged(object sender, SelectionChangedEventArgs selectionChangedEventArgs)
 		{
 			if (selectionChangedEventArgs.AddedItems.Count == 0)
@@ -115,6 +129,11 @@ namespace ER_Diagram_Modeler.Dialogs
 			}
 		}
 
+		/// <summary>
+		/// Open flyout for FK creation
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private void AddNew_OnExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
 			var flyout = Flyouts.Items[0] as Flyout;
@@ -125,6 +144,11 @@ namespace ER_Diagram_Modeler.Dialogs
 			}
 		}
 
+		/// <summary>
+		/// Drop foreign key
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private async void Remove_OnExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
 			var updater = new DatabaseUpdater();
@@ -141,6 +165,11 @@ namespace ER_Diagram_Modeler.Dialogs
 			RelationshipsListBox.SelectedIndex = 0;
 		}
 
+		/// <summary>
+		/// Can drop check
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private void Remove_OnCanExecute(object sender, CanExecuteRoutedEventArgs e)
 		{
 			if (InfoViewModel == null)
@@ -152,11 +181,19 @@ namespace ER_Diagram_Modeler.Dialogs
 			e.CanExecute = true;
 		}
 
+		/// <summary>
+		/// Close dialog
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private void Cancel_OnExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
 			Close();
 		}
 
+		/// <summary>
+		/// For data binding
+		/// </summary>
 		public event PropertyChangedEventHandler PropertyChanged;
 
 		[NotifyPropertyChangedInvocator]
@@ -165,6 +202,11 @@ namespace ER_Diagram_Modeler.Dialogs
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 		}
 
+		/// <summary>
+		/// Create new FK - open dialog
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private void CreateRelationship_OnExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
 			var source = FlyoutPrimaryTableComboBox.SelectedItem as TableViewModel;
@@ -188,6 +230,11 @@ namespace ER_Diagram_Modeler.Dialogs
 			}
 		}
 
+		/// <summary>
+		/// Is create new flyout data valid - check
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private void CreateRelationship_OnCanExecute(object sender, CanExecuteRoutedEventArgs e)
 		{
 			var source = FlyoutPrimaryTableComboBox.SelectedItem as TableViewModel;

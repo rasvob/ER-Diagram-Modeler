@@ -3,10 +3,19 @@ using System.Windows.Input;
 
 namespace ER_Diagram_Modeler.ViewModels
 {
+	/// <summary>
+	/// Command from viewmodel
+	/// </summary>
 	public class SimpleCommand: ICommand
 	{
+		/// <summary>
+		/// Can execute
+		/// </summary>
 		public Predicate<object> CanExecuteDelegate { get; set; }
 
+		/// <summary>
+		/// Execute command
+		/// </summary>
 		public Action<object> ExecuteDelegate { get; set; }
 
 		public SimpleCommand(Predicate<object> canExecuteDelegate, Action<object> executeDelegate)

@@ -4,11 +4,17 @@ using ER_Diagram_Modeler.Annotations;
 
 namespace ER_Diagram_Modeler.Models.Database
 {
+	/// <summary>
+	/// Model of diagram in DB
+	/// </summary>
 	public class DiagramModel: INotifyPropertyChanged
 	{
 		private string _name;
 		private string _xml;
 
+		/// <summary>
+		/// Diagram name
+		/// </summary>
 		public string Name
 		{
 			get { return _name; }
@@ -20,6 +26,9 @@ namespace ER_Diagram_Modeler.Models.Database
 			}
 		}
 
+		/// <summary>
+		/// XML serialized data
+		/// </summary>
 		public string Xml
 		{
 			get { return _xml; }
@@ -31,6 +40,9 @@ namespace ER_Diagram_Modeler.Models.Database
 			}
 		}
 
+		/// <summary>
+		/// For data binding
+		/// </summary>
 		public event PropertyChangedEventHandler PropertyChanged;
 
 		[NotifyPropertyChangedInvocator]

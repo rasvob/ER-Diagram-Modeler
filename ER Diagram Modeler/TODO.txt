@@ -11,5 +11,4 @@ Async for some SQL
 Add comments
 
 --Bugs
-Timestamp datatype
 
