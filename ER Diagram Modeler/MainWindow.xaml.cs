@@ -711,15 +711,7 @@ namespace ER_Diagram_Modeler
 		/// <param name="args"></param>
 		private async void MainWindow_OnClosing(object sender, CancelEventArgs args)
 		{
-			if (_canClose)
-			{
-				return;
-			}
-
-			args.Cancel = true;
 			await DiagramFacade.CloseDiagramsOnDisconnect(this);
-			_canClose = true;
-			Application.Current.Shutdown();
 		}
 
 		/// <summary>
