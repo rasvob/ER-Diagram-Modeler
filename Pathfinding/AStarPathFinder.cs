@@ -4,8 +4,14 @@ using Pathfinding.Structure;
 
 namespace Pathfinding
 {
+	/// <summary>
+	/// A* Pathfinding algorithm
+	/// </summary>
 	public class AStarPathFinder: AbstractPathFinder
 	{
+		/// <summary>
+		/// Weight of heuristic
+		/// </summary>
 		public static int Weight = 100;
 
 		public AStarPathFinder(Grid grid) : base(grid)
@@ -13,6 +19,12 @@ namespace Pathfinding
 
 		}
 
+		/// <summary>
+		/// Find path between points
+		/// </summary>
+		/// <param name="startPoint">Path start</param>
+		/// <param name="endPoint">Path end</param>
+		/// <returns>All points in path</returns>
 		public override Point[] FindPath(Point startPoint, Point endPoint)
 		{
 			var q = new PriorityQueue<Node>();

@@ -6,8 +6,14 @@ using Pathfinding.Structure;
 
 namespace Pathfinding
 {
-	public abstract class AbstractPathFinder
+	/// <summary>
+	/// Base class for pathfinding algorithms
+	/// </summary>
+	public abstract class AbstractPathFinder: IPathFinder
 	{
+		/// <summary>
+		/// Graph as a grid
+		/// </summary>
 		public Grid Grid { get; set; }
 
 		protected AbstractPathFinder(Grid grid)
@@ -15,6 +21,11 @@ namespace Pathfinding
 			Grid = grid;
 		}
 
+		/// <summary>
+		/// Backtrack path from final node to start
+		/// </summary>
+		/// <param name="start">Final node</param>
+		/// <returns>Path from end to start</returns>
 		protected Point[] BacktrackNodes(Node start)
 		{
 			var res = new List<Point>();
@@ -30,6 +41,12 @@ namespace Pathfinding
 			return res.ToArray();
 		}
 
+		/// <summary>
+		/// Find only filtered bending points from full path
+		/// </summary>
+		/// <param name="startPoint">Path start</param>
+		/// <param name="endPoint">Path end</param>
+		/// <returns>Filtered bending points</returns>
 		public Point[] FindPathBendingPointsOnly(Point startPoint, Point endPoint)
 		{
 			var points = FindPath(startPoint, endPoint);
@@ -64,10 +81,27 @@ namespace Pathfinding
 			return res.ToArray();
 		}
 
+		/// <summary>
+		/// Is endpoint reached
+		/// </summary>
+		/// <param name="current">Current node</param>
+		/// <param name="endPoint">End point</param>
+		/// <returns>True if reached, false otherwise</returns>
 		protected bool EndpointReached(Node current, Point endPoint) => current.X == endPoint.X && current.Y == endPoint.Y;
 
+		/// <summary>
+		/// Heuristic function
+		/// </summary>
+		/// <param name="point1">Current node</param>
+		/// <param name="point2">End point</param>
+		/// <returns>Result of heuristic</returns>
 		protected short Manhattan(Node point1, Point point2) => (short) (Math.Abs(point1.X - point2.X) + Math.Abs(point1.Y - point2.Y));
 
+		/// <summary>
+		/// Get neighbor nodes
+		/// </summary>
+		/// <param name="node">Current node</param>
+		/// <returns>Array of 4 nodes</returns>
 		protected Node[] GetNeighbors(Node node)
 		{
 			var res = new Node[4];
@@ -80,6 +114,12 @@ namespace Pathfinding
 			return res;
 		}
 
+		/// <summary>
+		/// Find path between points
+		/// </summary>
+		/// <param name="startPoint">Path start</param>
+		/// <param name="endPoint">Path end</param>
+		/// <returns>All points in path</returns>
 		public abstract Point[] FindPath(Point startPoint, Point endPoint);
 	}
 }

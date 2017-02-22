@@ -2,6 +2,10 @@
 
 namespace Pathfinding.Structure
 {
+	/// <summary>
+	/// Struct for Node in Graph
+	/// </summary>
+	/// <remarks>DEPRECATED</remarks>
 	public struct NodeStruct: IComparable<NodeStruct>
 	{
 		public short ParentX;

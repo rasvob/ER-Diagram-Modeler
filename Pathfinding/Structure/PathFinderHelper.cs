@@ -6,16 +6,37 @@ using System.Threading.Tasks;
 
 namespace Pathfinding.Structure
 {
+	/// <summary>
+	/// Helper methods for preprocessing data for pathfinding
+	/// </summary>
 	public static class PathFinderHelper
 	{
+		/// <summary>
+		/// Round to nearest power of two
+		/// </summary>
+		/// <param name="n">Number for round</param>
+		/// <returns>Nearest power of two</returns>
 		public static int RoundToNearestPowerOfTwo(int n) => (int)Math.Pow(2, Math.Ceiling(Math.Log(n) / Math.Log(2)));
 
+		/// <summary>
+		/// Create grid of given dimensions
+		/// </summary>
+		/// <param name="width">Count of columns</param>
+		/// <param name="height">Count of rows</param>
+		/// <returns>Grid of given dimensions</returns>
 		public static Grid CreateNewGrid(int width, int height)
 		{
 			Grid grid = new Grid(width, width);
 			return grid;
 		}
 
+		/// <summary>
+		/// Update state of nodes in grid
+		/// </summary>
+		/// <param name="width">Count of columns</param>
+		/// <param name="height">Count of rows</param>
+		/// <param name="obstacles">Filled rectangle areas</param>
+		/// <param name="grid">Existing grid</param>
 		public static void UpdateGrid(int width, int height, IEnumerable<Rectangle> obstacles, Grid grid)
 		{
 			grid.Width = width;
@@ -50,6 +71,13 @@ namespace Pathfinding.Structure
 			}
 		}
 
+		/// <summary>
+		/// Create new grid
+		/// </summary>
+		/// <param name="width">Count of columns</param>
+		/// <param name="height">Count of rows</param>
+		/// <param name="obstacles">Filled rectangle areas</param>
+		/// <returns></returns>
 		public static Grid CreateGrid(int width, int height, IEnumerable<Rectangle> obstacles)
 		{
 			Grid grid = CreateNewGrid(width, height);
@@ -80,6 +108,14 @@ namespace Pathfinding.Structure
 			return grid;
 		}
 
+		/// <summary>
+		/// Create grid for struct represented nodes
+		/// </summary>
+		/// <param name="width">Count of columns</param>
+		/// <param name="height">Count of rows</param>
+		/// <param name="obstacles">Filled rectangle areas</param>
+		/// <returns>Byte array of free/closed nodes</returns>
+		/// <remarks>DEPRECATED</remarks>
 		public static byte[,] CreateGridStruct(int width, int height, IEnumerable<Rectangle> obstacles)
 		{
 			var res = new byte[height, width];

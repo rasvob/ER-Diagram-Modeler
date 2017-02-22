@@ -7,6 +7,9 @@ using Pathfinding.Structure;
 
 namespace Pathfinding
 {
+	/// <summary>
+	/// Finds first free rectangle in grid
+	/// </summary>
 	public class FreeRectangleFinder
 	{
 		private readonly Grid _grid;
@@ -16,6 +19,11 @@ namespace Pathfinding
 			_grid = grid;
 		}
 
+		/// <summary>
+		/// Find top-left point of free rectangle
+		/// </summary>
+		/// <param name="rect">Needed area</param>
+		/// <returns>Top-left point of free rectangle, NULL if there is none</returns>
 		public Point? FindFreeRectangle(Rectangle rect)
 		{
 			PreprocessGrid();
@@ -36,6 +44,11 @@ namespace Pathfinding
 			return null;
 		}
 
+		/// <summary>
+		/// Get neighbor nodes
+		/// </summary>
+		/// <param name="node">Current node</param>
+		/// <returns>Array of 8 nodes</returns>
 		private Node[] GetNeighbors(Node node)
 		{
 			var res = new Node[8];
@@ -52,6 +65,11 @@ namespace Pathfinding
 			return res;
 		}
 
+		/// <summary>
+		/// Get list of possible top-left points of free rectangles
+		/// </summary>
+		/// <param name="rectangle">Needed area</param>
+		/// <returns>List of possible top-left points of free rectangles</returns>
 		private List<Node> GetListOfFreePoints(Rectangle rectangle)
 		{
 			var nodes = new List<Node>();
@@ -73,6 +91,12 @@ namespace Pathfinding
 			return nodes;
 		}
 
+		/// <summary>
+		/// Get list of possible top-left points of free rectangles with BFS
+		/// </summary>
+		/// <param name="rectangle">Needed area</param>
+		/// <returns>List of possible top-left points of free rectangles</returns>
+		/// <remarks>DEPRECATED</remarks>
 		private List<Node> GetListOfFreePointsWithBfs(Rectangle rectangle)
 		{
 			var nodes = new List<Node>();
@@ -116,6 +140,12 @@ namespace Pathfinding
 			return nodes;
 		}
 
+		/// <summary>
+		/// Get line of point from start to start.X + count
+		/// </summary>
+		/// <param name="from">Start node</param>
+		/// <param name="count">How many nodes</param>
+		/// <returns>Nodes in line</returns>
 		private Node[] GetLineOfPoints(Node from, int count)
 		{
 			var res = new Node[count];
@@ -129,9 +159,26 @@ namespace Pathfinding
 			return res;
 		}
 
+		/// <summary>
+		/// Heuristic for distance
+		/// </summary>
+		/// <param name="point1">Current node</param>
+		/// <param name="point2">End point</param>
+		/// <returns>Distance by function</returns>
 		private short Manhattan(Node point1, Point point2) => (short)(Math.Abs(point1.X - point2.X) + Math.Abs(point1.Y - point2.Y));
+
+		/// <summary>
+		/// Heuristic for distance
+		/// </summary>
+		/// <param name="point1">Current node</param>
+		/// <param name="point2">End point</param>
+		/// <returns>Distance by function</returns>
+		/// <remarks>DEPRECATED</remarks>
 		private short DistanceToCenter(Node point1, Point point2) => (short) (Math.Pow(Math.Abs(point1.X - point2.X), 2) + Math.Pow(Math.Abs(point1.Y - point2.Y), 2));
 
+		/// <summary>
+		/// Preprocess grid for rectangle finding by creating histogram-like structure
+		/// </summary>
 		private void PreprocessGrid()
 		{
 			for (int i = 0; i < _grid.Width; i++)

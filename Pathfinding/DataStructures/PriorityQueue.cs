@@ -3,6 +3,10 @@ using System.Collections.Generic;
 
 namespace Pathfinding.DataStructures
 {
+	/// <summary>
+	/// Binary heap implementation of IPriorityQueue
+	/// </summary>
+	/// <typeparam name="T">Queue item</typeparam>
 	public class PriorityQueue<T>: IPriorityQueue<T> where T : IComparable<T>
 	{
 		private readonly List<T> _items;
@@ -10,8 +14,12 @@ namespace Pathfinding.DataStructures
 		public PriorityQueue()
 		{
 			_items = new List<T>();
-		} 
+		}
 
+		/// <summary>
+		/// Add item to queue
+		/// </summary>
+		/// <param name="item">Item for enque</param>
 		public void Enqueue(T item)
 		{
 			_items.Add(item);
@@ -31,6 +39,10 @@ namespace Pathfinding.DataStructures
 			}
 		}
 
+		/// <summary>
+		/// Deque item from queue
+		/// </summary>
+		/// <returns>Item with highest priority</returns>
 		public T Dequeue()
 		{
 			int lastIndex = _items.Count - 1;
@@ -69,8 +81,16 @@ namespace Pathfinding.DataStructures
 			return retItem;
 		}
 
+		/// <summary>
+		/// Peek at queue head value
+		/// </summary>
+		/// <returns>Item with highest priority</returns>
 		public T Peek() => _items[0];
 
+		/// <summary>
+		/// Update item in queue
+		/// </summary>
+		/// <param name="item">Item for update</param>
 		public void Update(T item)
 		{
 			int current = _items.IndexOf(item);
@@ -130,8 +150,16 @@ namespace Pathfinding.DataStructures
 			}
 		}
 
+		/// <summary>
+		/// Count of items in queue
+		/// </summary>
 		public int Count => _items.Count;
 
+		/// <summary>
+		/// Swap items in list
+		/// </summary>
+		/// <param name="i">Index of item one</param>
+		/// <param name="j">Index of item two</param>
 		private void Swap(int i, int j)
 		{
 			T tmp = _items[i];

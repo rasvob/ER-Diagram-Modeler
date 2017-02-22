@@ -8,10 +8,19 @@ using Pathfinding.Structure;
 
 namespace Pathfinding
 {
+	/// <summary>
+	/// BFS Pathfinding algorithm
+	/// </summary>
 	public class BfsPathFinder: AbstractPathFinder
 	{
 		public BfsPathFinder(Grid grid): base(grid){ }
 
+		/// <summary>
+		/// Find path between points
+		/// </summary>
+		/// <param name="startPoint">Path start</param>
+		/// <param name="endPoint">Path end</param>
+		/// <returns>All points in path</returns>
 		public override Point[] FindPath(Point startPoint, Point endPoint)
 		{
 			var q = new PriorityQueue<Node>();

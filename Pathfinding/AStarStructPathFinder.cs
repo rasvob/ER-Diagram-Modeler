@@ -7,6 +7,10 @@ using Pathfinding.Structure;
 
 namespace Pathfinding
 {
+	/// <summary>
+	/// Pathfinding in graph where nodes are represented as structs in memory
+	/// </summary>
+	/// <remarks>DEPRECATED</remarks>
 	public class AStarStructPathFinder
 	{
 		private readonly int _width;
