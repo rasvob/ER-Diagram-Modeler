@@ -1,26 +1,23 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Data.SqlClient;
 using System.Diagnostics;
+using System.Drawing;
+using System.IO;
 using System.Linq;
-using System.Net;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
-using ER_Diagram_Modeler.Configuration.Providers;
+using ER_Diagram_Modeler.CommandOutput;
 using ER_Diagram_Modeler.DiagramConstruction;
-using ER_Diagram_Modeler.DiagramConstruction.Strategy;
 using ER_Diagram_Modeler.Dialogs;
 using ER_Diagram_Modeler.EventArgs;
 using ER_Diagram_Modeler.Models.Designer;
-using ER_Diagram_Modeler.Models.Helpers;
 using ER_Diagram_Modeler.ViewModels;
 using ER_Diagram_Modeler.ViewModels.Enums;
 using ER_Diagram_Modeler.Views.Canvas.Connection;
@@ -29,6 +26,9 @@ using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
 using Oracle.ManagedDataAccess.Client;
 using Xceed.Wpf.Toolkit.Core.Utilities;
+using Image = System.Drawing.Image;
+using Point = System.Windows.Point;
+using Size = System.Windows.Size;
 
 namespace ER_Diagram_Modeler.Views.Canvas
 {
@@ -881,6 +881,101 @@ namespace ER_Diagram_Modeler.Views.Canvas
 			}
 
 			e.CanExecute = ViewModel.ConnectionInfoViewModels.Any(t => t.IsSelected);
+		}
+
+		/// <summary>
+		/// Export canvas to png
+		/// </summary>
+		/// <param name="filepath">Path to file</param>
+		public void ExportToPng(string filepath)
+		{
+			RenderTargetBitmap bitmap = RenderCanvas();
+			PngBitmapEncoder encoder = new PngBitmapEncoder();
+			int offset = 30;
+			int left = 0, right = (int)ViewModel.CanvasWidth, top = 0, bot = (int)ViewModel.CanvasHeight;
+
+			if (ViewModel.TableViewModels.Any())
+			{
+				left = (int)ViewModel.TableViewModels.Select(t => t.Left - offset).Min();
+				top = (int)ViewModel.TableViewModels.Select(t => t.Top - offset).Min();
+				right = (int)ViewModel.TableViewModels.Select(t => t.Left + t.Width + offset).Max();
+				bot = (int)ViewModel.TableViewModels.Select(t => t.Top + t.Height + offset).Max();
+			}
+
+			if (ViewModel.ConnectionInfoViewModels.Any())
+			{
+				left = (int)Math.Min(left, ViewModel.ConnectionInfoViewModels.SelectMany(t => t.Points).Select(t => t.X - offset).Min());
+				right = (int)Math.Max(right,ViewModel.ConnectionInfoViewModels.SelectMany(t => t.Points).Select(t => t.X + offset).Max());
+				bot = (int)Math.Max(bot, ViewModel.ConnectionInfoViewModels.SelectMany(t => t.Points).Select(t => t.Y + offset).Max());
+				top = (int)Math.Min(top,ViewModel.ConnectionInfoViewModels.SelectMany(t => t.Points).Select(t => t.Y - offset).Min());
+			}
+
+			left = left < 0 ? 0 : left;
+			top = top < 0 ? 0 : top;
+			right = right > ViewModel.CanvasWidth ? (int)ViewModel.CanvasWidth : right;
+			bot = bot > ViewModel.CanvasHeight ? (int)ViewModel.CanvasHeight : bot;
+
+			BitmapFrame frame = BitmapFrame.Create(bitmap);
+			encoder.Frames.Add(frame);
+
+			using (MemoryStream ms = new MemoryStream())
+			{
+				encoder.Save(ms);
+				ms.Seek(0, SeekOrigin.Begin);
+
+				var crop = new System.Drawing.Rectangle(left, top, right - left, bot - top);
+				var cropped = new Bitmap(crop.Width, crop.Height);
+				var img = Image.FromStream(ms);
+				using (Graphics g = Graphics.FromImage(cropped))
+				{
+					g.DrawImage(img, -crop.X, -crop.Y);
+					cropped.Save(filepath);
+				}
+			}
+
+			Output.WriteLine("FILE SAVED");
+		}
+
+		/// <summary>
+		/// Export whole canva to png
+		/// </summary>
+		/// <param name="filepath">Path to file</param>
+		public void ExportToPngFullSize(string filepath)
+		{
+			RenderTargetBitmap bitmap = RenderCanvas();
+			PngBitmapEncoder encoder = new PngBitmapEncoder();
+			BitmapFrame frame = BitmapFrame.Create(bitmap);
+			encoder.Frames.Add(frame);
+
+			using (var fs = File.Create(filepath))
+			{
+				encoder.Save(fs);
+			}
+
+			Output.WriteLine("FILE SAVED");
+		}
+
+		/// <summary>
+		/// Render canvas to bitmap
+		/// </summary>
+		/// <returns>Rendered canvas</returns>
+		private RenderTargetBitmap RenderCanvas()
+		{
+			Transform layoutTransform = ModelDesignerCanvas.LayoutTransform;
+			ModelDesignerCanvas.LayoutTransform = null;
+
+			double dpi = 300;
+			double scale = dpi / 96;
+
+			var size = new Size((int)ViewModel.CanvasWidth, (int)ViewModel.CanvasHeight);
+			ModelDesignerCanvas.Measure(size);
+			ModelDesignerCanvas.Arrange(new Rect(size));
+
+			RenderTargetBitmap render = new RenderTargetBitmap((int)(ViewModel.CanvasWidth*scale), (int)(ViewModel.CanvasHeight*scale), dpi, dpi, PixelFormats.Pbgra32);
+			render.Render(ModelDesignerCanvas);
+
+			ModelDesignerCanvas.LayoutTransform = layoutTransform;
+			return render;
 		}
 	}
 }

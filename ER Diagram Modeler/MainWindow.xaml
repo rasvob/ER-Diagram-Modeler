@@ -41,6 +41,8 @@
 			<RoutedUICommand x:Key="Commands.ShowAbout" />
 			<RoutedUICommand x:Key="Commands.ShowMsSqlConnectionPanel" />
 			<RoutedUICommand x:Key="Commands.ShowOracleConnectionPanel" />
+			<RoutedUICommand x:Key="Commands.ExportToPng" />
+			<RoutedUICommand x:Key="Commands.ExportToPngFullResolution" />
 		</ResourceDictionary>
 	</Window.Resources>
 
@@ -103,6 +105,14 @@
 						Executed="OpenQueryFile_OnExecuted"
 						CanExecute="NewQuery_OnCanExecute"
 						></CommandBinding>
+
+		<CommandBinding Command="{StaticResource Commands.ExportToPng}"
+						Executed="ExportToPng_OnExecuted"
+						CanExecute="ExportToPng_OnCanExecute" />
+
+		<CommandBinding Command="{StaticResource Commands.ExportToPngFullResolution}"
+						Executed="ExportToPngFull_OnExecuted"
+						CanExecute="ExportToPng_OnCanExecute" />
 
 		<CommandBinding Command="{StaticResource Commands.ShowAbout}" Executed="ShowAbout_OnExecuted" />
 		<CommandBinding Command="{StaticResource Commands.ShowMsSqlConnectionPanel}" Executed="ShowMsSqlConnectionPanel_OnExecuted" />
@@ -433,6 +443,8 @@
 					<MenuItem Name="MenuItemAddDiagram" Header="Add new diagram (Ctrl + Shift + N)" Command="{StaticResource Commands.NewDiagram}"/>
 					<MenuItem Name="MenuItemSaveDiagram" Header="Save diagram (Ctrl + S)" Command="{StaticResource Commands.SaveDiagram}"></MenuItem>
 					<MenuItem Name="MenuItemSaveDiagramAs" Header="Save diagram as... (Ctrl + Shift + S)" Command="{StaticResource Commands.SaveDiagramAs}"></MenuItem>
+					<MenuItem Name="MenuItemExportDiagramUsedSpace" Header="Export diagram to png (only used part)" Command="{StaticResource Commands.ExportToPng}"></MenuItem>
+					<MenuItem Name="MenuItemExportDiagram" Header="Export diagram to png (whole canvas)" Command="{StaticResource Commands.ExportToPngFullResolution}"></MenuItem>
 				</MenuItem>
 
 				<MenuItem Header="Query">

@@ -205,7 +205,7 @@ exec sp_pkeys @table_name = 'hodnoceni_uzivatel'";
 				CreatePrompt = true,
 				OverwritePrompt = true,
 				AddExtension = true,
-				DefaultExt = ".sql",
+				DefaultExt = "sql",
 			};
 			bool? b = dialog.ShowDialog(Window.GetWindow(this));
 

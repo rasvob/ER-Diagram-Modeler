@@ -7,10 +7,12 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Threading;
 using System.Xml.Linq;
 using ER_Diagram_Modeler.CommandOutput;
 using ER_Diagram_Modeler.Configuration.Providers;
@@ -1061,6 +1063,71 @@ namespace ER_Diagram_Modeler
 		private void Exit_OnClick(object sender, RoutedEventArgs e)
 		{
 			Close();
+		}
+
+		/// <summary>
+		/// Export current diagram to PNG
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		private void ExportToPng_OnExecuted(object sender, ExecutedRoutedEventArgs e)
+		{
+			DatabaseModelDesigner designer;
+			if (TryGetSelectedDesigner(out designer))
+			{
+				var dialog = new SaveFileDialog
+				{
+					OverwritePrompt = true,
+					AddExtension = true,
+					DefaultExt = "png",
+					Filter = "Image Files|*.png"
+				};
+
+				bool? showDialog = dialog.ShowDialog(this);
+
+				if (showDialog.Value)
+				{
+					designer.ExportToPng(dialog.FileName);
+				}
+			}
+		}
+
+		/// <summary>
+		/// Export current diagram to PNG - check if it's possible
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		private void ExportToPng_OnCanExecute(object sender, CanExecuteRoutedEventArgs e)
+		{
+			DatabaseModelDesigner designer;
+			e.CanExecute = TryGetSelectedDesigner(out designer);
+		}
+
+		/// <summary>
+		/// Export current diagram to PNG - Full size of canvas
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		private async void ExportToPngFull_OnExecuted(object sender, ExecutedRoutedEventArgs e)
+		{
+			DatabaseModelDesigner designer;
+			if(TryGetSelectedDesigner(out designer))
+			{
+				var dialog = new SaveFileDialog
+				{
+					OverwritePrompt = true,
+					AddExtension = true,
+					DefaultExt = "png",
+					Filter = "Image Files|*.png"
+				};
+
+				bool? showDialog = dialog.ShowDialog(this);
+
+				if(showDialog.Value)
+				{
+					designer.ExportToPngFullSize(dialog.FileName);
+				}
+			}
 		}
 	}
 }
