@@ -8,7 +8,6 @@ Rework of treeview update
 Async for some SQL
 
 ---Other
-Add comments
 
 --Bugs
 
