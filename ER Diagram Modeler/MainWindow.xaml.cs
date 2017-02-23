@@ -1142,6 +1142,11 @@ namespace ER_Diagram_Modeler
 			}
 		}
 
+		/// <summary>
+		/// Generate DDL for current dialog
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private void GenerateDdl_OnExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
 			DatabaseModelDesigner designer;

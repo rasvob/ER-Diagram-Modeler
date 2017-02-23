@@ -7,9 +7,19 @@ using ER_Diagram_Modeler.ViewModels.Enums;
 
 namespace ER_Diagram_Modeler.DDLGenerator
 {
+	/// <summary>
+	/// DDL Script generator
+	/// </summary>
 	public abstract class BaseGenerator
 	{
+		/// <summary>
+		/// Tables
+		/// </summary>
 		protected readonly IEnumerable<TableModel> Tables;
+
+		/// <summary>
+		/// Foreign keys
+		/// </summary>
 		protected readonly IEnumerable<RelationshipModel> ForeignKeys;
 
 		protected BaseGenerator(IEnumerable<TableModel> tables, IEnumerable<RelationshipModel> foreignKeys)
@@ -18,6 +28,11 @@ namespace ER_Diagram_Modeler.DDLGenerator
 			ForeignKeys = foreignKeys;
 		}
 
+		/// <summary>
+		/// Generate Create table statement
+		/// </summary>
+		/// <param name="table">Table model</param>
+		/// <returns>Create table statement</returns>
 		protected string GenerateCreateTable(TableModel table)
 		{
 			var sb = new StringBuilder();
@@ -27,6 +42,11 @@ namespace ER_Diagram_Modeler.DDLGenerator
 			return sb.ToString();
 		}
 
+		/// <summary>
+		/// Generate Alter table statement
+		/// </summary>
+		/// <param name="table">Table model</param>
+		/// <returns>Primary key statement</returns>
 		protected string GeneratePrimaryKey(TableModel table)
 		{
 			var pk = table.Attributes.Where(t => t.PrimaryKey);
@@ -38,8 +58,17 @@ namespace ER_Diagram_Modeler.DDLGenerator
 				string.Join(",", rowModels.Select(t => t.Name)));
 		}
 
+		/// <summary>
+		/// Generate Alter table statement
+		/// </summary>
+		/// <param name="model">Foreign model</param>
+		/// <returns>Foreign key statement</returns>
 		protected abstract string GenerateForeignKey(RelationshipModel model);
 
+		/// <summary>
+		/// Generate complete DDL for diagram
+		/// </summary>
+		/// <returns>DDL script</returns>
 		public string GenerateDdl()
 		{
 			var sb = new StringBuilder();
@@ -79,8 +108,21 @@ namespace ER_Diagram_Modeler.DDLGenerator
 				.ToString();
 		}
 
+		/// <summary>
+		/// Return table name
+		/// </summary>
+		/// <param name="name">Name of table</param>
+		/// <returns>Table name</returns>
 		protected abstract string GetTableName(string name);
 
+		/// <summary>
+		/// Factory method
+		/// </summary>
+		/// <param name="tables">Table models</param>
+		/// <param name="foreignKeys">Foreign kys models</param>
+		/// <param name="connection">Type of connection</param>
+		/// <param name="owner">DB Owner - Oracle only</param>
+		/// <returns>Instance of BaseGenerator subtype</returns>
 		public static BaseGenerator CreateGenerator(IEnumerable<TableModel> tables, IEnumerable<RelationshipModel> foreignKeys,
 			ConnectionType connection, string owner = null)
 		{
