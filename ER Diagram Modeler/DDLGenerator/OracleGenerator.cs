@@ -26,7 +26,7 @@ namespace ER_Diagram_Modeler.DDLGenerator
 		/// <returns>Foreign key statement</returns>
 		protected override string GenerateForeignKey(RelationshipModel model)
 		{
-			string sql = @"ALTER TABLE {0} ADD CONSTRAINT {1} FOREIGN KEY ({2}) REFERENCES [{3}] ({4})";
+			string sql = @"ALTER TABLE {0} ADD CONSTRAINT {1} FOREIGN KEY ({2}) REFERENCES {3} ({4})";
 			string tableColumns = string.Join(",", model.Attributes.Select(t => t.Destination.Name));
 			string referencedColumns = string.Join(",", model.Attributes.Select(t => t.Source.Name));
 
