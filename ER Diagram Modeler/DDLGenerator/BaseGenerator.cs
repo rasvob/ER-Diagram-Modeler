@@ -52,7 +52,7 @@ namespace ER_Diagram_Modeler.DDLGenerator
 			var pk = table.Attributes.Where(t => t.PrimaryKey);
 			IEnumerable<TableRowModel> rowModels = pk as IList<TableRowModel> ?? pk.ToList();
 			var first = rowModels.FirstOrDefault();
-			var str = "ALTER TABLE [{0}] ADD CONSTRAINT {1} PRIMARY KEY ({2})";
+			var str = "ALTER TABLE {0} ADD CONSTRAINT {1} PRIMARY KEY ({2})";
 
 			return string.Format(str, GetTableName(table.Title), first?.PrimaryKeyConstraintName,
 				string.Join(",", rowModels.Select(t => t.Name)));
