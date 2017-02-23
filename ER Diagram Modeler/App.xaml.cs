@@ -25,10 +25,11 @@ namespace ER_Diagram_Modeler
 		/// <remarks>Exception logging only in avalon dock isn!t revisited</remarks>
 		protected override void OnStartup(StartupEventArgs e)
 		{
+			//TODO: ONLY DEBUG
 			base.OnStartup(e);
 			SetEnglighCultureInfo();
-			//RenderOptions.ProcessRenderMode = RenderMode.SoftwareOnly;
-			//this.DispatcherUnhandledException += OnDispatcherUnhandledException;
+			RenderOptions.ProcessRenderMode = RenderMode.SoftwareOnly;
+			this.DispatcherUnhandledException += OnDispatcherUnhandledException;
 		}
 
 		/// <summary>
