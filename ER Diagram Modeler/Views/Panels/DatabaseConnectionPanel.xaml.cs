@@ -249,9 +249,16 @@ namespace ER_Diagram_Modeler.Views.Panels
 			if(itemMsSql != null)
 			{
 				itemMsSql.IsExpanded = true;
-				TreeViewItem firstOrDefault = itemMsSql.Items.Cast<TreeViewItem>().FirstOrDefault();
+				IEnumerable<TreeViewItem> items = itemMsSql.Items.Cast<TreeViewItem>();
+				IEnumerable<TreeViewItem> viewItems = items as IList<TreeViewItem> ?? items.ToList();
+				TreeViewItem firstOrDefault = viewItems.FirstOrDefault();
 				if(firstOrDefault != null)
 					firstOrDefault.IsExpanded = true;
+
+				TreeViewItem diagrams = viewItems.Skip(1).FirstOrDefault();
+
+				if (diagrams != null)
+					diagrams.IsExpanded = true;
 			}
 		}
 
@@ -301,16 +308,29 @@ namespace ER_Diagram_Modeler.Views.Panels
 			item.ForEach(t => OracleTreeView.Items.Add(t));
 		}
 
+		/// <summary>
+		/// Invoke Drop DB event
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private void DropDatabaseAction(string dbName)
 		{
 			OnDropMsSqlDatabase(dbName);
 		}
 
+		/// <summary>
+		/// Event invoker
+		/// </summary>
 		protected virtual void OnAddTable(TableModel e)
 		{
 			AddTable?.Invoke(this, e);
 		}
 
+		/// <summary>
+		/// Invoke Create DB event
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private void CreateNewMsSqlDatabase_OnExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
 			OnCreateMsSqlDatabase();
@@ -326,41 +346,65 @@ namespace ER_Diagram_Modeler.Views.Panels
 			e.CanExecute = SessionProvider.Instance.ConnectionType == ConnectionType.SqlServer;
 		}
 
+		/// <summary>
+		/// Event invoker
+		/// </summary>
 		protected virtual void OnCreateMsSqlDatabase()
 		{
 			CreateMsSqlDatabase?.Invoke(this, System.EventArgs.Empty);
 		}
 
+		/// <summary>
+		/// Event invoker
+		/// </summary>
 		protected virtual void OnDropMsSqlDatabase(string e)
 		{
 			DropMsSqlDatabase?.Invoke(this, e);
 		}
 
+		/// <summary>
+		/// Event invoker
+		/// </summary>
 		protected virtual void OnAddDiagram(DiagramModel e)
 		{
 			AddDiagram?.Invoke(this, e);
 		}
 
+		/// <summary>
+		/// Event invoker
+		/// </summary>
 		protected virtual void OnDropDiagram(DiagramModel e)
 		{
 			DropDiagram?.Invoke(this, e);
 		}
 
+		/// <summary>
+		/// Event invoker
+		/// </summary>
 		protected virtual void OnDisconnectClick()
 		{
 			DisconnectClick?.Invoke(this, System.EventArgs.Empty);
 		}
 
+		/// <summary>
+		/// Event invoker
+		/// </summary>
 		protected virtual void OnMsSqlDatabaseChanged(string e)
 		{
 			MsSqlDatabaseChanged?.Invoke(this, e);
 		}
 
+		/// <summary>
+		/// Event invoker
+		/// </summary>
 		private void ConnectToSqlServerMenuItem_OnClick(object sender, RoutedEventArgs e)
 		{
 			OnConnectionClick(ConnectionType.SqlServer);
 		}
 
+		/// <summary>
+		/// Event invoker
+		/// </summary>
 		private void ConnectToOracleMenuItem_OnClick(object sender, RoutedEventArgs e)
 		{
 			OnConnectionClick(ConnectionType.Oracle);

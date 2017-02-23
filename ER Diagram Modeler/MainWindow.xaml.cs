@@ -18,6 +18,7 @@ using ER_Diagram_Modeler.CommandOutput;
 using ER_Diagram_Modeler.Configuration.Providers;
 using ER_Diagram_Modeler.DatabaseConnection.Oracle;
 using ER_Diagram_Modeler.DatabaseConnection.SqlServer;
+using ER_Diagram_Modeler.DDLGenerator;
 using ER_Diagram_Modeler.DiagramConstruction;
 using ER_Diagram_Modeler.DiagramConstruction.Strategy;
 using ER_Diagram_Modeler.Dialogs;
@@ -32,6 +33,7 @@ using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
 using Microsoft.Win32;
 using Oracle.ManagedDataAccess.Client;
+using PathfindingTestConsoleApp;
 using Xceed.Wpf.AvalonDock.Layout;
 using Xceed.Wpf.Toolkit.Core.Utilities;
 
@@ -125,6 +127,7 @@ namespace ER_Diagram_Modeler
 		/// <param name="diagramModel">Diagram for opening</param>
 		private void DatabaseConnectionSidebarOnAddDiagram(object sender, DiagramModel diagramModel)
 		{
+			Mouse.OverrideCursor = Cursors.Wait;
 			DiagramFacade.CreateNewDiagram(this, diagramModel.Name);
 			DatabaseModelDesigner designer;
 			if (TryGetSelectedDesigner(out designer))
@@ -133,6 +136,7 @@ namespace ER_Diagram_Modeler
 				facade.LoadDiagram(designer.ModelDesignerCanvas, XDocument.Parse(diagramModel.Xml));
 			}
 			DatabaseConnectionSidebar.RefreshTreeData();
+			Mouse.OverrideCursor = null;
 		}
 
 		/// <summary>
@@ -828,8 +832,10 @@ namespace ER_Diagram_Modeler
 				return;
 			}
 
+			Mouse.OverrideCursor = Cursors.Wait;
 			var facade = new DiagramFacade(designer.ViewModel);
 			await facade.RefreshDiagram(designer.ModelDesignerCanvas);
+			Mouse.OverrideCursor = null;
 		}
 
 		/// <summary>
@@ -926,14 +932,14 @@ namespace ER_Diagram_Modeler
 		/// <param name="args">CancelEventArgs</param>
 		private void MainWindow_OnClosing(object sender, CancelEventArgs args)
 		{
-			try
-			{
-				DiagramFacade.SaveAllDiagrams(this);
-			}
-			catch (Exception e)
-			{
-				Debug.WriteLine(e.Message);
-			}
+			//try
+			//{
+			//	DiagramFacade.SaveAllDiagrams(this);
+			//}
+			//catch (Exception e)
+			//{
+			//	Debug.WriteLine(e.Message);
+			//}
 		}
 
 		/// <summary>
@@ -1080,15 +1086,18 @@ namespace ER_Diagram_Modeler
 					OverwritePrompt = true,
 					AddExtension = true,
 					DefaultExt = "png",
-					Filter = "Image Files|*.png"
+					Filter = "Image Files|*.png",
+					DereferenceLinks = false
 				};
 
 				bool? showDialog = dialog.ShowDialog(this);
 
-				if (showDialog.Value)
+				Mouse.OverrideCursor = Cursors.Wait;
+				if(showDialog.Value)
 				{
 					designer.ExportToPng(dialog.FileName);
 				}
+				Mouse.OverrideCursor = null;
 			}
 		}
 
@@ -1108,7 +1117,7 @@ namespace ER_Diagram_Modeler
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
-		private async void ExportToPngFull_OnExecuted(object sender, ExecutedRoutedEventArgs e)
+		private void ExportToPngFull_OnExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
 			DatabaseModelDesigner designer;
 			if(TryGetSelectedDesigner(out designer))
@@ -1118,15 +1127,39 @@ namespace ER_Diagram_Modeler
 					OverwritePrompt = true,
 					AddExtension = true,
 					DefaultExt = "png",
-					Filter = "Image Files|*.png"
+					Filter = "Image Files|*.png",
+					DereferenceLinks = false
 				};
 
 				bool? showDialog = dialog.ShowDialog(this);
 
+				Mouse.OverrideCursor = Cursors.Wait;
 				if(showDialog.Value)
 				{
 					designer.ExportToPngFullSize(dialog.FileName);
 				}
+				Mouse.OverrideCursor = null;
+			}
+		}
+
+		private void GenerateDdl_OnExecuted(object sender, ExecutedRoutedEventArgs e)
+		{
+			DatabaseModelDesigner designer;
+			if(TryGetSelectedDesigner(out designer))
+			{
+				var ddlGenerator = BaseGenerator.CreateGenerator(designer.ViewModel.TableViewModels.Select(t => t.Model),
+					designer.ViewModel.ConnectionInfoViewModels.Select(t => t.RelationshipModel),
+					SessionProvider.Instance.ConnectionType, SessionProvider.Instance.Username);
+
+				string sql = ddlGenerator.GenerateDdl();
+
+				var panel = new QueryPanel { Text = sql };
+				panel.QueryResultReady += PanelOnQueryResultReady;
+				panel.BuildNewQueryPanel(this, $"{designer.ViewModel.DiagramTitle}_DDL");
+
+				MainDocumentPane.Children.Add(panel.Anchorable);
+				int indexOf = MainDocumentPane.Children.IndexOf(panel.Anchorable);
+				MainDocumentPane.SelectedContentIndex = indexOf;
 			}
 		}
 	}

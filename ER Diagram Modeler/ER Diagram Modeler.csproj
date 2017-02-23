@@ -147,6 +147,9 @@
     <Compile Include="DatabaseConnection\SqlServer\IMsSqlMapper.cs" />
     <Compile Include="DatabaseConnection\SqlServer\MsSqlDatabase.cs" />
     <Compile Include="DatabaseConnection\SqlServer\MsSqlMapper.cs" />
+    <Compile Include="DDLGenerator\BaseGenerator.cs" />
+    <Compile Include="DDLGenerator\MsSqlDdlGenerator.cs" />
+    <Compile Include="DDLGenerator\OracleGenerator.cs" />
     <Compile Include="DiagramConstruction\DatabaseUpdater.cs" />
     <Compile Include="DiagramConstruction\DiagramFacade.cs" />
     <Compile Include="DiagramConstruction\Serialization\IDiagramSerializable.cs" />
@@ -404,6 +407,10 @@
     </Resource>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\PathfindingTestConsoleApp\PathfindingTestConsoleApp.csproj">
+      <Project>{115936B6-89A3-4A2F-89FF-9727226961DD}</Project>
+      <Name>PathfindingTestConsoleApp</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Pathfinding\Pathfinding.csproj">
       <Project>{78438841-45cb-45a8-9e67-0157a4dd29f1}</Project>
       <Name>Pathfinding</Name>
