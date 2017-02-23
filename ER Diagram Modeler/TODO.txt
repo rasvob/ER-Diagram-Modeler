@@ -1,7 +1,6 @@
 ﻿---Designer_part
 
 ---DB_Part
-Create SQL
 
 ---Other
 
