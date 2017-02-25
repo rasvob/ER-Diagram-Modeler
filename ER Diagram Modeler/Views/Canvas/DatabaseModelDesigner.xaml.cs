@@ -1012,5 +1012,26 @@ namespace ER_Diagram_Modeler.Views.Canvas
 			ModelDesignerCanvas.LayoutTransform = layoutTransform;
 			Output.WriteLine("FILE SAVED");
 		}
+
+		/// <summary>
+		/// On drop table item
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		private void ModelDesignerCanvas_OnPreviewDrop(object sender, DragEventArgs e)
+		{
+			var data = e.Data.GetData("ConnectionPanelTableDragFormat") as TableModel;
+
+			if (data != null)
+			{
+				var facade = new DiagramFacade(ViewModel);
+				Point position = e.GetPosition(ModelDesignerCanvas);
+				facade.AddTableCallbackAction += async model =>
+				{
+					await facade.AddRelationShipsForTable(model, ModelDesignerCanvas);
+				};
+				facade.AddTable(data, (int)position.X, (int)position.Y);
+			}
+		}
 	}
 }

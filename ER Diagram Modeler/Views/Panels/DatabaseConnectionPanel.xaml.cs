@@ -164,12 +164,10 @@ namespace ER_Diagram_Modeler.Views.Panels
 						{
 							mapper.SelectDiagrams().ToList().ForEach(t => info.Diagrams.Add(t));
 						}
-						catch(SqlException e)
+						catch(SqlException)
 						{
-							Debug.WriteLine(e.Message);
 						}
 					}
-					Trace.WriteLine(info.Name);
 				}
 
 			});

@@ -1,6 +1,5 @@
 ﻿---Designer_part
 Labels
-Drag and drop
 
 ---DB_Part
 Own connection string

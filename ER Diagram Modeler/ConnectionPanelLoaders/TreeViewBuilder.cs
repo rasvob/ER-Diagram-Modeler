@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using ER_Diagram_Modeler.Models.Database;
 using ER_Diagram_Modeler.Models.Designer;
 
@@ -31,6 +34,8 @@ namespace ER_Diagram_Modeler.ConnectionPanelLoaders
 		/// </summary>
 		private readonly Action<DiagramModel> _dropDiagramAction;
 
+		private Point _startPoint;
+
 		protected TreeViewBuilder(Action<TableModel> addTableAction, IEnumerable<DatabaseInfo> infos, Action<DiagramModel> addDiagramAction, Action<DiagramModel> dropDiagramAction)
 		{
 			_addTableAction = addTableAction;
@@ -51,6 +56,21 @@ namespace ER_Diagram_Modeler.ConnectionPanelLoaders
 			addTableToDiagramItem.Click += (sender, args) => _addTableAction(model);
 			menu.Items.Add(addTableToDiagramItem);
 			item.MouseDoubleClick += (sender, args) => _addTableAction(model);
+			item.PreviewMouseLeftButtonDown += (sender, args) =>
+			{
+				_startPoint = args.GetPosition(null);
+			};
+			item.PreviewMouseMove += (sender, args) =>
+			{
+				var pos = args.GetPosition(null);
+				Vector vector = _startPoint - pos;
+				TreeViewItem ti = args.Source as TreeViewItem;
+				if (ti != null && args.LeftButton == MouseButtonState.Pressed && Math.Abs(vector.X) > SystemParameters.MinimumHorizontalDragDistance && Math.Abs(vector.Y) > SystemParameters.MinimumVerticalDragDistance)
+				{
+					DataObject data = new DataObject("ConnectionPanelTableDragFormat", model);
+					DragDrop.DoDragDrop(ti, data, DragDropEffects.Copy);
+				}
+			};
 			item.ContextMenu = menu;
 		}
 

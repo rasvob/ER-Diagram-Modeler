@@ -205,6 +205,8 @@
 				                      IsEnabled="{Binding MouseMode, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource CanvasEnabledConverter}}"
 				                      Cursor="{Binding MouseMode, Mode=OneWay, Converter={StaticResource MouseModeToCursorConverter}, UpdateSourceTrigger=PropertyChanged}"
 				                      MouseDown="ModelDesignerCanvasOnMouseDown"
+									  AllowDrop="True"
+									  PreviewDrop="ModelDesignerCanvas_OnPreviewDrop"
 				                      Background="White">
 				<local:DesignerCanvas.LayoutTransform>
 					<ScaleTransform ScaleX="{Binding Scale}" ScaleY="{Binding Scale}"></ScaleTransform>
