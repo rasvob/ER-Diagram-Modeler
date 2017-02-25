@@ -463,8 +463,8 @@ namespace ER_Diagram_Modeler.DiagramConstruction
 
 				if(step > 1)
 				{
-					right = (right / step + 1) * step;
-					bottom = (bottom / step + 1) * step;
+					right = (right / step + 2) * step;
+					bottom = (bottom / step + 2) * step;
 				}
 
 				return new Rectangle(left, top, right - left, bottom - top);

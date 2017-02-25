@@ -2026,18 +2026,18 @@ namespace ER_Diagram_Modeler.ViewModels
 			var rects = DiagramFacade.GetTableRectangles(designer.TableViewModels, step);
 			var canvas = new Rectangle(0,0, (int) designer.CanvasWidth, (int) designer.CanvasHeight);
 			//TODO: Remove if true
-			bool vertical = !horizontalLines.Any() || (rnd.Next(2) == 0) || true;
+			bool vertical = !horizontalLines.Any() || (rnd.Next(2) == 0);
 
 			if (vertical)
 			{
 				var offsetPointsTop = verticalLines.Select(s => new Point[] { new Point(s, t - off), new Point(s, (t-off)/step * step) });
-				var offsetPointsBot = verticalLines.Select(s => new Point[] { new Point(s, b + off), new Point(s, ((b+off)/step+2) * step) });
+				var offsetPointsBot = verticalLines.Select(s => new Point[] { new Point(s, b + off), new Point(s, ((b+off)/step+1) * step) });
 
 				IEnumerable<Point[]> validTop = offsetPointsTop.Where(s => rects.All(m => !DiagramFacade.DoesPointIntersectWithRectangle(m, s[1]))).Where(n => DiagramFacade.DoesPointIntersectWithRectangle(canvas,n[1]));
 				IEnumerable<Point[]> validBot = offsetPointsBot.Where(s => rects.All(m => !DiagramFacade.DoesPointIntersectWithRectangle(m, s[1]))).Where(n => DiagramFacade.DoesPointIntersectWithRectangle(canvas, n[1]));
 
 				var top = validTop as IList<Point[]> ?? validTop.ToList();
-				bool bottom = !top.Any() || rnd.Next(2) == 0 || true;
+				bool bottom = !top.Any() || rnd.Next(2) == 0;
 				IEnumerable<Point[]> bot = validBot as IList<Point[]> ?? validBot.ToList();
 
 				if (bot.Any() && bottom)
@@ -2056,7 +2056,7 @@ namespace ER_Diagram_Modeler.ViewModels
 			else
 			{
 				var offsetPointsLeft = horizontalLines.Select(s => new Point[] { new Point(l - off, s), new Point((l - off)/step * step, s) });
-				var offsetPointsRight = horizontalLines.Select(s => new Point[] { new Point(r + off, s), new Point(((r + off) / step + 2) * step, s) });
+				var offsetPointsRight = horizontalLines.Select(s => new Point[] { new Point(r + off, s), new Point(((r + off) / step + 1) * step, s) });
 
 				IEnumerable<Point[]> validLeft = offsetPointsLeft.Where(s => rects.All(m => !DiagramFacade.DoesPointIntersectWithRectangle(m, s[1]))).Where(n => DiagramFacade.DoesPointIntersectWithRectangle(canvas, n[1]));
 				IEnumerable<Point[]> validRight = offsetPointsRight.Where(s => rects.All(m => !DiagramFacade.DoesPointIntersectWithRectangle(m, s[1]))).Where(n => DiagramFacade.DoesPointIntersectWithRectangle(canvas, n[1]));

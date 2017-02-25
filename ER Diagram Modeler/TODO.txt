@@ -1,6 +1,5 @@
 ﻿---Designer_part
 Labels
-Connector bug
 Drag and drop
 
 ---DB_Part
