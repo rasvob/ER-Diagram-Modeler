@@ -150,8 +150,6 @@ namespace ER_Diagram_Modeler.Views.Panels
 
 			await Task.Run(() =>
 			{
-				Trace.WriteLine("SQL Start");
-
 				using(MsSqlMapper mapper = new MsSqlMapper())
 				{
 					DatabaseInfos = mapper.ListDatabases().ToList();
@@ -174,10 +172,8 @@ namespace ER_Diagram_Modeler.Views.Panels
 					Trace.WriteLine(info.Name);
 				}
 
-				Trace.WriteLine("SQL Done");
 			});
 
-			Trace.WriteLine("UI Start");
 			if(loadPrev)
 			{
 				int indexOf = DatabaseInfos.IndexOf(DatabaseInfos.FirstOrDefault(t => t.Name.Equals(name)));
@@ -198,7 +194,6 @@ namespace ER_Diagram_Modeler.Views.Panels
 			LoadMsSqlTreeViewData();
 
 			MsSqlServerGrid.Visibility = Visibility.Visible;
-			Trace.WriteLine("UI Done");
 		}
 
 		/// <summary>

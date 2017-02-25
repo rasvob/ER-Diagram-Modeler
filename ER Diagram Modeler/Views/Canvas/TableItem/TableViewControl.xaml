@@ -84,6 +84,7 @@
 				          CanUserSortColumns="False"
 				          CanUserDeleteRows="False"
 				          GridLinesVisibility="All"
+						  IsReadOnly="True"
 				          AutoGenerateColumns="False">
 				<DataGrid.Columns>
 					<DataGridCheckBoxColumn Binding="{Binding PrimaryKey, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
@@ -92,7 +93,7 @@
 						                        ElementStyle="{DynamicResource MetroDataGridCheckBox}">
 					</DataGridCheckBoxColumn>
 
-					<DataGridTextColumn Binding="{Binding Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, NotifyOnValidationError=True, ValidatesOnDataErrors=True}" IsReadOnly="True"
+					<DataGridTextColumn Binding="{Binding Name, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" IsReadOnly="True"
 						                    Header="Name" />
 
 					<DataGridTemplateColumn Header="Data Type" x:Name="DataTypeColumn">
@@ -120,7 +121,7 @@
 											 IsReadOnly="True"
 											 controls:TextBoxHelper.UseFloatingWatermark="True"
 										     controls:TextBoxHelper.Watermark="Datatype"
-											 Text="{Binding SelectedDatatype.Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+											 Text="{Binding SelectedDatatype.Name, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
 											 >
 										
 									</TextBox>
@@ -130,29 +131,29 @@
 												 IsReadOnly="True"
 										         controls:TextBoxHelper.UseFloatingWatermark="True"
 										         controls:TextBoxHelper.Watermark="Lenght"
-										         Text="{Binding SelectedDatatype.Lenght, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, NotifyOnValidationError=True, ValidatesOnDataErrors=True}">
+										         Text="{Binding SelectedDatatype.Lenght, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
 										<TextBox.Style>
 											<Style TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}">
 												<Style.Triggers>
 													<DataTrigger
 															Binding="{Binding SelectedDatatype.HasLenght, 
-														Mode=OneWay, 
-														UpdateSourceTrigger=PropertyChanged}"
+															Mode=OneWay, 
+															UpdateSourceTrigger=PropertyChanged}"
 															Value="True">
 														<Setter Property="Visibility" Value="Visible"></Setter>
 													</DataTrigger>
 
 													<DataTrigger
 															Binding="{Binding SelectedDatatype.HasLenght, 
-														Mode=OneWay, 
-														UpdateSourceTrigger=PropertyChanged}"
+															Mode=OneWay, 
+															UpdateSourceTrigger=PropertyChanged}"
 															Value="False">
 														<Setter Property="Visibility" Value="Collapsed"></Setter>
 													</DataTrigger>
 
-													<Trigger Property="Validation.HasError" Value="True">
+													<!--<Trigger Property="Validation.HasError" Value="True">
 														<Setter Property="FocusManager.FocusedElement" Value="{Binding ElementName=LengthTextBox}"></Setter>
-													</Trigger>
+													</Trigger>-->
 												</Style.Triggers>
 											</Style>
 										</TextBox.Style>
@@ -163,22 +164,22 @@
 												 IsReadOnly="True"
 										         controls:TextBoxHelper.UseFloatingWatermark="True"
 										         controls:TextBoxHelper.Watermark="Precision"
-										         Text="{Binding SelectedDatatype.Precision, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, NotifyOnValidationError=True, ValidatesOnDataErrors=True}">
+										         Text="{Binding SelectedDatatype.Precision, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
 										<TextBox.Style>
 											<Style TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}">
 												<Style.Triggers>
 													<DataTrigger
 															Binding="{Binding SelectedDatatype.HasPrecision, 
-														Mode=OneWay, 
-														UpdateSourceTrigger=PropertyChanged}"
+															Mode=OneWay, 
+															UpdateSourceTrigger=PropertyChanged}"
 															Value="True">
 														<Setter Property="Visibility" Value="Visible"></Setter>
 													</DataTrigger>
 
 													<DataTrigger
 															Binding="{Binding SelectedDatatype.HasPrecision, 
-														Mode=OneWay, 
-														UpdateSourceTrigger=PropertyChanged}"
+															Mode=OneWay, 
+															UpdateSourceTrigger=PropertyChanged}"
 															Value="False">
 														<Setter Property="Visibility" Value="Collapsed"></Setter>
 													</DataTrigger>
@@ -192,22 +193,22 @@
 												 IsReadOnly="True"
 										         controls:TextBoxHelper.UseFloatingWatermark="True"
 										         controls:TextBoxHelper.Watermark="Scale"
-										         Text="{Binding SelectedDatatype.Scale, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, NotifyOnValidationError=True, ValidatesOnDataErrors=True}">
+										         Text="{Binding SelectedDatatype.Scale, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
 										<TextBox.Style>
 											<Style TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}">
 												<Style.Triggers>
 													<DataTrigger
 															Binding="{Binding SelectedDatatype.HasScale, 
-														Mode=OneWay, 
-														UpdateSourceTrigger=PropertyChanged}"
+															Mode=OneWay, 
+															UpdateSourceTrigger=PropertyChanged}"
 															Value="True">
 														<Setter Property="Visibility" Value="Visible"></Setter>
 													</DataTrigger>
 
 													<DataTrigger
 															Binding="{Binding SelectedDatatype.HasScale, 
-														Mode=OneWay, 
-														UpdateSourceTrigger=PropertyChanged}"
+															Mode=OneWay, 
+															UpdateSourceTrigger=PropertyChanged}"
 															Value="False">
 														<Setter Property="Visibility" Value="Collapsed"></Setter>
 													</DataTrigger>
@@ -220,7 +221,7 @@
 						</DataGridTemplateColumn.CellTemplate>
 					</DataGridTemplateColumn>
 
-					<DataGridCheckBoxColumn Binding="{Binding AllowNull, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+					<DataGridCheckBoxColumn Binding="{Binding AllowNull, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
 						                        Header="Allow Null"
 												IsReadOnly="True"
 						                        ElementStyle="{DynamicResource MetroDataGridCheckBox}">

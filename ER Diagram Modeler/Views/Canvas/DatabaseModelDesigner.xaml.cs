@@ -5,14 +5,19 @@ using System.Data.SqlClient;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
+using System.IO.Packaging;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using System.Windows.Threading;
+using System.Windows.Xps;
+using System.Windows.Xps.Packaging;
 using ER_Diagram_Modeler.CommandOutput;
 using ER_Diagram_Modeler.DiagramConstruction;
 using ER_Diagram_Modeler.Dialogs;
@@ -940,23 +945,22 @@ namespace ER_Diagram_Modeler.Views.Canvas
 		/// Export whole canva to png
 		/// </summary>
 		/// <param name="filepath">Path to file</param>
-		public void ExportToPngFullSize(string filepath)
+		public async Task ExportToPngFullSize(string filepath)
 		{
-			var sw = new Stopwatch();
-			sw.Start();
-			RenderTargetBitmap bitmap = RenderCanvas();
-			PngBitmapEncoder encoder = new PngBitmapEncoder();
-			BitmapFrame frame = BitmapFrame.Create(bitmap);
-			encoder.Frames.Add(frame);
-
-			using (var fs = File.Create(filepath))
+			await Dispatcher.BeginInvoke(new Action(() =>
 			{
-				encoder.Save(fs);
-			}
+				RenderTargetBitmap bitmap = RenderCanvas();
+				PngBitmapEncoder encoder = new PngBitmapEncoder();
+				BitmapFrame frame = BitmapFrame.Create(bitmap);
+				encoder.Frames.Add(frame);
 
-			Trace.WriteLine(sw.ElapsedMilliseconds);
+				using(var fs = File.Create(filepath))
+				{
+					encoder.Save(fs);
+				}
 
-			Output.WriteLine("FILE SAVED");
+				Output.WriteLine("FILE SAVED");
+			}), DispatcherPriority.Background);
 		}
 
 		/// <summary>
@@ -975,11 +979,38 @@ namespace ER_Diagram_Modeler.Views.Canvas
 			ModelDesignerCanvas.Measure(size);
 			ModelDesignerCanvas.Arrange(new Rect(size));
 
-			RenderTargetBitmap render = new RenderTargetBitmap((int)(ViewModel.CanvasWidth*scale), (int)(ViewModel.CanvasHeight*scale), dpi, dpi, PixelFormats.Pbgra32);
+			RenderTargetBitmap render = new RenderTargetBitmap((int)(ViewModel.CanvasWidth*scale), (int)(ViewModel.CanvasHeight*scale), dpi, dpi, PixelFormats.Default);
 			render.Render(ModelDesignerCanvas);
 
 			ModelDesignerCanvas.LayoutTransform = layoutTransform;
 			return render;
+		}
+
+		/// <summary>
+		/// Export whole canva to XPS
+		/// </summary>
+		/// <param name="fileName">Path to file</param>
+		public void ExportToXps(string fileName)
+		{
+			
+			Transform layoutTransform = ModelDesignerCanvas.LayoutTransform;
+			ModelDesignerCanvas.LayoutTransform = null;
+
+			var size = new Size(ViewModel.CanvasWidth, ViewModel.CanvasHeight);
+			ModelDesignerCanvas.Measure(size);
+			ModelDesignerCanvas.Arrange(new Rect(size));
+
+			Package package = Package.Open(fileName, FileMode.Create);
+			XpsDocument document = new XpsDocument(package);
+
+			XpsDocumentWriter writer = XpsDocument.CreateXpsDocumentWriter(document);
+			writer.Write(ModelDesignerCanvas);
+
+			document.Close();
+			package.Close();
+
+			ModelDesignerCanvas.LayoutTransform = layoutTransform;
+			Output.WriteLine("FILE SAVED");
 		}
 	}
 }

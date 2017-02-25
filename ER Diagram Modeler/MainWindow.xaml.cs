@@ -34,7 +34,6 @@ using MahApps.Metro.Controls.Dialogs;
 using Microsoft.Win32;
 using Oracle.ManagedDataAccess.Client;
 using Xceed.Wpf.AvalonDock.Layout;
-using Xceed.Wpf.Toolkit.Core.Utilities;
 
 namespace ER_Diagram_Modeler
 {
@@ -1122,7 +1121,7 @@ namespace ER_Diagram_Modeler
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
-		private void ExportToPngFull_OnExecuted(object sender, ExecutedRoutedEventArgs e)
+		private async void ExportToPngFull_OnExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
 			DatabaseModelDesigner designer;
 			if(TryGetSelectedDesigner(out designer))
@@ -1141,7 +1140,7 @@ namespace ER_Diagram_Modeler
 				Mouse.OverrideCursor = Cursors.Wait;
 				if(showDialog.Value)
 				{
-					designer.ExportToPngFullSize(dialog.FileName);
+					await designer.ExportToPngFullSize(dialog.FileName);
 				}
 				Mouse.OverrideCursor = null;
 			}
@@ -1170,6 +1169,36 @@ namespace ER_Diagram_Modeler
 				MainDocumentPane.Children.Add(panel.Anchorable);
 				int indexOf = MainDocumentPane.Children.IndexOf(panel.Anchorable);
 				MainDocumentPane.SelectedContentIndex = indexOf;
+			}
+		}
+
+		/// <summary>
+		/// Export diagram to XPS
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		private void ExportToXps_OnExecuted(object sender, ExecutedRoutedEventArgs e)
+		{
+			DatabaseModelDesigner designer;
+			if(TryGetSelectedDesigner(out designer))
+			{
+				var dialog = new SaveFileDialog
+				{
+					OverwritePrompt = true,
+					AddExtension = true,
+					DefaultExt = "xps",
+					Filter = "XPS Document|*.xps",
+					DereferenceLinks = false
+				};
+
+				bool? showDialog = dialog.ShowDialog(this);
+
+				Mouse.OverrideCursor = Cursors.Wait;
+				if(showDialog.Value)
+				{
+					designer.ExportToXps(dialog.FileName);
+				}
+				Mouse.OverrideCursor = null;
 			}
 		}
 	}

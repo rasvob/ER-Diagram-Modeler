@@ -42,6 +42,7 @@
 			<RoutedUICommand x:Key="Commands.ShowMsSqlConnectionPanel" />
 			<RoutedUICommand x:Key="Commands.ShowOracleConnectionPanel" />
 			<RoutedUICommand x:Key="Commands.ExportToPng" />
+			<RoutedUICommand x:Key="Commands.ExportToXps" />
 			<RoutedUICommand x:Key="Commands.ExportToPngFullResolution" />
 			<RoutedUICommand x:Key="Commands.GenerateDdl" />
 		</ResourceDictionary>
@@ -122,6 +123,7 @@
 		<CommandBinding Command="{StaticResource Commands.ShowAbout}" Executed="ShowAbout_OnExecuted" />
 		<CommandBinding Command="{StaticResource Commands.ShowMsSqlConnectionPanel}" Executed="ShowMsSqlConnectionPanel_OnExecuted" />
 		<CommandBinding Command="{StaticResource Commands.ShowOracleConnectionPanel}" Executed="ShowOracleConnectionPanel_OnExecuted" />
+		<CommandBinding Command="{StaticResource Commands.ExportToXps}" Executed="ExportToXps_OnExecuted" CanExecute="ExportToPng_OnCanExecute" />
 	</Window.CommandBindings>
 
 	<Window.InputBindings>
@@ -451,6 +453,7 @@
 					<Separator />
 					<MenuItem Name="MenuItemExportDiagramUsedSpace" Header="Export diagram to png (only used part)" Command="{StaticResource Commands.ExportToPng}"></MenuItem>
 					<MenuItem Name="MenuItemExportDiagram" Header="Export diagram to png (whole canvas)" Command="{StaticResource Commands.ExportToPngFullResolution}"></MenuItem>
+					<MenuItem Name="MenuItemExportDiagramXps" Header="Export diagram to XPS" Command="{StaticResource Commands.ExportToXps}"></MenuItem>
 					<Separator />
 					<MenuItem Name="MenuItemGenerateDdl" Header="Generate DDL to new panel" Command="{StaticResource Commands.GenerateDdl}"></MenuItem>
 				</MenuItem>
