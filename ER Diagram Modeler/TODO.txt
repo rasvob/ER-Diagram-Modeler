@@ -1,5 +1,7 @@
 ﻿---Designer_part
 Labels
+Remember last focused panel
+Selection rectangle
 
 ---DB_Part
 Own connection string

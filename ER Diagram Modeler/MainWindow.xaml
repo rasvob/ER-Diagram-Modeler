@@ -480,6 +480,7 @@
 		<xcad:DockingManager Grid.Row="2"
 							 AllowMixedOrientation="False"
 							 Margin="5"
+							 Name="DockingManagerMain"
                              >
 			<xcad:DockingManager.Theme>
 				<xcad:MetroTheme></xcad:MetroTheme>

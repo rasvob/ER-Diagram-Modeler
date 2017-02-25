@@ -1,18 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Data.SqlClient;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Threading;
 using System.Xml.Linq;
 using ER_Diagram_Modeler.CommandOutput;
 using ER_Diagram_Modeler.Configuration.Providers;
@@ -33,6 +28,7 @@ using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
 using Microsoft.Win32;
 using Oracle.ManagedDataAccess.Client;
+using Xceed.Wpf.AvalonDock;
 using Xceed.Wpf.AvalonDock.Layout;
 
 namespace ER_Diagram_Modeler
@@ -80,6 +76,11 @@ namespace ER_Diagram_Modeler
 			DatabaseConnectionSidebar.DropDiagram += DatabaseConnectionSidebarOnDropDiagram;
 			DatabaseConnectionSidebar.DisconnectClick += DatabaseConnectionSidebarOnDisconnectClick;
 			DatabaseConnectionSidebar.MsSqlDatabaseChanged += DatabaseConnectionSidebarOnMsSqlDatabaseChanged;
+
+			DockingManagerMain.ActiveContentChanged += (sender, args) =>
+			{
+				Debug.WriteLine(DockingManagerMain.ActiveContent.GetType());
+			};
 		}
 
 		/// <summary>
@@ -828,9 +829,11 @@ namespace ER_Diagram_Modeler
 		public async void AnchorableDesignerActiveChangedHandler(object sender, System.EventArgs e)
 		{
 			var anchorable = sender as LayoutAnchorable;
-			
+			//TODO: Refresh only invisible
 			DatabaseModelDesigner designer = anchorable?.Content as DatabaseModelDesigner;
+			
 
+			Debug.WriteLine("---"+LayoutRoot.LastFocusedDocument.Title);
 			if (designer == null || !anchorable.IsActive)
 			{
 				return;
