@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Controls;
 using ER_Diagram_Modeler.Configuration.Providers;
 using ER_Diagram_Modeler.DatabaseConnection.SqlServer;
@@ -17,34 +18,97 @@ namespace ER_Diagram_Modeler.ConnectionPanelLoaders
 		/// </summary>
 		private Action<string> _dropDatabaseAction;
 
+		///// <summary>
+		///// Build treeview for MS Sql server
+		///// </summary>
+		/// <remarks>DEPRECATED</remarks>
+		///// <returns>Collection of treeview items</returns>
+		//public override List<TreeViewItem> BuildTreeView()
+		//{
+		//	string origdb = SessionProvider.Instance.Database;
+		//	List<TreeViewItem> res = new List<TreeViewItem>();
+		//	var ctx = new DatabaseContext(ConnectionType.SqlServer);
+		//	foreach(DatabaseInfo databaseInfo in Infos)
+		//	{
+		//		SessionProvider.Instance.Database = databaseInfo.Name;
+		//		TreeViewItem root = new TreeViewItem();
+		//		root.Header = databaseInfo.Name;
+		//		SetupDatabaseItemContextMenu(root);
+		//		databaseInfo.Tables.Clear();
+
+		//		TreeViewItem tables = new TreeViewItem();
+		//		tables.Header = "Tables";
+
+		//		foreach(TableModel model in ctx.ListTables())
+		//		{
+		//			databaseInfo.Tables.Add(model);
+
+		//			TreeViewItem item = new TreeViewItem
+		//			{
+		//				Header = model.Title,
+		//				IsEnabled = databaseInfo.Name.Equals(origdb)
+		//			};
+
+		//			SetupTreeViewItemContextMenu(item, model);
+		//			tables.Items.Add(item);
+		//		}
+		//		root.Items.Add(tables);
+
+		//		databaseInfo.Diagrams.Clear();
+
+		//		TreeViewItem diagrams = new TreeViewItem();
+		//		diagrams.Header = "Diagrams";
+
+		//		IEnumerable<DiagramModel> diagramModels = ctx.SelectDiagrams();
+
+		//		foreach(DiagramModel model in diagramModels)
+		//		{
+		//			databaseInfo.Diagrams.Add(model);
+
+		//			TreeViewItem item = new TreeViewItem
+		//			{
+		//				Header = model.Name,
+		//				IsEnabled = databaseInfo.Name.Equals(origdb)
+		//			};
+
+		//			SetupTreeViewItemDiagramContextMenu(item, model);
+		//			diagrams.Items.Add(item);
+		//		}
+
+		//		root.Items.Add(diagrams);
+
+		//		res.Add(root);
+		//	}
+
+		//	SessionProvider.Instance.Database = origdb;
+
+		//	return res;
+		//}
+
 		/// <summary>
 		/// Build treeview for MS Sql server
 		/// </summary>
 		/// <returns>Collection of treeview items</returns>
 		public override List<TreeViewItem> BuildTreeView()
 		{
-			string origdb = SessionProvider.Instance.Database;
 			List<TreeViewItem> res = new List<TreeViewItem>();
-			var ctx = new DatabaseContext(ConnectionType.SqlServer);
 			foreach(DatabaseInfo databaseInfo in Infos)
 			{
-				SessionProvider.Instance.Database = databaseInfo.Name;
 				TreeViewItem root = new TreeViewItem();
 				root.Header = databaseInfo.Name;
 				SetupDatabaseItemContextMenu(root);
-				databaseInfo.Tables.Clear();
 
 				TreeViewItem tables = new TreeViewItem();
 				tables.Header = "Tables";
 
-				foreach(TableModel model in ctx.ListTables())
+				foreach(TableModel model in databaseInfo.Tables.ToList())
 				{
 					databaseInfo.Tables.Add(model);
 
 					TreeViewItem item = new TreeViewItem
 					{
 						Header = model.Title,
-						IsEnabled = databaseInfo.Name.Equals(origdb)
+						IsEnabled = databaseInfo.Name.Equals(SessionProvider.Instance.Database)
 					};
 
 					SetupTreeViewItemContextMenu(item, model);
@@ -52,21 +116,17 @@ namespace ER_Diagram_Modeler.ConnectionPanelLoaders
 				}
 				root.Items.Add(tables);
 
-				databaseInfo.Diagrams.Clear();
-
 				TreeViewItem diagrams = new TreeViewItem();
 				diagrams.Header = "Diagrams";
 
-				IEnumerable<DiagramModel> diagramModels = ctx.SelectDiagrams();
-
-				foreach (DiagramModel model in diagramModels)
+				foreach(DiagramModel model in databaseInfo.Diagrams.ToList())
 				{
 					databaseInfo.Diagrams.Add(model);
 
 					TreeViewItem item = new TreeViewItem
 					{
 						Header = model.Name,
-						IsEnabled = databaseInfo.Name.Equals(origdb)
+						IsEnabled = databaseInfo.Name.Equals(SessionProvider.Instance.Database)
 					};
 
 					SetupTreeViewItemDiagramContextMenu(item, model);
@@ -76,10 +136,7 @@ namespace ER_Diagram_Modeler.ConnectionPanelLoaders
 				root.Items.Add(diagrams);
 
 				res.Add(root);
-				}
-
-			SessionProvider.Instance.Database = origdb;
-
+			}
 			return res;
 		}
 

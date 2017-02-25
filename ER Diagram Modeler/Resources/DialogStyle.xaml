@@ -3,7 +3,7 @@
                     xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls">
 	<Style x:Key="BaseDialogStyle" TargetType="{x:Type controls:MetroWindow}" BasedOn="{StaticResource {x:Type controls:MetroWindow}}">
 		<Setter Property="ShowMaxRestoreButton" Value="False"></Setter>
-		<Setter Property="ShowCloseButton" Value="False"></Setter>
+		<Setter Property="ShowCloseButton" Value="True"></Setter>
 		<Setter Property="ShowIconOnTitleBar" Value="False"></Setter>
 		<Setter Property="ShowMinButton" Value="False"></Setter>
 		<Setter Property="GlowBrush" Value="{StaticResource AccentColorBrush}"></Setter>

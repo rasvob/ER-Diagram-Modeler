@@ -1,8 +1,14 @@
 ﻿---Designer_part
+Performance optimalization - with cache - OK
+Export to PDF/XPS
+Labels
+Connector bug
+Drag and drop
 
 ---DB_Part
+Own connection string
 
 ---Other
 
 --Bugs
-
+Diagrams in MS Sql

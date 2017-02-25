@@ -7,8 +7,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ER Diagram Modeler", "ER Di
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pathfinding", "Pathfinding\Pathfinding.csproj", "{78438841-45CB-45A8-9E67-0157A4DD29F1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PathfindingTestConsoleApp", "PathfindingTestConsoleApp\PathfindingTestConsoleApp.csproj", "{115936B6-89A3-4A2F-89FF-9727226961DD}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -23,10 +21,6 @@ Global
 		{78438841-45CB-45A8-9E67-0157A4DD29F1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{78438841-45CB-45A8-9E67-0157A4DD29F1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{78438841-45CB-45A8-9E67-0157A4DD29F1}.Release|Any CPU.Build.0 = Release|Any CPU
-		{115936B6-89A3-4A2F-89FF-9727226961DD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{115936B6-89A3-4A2F-89FF-9727226961DD}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{115936B6-89A3-4A2F-89FF-9727226961DD}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{115936B6-89A3-4A2F-89FF-9727226961DD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

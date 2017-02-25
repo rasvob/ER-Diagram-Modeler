@@ -27,7 +27,7 @@ namespace ER_Diagram_Modeler.ConnectionPanelLoaders
 			TreeViewItem tables = new TreeViewItem();
 			tables.Header = "Tables";
 
-			ObservableCollection<TableModel> models = Infos.FirstOrDefault()?.Tables;
+			List<TableModel> models = Infos.FirstOrDefault()?.Tables;
 
 			if (models != null)
 				foreach (TableModel model in models)
@@ -42,7 +42,7 @@ namespace ER_Diagram_Modeler.ConnectionPanelLoaders
 			TreeViewItem diagrams = new TreeViewItem();
 			diagrams.Header = "Diagrams";
 
-			ObservableCollection<DiagramModel> diagramModels = Infos.FirstOrDefault()?.Diagrams;
+			List<DiagramModel> diagramModels = Infos.FirstOrDefault()?.Diagrams;
 			if (diagramModels != null)
 				foreach (DiagramModel model in diagramModels)
 				{

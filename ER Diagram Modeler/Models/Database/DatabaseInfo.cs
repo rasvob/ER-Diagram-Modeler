@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using ER_Diagram_Modeler.Annotations;
@@ -13,8 +14,8 @@ namespace ER_Diagram_Modeler.Models.Database
 	{
 		private string _name;
 		private int _id;
-		private ObservableCollection<TableModel> _tables;
-		private ObservableCollection<DiagramModel> _diagrams;
+		private List<TableModel> _tables;
+		private List<DiagramModel> _diagrams;
 
 		/// <summary>
 		/// DB name
@@ -47,7 +48,7 @@ namespace ER_Diagram_Modeler.Models.Database
 		/// <summary>
 		/// Tables in DB
 		/// </summary>
-		public ObservableCollection<TableModel> Tables
+		public List<TableModel> Tables
 		{
 			get { return _tables; }
 			set
@@ -61,7 +62,7 @@ namespace ER_Diagram_Modeler.Models.Database
 		/// <summary>
 		/// Diagrams in DB
 		/// </summary>
-		public ObservableCollection<DiagramModel> Diagrams
+		public List<DiagramModel> Diagrams
 		{
 			get { return _diagrams; }
 			set
@@ -74,8 +75,8 @@ namespace ER_Diagram_Modeler.Models.Database
 
 		public DatabaseInfo()
 		{
-			Diagrams = new ObservableCollection<DiagramModel>();
-			Tables = new ObservableCollection<TableModel>();
+			Diagrams = new List<DiagramModel>();
+			Tables = new List<TableModel>();
 		}
 
 		/// <summary>

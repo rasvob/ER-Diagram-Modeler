@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data.SqlClient;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
@@ -13,6 +15,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using ER_Diagram_Modeler.CommandOutput;
 using ER_Diagram_Modeler.Configuration.Providers;
 using ER_Diagram_Modeler.ConnectionPanelLoaders;
 using ER_Diagram_Modeler.Controls.Buttons;
@@ -131,10 +134,11 @@ namespace ER_Diagram_Modeler.Views.Panels
 		/// Load Ms Sql tree data
 		/// </summary>
 		/// <param name="loadPrev">Select previous DB</param>
-		public void LoadMsSqlData(bool loadPrev = false)
+		public async Task LoadMsSqlData(bool loadPrev = false)
 		{
 			int selected = 0;
 			string name = string.Empty;
+			
 			if (loadPrev)
 			{
 				DatabaseInfo info = DatabaseInfos.FirstOrDefault(t => t.Name.Equals(SessionProvider.Instance.Database));
@@ -144,12 +148,37 @@ namespace ER_Diagram_Modeler.Views.Panels
 				}
 			}
 
-			using (MsSqlMapper mapper = new MsSqlMapper())
+			await Task.Run(() =>
 			{
-				DatabaseInfos = mapper.ListDatabases().ToList();
-			}
+				Trace.WriteLine("SQL Start");
 
-			if (loadPrev)
+				using(MsSqlMapper mapper = new MsSqlMapper())
+				{
+					DatabaseInfos = mapper.ListDatabases().ToList();
+				}
+
+				foreach(DatabaseInfo info in DatabaseInfos)
+				{
+					using(MsSqlMapper mapper = new MsSqlMapper(SessionProvider.Instance.GetConnectionStringForMsSqlDatabase(info.Name)))
+					{
+						mapper.ListTables().ToList().ForEach(t => info.Tables.Add(t));
+						try
+						{
+							mapper.SelectDiagrams().ToList().ForEach(t => info.Diagrams.Add(t));
+						}
+						catch(SqlException e)
+						{
+							Debug.WriteLine(e.Message);
+						}
+					}
+					Trace.WriteLine(info.Name);
+				}
+
+				Trace.WriteLine("SQL Done");
+			});
+
+			Trace.WriteLine("UI Start");
+			if(loadPrev)
 			{
 				int indexOf = DatabaseInfos.IndexOf(DatabaseInfos.FirstOrDefault(t => t.Name.Equals(name)));
 				selected = indexOf > 0 ? indexOf : 0;
@@ -157,6 +186,10 @@ namespace ER_Diagram_Modeler.Views.Panels
 
 			if(DatabaseInfos.Any())
 			{
+				if(SessionProvider.Instance.Database.Equals(string.Empty))
+				{
+					SessionProvider.Instance.Database = DatabaseInfos[selected].Name;
+				}
 				MsSqlDatabaseComboBox.ItemsSource = DatabaseInfos;
 				MsSqlDatabaseComboBox.DisplayMemberPath = "Name";
 				MsSqlDatabaseComboBox.SelectedIndex = selected;
@@ -165,37 +198,40 @@ namespace ER_Diagram_Modeler.Views.Panels
 			LoadMsSqlTreeViewData();
 
 			MsSqlServerGrid.Visibility = Visibility.Visible;
+			Trace.WriteLine("UI Done");
 		}
 
 		/// <summary>
 		/// Load Oracle tree data
 		/// </summary>
-		public void LoadOracleData()
+		public async Task LoadOracleData()
 		{
-			var ctx = new DatabaseContext(ConnectionType.Oracle);
-			
-			DatabaseInfos = new List<DatabaseInfo>();
-			DatabaseInfo info = new DatabaseInfo()
+			await Task.Run(() =>
 			{
-				Name = "Tables"
-			};
+				var ctx = new DatabaseContext(ConnectionType.Oracle);
+				DatabaseInfos = new List<DatabaseInfo>();
+				DatabaseInfo info = new DatabaseInfo()
+				{
+					Name = "Tables"
+				};
 
-			IEnumerable<TableModel> tables = ctx.ListTables();
+				IEnumerable<TableModel> tables = ctx.ListTables();
 
-			foreach (TableModel model in tables)
-			{
-				info.Tables.Add(model);
-			}
+				foreach(TableModel model in tables)
+				{
+					info.Tables.Add(model);
+				}
 
-			IEnumerable<DiagramModel> diagrams = ctx.SelectDiagrams();
+				IEnumerable<DiagramModel> diagrams = ctx.SelectDiagrams();
 
-			foreach (DiagramModel diagram in diagrams)
-			{
-				info.Diagrams.Add(diagram);
-			}
+				foreach(DiagramModel diagram in diagrams)
+				{
+					info.Diagrams.Add(diagram);
+				}
 
-			DatabaseInfos.Add(info);
-			
+				DatabaseInfos.Add(info);
+			});
+
 			LoadOracleTreeData();
 			OracleStackPanel.Visibility = Visibility.Visible;
 		}
@@ -212,25 +248,19 @@ namespace ER_Diagram_Modeler.Views.Panels
 		/// <summary>
 		/// Refresh views
 		/// </summary>
-		public void RefreshTreeData()
+		public async Task RefreshTreeData()
 		{
 			switch (SessionProvider.Instance.ConnectionType)
 			{
 				case ConnectionType.None:
 					break;
 				case ConnectionType.SqlServer:
-					using(MsSqlMapper mapper = new MsSqlMapper())
-					{
-						DatabaseInfos = mapper.ListDatabases().ToList();
-					}
-					LoadMsSqlTreeViewData();
+					await LoadMsSqlData(true);
 					ExpandMsSqlTreeItem();
 					break;
 				case ConnectionType.Oracle:
-					LoadOracleData();
-					TreeViewItem item = OracleTreeView.Items.Cast<TreeViewItem>().FirstOrDefault();
-					if (item != null)
-						item.IsExpanded = true;
+					await LoadOracleData();
+					ExpandOracleTreeItem();
 					break;
 			}
 		}
@@ -259,6 +289,23 @@ namespace ER_Diagram_Modeler.Views.Panels
 
 				if (diagrams != null)
 					diagrams.IsExpanded = true;
+			}
+		}
+
+		/// <summary>
+		/// Expand treeview item
+		/// </summary>
+		private void ExpandOracleTreeItem()
+		{
+			IEnumerable<TreeViewItem> items = OracleTreeView.Items.Cast<TreeViewItem>();
+			IEnumerable<TreeViewItem> treeViewItems = items as IList<TreeViewItem> ?? items.ToList();
+			TreeViewItem item = treeViewItems.FirstOrDefault();
+			if (item != null)
+			{
+				item.IsExpanded = true;
+				TreeViewItem viewItem = treeViewItems.Skip(1).FirstOrDefault();
+
+				if (viewItem != null) viewItem.IsExpanded = true;
 			}
 		}
 

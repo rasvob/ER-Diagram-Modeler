@@ -211,11 +211,11 @@
 				</local:DesignerCanvas.LayoutTransform>
 				
 				<!--Quality loss-->
-				<!--<local:DesignerCanvas.CacheMode>
+				<local:DesignerCanvas.CacheMode>
 					<BitmapCache RenderAtScale="1"
 								 SnapsToDevicePixels="True"
 								 EnableClearType="True"></BitmapCache>
-				</local:DesignerCanvas.CacheMode>-->
+				</local:DesignerCanvas.CacheMode>
 
 				<!--Performance loss-->
 				<!--<local:DesignerCanvas.Effect>

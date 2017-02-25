@@ -99,6 +99,20 @@ namespace ER_Diagram_Modeler.Configuration.Providers
 			}
 		}
 
+		public string GetConnectionStringForMsSqlDatabase(string database)
+		{
+			SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder();
+			builder.DataSource = ServerName;
+			builder.IntegratedSecurity = UseWinAuth;
+			if(!UseWinAuth)
+			{
+				builder.UserID = Username;
+				builder.Password = Password;
+			}
+			builder.InitialCatalog = database;
+			return builder.ConnectionString;
+		}
+
 		/// <summary>
 		/// Cancel current session
 		/// </summary>

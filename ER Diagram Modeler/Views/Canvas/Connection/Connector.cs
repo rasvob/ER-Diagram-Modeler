@@ -147,6 +147,9 @@ namespace ER_Diagram_Modeler.Views.Canvas.Connection
 			ConnectionPath.StrokeDashCap = PenLineCap.Round;
 			ConnectionPath.Data = _connectionGeometry;
 
+			Symbol.CacheMode = new BitmapCache() {RenderAtScale = 1, EnableClearType = true, SnapsToDevicePixels = true};
+			ConnectionPath.CacheMode = new BitmapCache() {RenderAtScale = 1, EnableClearType = true, SnapsToDevicePixels = true};
+
 			Symbol.PreviewMouseLeftButtonDown += SymbolOnPreviewMouseLeftButtonDown;
 			ConnectionPath.PreviewMouseLeftButtonDown += SymbolOnPreviewMouseLeftButtonDown;
 		}

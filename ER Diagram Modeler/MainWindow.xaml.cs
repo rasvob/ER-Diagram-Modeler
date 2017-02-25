@@ -93,7 +93,7 @@ namespace ER_Diagram_Modeler
 		{
 			await DiagramFacade.CloseDiagramsOnDisconnect(this);
 			SessionProvider.Instance.Database = s;
-			DatabaseConnectionSidebar.LoadMsSqlTreeViewData();
+			await DatabaseConnectionSidebar.LoadMsSqlData(true);
 		}
 
 		/// <summary>
@@ -113,11 +113,11 @@ namespace ER_Diagram_Modeler
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="diagramModel">Diagram for deletion</param>
-		private void DatabaseConnectionSidebarOnDropDiagram(object sender, DiagramModel diagramModel)
+		private async void DatabaseConnectionSidebarOnDropDiagram(object sender, DiagramModel diagramModel)
 		{
 			var ctx = new DatabaseContext(SessionProvider.Instance.ConnectionType);
 			var res = ctx.DeleteDiagram(diagramModel.Name);
-			DatabaseConnectionSidebar.RefreshTreeData();
+			await DatabaseConnectionSidebar.RefreshTreeData();
 		}
 
 		/// <summary>
@@ -125,17 +125,24 @@ namespace ER_Diagram_Modeler
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="diagramModel">Diagram for opening</param>
-		private void DatabaseConnectionSidebarOnAddDiagram(object sender, DiagramModel diagramModel)
+		private async void DatabaseConnectionSidebarOnAddDiagram(object sender, DiagramModel diagramModel)
 		{
 			Mouse.OverrideCursor = Cursors.Wait;
 			DiagramFacade.CreateNewDiagram(this, diagramModel.Name);
-			DatabaseModelDesigner designer;
-			if (TryGetSelectedDesigner(out designer))
+
+			LayoutAnchorable panel;
+			if (TryGetSelectedPanel(out panel))
 			{
-				var facade = new DiagramFacade(designer.ViewModel);
-				facade.LoadDiagram(designer.ModelDesignerCanvas, XDocument.Parse(diagramModel.Xml));
+				DatabaseModelDesigner designer;
+				if(TryGetSelectedDesigner(out designer))
+				{
+					panel.IsActiveChanged -= AnchorableDesignerActiveChangedHandler;
+					var facade = new DiagramFacade(designer.ViewModel);
+					await facade.LoadDiagram(designer.ModelDesignerCanvas, XDocument.Parse(diagramModel.Xml));
+					panel.IsActiveChanged += AnchorableDesignerActiveChangedHandler;
+				}
 			}
-			DatabaseConnectionSidebar.RefreshTreeData();
+			await DatabaseConnectionSidebar.RefreshTreeData();
 			Mouse.OverrideCursor = null;
 		}
 
@@ -160,7 +167,7 @@ namespace ER_Diagram_Modeler
 				using(IMsSqlMapper mapper = new MsSqlMapper())
 				{
 					await Task.Factory.StartNew(() => mapper.DropDatabase(dbName));
-					DatabaseConnectionSidebar.LoadMsSqlData(true);
+					await DatabaseConnectionSidebar.LoadMsSqlData(true);
 					await progress.CloseAsync();
 					await this.ShowMessageAsync("Drop database", $"Database {dbName} dropped successfully");
 				}
@@ -191,7 +198,7 @@ namespace ER_Diagram_Modeler
 				using (IMsSqlMapper mapper = new MsSqlMapper())
 				{
 					mapper.CreateDatabase(name);
-					DatabaseConnectionSidebar.LoadMsSqlData(true);
+					await DatabaseConnectionSidebar.LoadMsSqlData(true);
 				}
 			}
 			catch (SqlException exc)
@@ -422,7 +429,7 @@ namespace ER_Diagram_Modeler
 					flyout.IsOpen = !flyout.IsOpen;
 				}
 
-				DatabaseConnectionSidebar.LoadMsSqlData();
+				await DatabaseConnectionSidebar.LoadMsSqlData();
 			}
 			catch (SqlException exception)
 			{
@@ -623,7 +630,7 @@ namespace ER_Diagram_Modeler
 				return;
 			}
 
-			DatabaseConnectionSidebar.RefreshTreeData();
+			await DatabaseConnectionSidebar.RefreshTreeData();
 		}
 
 		/// <summary>
@@ -699,7 +706,7 @@ namespace ER_Diagram_Modeler
 					var facade = new DiagramFacade(designer);
 					facade.RemoveTable(e);
 				}
-				DatabaseConnectionSidebar.RefreshTreeData();
+				await DatabaseConnectionSidebar.RefreshTreeData();
 			}
 		}
 
@@ -756,19 +763,18 @@ namespace ER_Diagram_Modeler
 				var db = new OracleDatabase();
 				await db.BuildSession(OracleServerNameTextBox.Text, OraclePortTextBox.Text, OracleSidTextBox.Text,
 					OracleUsernameTextBox.Text, OraclePasswordBox.Password);
-				using(IOracleMapper mapper = new OracleMapper())
-				{
-					TableModel model = mapper.ListTables().FirstOrDefault();
-					if(model != null)
-					{
-						mapper.ListForeignKeys(model.Title);
-					}
-				}
 
 				//Init work
 				await Task.Factory.StartNew(() =>
 				{
-					
+					using(IOracleMapper mapper = new OracleMapper())
+					{
+						TableModel model = mapper.ListTables().FirstOrDefault();
+						if(model != null)
+						{
+							mapper.ListForeignKeys(model.Title);
+						}
+					}
 				});
 
 				await closeProgress(progressDialogController);
@@ -781,7 +787,7 @@ namespace ER_Diagram_Modeler
 					flyout.IsOpen = !flyout.IsOpen;
 				}
 
-				DatabaseConnectionSidebar.LoadOracleData();
+				await DatabaseConnectionSidebar.LoadOracleData();
 			}
 			catch (OracleException exception)
 			{
@@ -811,9 +817,9 @@ namespace ER_Diagram_Modeler
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
-		public void CreateTableHandler(object sender, System.EventArgs e)
+		public async void CreateTableHandler(object sender, System.EventArgs e)
 		{
-			DatabaseConnectionSidebar.RefreshTreeData();
+			await DatabaseConnectionSidebar.RefreshTreeData();
 		}
 
 		/// <summary>
@@ -897,12 +903,12 @@ namespace ER_Diagram_Modeler
 		/// Save diagram to DB and refresh treeview in panel
 		/// </summary>
 		/// <param name="vm"></param>
-		private void SaveDiagramAndRefresh(DatabaseModelDesignerViewModel vm)
+		private async void SaveDiagramAndRefresh(DatabaseModelDesignerViewModel vm)
 		{
 			var facade = new DiagramFacade(vm);
 			var res = facade.SaveDiagram();
 			Output.WriteLine(DiagramFacade.DiagramSaved);
-			DatabaseConnectionSidebar.RefreshTreeData();
+			await DatabaseConnectionSidebar.RefreshTreeData();
 		}
 
 		/// <summary>

@@ -103,6 +103,8 @@ namespace ER_Diagram_Modeler.Views.Canvas.Connection
 			Line.SnapsToDevicePixels = true;
 			Line.StrokeEndLineCap = PenLineCap.Round;
 			Line.StrokeStartLineCap = PenLineCap.Round;
+			//TODO: Cache
+			Line.CacheMode = new BitmapCache() {EnableClearType = true, RenderAtScale = 1, SnapsToDevicePixels = true};
 
 			StartPoint.CoordinatesChanged += StartPointOnCoordinatesChanged;
 			EndPoint.CoordinatesChanged += EndPointOnCoordinatesChanged;

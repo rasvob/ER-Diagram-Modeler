@@ -88,6 +88,7 @@ namespace ER_Diagram_Modeler.Views.Canvas
 		{
 			var data = CreateGridWithStreamGeometry(Height, Width, GridCellWidth);
 			RefreshGuideLines(data);
+			Loaded -= OnLoaded;
 		}
 
 		/// <summary>

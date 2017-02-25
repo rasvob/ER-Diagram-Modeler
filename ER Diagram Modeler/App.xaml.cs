@@ -28,8 +28,8 @@ namespace ER_Diagram_Modeler
 			//TODO: ONLY DEBUG
 			base.OnStartup(e);
 			SetEnglighCultureInfo();
-			RenderOptions.ProcessRenderMode = RenderMode.SoftwareOnly;
-			this.DispatcherUnhandledException += OnDispatcherUnhandledException;
+			//RenderOptions.ProcessRenderMode = RenderMode.SoftwareOnly;
+			//this.DispatcherUnhandledException += OnDispatcherUnhandledException;
 		}
 
 		/// <summary>

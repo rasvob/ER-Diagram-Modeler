@@ -124,7 +124,13 @@ namespace ER_Diagram_Modeler.DiagramConstruction
 		{
 			var ctx = new DatabaseContext(SessionProvider.Instance.ConnectionType);
 
-			var relationships = ctx.ListRelationshipsForTable(model.Title, ViewModel.TableViewModels.Select(t => t.Model)).Where(t => !ViewModel.ConnectionInfoViewModels.Any(s => s.RelationshipModel.Name.Equals(t.Name)));
+			var relationships =
+				await Task.Run(
+					() =>
+						ctx.ListRelationshipsForTable(model.Title, ViewModel.TableViewModels.Select(t => t.Model))
+							.Where(t => !ViewModel.ConnectionInfoViewModels.Any(s => s.RelationshipModel.Name.Equals(t.Name))));
+
+			//var relationships = ctx.ListRelationshipsForTable(model.Title, ViewModel.TableViewModels.Select(t => t.Model)).Where(t => !ViewModel.ConnectionInfoViewModels.Any(s => s.RelationshipModel.Name.Equals(t.Name)));
 
 			foreach (RelationshipModel relationship in relationships)
 			{
@@ -212,8 +218,8 @@ namespace ER_Diagram_Modeler.DiagramConstruction
 		public async Task RefreshDiagram(DesignerCanvas canvas)
 		{
 			var ctx = new DatabaseContext(SessionProvider.Instance.ConnectionType);
-			IEnumerable<TableModel> tables = ctx.ListTables();
-			IEnumerable<string> foreignKeys = ctx.ListAllForeignKeys();
+			IEnumerable<TableModel> tables = await Task.Run(() => ctx.ListTables());
+			IEnumerable<string> foreignKeys = await Task.Run(() => ctx.ListAllForeignKeys());
 
 			var tablesForDelete = ViewModel.TableViewModels.Where(t => !tables.Any(s => s.Id.Equals(t.Model.Id))).ToList();
 			tablesForDelete.ForEach(t => ViewModel.TableViewModels.Remove(t));
@@ -237,10 +243,10 @@ namespace ER_Diagram_Modeler.DiagramConstruction
 
 			foreach(TableViewModel viewModel in ViewModel.TableViewModels)
 			{
-				TableModel model = ctx.ReadTableDetails(viewModel.Model.Id, viewModel.Model.Title);
+				TableModel model = await Task.Run(() => ctx.ReadTableDetails(viewModel.Model.Id, viewModel.Model.Title));
 				viewModel.Model.RefreshModel(model);
 
-				IEnumerable<RelationshipModel> relationshipModels = ctx.ListRelationshipsForTable(viewModel.Model.Title, ViewModel.TableViewModels.Select(t => t.Model));
+				IEnumerable<RelationshipModel> relationshipModels = await Task.Run(() => ctx.ListRelationshipsForTable(viewModel.Model.Title, ViewModel.TableViewModels.Select(t => t.Model)));
 				IEnumerable<RelationshipModel> filtered = relationshipModels.Where(t => !ViewModel.ConnectionInfoViewModels.Any(s => s.RelationshipModel.Name.Equals(t.Name)));
 
 				foreach (RelationshipModel relationshipModel in filtered)
@@ -255,7 +261,7 @@ namespace ER_Diagram_Modeler.DiagramConstruction
 		/// </summary>
 		/// <param name="canvas">Canvas for diagram</param>
 		/// <param name="data">XML attribute from DB</param>
-		public void LoadDiagram(DesignerCanvas canvas, XDocument data)
+		public async Task LoadDiagram(DesignerCanvas canvas, XDocument data)
 		{
 			var root = data.Root;
 			ViewModel.LoadFromElement(data.Root);
@@ -268,7 +274,7 @@ namespace ER_Diagram_Modeler.DiagramConstruction
 			}
 			
 			var ctx = new DatabaseContext(SessionProvider.Instance.ConnectionType);
-			var tablesInDb = ctx.ListTables();
+			var tablesInDb = await Task.Run(() => ctx.ListTables());
 			var tableElements = root?.XPathSelectElements("TableViewModels/TableViewModel")
 				.Select(t =>
 				{
@@ -286,12 +292,22 @@ namespace ER_Diagram_Modeler.DiagramConstruction
 				return;	
 			}
 
-			tableElements?.ForEach(t => t.Model.RefreshModel(ctx.ReadTableDetails(t.Model.Id, t.Model.Title)));
-			tableElements?.ForEach(t => ViewModel.TableViewModels.Add(t));
+			var relationShipsInDb = await Task.Run(() => ctx.ListAllForeignKeys());
+			var allRelationshipsDetailsPom = new List<RelationshipModel>();
+			foreach (TableViewModel model in tableElements)
+			{
+				TableModel tab = ctx.ReadTableDetails(model.Model.Id, model.Model.Title);
+				model.Model.RefreshModel(tab);
+				ViewModel.TableViewModels.Add(model);
+			}
 
-			var relationShipsInDb = ctx.ListAllForeignKeys();
-			var allRelationshipsDetails = tableElements?
-				.SelectMany(t => ctx.ListRelationshipsForTable(t.Model.Title, tableElements.Select(s => s.Model)))
+			foreach (TableViewModel model in tableElements)
+			{
+				IEnumerable<RelationshipModel> models = await Task.Run(() => ctx.ListRelationshipsForTable(model.Model.Title, tableElements.Select(s => s.Model)));
+				allRelationshipsDetailsPom.AddRange(models);
+			}
+
+			var allRelationshipsDetails = allRelationshipsDetailsPom
 				.GroupBy(t => t.Name)
 				.Select(t => t.FirstOrDefault())
 				.ToList();

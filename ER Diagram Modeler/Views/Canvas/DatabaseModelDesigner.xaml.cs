@@ -942,6 +942,8 @@ namespace ER_Diagram_Modeler.Views.Canvas
 		/// <param name="filepath">Path to file</param>
 		public void ExportToPngFullSize(string filepath)
 		{
+			var sw = new Stopwatch();
+			sw.Start();
 			RenderTargetBitmap bitmap = RenderCanvas();
 			PngBitmapEncoder encoder = new PngBitmapEncoder();
 			BitmapFrame frame = BitmapFrame.Create(bitmap);
@@ -951,6 +953,8 @@ namespace ER_Diagram_Modeler.Views.Canvas
 			{
 				encoder.Save(fs);
 			}
+
+			Trace.WriteLine(sw.ElapsedMilliseconds);
 
 			Output.WriteLine("FILE SAVED");
 		}
