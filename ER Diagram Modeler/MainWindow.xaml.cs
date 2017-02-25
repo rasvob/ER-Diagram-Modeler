@@ -33,7 +33,6 @@ using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
 using Microsoft.Win32;
 using Oracle.ManagedDataAccess.Client;
-using PathfindingTestConsoleApp;
 using Xceed.Wpf.AvalonDock.Layout;
 using Xceed.Wpf.Toolkit.Core.Utilities;
 
