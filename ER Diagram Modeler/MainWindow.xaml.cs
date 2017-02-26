@@ -58,6 +58,7 @@ namespace ER_Diagram_Modeler
 		/// </summary>
 		private readonly DatabaseUpdater _updater;
 
+		private LayoutAnchorable _lastFocued;
 		/// <summary>
 		/// Application initialization with subscribtion for connection panel events
 		/// </summary>
@@ -76,11 +77,6 @@ namespace ER_Diagram_Modeler
 			DatabaseConnectionSidebar.DropDiagram += DatabaseConnectionSidebarOnDropDiagram;
 			DatabaseConnectionSidebar.DisconnectClick += DatabaseConnectionSidebarOnDisconnectClick;
 			DatabaseConnectionSidebar.MsSqlDatabaseChanged += DatabaseConnectionSidebarOnMsSqlDatabaseChanged;
-
-			DockingManagerMain.ActiveContentChanged += (sender, args) =>
-			{
-				Debug.WriteLine(DockingManagerMain.ActiveContent.GetType());
-			};
 		}
 
 		/// <summary>
@@ -829,13 +825,24 @@ namespace ER_Diagram_Modeler
 		public async void AnchorableDesignerActiveChangedHandler(object sender, System.EventArgs e)
 		{
 			var anchorable = sender as LayoutAnchorable;
+
 			//TODO: Refresh only invisible
 			DatabaseModelDesigner designer = anchorable?.Content as DatabaseModelDesigner;
-			
 
-			Debug.WriteLine("---"+LayoutRoot.LastFocusedDocument.Title);
-			if (designer == null || !anchorable.IsActive)
+			if (designer == null)
 			{
+				return;
+			}
+
+			if (!anchorable.IsActive)
+			{
+				_lastFocued = anchorable;
+				return;
+			}
+
+			if (_lastFocued != null && _lastFocued.Equals(anchorable))
+			{
+				Debug.WriteLine(_lastFocued.Title);
 				return;
 			}
 
