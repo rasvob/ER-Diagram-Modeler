@@ -106,7 +106,7 @@ namespace ER_Diagram_Modeler.DatabaseConnection.SqlServer
 		/// </summary>
 		/// <param name="connStreing">Connection string</param>
 		/// <returns>Task for async execution</returns>
-		private async Task TryToConnectToServer(string connStreing)
+		public async Task TryToConnectToServer(string connStreing)
 		{
 			SqlConnection connection = new SqlConnection(connStreing);
 			await connection.OpenAsync();
@@ -140,7 +140,7 @@ namespace ER_Diagram_Modeler.DatabaseConnection.SqlServer
 			SessionProvider.Instance.ServerName = builder.DataSource;
 			SessionProvider.Instance.UseWinAuth = builder.IntegratedSecurity;
 
-			if(SessionProvider.Instance.UseWinAuth)
+			if(!SessionProvider.Instance.UseWinAuth)
 			{
 				SessionProvider.Instance.Username = builder.UserID;
 				SessionProvider.Instance.Password = builder.Password;

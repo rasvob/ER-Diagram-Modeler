@@ -81,7 +81,7 @@ namespace ER_Diagram_Modeler.DatabaseConnection.Oracle
 		/// </summary>
 		/// <param name="connStreing">Connection string</param>
 		/// <returns>Task for async execution</returns>
-		private async Task TryToConnectToServer(string connStreing)
+		public async Task TryToConnectToServer(string connStreing)
 		{
 			OracleConnection connection = new OracleConnection(connStreing);
 			await connection.OpenAsync();

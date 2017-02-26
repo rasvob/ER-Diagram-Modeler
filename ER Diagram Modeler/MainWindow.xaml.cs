@@ -133,7 +133,15 @@ namespace ER_Diagram_Modeler
 				{
 					panel.IsActiveChanged -= AnchorableDesignerActiveChangedHandler;
 					var facade = new DiagramFacade(designer.ViewModel);
-					await facade.LoadDiagram(designer.ModelDesignerCanvas, XDocument.Parse(diagramModel.Xml));
+					try
+					{
+						await facade.LoadDiagram(designer.ModelDesignerCanvas, XDocument.Parse(diagramModel.Xml));
+					}
+					catch(Exception exception) when(exception is SqlException || exception is OracleException)
+					{
+						Output.WriteLine(OutputPanelListener.PrepareException(exception.Message));
+					}
+					
 					panel.IsActiveChanged += AnchorableDesignerActiveChangedHandler;
 				}
 			}
@@ -1209,6 +1217,163 @@ namespace ER_Diagram_Modeler
 				}
 				Mouse.OverrideCursor = null;
 			}
+		}
+
+		private async void ConnectToMsSqlServerOwnConnString_OnExecuted(object sender, ExecutedRoutedEventArgs e)
+		{
+			var example =
+				@"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=Init;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=True";
+			var res = await this.ShowInputAsync("Connection string", $"Use customized connection string \n (Example: {example})");
+
+			if (res != null)
+			{
+				await DiagramFacade.CloseDiagramsOnDisconnect(this);
+				SessionProvider.Instance.Disconnect();
+				DatabaseConnectionSidebar.HideDatabaseStackPanels();
+
+				ProgressDialogController progressDialogController = null;
+
+				Func<ProgressDialogController, Task> closeProgress = async t =>
+				{
+					if(t != null)
+					{
+						if(t.IsOpen)
+						{
+							await t.CloseAsync();
+						}
+					}
+				};
+
+				try
+				{
+					progressDialogController = await this.ShowProgressAsync("Please wait", "Connecting to server...", false,
+						new MetroDialogSettings()
+						{
+							AnimateShow = false,
+							AnimateHide = false
+						});
+					progressDialogController.SetIndeterminate();
+
+					var db = new MsSqlDatabase();
+					await db.TryToConnectToServer(res);
+
+					SessionProvider.Instance.OwnConnectionString = res;
+					SessionProvider.Instance.UseOwnConnectionString = true;
+					SessionProvider.Instance.ConnectionType = ConnectionType.SqlServer;
+
+					await closeProgress(progressDialogController);
+					await this.ShowMessageAsync("Connected", $"Successfuly connected to server");
+
+					var flyout = Flyouts.Items[0] as Flyout;
+
+					if (flyout != null)
+					{
+						flyout.IsOpen = !flyout.IsOpen;
+					}
+
+					await DatabaseConnectionSidebar.LoadMsSqlData();
+				}
+				catch (SqlException exception)
+				{
+					await closeProgress(progressDialogController);
+					await this.ShowMessageAsync("Connection error", exception.Message);
+					SessionProvider.Instance.ConnectionType = ConnectionType.None;
+				}
+				catch (ArgumentException)
+				{
+					await closeProgress(progressDialogController);
+					await this.ShowMessageAsync("Connection error", "Connection string is not valid");
+					SessionProvider.Instance.ConnectionType = ConnectionType.None;
+				}
+			}
+		}
+
+		private async void ConnectToOracleOwnConnString_OnExecuted(object sender, ExecutedRoutedEventArgs e)
+		{
+			var example =
+				@"USER ID=c##username;PASSWORD=y0urP455woRd;DATA SOURCE=""(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=192.168.14.10)(PORT=1521)))(CONNECT_DATA=(SERVER=DEDICATED)(SERVICE_NAME=orcl)))""";
+			var res = await this.ShowInputAsync("Connection string", $"Use customized connection string \n (Example: {example})");
+
+			if (res != null)
+			{
+				await DiagramFacade.CloseDiagramsOnDisconnect(this);
+				SessionProvider.Instance.Disconnect();
+				DatabaseConnectionSidebar.HideDatabaseStackPanels();
+
+				ProgressDialogController progressDialogController = null;
+
+				Func<ProgressDialogController, Task> closeProgress = async t =>
+				{
+					if(t != null)
+					{
+						if(t.IsOpen)
+						{
+							await t.CloseAsync();
+						}
+					}
+				};
+
+				try
+				{
+					progressDialogController = await this.ShowProgressAsync("Please wait", "Connecting to server...", false, new MetroDialogSettings()
+					{
+						AnimateShow = false,
+						AnimateHide = false
+					});
+					progressDialogController.SetIndeterminate();
+
+					var db = new OracleDatabase();
+					OracleConnectionStringBuilder builder = new OracleConnectionStringBuilder(res);
+					builder.ConnectionTimeout = 2;
+
+					await db.TryToConnectToServer(builder.ConnectionString);
+
+					SessionProvider.Instance.OwnConnectionString = res;
+					SessionProvider.Instance.UseOwnConnectionString = true;
+					SessionProvider.Instance.Username = builder.UserID;
+					SessionProvider.Instance.ConnectionType = ConnectionType.Oracle;
+
+					//Init work
+					await Task.Factory.StartNew(() =>
+					{
+						using(IOracleMapper mapper = new OracleMapper())
+						{
+							TableModel model = mapper.ListTables().FirstOrDefault();
+							if(model != null)
+							{
+								mapper.ListForeignKeys(model.Title);
+							}
+						}
+					});
+
+					await closeProgress(progressDialogController);
+					await this.ShowMessageAsync("Connected", $"Successfuly connected to server");
+
+					var flyout = Flyouts.Items[2] as Flyout;
+
+					if(flyout != null)
+					{
+						flyout.IsOpen = !flyout.IsOpen;
+					}
+
+					await DatabaseConnectionSidebar.LoadOracleData();
+				}
+				catch(OracleException exception)
+				{
+					await closeProgress(progressDialogController);
+					await this.ShowMessageAsync("Connection error", exception.Message);
+					Output.WriteLine(OutputPanelListener.PrepareException(exception.Message));
+					SessionProvider.Instance.ConnectionType = ConnectionType.None;
+				}
+				catch(ArgumentException)
+				{
+					await closeProgress(progressDialogController);
+					await this.ShowMessageAsync("Connection error", "Connection string is not valid");
+					SessionProvider.Instance.ConnectionType = ConnectionType.None;
+				}
+			}
+
+			
 		}
 	}
 }

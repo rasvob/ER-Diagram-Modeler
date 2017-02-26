@@ -45,6 +45,8 @@
 			<RoutedUICommand x:Key="Commands.ExportToXps" />
 			<RoutedUICommand x:Key="Commands.ExportToPngFullResolution" />
 			<RoutedUICommand x:Key="Commands.GenerateDdl" />
+			<RoutedUICommand x:Key="Commands.ConnectToMsSqlServerOwnConnString" />
+			<RoutedUICommand x:Key="Commands.ConnectToOracleOwnConnString" />
 		</ResourceDictionary>
 	</Window.Resources>
 
@@ -124,6 +126,8 @@
 		<CommandBinding Command="{StaticResource Commands.ShowMsSqlConnectionPanel}" Executed="ShowMsSqlConnectionPanel_OnExecuted" />
 		<CommandBinding Command="{StaticResource Commands.ShowOracleConnectionPanel}" Executed="ShowOracleConnectionPanel_OnExecuted" />
 		<CommandBinding Command="{StaticResource Commands.ExportToXps}" Executed="ExportToXps_OnExecuted" CanExecute="ExportToPng_OnCanExecute" />
+		<CommandBinding Command="{StaticResource Commands.ConnectToMsSqlServerOwnConnString}" Executed="ConnectToMsSqlServerOwnConnString_OnExecuted" />
+		<CommandBinding Command="{StaticResource Commands.ConnectToOracleOwnConnString}" Executed="ConnectToOracleOwnConnString_OnExecuted" />
 	</Window.CommandBindings>
 
 	<Window.InputBindings>
@@ -152,6 +156,7 @@
 
 				<Grid Margin="10">
 					<Grid.RowDefinitions>
+						<RowDefinition Height="Auto"></RowDefinition>
 						<RowDefinition Height="Auto"></RowDefinition>
 						<RowDefinition Height="Auto"></RowDefinition>
 						<RowDefinition Height="Auto"></RowDefinition>
@@ -191,6 +196,7 @@
 									 />
 					</StackPanel>
 					<Button Content="Connect" Grid.Row="3" Margin="0 10" Command="{StaticResource Commands.ConnectToMsSqlServer}"/>
+					<Button Content="Connect using own connection string" Grid.Row="4" Margin="0 10" Command="{StaticResource Commands.ConnectToMsSqlServerOwnConnString}"/>
 				</Grid>
 			</Controls:Flyout>
 
@@ -381,6 +387,7 @@
 						<RowDefinition Height="Auto"></RowDefinition>
 						<RowDefinition Height="Auto"></RowDefinition>
 						<RowDefinition Height="Auto"></RowDefinition>
+						<RowDefinition Height="Auto"></RowDefinition>
 					</Grid.RowDefinitions>
 
 					<TextBox x:Name="OracleServerNameTextBox" Margin="0 5"
@@ -430,6 +437,7 @@
 									 />
 					</StackPanel>
 					<Button Content="Connect" Grid.Row="4" Margin="0 10" Command="{StaticResource Commands.ConnectToOracle}"/>
+					<Button Content="Connect using own connection string" Grid.Row="5" Margin="0 10" Command="{StaticResource Commands.ConnectToOracleOwnConnString}"/>
 				</Grid>
 			</Controls:Flyout>
 		</Controls:FlyoutsControl>

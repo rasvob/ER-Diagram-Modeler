@@ -59,6 +59,16 @@ namespace ER_Diagram_Modeler.Configuration.Providers
 		public bool UseWinAuth { get; set; }
 
 		/// <summary>
+		/// Use raw connection string instead of built one
+		/// </summary>
+		public bool UseOwnConnectionString { get; set; } = false;
+
+		/// <summary>
+		/// Raw connection string provided by user
+		/// </summary>
+		public string OwnConnectionString { get; set; }
+
+		/// <summary>
 		/// Build connection string based on session parameters
 		/// </summary>
 		public string ConnectionString
@@ -70,6 +80,14 @@ namespace ER_Diagram_Modeler.Configuration.Providers
 					case ConnectionType.None:
 						return string.Empty;
 					case ConnectionType.SqlServer:
+						if (UseOwnConnectionString)
+						{
+							SqlConnectionStringBuilder sb = new SqlConnectionStringBuilder();
+							sb.ConnectionString = OwnConnectionString;
+							sb.InitialCatalog = Database;
+							return sb.ConnectionString;
+						}
+
 						SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder();
 						builder.DataSource = ServerName;
 						builder.IntegratedSecurity = UseWinAuth;
@@ -86,6 +104,11 @@ namespace ER_Diagram_Modeler.Configuration.Providers
 
 						return builder.ConnectionString;
 					case ConnectionType.Oracle:
+						if (UseOwnConnectionString)
+						{
+							return OwnConnectionString;
+						}
+
 						OracleConnectionStringBuilder oracleConnectionStringBuilder = new OracleConnectionStringBuilder
 						{
 							DataSource = ServerName,
@@ -101,9 +124,19 @@ namespace ER_Diagram_Modeler.Configuration.Providers
 
 		public string GetConnectionStringForMsSqlDatabase(string database)
 		{
+			if(UseOwnConnectionString)
+			{
+				SqlConnectionStringBuilder sb = new SqlConnectionStringBuilder();
+				sb.ConnectionString = OwnConnectionString;
+				sb.InitialCatalog = database;
+				sb.ConnectTimeout = 1;
+				return sb.ConnectionString;
+			}
+
 			SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder();
 			builder.DataSource = ServerName;
 			builder.IntegratedSecurity = UseWinAuth;
+			builder.ConnectTimeout = 1;
 			if(!UseWinAuth)
 			{
 				builder.UserID = Username;
@@ -121,6 +154,8 @@ namespace ER_Diagram_Modeler.Configuration.Providers
 			ConnectionType = ConnectionType.None;
 			Database = string.Empty;
 			ServerName = string.Empty;
+			OwnConnectionString = string.Empty;
+			UseOwnConnectionString = false;
 		}
 	}
 }

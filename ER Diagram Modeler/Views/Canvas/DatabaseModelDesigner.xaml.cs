@@ -1035,7 +1035,14 @@ namespace ER_Diagram_Modeler.Views.Canvas
 				Point position = e.GetPosition(ModelDesignerCanvas);
 				facade.AddTableCallbackAction += async model =>
 				{
-					await facade.AddRelationShipsForTable(model, ModelDesignerCanvas);
+					try
+					{
+						await facade.AddRelationShipsForTable(model, ModelDesignerCanvas);
+					}
+					catch(Exception exception) when(exception is SqlException || exception is OracleException)
+					{
+						Output.WriteLine(OutputPanelListener.PrepareException(exception.Message));
+					}
 				};
 				facade.AddTable(data, (int)position.X, (int)position.Y);
 			}

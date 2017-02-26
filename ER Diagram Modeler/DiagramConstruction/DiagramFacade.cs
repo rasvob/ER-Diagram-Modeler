@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
@@ -20,6 +21,7 @@ using ER_Diagram_Modeler.ViewModels;
 using ER_Diagram_Modeler.Views.Canvas;
 using ER_Diagram_Modeler.Views.Canvas.TableItem;
 using MahApps.Metro.Controls.Dialogs;
+using Oracle.ManagedDataAccess.Client;
 using Pathfinding;
 using Pathfinding.Structure;
 using Xceed.Wpf.AvalonDock.Layout;
@@ -365,7 +367,16 @@ namespace ER_Diagram_Modeler.DiagramConstruction
 		{
 			XDocument doc = XDocument.Parse(ViewModel.CreateElement().ToString());
 			var ctx = new DatabaseContext(SessionProvider.Instance.ConnectionType);
-			return ctx.SaveDiagram(ViewModel.DiagramTitle, doc);
+			int saveDiagram = 0;
+			try
+			{
+				saveDiagram = ctx.SaveDiagram(ViewModel.DiagramTitle, doc);
+			}
+			catch(Exception exception) when(exception is SqlException || exception is OracleException)
+			{
+				Output.WriteLine(OutputPanelListener.PrepareException(exception.Message));
+			}
+			return saveDiagram;
 		}
 
 #region HELPERS

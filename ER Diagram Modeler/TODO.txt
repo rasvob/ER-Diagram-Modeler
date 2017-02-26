@@ -2,7 +2,7 @@
 Labels
 
 ---DB_Part
-Own connection string
+Own connection string - Oracle
 
 ---Other
 

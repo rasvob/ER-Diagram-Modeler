@@ -150,24 +150,46 @@ namespace ER_Diagram_Modeler.Views.Panels
 
 			await Task.Run(() =>
 			{
+				var pomInfos = new List<DatabaseInfo>();
+				DatabaseInfos = new List<DatabaseInfo>();
 				using(MsSqlMapper mapper = new MsSqlMapper())
 				{
-					DatabaseInfos = mapper.ListDatabases().ToList();
+					pomInfos = mapper.ListDatabases().ToList();
 				}
 
-				foreach(DatabaseInfo info in DatabaseInfos)
+				foreach(DatabaseInfo info in pomInfos)
 				{
-					using(MsSqlMapper mapper = new MsSqlMapper(SessionProvider.Instance.GetConnectionStringForMsSqlDatabase(info.Name)))
+					try
 					{
-						mapper.ListTables().ToList().ForEach(t => info.Tables.Add(t));
-						try
+						using(MsSqlMapper mapper = new MsSqlMapper(SessionProvider.Instance.GetConnectionStringForMsSqlDatabase(info.Name)))
 						{
-							mapper.SelectDiagrams().ToList().ForEach(t => info.Diagrams.Add(t));
-						}
-						catch(SqlException)
-						{
+							try
+							{
+								mapper.ListTables().ToList().ForEach(t => info.Tables.Add(t));
+							}
+							catch(SqlException)
+							{
+								Debug.WriteLine("Can't read table");
+								continue;
+							}
+
+							try
+							{
+								mapper.SelectDiagrams().ToList().ForEach(t => info.Diagrams.Add(t));
+							}
+							catch(SqlException)
+							{
+								Debug.WriteLine("Can't read diagrams");
+							}
+
+							DatabaseInfos.Add(info);
 						}
 					}
+					catch (SqlException e)
+					{
+						Debug.WriteLine(e.Message);
+					}
+					
 				}
 
 			});
@@ -208,18 +230,32 @@ namespace ER_Diagram_Modeler.Views.Panels
 					Name = "Tables"
 				};
 
-				IEnumerable<TableModel> tables = ctx.ListTables();
-
-				foreach(TableModel model in tables)
+				try
 				{
-					info.Tables.Add(model);
+					IEnumerable<TableModel> tables = ctx.ListTables();
+
+					foreach(TableModel model in tables)
+					{
+						info.Tables.Add(model);
+					}
+				}
+				catch (SqlException e)
+				{
+					Debug.WriteLine(e.Message);
 				}
 
-				IEnumerable<DiagramModel> diagrams = ctx.SelectDiagrams();
-
-				foreach(DiagramModel diagram in diagrams)
+				try
 				{
-					info.Diagrams.Add(diagram);
+					IEnumerable<DiagramModel> diagrams = ctx.SelectDiagrams();
+
+					foreach(DiagramModel diagram in diagrams)
+					{
+						info.Diagrams.Add(diagram);
+					}
+				}
+				catch(SqlException e)
+				{
+					Debug.WriteLine(e.Message);
 				}
 
 				DatabaseInfos.Add(info);
