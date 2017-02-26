@@ -65,7 +65,7 @@ namespace ER_Diagram_Modeler.ConnectionPanelLoaders
 				var pos = args.GetPosition(null);
 				Vector vector = _startPoint - pos;
 				TreeViewItem ti = args.Source as TreeViewItem;
-				if (ti != null && args.LeftButton == MouseButtonState.Pressed && Math.Abs(vector.X) > SystemParameters.MinimumHorizontalDragDistance && Math.Abs(vector.Y) > SystemParameters.MinimumVerticalDragDistance)
+				if (ti != null && args.LeftButton == MouseButtonState.Pressed && (Math.Abs(vector.X) > SystemParameters.MinimumHorizontalDragDistance || Math.Abs(vector.Y) > SystemParameters.MinimumVerticalDragDistance))
 				{
 					DataObject data = new DataObject("ConnectionPanelTableDragFormat", model);
 					DragDrop.DoDragDrop(ti, data, DragDropEffects.Copy);

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Data.SqlClient;
@@ -44,8 +45,10 @@ namespace ER_Diagram_Modeler.Views.Canvas
 	{
 		private DatabaseModelDesignerViewModel _viewModel;
 		private Point? _dragStartPoint = null;
+		private Point? _dragSelectionStartPoint = null;
 		private double _capturedVerticalOffset;
 		private double _capturedHorizontalOffset;
+		private bool _isDraggingSelection;
 
 		private TableViewModel _sourceModel;
 		private TableViewModel _destinationModel;
@@ -297,6 +300,10 @@ namespace ER_Diagram_Modeler.Views.Canvas
 					_destinationModel = null;
 					DeselectConnections();
 					ModelDesignerCanvas.ResetZIndexes();
+
+					//Selection rectangle logic
+					_dragSelectionStartPoint = e.GetPosition(ModelDesignerCanvas);
+					ModelDesignerCanvas.CaptureMouse();
 					break;
 				case MouseMode.NewTable:
 					var origin = e.GetPosition(ModelDesignerCanvas);
@@ -1031,6 +1038,100 @@ namespace ER_Diagram_Modeler.Views.Canvas
 					await facade.AddRelationShipsForTable(model, ModelDesignerCanvas);
 				};
 				facade.AddTable(data, (int)position.X, (int)position.Y);
+			}
+		}
+
+		/// <summary>
+		/// Mouse button up
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		private void ModelDesignerCanvas_OnMouseUp(object sender, MouseButtonEventArgs e)
+		{
+			if (ViewModel.MouseMode == MouseMode.Select)
+			{
+				if (_isDraggingSelection)
+				{
+					var selectionRect = new System.Drawing.Rectangle((int)System.Windows.Controls.Canvas.GetLeft(SelectionBorder), (int)System.Windows.Controls.Canvas.GetTop(SelectionBorder), (int)SelectionBorder.Width, (int)SelectionBorder.Height);
+					var rectanglesVm = ViewModel.TableViewModels.Where(t => DiagramFacade.GetTableRectangles(new[] { t }).FirstOrDefault().IntersectsWith(selectionRect));
+
+					IEnumerable<TableContent> contents = ModelDesignerCanvas.Children.OfType<TableContent>().Where(t => rectanglesVm.Any(s => s.Equals(t.TableViewModel)));
+
+					foreach (TableContent content in contents)
+					{
+						content.IsSelected = true;
+					}
+
+					DragSelectionCanvas.Visibility = Visibility.Hidden;
+				}
+
+				ModelDesignerCanvas.ReleaseMouseCapture();
+				_dragSelectionStartPoint = null;
+				_isDraggingSelection = false;
+			}
+		}
+
+		/// <summary>
+		/// Mouse moving on canvas
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		private void ModelDesignerCanvas_OnMouseMove(object sender, MouseEventArgs e)
+		{
+			if(ViewModel.MouseMode == MouseMode.Select)
+			{
+				if(_isDraggingSelection)
+				{
+					Point current = e.GetPosition(ModelDesignerCanvas);
+					UpdateSelectionRectangleVisual(_dragSelectionStartPoint, current);
+				}
+				else if (_dragSelectionStartPoint.HasValue)
+				{
+					Point current = e.GetPosition(ModelDesignerCanvas);
+					Vector vector = current - _dragSelectionStartPoint.Value;
+
+					if (Math.Abs(vector.X) > SystemParameters.MinimumHorizontalDragDistance || Math.Abs(vector.Y) > SystemParameters.MinimumVerticalDragDistance)
+					{
+						_isDraggingSelection = true;
+						UpdateSelectionRectangleVisual(_dragSelectionStartPoint, current);
+						DragSelectionCanvas.Visibility = Visibility.Visible;
+					}
+				}
+			}
+		}
+
+		private void UpdateSelectionRectangleVisual(Point? startPoint, Point currentPoint)
+		{
+			if (startPoint.HasValue)
+			{
+				double x, y, w, h;
+
+				if (startPoint.Value.X > currentPoint.X)
+				{
+					x = currentPoint.X;
+					w = startPoint.Value.X - currentPoint.X;
+				}
+				else
+				{
+					x = startPoint.Value.X;
+					w = currentPoint.X - startPoint.Value.X;
+				}
+
+				if (startPoint.Value.Y > currentPoint.Y)
+				{
+					y = currentPoint.Y;
+					h = startPoint.Value.Y - currentPoint.Y;
+				}
+				else
+				{
+					y = startPoint.Value.Y;
+					h = currentPoint.Y - startPoint.Value.Y;
+				}
+
+				System.Windows.Controls.Canvas.SetLeft(SelectionBorder, x);
+				System.Windows.Controls.Canvas.SetTop(SelectionBorder, y);
+				SelectionBorder.Width = w;
+				SelectionBorder.Height = h;
 			}
 		}
 	}

@@ -205,6 +205,8 @@
 				                      IsEnabled="{Binding MouseMode, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource CanvasEnabledConverter}}"
 				                      Cursor="{Binding MouseMode, Mode=OneWay, Converter={StaticResource MouseModeToCursorConverter}, UpdateSourceTrigger=PropertyChanged}"
 				                      MouseDown="ModelDesignerCanvasOnMouseDown"
+									  MouseUp="ModelDesignerCanvas_OnMouseUp"
+									  MouseMove="ModelDesignerCanvas_OnMouseMove"
 									  AllowDrop="True"
 									  PreviewDrop="ModelDesignerCanvas_OnPreviewDrop"
 				                      Background="White">
@@ -218,6 +220,17 @@
 								 SnapsToDevicePixels="True"
 								 EnableClearType="True"></BitmapCache>
 				</local:DesignerCanvas.CacheMode>
+				
+				<Canvas x:Name="DragSelectionCanvas"
+						ZIndex="200"
+						Visibility="Hidden">
+					<Border x:Name="SelectionBorder"
+							BorderBrush="{StaticResource AccentColorBrush}"
+							Background="{StaticResource AccentColorBrush4}"
+							BorderThickness="1"
+							Opacity="0.5">
+					</Border>
+				</Canvas>
 
 				<!--Performance loss-->
 				<!--<local:DesignerCanvas.Effect>

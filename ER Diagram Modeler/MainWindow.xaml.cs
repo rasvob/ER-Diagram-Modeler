@@ -842,7 +842,6 @@ namespace ER_Diagram_Modeler
 
 			if (_lastFocued != null && _lastFocued.Equals(anchorable))
 			{
-				Debug.WriteLine(_lastFocued.Title);
 				return;
 			}
 
