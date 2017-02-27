@@ -33,6 +33,7 @@
 			<RoutedUICommand x:Key="Commands.RefeshLines"></RoutedUICommand>
 			<RoutedUICommand x:Key="Commands.RefreshOneLine"></RoutedUICommand>
 			<RoutedUICommand x:Key="Commands.SelectionMode"></RoutedUICommand>
+			<RoutedUICommand x:Key="Commands.NewLabel"></RoutedUICommand>
 
 			<RoutedCommand x:Key="TestCommand"></RoutedCommand>
 			<RoutedCommand x:Key="TestCommand2"></RoutedCommand>
@@ -86,6 +87,10 @@
 					Modifiers="Control"
 					Key="R" />
 
+		<KeyBinding Command="{StaticResource Commands.NewLabel}"
+					Modifiers="Control"
+					Key="I" />
+
 		<KeyBinding Command="{StaticResource Commands.DeleteItems}"
 					Key="Delete" />
 		
@@ -126,6 +131,9 @@
 
 		<CommandBinding Command="{StaticResource Commands.RefeshLines}"
 						Executed="RefeshLines_OnExecuted"></CommandBinding>
+
+		<CommandBinding Command="{StaticResource Commands.NewLabel}"
+						Executed="NewLabel_OnExecuted"></CommandBinding>
 	</UserControl.CommandBindings>
 
 	<Grid Background="GhostWhite">
@@ -152,13 +160,19 @@
 										   Icon="{StaticResource DeleteTableIcon}" 
 										   IsChecked="False" 
 										   Command="{StaticResource Commands.DeleteItems}" 
-										   ToolTip="Delete table (Del)" />
+										   ToolTip="Delete item (Del)" />
 			<buttons:DesignerToolBarButton x:Name="AddFkButton" 
 										   Icon="{StaticResource AddNewForeignKeyIcon}" 
 										   IsChecked="False" 
 										   Command="{StaticResource Commands.NewForeignKey}" 
 										   ToolTip="Manage foreign keys(Ctrl + K)" />
-			
+
+			<buttons:DesignerToolBarButton x:Name="AddLabelButton" 
+										   Icon="{StaticResource LabelIcon}" 
+										   IsChecked="{Binding MouseMode, Converter={StaticResource MouseModeToButtonCheckedConverter}, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, ConverterParameter='NewLabelButon'}"
+										   Command="{StaticResource Commands.NewLabel}" 
+										   ToolTip="Add new label" />
+
 			<Separator />
 			
 			<buttons:DesignerToolBarButton x:Name="ShowGuidelinesButton" 
@@ -173,6 +187,8 @@
 										   Command="{StaticResource Commands.EnableTableLimits}" 
 										   ToolTip="Enable table limits (Ctrl + L)" />
 
+			<Separator />
+			
 			<buttons:DesignerToolBarButton x:Name="RefreshOneRelationsipButton" 
 										   Icon="{StaticResource RefreshOneLineIcon}" 
 										   Command="{StaticResource Commands.RefreshOneLine}" 

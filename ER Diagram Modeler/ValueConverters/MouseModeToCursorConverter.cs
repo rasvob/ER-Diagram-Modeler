@@ -22,6 +22,8 @@ namespace ER_Diagram_Modeler.ValueConverters
 					return Cursors.Cross;
 				case MouseMode.Panning:
 					return Cursors.Hand;
+				case MouseMode.NewLabel:
+					return Cursors.Cross;
 				default:
 					return Cursors.Arrow;
 			}

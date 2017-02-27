@@ -10,6 +10,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
 using ER_Diagram_Modeler.ViewModels.Enums;
+using ER_Diagram_Modeler.Views.Canvas.LabelItem;
 using ER_Diagram_Modeler.Views.Canvas.TableItem;
 
 namespace ER_Diagram_Modeler.Views.Canvas
@@ -25,6 +26,11 @@ namespace ER_Diagram_Modeler.Views.Canvas
 		/// Unselected table item Z index
 		/// </summary>
 		public static int TableUnselectedZIndex = 10;
+
+		/// <summary>
+		/// Unselected label item Z index
+		/// </summary>
+		public static int LabelUnselectedZIndex = 20;
 
 		/// <summary>
 		/// Line Z index
@@ -46,6 +52,9 @@ namespace ER_Diagram_Modeler.Views.Canvas
 		/// </summary>
 		public static int GridCellWidth = 30;
 
+		/// <summary>
+		/// Grid on blank canvas
+		/// </summary>
 		private readonly Path _canvasGrid;
 
 		/// <summary>
@@ -57,6 +66,16 @@ namespace ER_Diagram_Modeler.Views.Canvas
 		/// All tables
 		/// </summary>
 		public IEnumerable<TableContent> Tables => Children.OfType<TableContent>();
+
+		/// <summary>
+		/// All labels
+		/// </summary>
+		public IEnumerable<LabelContent> Labels => Children.OfType<LabelContent>();
+
+		/// <summary>
+		/// Selected labels
+		/// </summary>
+		public IEnumerable<LabelContent> SelectedLabels => Children.OfType<LabelContent>().Where(t => t.IsSelected);
 
 		/// <summary>
 		/// Is grid visible
@@ -103,6 +122,17 @@ namespace ER_Diagram_Modeler.Views.Canvas
 		}
 
 		/// <summary>
+		/// Deselect all labels
+		/// </summary>
+		public void DeselectLabels()
+		{
+			foreach (LabelContent label in SelectedLabels)
+			{
+				label.IsSelected = false;
+			}
+		}
+
+		/// <summary>
 		/// Reset Z indexes of items
 		/// </summary>
 		public void ResetZIndexes()
@@ -110,6 +140,11 @@ namespace ER_Diagram_Modeler.Views.Canvas
 			foreach (TableContent item in Tables)
 			{
 				SetZIndex(item, TableUnselectedZIndex);
+			}
+
+			foreach (LabelContent label in Labels)
+			{
+				SetZIndex(label, LabelUnselectedZIndex);
 			}
 		}
 

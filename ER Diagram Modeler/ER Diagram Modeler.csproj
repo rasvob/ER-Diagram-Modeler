@@ -203,6 +203,7 @@
     <Compile Include="ViewModels\Enums\Optionality.cs" />
     <Compile Include="ViewModels\Enums\RelativeTablePosition.cs" />
     <Compile Include="ViewModels\Enums\TableViewMode.cs" />
+    <Compile Include="ViewModels\LabelViewModel.cs" />
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
     <Compile Include="ViewModels\PrimaryKeyDialogViewModel.cs" />
     <Compile Include="ViewModels\SimpleCommand.cs" />
@@ -213,6 +214,15 @@
     <Compile Include="Views\Canvas\Connection\ConnectionPointMark.cs" />
     <Compile Include="Views\Canvas\Connection\Connector.cs" />
     <Compile Include="Views\Canvas\DesignerCanvas.cs" />
+    <Compile Include="Views\Canvas\LabelItem\LabelContent.cs" />
+    <Compile Include="Views\Canvas\LabelItem\LabelItemDecorator.cs" />
+    <Compile Include="Views\Canvas\LabelItem\LabelViewControl.xaml.cs">
+      <DependentUpon>LabelViewControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Canvas\LabelItem\MoveThumbLabel.cs" />
+    <Compile Include="Views\Canvas\LabelItem\ResizeDecoratorLabelFlat.cs" />
+    <Compile Include="Views\Canvas\LabelItem\ResizeLabelAdorner.cs" />
+    <Compile Include="Views\Canvas\LabelItem\ResizeThumbLabel.cs" />
     <Compile Include="Views\Canvas\TableItem\DesignerItemDecorator.cs" />
     <Compile Include="Views\Canvas\DatabaseModelDesigner.xaml.cs">
       <DependentUpon>DatabaseModelDesigner.xaml</DependentUpon>
@@ -309,6 +319,22 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Canvas\DatabaseModelDesigner.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Canvas\LabelItem\LabelItem.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Canvas\LabelItem\LabelViewControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Canvas\LabelItem\MoveThumbLabel.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Canvas\LabelItem\ResizeDecoratorLabelFlat.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

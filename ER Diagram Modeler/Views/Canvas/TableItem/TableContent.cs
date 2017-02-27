@@ -225,12 +225,14 @@ namespace ER_Diagram_Modeler.Views.Canvas.TableItem
 				{
 					IsSelected = !IsSelected;
 					DesignerCanvas.SetZIndex(this, !IsSelected ? ZIndexUnSelectedValue : ZIndexSelectedValue);
+					canvas.DeselectLabels();
 				}
 				else
 				{
 					if (!IsSelected)
 					{
 						canvas.ResetZIndexes();
+						canvas.DeselectLabels();
 						canvas.DeselectTables();
 						IsSelected = true;
 						DesignerCanvas.SetZIndex(this, ZIndexSelectedValue);

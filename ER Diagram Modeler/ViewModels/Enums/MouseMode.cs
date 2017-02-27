@@ -5,6 +5,6 @@
 	/// </summary>
 	public enum MouseMode
 	{
-		Select, NewTable, Panning
+		Select, NewTable, Panning, NewLabel
 	}
 }

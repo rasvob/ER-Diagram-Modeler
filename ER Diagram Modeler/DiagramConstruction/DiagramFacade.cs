@@ -274,7 +274,23 @@ namespace ER_Diagram_Modeler.DiagramConstruction
 					DesignerCanvas.GridCellWidth);
 				canvas.RefreshGuideLines(geometry);
 			}
-			
+
+			var labels = root?.XPathSelectElements("LabelViewModels/LabelViewModel")
+				.Select(t =>
+				{
+					var vm = new LabelViewModel();
+					vm.LoadFromElement(t);
+					return vm;
+				}).ToList();
+
+			if (labels != null && labels.Any())
+			{
+				foreach(LabelViewModel label in labels)
+				{
+					ViewModel.LabelViewModels.Add(label);
+				}
+			}
+
 			var ctx = new DatabaseContext(SessionProvider.Instance.ConnectionType);
 			var tablesInDb = await Task.Run(() => ctx.ListTables());
 			var tableElements = root?.XPathSelectElements("TableViewModels/TableViewModel")

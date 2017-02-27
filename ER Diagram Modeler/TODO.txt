@@ -1,8 +1,7 @@
 ﻿---Designer_part
-Labels
+Labels - test empty label
 
 ---DB_Part
-Own connection string - Oracle
 
 ---Other
 

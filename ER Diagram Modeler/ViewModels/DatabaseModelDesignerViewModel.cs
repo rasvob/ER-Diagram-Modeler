@@ -39,6 +39,18 @@ namespace ER_Diagram_Modeler.ViewModels
 		private string _diagramTitle;
 		private bool _areTableLimitsEnabled = true;
 		private string _database = "NO_DB";
+		private ObservableCollection<LabelViewModel> _labelViewModels;
+
+		public ObservableCollection<LabelViewModel> LabelViewModels
+		{
+			get { return _labelViewModels; }
+			set
+			{
+				if (Equals(value, _labelViewModels)) return;
+				_labelViewModels = value;
+				OnPropertyChanged();
+			}
+		}
 
 		/// <summary>
 		/// DB Name
@@ -399,6 +411,7 @@ namespace ER_Diagram_Modeler.ViewModels
 		{
 			TableViewModels = new ObservableCollection<TableViewModel>();
 			ConnectionInfoViewModels = new ObservableCollection<ConnectionInfoViewModel>();
+			LabelViewModels = new ObservableCollection<LabelViewModel>();
 			ChangeZoomCommand = new SimpleCommand(ChangeZoomCommand_Executed);
 			Database = "NO_DB";
 		}
@@ -489,8 +502,13 @@ namespace ER_Diagram_Modeler.ViewModels
 
 			var lines = new XElement("ConnectionInfoViewModels");
 			ConnectionInfoViewModels.ToList().ForEach(t => lines.Add(t.CreateElement()));
+
+			var labels = new XElement("LabelViewModels");
+			LabelViewModels.ToList().ForEach(t => labels.Add(t.CreateElement()));
+
 			elem.Add(tables);
 			elem.Add(lines);
+			elem.Add(labels);
 			return elem;
 		}
 

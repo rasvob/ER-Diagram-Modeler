@@ -25,6 +25,11 @@ namespace ER_Diagram_Modeler.ValueConverters
 				return true;
 			}
 
+			if (mode == MouseMode.NewLabel && name.Equals("NewLabelButon"))
+			{
+				return true;
+			}
+
 			return false;
 		}
 

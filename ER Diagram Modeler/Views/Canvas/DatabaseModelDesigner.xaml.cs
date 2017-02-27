@@ -27,6 +27,7 @@ using ER_Diagram_Modeler.Models.Designer;
 using ER_Diagram_Modeler.ViewModels;
 using ER_Diagram_Modeler.ViewModels.Enums;
 using ER_Diagram_Modeler.Views.Canvas.Connection;
+using ER_Diagram_Modeler.Views.Canvas.LabelItem;
 using ER_Diagram_Modeler.Views.Canvas.TableItem;
 using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
@@ -71,6 +72,84 @@ namespace ER_Diagram_Modeler.Views.Canvas
 				ViewModel.TableViewModels.CollectionChanged += TableViewModelsOnCollectionChanged;
 				ViewModel.ScaleChanged += ViewModelOnScaleChanged;
 				ViewModel.ConnectionInfoViewModels.CollectionChanged += ConnectionsOnCollectionChanged;
+				ViewModel.LabelViewModels.CollectionChanged += LabelViewModelsOnCollectionChanged;
+			}
+		}
+
+		/// <summary>
+		/// Notify change for labels
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="args"></param>
+		private void LabelViewModelsOnCollectionChanged(object sender, NotifyCollectionChangedEventArgs args)
+		{
+			switch(args.Action)
+			{
+				case NotifyCollectionChangedAction.Add:
+					foreach(LabelViewModel item in args.NewItems)
+					{
+						AddLabelElement(item);
+						item.PropertyChanged += LabelItemOnPropertyChanged;
+					}
+					break;
+				case NotifyCollectionChangedAction.Remove:
+					foreach(LabelViewModel item in args.OldItems)
+					{
+						RemoveLabelElement(item);
+					}
+					break;
+			}
+		}
+
+		/// <summary>
+		/// Remove label from canvas
+		/// </summary>
+		/// <param name="viewModel">Label viewmodel</param>
+		private void RemoveLabelElement(LabelViewModel viewModel)
+		{
+			var label = ModelDesignerCanvas.Children.OfType<LabelContent>().FirstOrDefault(t => t.ViewModel.Equals(viewModel));
+			ModelDesignerCanvas.Children.Remove(label);
+		}
+
+		/// <summary>
+		/// Add new label to canvas
+		/// </summary>
+		/// <param name="viewModel">Label viewmodel</param>
+		private void AddLabelElement(LabelViewModel viewModel)
+		{
+			var content = new LabelContent(viewModel);
+			RoutedEventHandler loadedEventHandler = null;
+			loadedEventHandler = (sender, args) =>
+			{
+				MeasureToFit(content);
+				DesignerCanvas.SetZIndex(content, DesignerCanvas.LabelUnselectedZIndex);
+				DesignerCanvas.SetTop(content, viewModel.Top);
+				DesignerCanvas.SetLeft(content, viewModel.Left);
+				content.Height = content.ActualHeight + 30;
+				content.Width = content.ActualWidth + 30;
+				viewModel.Height = content.Height;
+				viewModel.Width = content.Width;
+				content.Loaded -= loadedEventHandler;
+			};
+
+			content.Loaded += loadedEventHandler;
+			ModelDesignerCanvas.Children.Add(content);
+		}
+
+		/// <summary>
+		/// Label property changed
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="args"></param>
+		private void LabelItemOnPropertyChanged(object sender, PropertyChangedEventArgs args)
+		{
+			if(args.PropertyName.Equals("IsSelected", StringComparison.CurrentCultureIgnoreCase))
+			{
+				var table = sender as LabelViewModel;
+				if(table != null && table.IsSelected)
+				{
+					DeselectConnections();
+				}
 			}
 		}
 
@@ -238,6 +317,7 @@ namespace ER_Diagram_Modeler.Views.Canvas
 					info.IsSelected = false;
 				}
 				ModelDesignerCanvas.DeselectTables();
+				ModelDesignerCanvas.DeselectLabels();
 				_sourceModel = null;
 				_destinationModel = null;
 			}
@@ -296,6 +376,7 @@ namespace ER_Diagram_Modeler.Views.Canvas
 			{
 				case MouseMode.Select:
 					ModelDesignerCanvas.DeselectTables();
+					ModelDesignerCanvas.DeselectLabels();
 					_sourceModel = null;
 					_destinationModel = null;
 					DeselectConnections();
@@ -344,6 +425,16 @@ namespace ER_Diagram_Modeler.Views.Canvas
 					}
 					ViewModel.MouseMode = MouseMode.Select;
 					break;
+				case MouseMode.NewLabel:
+					var originLabel = e.GetPosition(ModelDesignerCanvas);
+					ViewModel.LabelViewModels.Add(new LabelViewModel()
+					{
+						Left = originLabel.X,
+						Top = originLabel.Y
+					});
+					ViewModel.MouseMode = MouseMode.Select;
+					break;
+		
 			}
 		}
 
@@ -487,6 +578,23 @@ namespace ER_Diagram_Modeler.Views.Canvas
 			if (content.ActualHeight + content.TableViewModel.Top >= ModelDesignerCanvas.ActualHeight)
 			{
 				content.TableViewModel.Top = ModelDesignerCanvas.ActualHeight - content.ActualHeight - 10;
+			}
+		}
+
+		/// <summary>
+		/// Ensure bounds
+		/// </summary>
+		/// <param name="content">Item on canvas</param>
+		private void MeasureToFit(LabelContent content)
+		{
+			if(content.ActualWidth + content.ViewModel.Left >= ModelDesignerCanvas.ActualWidth)
+			{
+				content.ViewModel.Left = ModelDesignerCanvas.ActualWidth - content.ActualWidth - 10;
+			}
+
+			if(content.ActualHeight + content.ViewModel.Top >= ModelDesignerCanvas.ActualHeight)
+			{
+				content.ViewModel.Top = ModelDesignerCanvas.ActualHeight - content.ActualHeight - 10;
 			}
 		}
 
@@ -731,7 +839,20 @@ namespace ER_Diagram_Modeler.Views.Canvas
 		private void DeleteTablesCommand_OnExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
 			DeleteSelectedTables();
+			DeleteSelectedLabels();
 			//DeleteSelectedConnections();
+		}
+
+		/// <summary>
+		/// Delete selected labels from canvas
+		/// </summary>
+		private void DeleteSelectedLabels()
+		{
+			var delete = ViewModel.LabelViewModels.Where(t => t.IsSelected).ToList();
+			foreach(LabelViewModel item in delete)
+			{
+				ViewModel.LabelViewModels.Remove(item);
+			}
 		}
 
 		/// <summary>
@@ -742,7 +863,7 @@ namespace ER_Diagram_Modeler.Views.Canvas
 		private void DeleteTablesCommand_OnCanExecute(object sender, CanExecuteRoutedEventArgs e)
 		{
 			if (ViewModel != null)
-				e.CanExecute = ViewModel.TableViewModels.Any(t => t.IsSelected);
+				e.CanExecute = ViewModel.TableViewModels.Any(t => t.IsSelected) || ViewModel.LabelViewModels.Any(t => t.IsSelected);
 		}
 
 		/// <summary>
@@ -920,6 +1041,14 @@ namespace ER_Diagram_Modeler.Views.Canvas
 				right = (int)Math.Max(right,ViewModel.ConnectionInfoViewModels.SelectMany(t => t.Points).Select(t => t.X + offset).Max());
 				bot = (int)Math.Max(bot, ViewModel.ConnectionInfoViewModels.SelectMany(t => t.Points).Select(t => t.Y + offset).Max());
 				top = (int)Math.Min(top,ViewModel.ConnectionInfoViewModels.SelectMany(t => t.Points).Select(t => t.Y - offset).Min());
+			}
+
+			if (ViewModel.LabelViewModels.Any())
+			{
+				left = (int)Math.Min(left, ViewModel.LabelViewModels.Select(t => t.Left - offset).Min());
+				top = (int)Math.Min(top, ViewModel.LabelViewModels.Select(t => t.Top - offset).Min());
+				right = (int)Math.Max(right, ViewModel.LabelViewModels.Select(t => t.Left + t.Width + offset).Max());
+				bot = (int)Math.Max(bot, ViewModel.LabelViewModels.Select(t => t.Top + t.Height + offset).Max());
 			}
 
 			left = left < 0 ? 0 : left;
@@ -1140,6 +1269,11 @@ namespace ER_Diagram_Modeler.Views.Canvas
 				SelectionBorder.Width = w;
 				SelectionBorder.Height = h;
 			}
+		}
+
+		private void NewLabel_OnExecuted(object sender, ExecutedRoutedEventArgs e)
+		{
+			ViewModel.MouseMode = MouseMode.NewLabel;
 		}
 	}
 }

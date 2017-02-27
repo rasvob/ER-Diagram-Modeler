@@ -22,6 +22,7 @@
 				<ResourceDictionary Source="Resources/Constants.xaml"></ResourceDictionary>
 				<ResourceDictionary Source="Resources/Icons.xaml"></ResourceDictionary>
 				<ResourceDictionary Source="Views/Canvas/TableItem/TableItem.xaml"></ResourceDictionary>
+				<ResourceDictionary Source="Views/Canvas/LabelItem/LabelItem.xaml"></ResourceDictionary>
 				<ResourceDictionary Source="Controls/Buttons/DesignerToolBarButton.xaml"></ResourceDictionary>
 			</ResourceDictionary.MergedDictionaries>
 		</ResourceDictionary>

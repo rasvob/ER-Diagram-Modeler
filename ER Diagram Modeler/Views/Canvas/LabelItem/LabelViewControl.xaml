@@ -1,0 +1,46 @@
+﻿<UserControl x:Class="ER_Diagram_Modeler.Views.Canvas.LabelItem.LabelViewControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:ER_Diagram_Modeler.Views.Canvas.LabelItem"
+             xmlns:viewModels="clr-namespace:ER_Diagram_Modeler.ViewModels"
+             mc:Ignorable="d" 
+			 d:DataContext="{d:DesignInstance viewModels:LabelViewModel}"
+             d:DesignHeight="300" d:DesignWidth="300">
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto"></RowDefinition>
+			<RowDefinition Height="*"></RowDefinition>
+		</Grid.RowDefinitions>
+		
+		<Rectangle
+			IsHitTestVisible="False"
+			Grid.Row="0"
+			Height="7"
+			Fill="{StaticResource PrimaryColorBrush}"
+			/>
+		
+		<Border 
+			Grid.Row="1"
+			BorderThickness="1"
+			BorderBrush="{StaticResource AccentColorBrush2}">
+			<TextBox
+				Padding="0"
+				IsReadOnly="True"
+				PreviewMouseDoubleClick="LabelTextBox_OnPreviewMouseDoubleClick"
+				LostFocus="LabelTextBox_OnLostFocus"
+				PreviewKeyUp="LabelTextBox_OnPreviewKeyDown"
+				BorderThickness="0"
+				Cursor="Arrow"
+				TextWrapping="Wrap"
+				AcceptsReturn="True"
+				Background="{StaticResource AccentColorBrush2}"
+				Foreground="White"
+				FontWeight="Bold"
+				x:Name="LabelTextBox"
+				Text="{Binding LabelText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+			/>
+		</Border>
+	</Grid>
+</UserControl>

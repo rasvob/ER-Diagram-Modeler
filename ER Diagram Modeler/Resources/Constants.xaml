@@ -5,4 +5,7 @@
 	<!--TableItem-->
 	<sys:Double x:Key="TableMinHeight">25</sys:Double>
 	<sys:Double x:Key="TableMinWidth">150</sys:Double>
+
+	<sys:Double x:Key="LabelMinHeight">35</sys:Double>
+	<sys:Double x:Key="LabelMinWidth">70</sys:Double>
 </ResourceDictionary>
