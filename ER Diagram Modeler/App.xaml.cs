@@ -1,11 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Globalization;
-using System.Linq;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Interop;
 using System.Windows.Media;
@@ -28,8 +22,8 @@ namespace ER_Diagram_Modeler
 			//TODO: ONLY DEBUG
 			base.OnStartup(e);
 			SetEnglighCultureInfo();
-			//RenderOptions.ProcessRenderMode = RenderMode.SoftwareOnly;
-			//this.DispatcherUnhandledException += OnDispatcherUnhandledException;
+			RenderOptions.ProcessRenderMode = RenderMode.SoftwareOnly;
+			this.DispatcherUnhandledException += OnDispatcherUnhandledException;
 		}
 
 		/// <summary>

@@ -51,7 +51,7 @@ WHERE a.CONSTRAINT_TYPE = 'R'
 		private static string SqlAddForeignKeyConstraint2 = "ALTER TABLE {0} ADD CONSTRAINT {1} FOREIGN KEY ({2}) REFERENCES {3} ({4}) {5}";
 
 		private static string SqlCreateDiagramTable = @"CREATE TABLE {0} (NAME VARCHAR2(100) PRIMARY KEY, DATA CLOB NOT NULL)";
-		private static string SqlDoesDiagramTableExist = @"SELECT count(*) FROM ALL_TABLES a WHERE a.OWNER = :Owner AND a.TABLE_NAME = 'ERDIAGRAMS'";
+		private static string SqlDoesDiagramTableExist = @"SELECT count(*) FROM SYS.ALL_OBJECTS WHERE OBJECT_TYPE = 'TABLE' AND OWNER = :Owner AND OBJECT_NAME = 'ERDIAGRAMS'";
 
 		private static string SqlInsertDiagram = @"INSERT INTO {0}(NAME, DATA) VALUES(:Name, :Data)";
 		private static string SqlUpdateDiagram = @"UPDATE {0} SET DATA = :Data WHERE NAME = :Name";
