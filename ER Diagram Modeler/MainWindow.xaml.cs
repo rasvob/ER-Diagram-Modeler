@@ -740,7 +740,6 @@ namespace ER_Diagram_Modeler
 			SessionProvider.Instance.Disconnect();
 			DatabaseConnectionSidebar.HideDatabaseStackPanels();
 
-			//TODO: REMOVE LOGIN CREDS
 			ProgressDialogController progressDialogController = null;
 
 			Func<ProgressDialogController, Task> closeProgress = async t =>
@@ -833,8 +832,6 @@ namespace ER_Diagram_Modeler
 		public async void AnchorableDesignerActiveChangedHandler(object sender, System.EventArgs e)
 		{
 			var anchorable = sender as LayoutAnchorable;
-
-			//TODO: Refresh only invisible
 			DatabaseModelDesigner designer = anchorable?.Content as DatabaseModelDesigner;
 
 			if (designer == null)

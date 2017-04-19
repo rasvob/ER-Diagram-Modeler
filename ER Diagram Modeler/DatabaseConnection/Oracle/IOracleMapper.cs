@@ -26,6 +26,5 @@ namespace ER_Diagram_Modeler.DatabaseConnection.Oracle
 		/// <param name="fkName">Name of constraint, generated if NULL</param>
 		/// <param name="onDelete">Action on delete, all standard Oracle actions</param>
 		void CreateForeignKey(string table, string referencedTable, IEnumerable<RowModelPair> collumns, string fkName = null, string onDelete = "NO ACTION");
-
 	}
 }

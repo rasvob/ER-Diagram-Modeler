@@ -53,7 +53,7 @@ namespace ER_Diagram_Modeler.Views.Panels
 			set { QueryEditor.Text = value; }
 		}
 
-		//TODO: Only debug - REMOVE LATER
+		//TODO: Only debug
 		private string TestSql = @"SELECT * 
 FROM sys.tables
 
@@ -82,7 +82,7 @@ exec sp_pkeys @table_name = 'hodnoceni_uzivatel'";
 		public QueryPanel()
 		{
 			InitializeComponent();
-			QueryEditor.Text = TestSql;
+			//QueryEditor.Text = TestSql;
 			Loaded += OnLoaded;
 		}
 

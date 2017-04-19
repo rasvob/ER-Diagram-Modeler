@@ -393,7 +393,7 @@
 					<TextBox x:Name="OracleServerNameTextBox" Margin="0 5"
 						 Grid.Row="0"
 						 IsReadOnly="False"
-						 Text="192.168.2.8"
+						 Text="localhost"
 						 Controls:TextBoxHelper.ClearTextButton="True"
 						 Controls:TextBoxHelper.UseFloatingWatermark="True"
 						 Controls:TextBoxHelper.Watermark="Host">
@@ -421,7 +421,7 @@
 						<Label Content="Username"></Label>
 						<TextBox x:Name="OracleUsernameTextBox"
 						 IsReadOnly="False"
-						 Text="c##rasvob"
+						 Text=""
 						 Controls:TextBoxHelper.ClearTextButton="True"
 						 Controls:TextBoxHelper.UseFloatingWatermark="True"
 						 Controls:TextBoxHelper.Watermark="Username">
@@ -429,7 +429,7 @@
 
 						<Label Content="Password"></Label>
 						<PasswordBox x:Name="OraclePasswordBox"
-							Password="ra1441"
+							Password=""
 							Style="{StaticResource MetroButtonRevealedPasswordBox}"
 							Controls:TextBoxHelper.ClearTextButton="True"
 							Controls:TextBoxHelper.UseFloatingWatermark="True"

@@ -1,5 +1,4 @@
 ﻿---Designer_part
-Labels - test empty label
 
 ---DB_Part
 

@@ -2025,7 +2025,6 @@ namespace ER_Diagram_Modeler.ViewModels
 			var rnd = new Random();
 			var rects = DiagramFacade.GetTableRectangles(designer.TableViewModels, step);
 			var canvas = new Rectangle(0,0, (int) designer.CanvasWidth, (int) designer.CanvasHeight);
-			//TODO: Remove if true
 			bool vertical = !horizontalLines.Any() || (rnd.Next(2) == 0);
 
 			if (vertical)
